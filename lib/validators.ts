@@ -48,24 +48,12 @@ export const getUserSchema = z.object({
 	role: z.string()
 });
 
-export const createContentSchema = z.object({
-	id: z.string().optional(),
-	title: z.string().min(1, 'Title is required'),
-	slug: z.string().min(1, 'Slug is required'),
-	content: z.string().min(1, 'Content is required'),
-	image: z.string().optional(),
-	category: z.string().optional(),
-	createdAt: z.date().optional(),
-	updatedAt: z.date().optional()
-});
-
 export const updateContentSchema = z.object({
 	id: z.string().optional(),
 	title: z.string().min(1, 'Title is required'),
 	slug: z.string().min(1, 'Slug is required'),
 	content: z.string().min(1, 'Content is required'),
 	image: z.string().optional()
-	// category: z.string().optional()
 });
 
 export const uploadedImageSchema = z.object({
@@ -75,116 +63,8 @@ export const uploadedImageSchema = z.object({
 	src: z.string().min(1, 'src is required'),
 	alt: z.string().optional(),
 	title: z.string().optional(),
-	projectId: z.string().optional().nullable(),
 	description: z.string().optional(),
 	type: z.string().min(1, 'type is required')
-});
-
-export const createProjectSchema = z.object({
-	id: z.string().optional(),
-	createdAt: z.date().optional(),
-	updatedAt: z.date().optional(),
-	title: z.string().min(1, 'Title is required'),
-	slug: z.string().min(1, 'Slug is required'),
-	content: z.string().min(1, 'Content is required'),
-	techStack: z.array(z.string()),
-	techPackages: z.array(z.string()).optional(),
-	gitHubRepo: z.string().optional(),
-	gitHubRepoPublic: z.boolean().default(false)
-});
-
-export const getProjectSchema = z.object({
-	id: z.string(),
-	createdAt: z.date(),
-	updatedAt: z.date(),
-	title: z.string(),
-	slug: z.string(),
-	content: z.string(),
-	images: z.array(uploadedImageSchema),
-	techStack: z.array(z.string()),
-	techPackages: z.array(z.string()),
-	codeBlocks: z.array(z.any()).optional(),
-	gitHubRepo: z.string(),
-	gitHubRepoPublic: z.boolean()
-});
-
-export const codeBlockSchema = z.object({
-	id: z.string().optional(),
-	createdAt: z.date().optional(),
-	updatedAt: z.date().optional(),
-	title: z.string().min(1, 'Title is required'),
-	description: z.string().min(1, 'Description is required'),
-	code: z.string().min(1, 'Code is required'),
-	techStack: z.string().min(1, 'Tech stack is required'),
-	projectId: z.string().optional().nullable(),
-	showLineNumbers: z.boolean().default(true)
-});
-
-export const getCodeBlockSchema = z.object({
-	id: z.string(),
-	createdAt: z.date(),
-	updatedAt: z.date(),
-	title: z.string(),
-	description: z.string(),
-	code: z.string(),
-	techStack: z.string(),
-	projectId: z.string(),
-	showLineNumbers: z.boolean(),
-	project: z.object({
-		id: z.string(),
-		title: z.string()
-	})
-});
-
-export const certificationSchema = z.object({
-	title: z.string().min(1, 'Title is required'),
-	description: z.string().min(1, 'Description is required'),
-	institution: z.string().min(1, 'Institution is required'),
-	media: z.string().min(1, 'Media document is required'),
-	date: z.date(),
-	techStack: z.array(z.string()).optional()
-});
-
-export const getCertificationSchema = z.object({
-	id: z.string(),
-	createdAt: z.date(),
-	updatedAt: z.date(),
-	title: z.string(),
-	description: z.string(),
-	institution: z.string(),
-	media: z.string(),
-	date: z.date(),
-	techStack: z.array(z.string())
-});
-
-export const jobSchema = z.object({
-	employer: z.string().min(1, 'Employer is required'),
-	dateStarted: z.date(),
-	dateEnded: z.date().optional().nullable(),
-	slug: z.string().min(1, 'slug is required'),
-	title: z.string().min(1, 'Job title is required'),
-	location: z.string().min(1, 'Location i required'),
-	techStack: z.array(z.string()),
-	description: z.string().min(1, 'Description is required'),
-	logo: z.string().optional(),
-	link: z.string().optional()
-});
-
-export const getJobSchema = z.object({
-	id: z.string(),
-	createdAt: z.date(),
-	updatedAt: z.date(),
-	employer: z.string(),
-	dateStarted: z.date(),
-	dateEnded: z.date(),
-	title: z.string(),
-	location: z.string(),
-	description: z.string(),
-	slug: z.string(),
-	techStack: z.array(z.string()),
-	projects: getProjectSchema.optional(),
-	logo: z.string(),
-	link: z.string()
 });
 
 export const trackingSchema = z.object({
@@ -228,19 +108,41 @@ export const getTrackingSchema = z.object({
 	numVisits: z.number()
 });
 
-export const emailSchema = z.object({
-	name: z.string().min(1, 'Your name is required'),
-	email: z.string().min(1, 'Email is required'),
-	message: z.string().min(3, 'Message is required'),
-	trackingId: z.string().min(1, 'id is required')
+export const foodItemSchema = z.object({
+	name: z.string().min(1, 'Name is required'),
+	category: z.string().min(1, 'Category is required'),
+	image: z.string().optional(),
+	carbGrams: z
+		.number()
+		.int()
+		.nullable()
+		.refine((val) => val !== null, { message: 'Carbs can be 0 or greater.' }),
+	fatGrams: z
+		.number()
+		.int()
+		.nullable()
+		.refine((val) => val !== null, { message: 'Fats can be 0 or greater.' }),
+	proteinGrams: z
+		.number()
+		.int()
+		.nullable()
+		.refine((val) => val !== null, { message: 'Protein can be 0 or greater.' }),
+	calories: z
+		.number()
+		.int()
+		.nullable()
+		.refine((val) => val !== null, { message: 'Calories can be 0 or greater.' })
 });
 
-export const getEmailSchema = z.object({
+export const getFoodItemSchema = z.object({
 	id: z.string(),
 	createdAt: z.date(),
+	updatedAt: z.date(),
 	name: z.string(),
-	email: z.string(),
-	message: z.string(),
-	trackingId: z.string().optional(),
-	tracking: getTrackingSchema.optional()
+	category: z.string(),
+	image: z.string(),
+	carbGrams: z.number(),
+	fatGrams: z.number(),
+	proteinGrams: z.number(),
+	calories: z.number()
 });

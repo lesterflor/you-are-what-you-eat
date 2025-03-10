@@ -47,3 +47,16 @@ model User {
   accounts      Account[]
   sessions      Session[]
 }
+
+model FoodItem {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  name         String   @unique
+  category     String
+  image        String?
+  carbGrams    Int      @default(0)
+  fatGrams     Int      @default(0)
+  proteinGrams Int      @default(0)
+  calories     Int      @default(0)
+}

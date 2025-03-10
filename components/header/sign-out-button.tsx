@@ -5,11 +5,10 @@ import { Button } from '../ui/button';
 export default function SignOutButton() {
 	return (
 		<Button
-			variant='destructive'
 			onClick={async () => {
 				await signOutUser();
 			}}>
-			Sign Away
+			Sign Out
 		</Button>
 	);
 }
