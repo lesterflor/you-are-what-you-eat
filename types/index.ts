@@ -1,8 +1,12 @@
 import {
+	foodEntrySchema,
 	foodItemSchema,
+	getFoodEntrySchema,
 	getFoodItemSchema,
+	getLogSchema,
 	getTrackingSchema,
 	getUserSchema,
+	logSchema,
 	trackingSchema,
 	updateContentSchema,
 	uploadedImageSchema
@@ -40,5 +44,10 @@ export type TrackingItemType = {
 export type TrackingType = 'page' | 'form';
 
 export type FoodItem = z.infer<typeof foodItemSchema>;
-
 export type GetFoodItem = z.infer<typeof getFoodItemSchema>;
+
+export type Log = z.infer<typeof logSchema>;
+export type GetLog = z.infer<typeof getLogSchema>;
+
+export type FoodEntry = z.infer<typeof foodEntrySchema>;
+export type GetFoodEntry = z.infer<typeof getFoodEntrySchema>;

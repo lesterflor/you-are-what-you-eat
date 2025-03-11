@@ -45,7 +45,8 @@ export const getUserSchema = z.object({
 	name: z.string(),
 	email: z.string(),
 	image: z.string(),
-	role: z.string()
+	role: z.string(),
+	logs: z.array(z.any())
 });
 
 export const updateContentSchema = z.object({
@@ -147,4 +148,53 @@ export const getFoodItemSchema = z.object({
 	calories: z.number(),
 	description: z.string(),
 	servingSize: z.number()
+});
+
+export const foodEntrySchema = z.object({
+	id: z.string(),
+	name: z.string(),
+	category: z.string(),
+	description: z.string(),
+	numServings: z.number().refine((val) => val !== null, {
+		message: 'Number of servings can be 1 or greater.'
+	}),
+	image: z.string().optional(),
+	carbGrams: z.number().refine((val) => val !== null, {
+		message: 'Carbs can be 0 or greater.'
+	}),
+	proteinGrams: z.number().refine((val) => val !== null, {
+		message: 'Protein can be 0 or greater.'
+	}),
+	fatGrams: z.number().refine((val) => val !== null, {
+		message: 'Fat can be 0 or greater.'
+	}),
+	calories: z.number().refine((val) => val !== null, {
+		message: 'Calories can be 0 or greater.'
+	})
+});
+
+export const getFoodEntrySchema = z.object({
+	id: z.string(),
+	name: z.string(),
+	category: z.string(),
+	description: z.string(),
+	numServings: z.number(),
+	image: z.string(),
+	carbGrams: z.number(),
+	proteinGrams: z.number(),
+	fatGrams: z.number(),
+	calories: z.number()
+});
+
+export const logSchema = z.object({
+	userId: z.string().min(1, 'User is required'),
+	foodItems: z.array(foodEntrySchema)
+});
+
+export const getLogSchema = z.object({
+	id: z.string(),
+	createdAt: z.date(),
+	updatedAt: z.date(),
+	userId: z.string(),
+	foodItems: z.array(getFoodEntrySchema)
 });

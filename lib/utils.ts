@@ -173,3 +173,21 @@ export const sanitizeHtmlConfig = {
 	allowedSchemes: ['http', 'https', 'mailto', 'tel'],
 	nonTextTags: ['style', 'script', 'textarea', 'option', 'noscript']
 };
+
+export function isToday(date: Date) {
+	const now = new Date();
+	return (
+		date.getDate() === now.getDate() &&
+		date.getMonth() === now.getMonth() &&
+		date.getFullYear() === now.getFullYear()
+	);
+}
+
+export function getToday() {
+	const todayStart = new Date();
+	todayStart.setHours(0, 0, 0, 0); // Set to the start of today
+	const todayEnd = new Date();
+	todayEnd.setHours(23, 59, 59, 999); // Set to the end of today
+
+	return { todayStart, todayEnd };
+}
