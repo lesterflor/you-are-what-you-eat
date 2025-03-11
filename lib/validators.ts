@@ -131,7 +131,11 @@ export const foodItemSchema = z.object({
 		.number()
 		.int()
 		.nullable()
-		.refine((val) => val !== null, { message: 'Calories can be 0 or greater.' })
+		.refine((val) => val !== null, {
+			message: 'Calories can be 0 or greater.'
+		}),
+	description: z.string().optional(),
+	servingSize: z.number().optional()
 });
 
 export const getFoodItemSchema = z.object({
@@ -144,5 +148,7 @@ export const getFoodItemSchema = z.object({
 	carbGrams: z.number(),
 	fatGrams: z.number(),
 	proteinGrams: z.number(),
-	calories: z.number()
+	calories: z.number(),
+	description: z.string(),
+	servingSize: z.number()
 });

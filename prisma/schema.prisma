@@ -54,6 +54,8 @@ model FoodItem {
   updatedAt    DateTime @updatedAt
   name         String   @unique
   category     String
+  description  String?
+  servingSize  Int?     @default(1)
   image        String?
   carbGrams    Int      @default(0)
   fatGrams     Int      @default(0)

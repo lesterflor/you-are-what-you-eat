@@ -6,10 +6,12 @@ import { Button } from './ui/button';
 
 export default function NumberIncrementor({
 	value = 0,
-	onChange
+	onChange,
+	minValue = 0
 }: {
 	value?: number;
 	onChange: (val: number) => void;
+	minValue?: number;
 }) {
 	const [val, setVal] = useState(value);
 
@@ -18,13 +20,13 @@ export default function NumberIncrementor({
 	}, [val]);
 
 	return (
-		<div className='flex flex-row items-center justify-center gap-2'>
+		<div className='flex flex-row items-center justify-start gap-6'>
 			<div>
 				<Button
 					variant='outline'
 					onClick={(e) => {
 						e.preventDefault();
-						if (val > 0) {
+						if (val > minValue) {
 							setVal((prev) => prev - 1);
 						}
 					}}>

@@ -10,7 +10,10 @@ export default async function Home() {
 		<>
 			{session ? (
 				<div className='flex flex-col gap-4'>
-					<div>You are what you eat {session.user?.name}</div>
+					<div className='text-lg'>
+						You are what you eat{' '}
+						<span className='font-semibold'>{session.user?.name}</span>
+					</div>
 					<div>
 						<AddFoodItemForm />
 					</div>

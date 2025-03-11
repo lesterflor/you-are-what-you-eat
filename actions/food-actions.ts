@@ -78,7 +78,9 @@ export async function updateFoodItem(item: GetFoodItem) {
 				carbGrams: item.carbGrams,
 				fatGrams: item.fatGrams,
 				proteinGrams: item.proteinGrams,
-				calories: item.calories
+				calories: item.calories,
+				description: item.description,
+				servingSize: item.servingSize
 			}
 		});
 
