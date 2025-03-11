@@ -1,4 +1,5 @@
 import { getFoodItems } from '@/actions/food-actions';
+import AddFoodItemForm from '@/components/food-items/add-food-item-form';
 import FoodCategoryIconMapper from '@/components/food-items/food-category-icon-mapper';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -8,8 +9,14 @@ import {
 	CardDescription,
 	CardHeader
 } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+	Sheet,
+	SheetContent,
+	SheetTitle,
+	SheetTrigger
+} from '@/components/ui/sheet';
 import { auth } from '@/db/auth';
-import Link from 'next/link';
 
 export default async function FoodsPage() {
 	const session = await auth();
@@ -22,9 +29,19 @@ export default async function FoodsPage() {
 			<div className='text-2xl font-bold flex flex-row justify-between'>
 				Food List
 				{session && (
-					<Button asChild>
-						<Link href='/'>Add Food Item</Link>
-					</Button>
+					<Sheet>
+						<SheetTrigger asChild>
+							<Button>Add Food Item</Button>
+						</SheetTrigger>
+						<SheetContent>
+							<SheetTitle>Add Food Item</SheetTitle>
+							<ScrollArea className='h-[90vh] pr-5'>
+								<AddFoodItemForm />
+								<br />
+								<br />
+							</ScrollArea>
+						</SheetContent>
+					</Sheet>
 				)}
 			</div>
 			<div className='flex flex-col gap-6'>

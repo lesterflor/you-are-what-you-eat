@@ -134,7 +134,7 @@ export default function AddFoodItemForm() {
 					<Card>
 						<CardHeader className='text-xl font-semibold'>Macros</CardHeader>
 						<CardContent>
-							<div className='w-full h-full grid grid-cols-2 gap-8'>
+							<div className='w-full h-full flex flex-row flex-wrap gap-4'>
 								<FormField
 									name='servingSize'
 									control={form.control}

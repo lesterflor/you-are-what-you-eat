@@ -114,22 +114,18 @@ export const foodItemSchema = z.object({
 	image: z.string().optional(),
 	carbGrams: z
 		.number()
-		.int()
 		.nullable()
 		.refine((val) => val !== null, { message: 'Carbs can be 0 or greater.' }),
 	fatGrams: z
 		.number()
-		.int()
 		.nullable()
 		.refine((val) => val !== null, { message: 'Fats can be 0 or greater.' }),
 	proteinGrams: z
 		.number()
-		.int()
 		.nullable()
 		.refine((val) => val !== null, { message: 'Protein can be 0 or greater.' }),
 	calories: z
 		.number()
-		.int()
 		.nullable()
 		.refine((val) => val !== null, {
 			message: 'Calories can be 0 or greater.'

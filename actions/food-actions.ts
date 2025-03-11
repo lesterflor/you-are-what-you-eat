@@ -4,6 +4,7 @@ import prisma from '@/db/prisma';
 import { formatError } from '@/lib/utils';
 import { foodItemSchema } from '@/lib/validators';
 import { FoodItem, GetFoodItem } from '@/types';
+import { revalidatePath } from 'next/cache';
 
 export async function getFoodItems() {
 	try {
@@ -42,6 +43,8 @@ export async function addFoodItem(item: FoodItem) {
 		if (!newItem) {
 			throw new Error('There was a problem creating a new food item');
 		}
+
+		revalidatePath('/foods');
 
 		return {
 			success: true,

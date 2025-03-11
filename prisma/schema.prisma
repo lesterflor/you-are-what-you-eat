@@ -55,10 +55,10 @@ model FoodItem {
   name         String   @unique
   category     String
   description  String?
-  servingSize  Int?     @default(1)
+  servingSize  Float?   @default(1)
   image        String?
-  carbGrams    Int      @default(0)
-  fatGrams     Int      @default(0)
-  proteinGrams Int      @default(0)
-  calories     Int      @default(0)
+  carbGrams    Float    @default(0)
+  fatGrams     Float    @default(0)
+  proteinGrams Float    @default(0)
+  calories     Float    @default(0)
 }
