@@ -1,16 +1,98 @@
 'use client';
 
-import { GetFoodItem } from '@/types';
+import { FoodEntry, GetFoodItem } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader } from '../ui/card';
 import FoodCategoryIconMapper from './food-category-icon-mapper';
 import { Badge } from '../ui/badge';
+import { useSession } from 'next-auth/react';
+import { Button } from '../ui/button';
+import NumberIncrementor from '../number-incrementor';
+import { useState } from 'react';
+import { createDailyLog, updateLog } from '@/actions/log-actions';
+import { toast } from 'sonner';
 
 export default function FoodItemCard({ item }: { item: GetFoodItem }) {
+	const { data: session } = useSession();
+
+	const [logFoodItem, setLogFoodItem] = useState<FoodEntry>({
+		id: item.id,
+		name: item.name,
+		category: item.category,
+		description: item.description ?? '',
+		numServings: 1,
+		image: item.image || '',
+		carbGrams: item.carbGrams,
+		fatGrams: item.fatGrams,
+		proteinGrams: item.proteinGrams,
+		calories: item.calories
+	});
+
+	const sendFoodItems = async () => {
+		const getLatestLog = await createDailyLog();
+
+		const currentFoodItems = getLatestLog?.data?.foodItems || [];
+
+		const cleanArr = currentFoodItems.map((item) => ({
+			...item,
+			description: item.description || '',
+			image: item.image || ''
+		}));
+
+		const foodItems = [...cleanArr];
+		foodItems.push(logFoodItem);
+		const res = await updateLog(foodItems);
+
+		if (res.success) {
+			toast('Added to your daily log!');
+		} else {
+			toast.error('Oops, Something went wrong with adding the item.');
+		}
+	};
+
 	return (
 		<Card>
-			<CardHeader className='text-xl font-semibold capitalize pb-2 flex flex-row items-center gap-2'>
-				<FoodCategoryIconMapper type={item.category} />
-				{item.name}
+			<CardHeader className='text-xl font-semibold capitalize pb-2 flex flex-row items-end justify-between gap-2'>
+				<div className='flex flex-row items-center gap-2'>
+					<FoodCategoryIconMapper type={item.category} />
+					{item.name}
+				</div>
+
+				{session && (
+					<div className='flex flex-row items-end justify-center gap-2'>
+						<div>
+							<span>Servings</span>
+							<NumberIncrementor
+								onChange={(val) => {
+									const entry: FoodEntry = {
+										id: item.id,
+										name: item.name,
+										category: item.category,
+										description: item.description ?? '',
+										numServings: val,
+										image: (item.image as string) ?? '',
+										carbGrams: item.carbGrams,
+										fatGrams: item.fatGrams,
+										proteinGrams: item.proteinGrams,
+										calories: item.calories
+									};
+
+									setLogFoodItem(entry);
+								}}
+								minValue={1}
+								value={1}
+							/>
+						</div>
+
+						<Button
+							onClick={(e) => {
+								e.preventDefault();
+								console.log(logFoodItem);
+								sendFoodItems();
+							}}>
+							Add item to log
+						</Button>
+					</div>
+				)}
 			</CardHeader>
 			<CardDescription className='p-6'>{item.description}</CardDescription>
 			<CardContent className='flex flex-row flex-wrap gap-8'>

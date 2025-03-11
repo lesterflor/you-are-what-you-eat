@@ -3,7 +3,7 @@
 import { auth } from '@/db/auth';
 import prisma from '@/db/prisma';
 import { formatError, getToday } from '@/lib/utils';
-import { FoodEntry } from '@/types';
+import { FoodEntry, GetLog } from '@/types';
 
 export async function createDailyLog() {
 	const session = await auth();
@@ -54,12 +54,25 @@ export async function createDailyLog() {
 	}
 }
 
-export async function updateLog(id: string, foodEntries: FoodEntry[]) {
+export async function updateLog(foodEntries: FoodEntry[]) {
+	const session = await auth();
+	const user = session?.user;
+
+	if (!user) {
+		throw new Error('User is not authenticated');
+	}
+
 	try {
 		let logUpdate;
 
 		const existing = await prisma.log.findFirst({
-			where: { id }
+			where: {
+				userId: user.id,
+				createdAt: {
+					gte: getToday().todayStart,
+					lte: getToday().todayEnd
+				}
+			}
 		});
 
 		if (!existing) {

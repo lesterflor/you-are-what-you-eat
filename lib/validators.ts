@@ -158,7 +158,7 @@ export const foodEntrySchema = z.object({
 	numServings: z.number().refine((val) => val !== null, {
 		message: 'Number of servings can be 1 or greater.'
 	}),
-	image: z.string().optional(),
+	image: z.string(),
 	carbGrams: z.number().refine((val) => val !== null, {
 		message: 'Carbs can be 0 or greater.'
 	}),

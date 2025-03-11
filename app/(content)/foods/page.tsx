@@ -1,5 +1,4 @@
 import { getFoodItems } from '@/actions/food-actions';
-import { createDailyLog } from '@/actions/log-actions';
 import AddFoodItemForm from '@/components/food-items/add-food-item-form';
 import FoodItemCard from '@/components/food-items/food-item-card';
 import { Button } from '@/components/ui/button';
@@ -17,8 +16,6 @@ export default async function FoodsPage() {
 	const session = await auth();
 	const res = await getFoodItems();
 
-	await createDailyLog();
-
 	const { data: foods = [] } = res;
 
 	return (
@@ -30,7 +27,7 @@ export default async function FoodsPage() {
 						<SheetTrigger asChild>
 							<Button>Add Food Item</Button>
 						</SheetTrigger>
-						<SheetContent>
+						<SheetContent side='bottom'>
 							<SheetTitle>Add Food Item</SheetTitle>
 							<ScrollArea className='h-[90vh] pr-5'>
 								<AddFoodItemForm />
