@@ -13,13 +13,15 @@ import { Badge } from '../ui/badge';
 import { useSession } from 'next-auth/react';
 import { Button } from '../ui/button';
 import NumberIncrementor from '../number-incrementor';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { createDailyLog, updateLog } from '@/actions/log-actions';
 import { toast } from 'sonner';
 import { FilePlus } from 'lucide-react';
+import { LogUpdateContext } from '@/contexts/log-context';
 
 export default function FoodItemCard({ item }: { item: GetFoodItem }) {
 	const { data: session } = useSession();
+	const logContext = useContext(LogUpdateContext);
 
 	const [logFoodItem, setLogFoodItem] = useState<FoodEntry>({
 		id: item.id,
@@ -52,6 +54,14 @@ export default function FoodItemCard({ item }: { item: GetFoodItem }) {
 
 		if (res.success) {
 			toast('Added to your daily log!');
+
+			if (logContext && logContext.isUpdated) {
+				const update = {
+					...logContext,
+					updated: true
+				};
+				logContext.isUpdated(update);
+			}
 		} else {
 			toast.error('Oops, Something went wrong with adding the item.');
 		}
@@ -110,7 +120,7 @@ export default function FoodItemCard({ item }: { item: GetFoodItem }) {
 
 									setLogFoodItem(entry);
 								}}
-								minValue={1}
+								minValue={0.5}
 								value={1}
 							/>
 						</div>

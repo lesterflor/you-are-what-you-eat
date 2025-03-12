@@ -1,17 +1,13 @@
-import { createDailyLog } from '@/actions/log-actions';
 import AddFoodSheet from '@/components/food-items/add-food-sheet';
+import FoodListSheet from '@/components/food-items/food-list-sheet';
 import FoodLogList from '@/components/logs/log-list';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { auth } from '@/db/auth';
-import { GetLog } from '@/types';
-import { Search } from 'lucide-react';
 import Link from 'next/link';
 
 export default async function Home() {
 	const session = await auth();
-
-	const log = await createDailyLog();
 
 	return (
 		<>
@@ -26,20 +22,12 @@ export default async function Home() {
 							<AddFoodSheet />
 						</div>
 						<div className='flex flex-row items-center gap-4'>
-							Search Food{' '}
-							<Button asChild>
-								<Link href='/foods'>
-									<Search className='w-4 h-4' /> Browse
-								</Link>
-							</Button>
+							<FoodListSheet />
 						</div>
 					</div>
 					<Separator />
 					<div>
-						<FoodLogList
-							log={log?.data as GetLog}
-							useScroller={false}
-						/>
+						<FoodLogList useScroller={false} />
 					</div>
 				</div>
 			) : (

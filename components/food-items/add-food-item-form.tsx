@@ -67,173 +67,179 @@ export default function AddFoodItemForm() {
 	};
 
 	return (
-		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)}>
-				<div className='flex flex-col gap-8 w-full'>
-					<div className='flex flex-row gap-2 justify-between flex-wrap w-full'>
-						<FormField
-							name='name'
-							control={form.control}
-							render={({
-								field
-							}: {
-								field: ControllerRenderProps<
-									z.infer<typeof foodItemSchema>,
-									'name'
-								>;
-							}) => (
-								<FormItem className='w-[49%]'>
-									<FormLabel className='font-semibold'>Name</FormLabel>
-									<FormControl>
-										<Input {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+		<div className='portrait:w-[81vw]'>
+			<Form {...form}>
+				<form onSubmit={form.handleSubmit(onSubmit)}>
+					<div className='flex flex-col gap-8 w-full'>
+						<div className='flex flex-row gap-2 justify-between flex-wrap w-full'>
+							<FormField
+								name='name'
+								control={form.control}
+								render={({
+									field
+								}: {
+									field: ControllerRenderProps<
+										z.infer<typeof foodItemSchema>,
+										'name'
+									>;
+								}) => (
+									<FormItem className='w-64'>
+										<FormLabel className='font-semibold'>Name</FormLabel>
+										<FormControl>
+											<Input {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 
-						<FormField
-							name='description'
-							control={form.control}
-							render={({
-								field
-							}: {
-								field: ControllerRenderProps<
-									z.infer<typeof foodItemSchema>,
-									'description'
-								>;
-							}) => (
-								<FormItem className='w-[49%]'>
-									<FormLabel className='font-semibold'>Description</FormLabel>
-									<FormControl>
-										<Textarea {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+							<FormField
+								name='description'
+								control={form.control}
+								render={({
+									field
+								}: {
+									field: ControllerRenderProps<
+										z.infer<typeof foodItemSchema>,
+										'description'
+									>;
+								}) => (
+									<FormItem className='w-64'>
+										<FormLabel className='font-semibold'>Description</FormLabel>
+										<FormControl>
+											<Textarea {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 
-						<FormField
-							name='category'
-							control={form.control}
-							render={() => (
-								<FormItem>
-									<FormLabel className='font-semibold'>Category</FormLabel>
-									<FormControl>
-										<FoodCategoryPicker
-											value={hasSubmitted ? '' : form.getValues('category')}
-											onSelect={(val) => {
-												form.setValue('category', val);
-											}}
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+							<FormField
+								name='category'
+								control={form.control}
+								render={() => (
+									<FormItem>
+										<FormLabel className='font-semibold'>Category</FormLabel>
+										<FormControl>
+											<FoodCategoryPicker
+												value={hasSubmitted ? '' : form.getValues('category')}
+												onSelect={(val) => {
+													form.setValue('category', val);
+												}}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
+
+						<Card>
+							<CardContent className='p-4'>
+								<div className='w-full h-full flex flex-row flex-wrap items-center justify-center gap-4'>
+									<FormField
+										name='servingSize'
+										control={form.control}
+										render={() => (
+											<FormItem className='flex flex-col items-center'>
+												<FormLabel>Serving Size</FormLabel>
+												<FormControl>
+													<NumberIncrementor
+														minValue={1}
+														value={
+															hasSubmitted ? 1 : form.getValues('servingSize')
+														}
+														onChange={(val) => {
+															form.setValue('servingSize', val);
+														}}
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+
+									<FormField
+										name='carbGrams'
+										control={form.control}
+										render={() => (
+											<FormItem className='flex flex-col items-center'>
+												<FormLabel>Carbs in grams</FormLabel>
+												<FormControl>
+													<NumberIncrementor
+														value={
+															hasSubmitted ? 0 : form.getValues('carbGrams')
+														}
+														onChange={(val) => {
+															form.setValue('carbGrams', val);
+														}}
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+
+									<FormField
+										name='proteinGrams'
+										control={form.control}
+										render={() => (
+											<FormItem className='flex flex-col items-center'>
+												<FormLabel>Protein in grams</FormLabel>
+												<FormControl>
+													<NumberIncrementor
+														value={
+															hasSubmitted ? 0 : form.getValues('proteinGrams')
+														}
+														onChange={(val) => {
+															form.setValue('proteinGrams', val);
+														}}
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+
+									<FormField
+										name='fatGrams'
+										control={form.control}
+										render={() => (
+											<FormItem className='flex flex-col items-center'>
+												<FormLabel>Fat in grams</FormLabel>
+												<FormControl>
+													<NumberIncrementor
+														value={
+															hasSubmitted ? 0 : form.getValues('fatGrams')
+														}
+														onChange={(val) => {
+															form.setValue('fatGrams', val);
+														}}
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								</div>
+							</CardContent>
+						</Card>
+
+						<div className='flex flex-row items-end justify-end w-full'>
+							<Button
+								disabled={form.formState.isSubmitting}
+								className='w-44'>
+								{form.formState.isSubmitting ? (
+									<LoaderIcon className='w-4 h-4' />
+								) : (
+									<Plus className='w-4 h-4' />
+								)}
+								{form.formState.isSubmitting ? 'Adding...' : 'Add'}
+							</Button>
+						</div>
 					</div>
-
-					<Card>
-						<CardContent className='p-4'>
-							<div className='w-full h-full flex flex-row flex-wrap items-center justify-center gap-4'>
-								<FormField
-									name='servingSize'
-									control={form.control}
-									render={() => (
-										<FormItem className='flex flex-col items-center'>
-											<FormLabel>Serving Size</FormLabel>
-											<FormControl>
-												<NumberIncrementor
-													minValue={1}
-													value={
-														hasSubmitted ? 1 : form.getValues('servingSize')
-													}
-													onChange={(val) => {
-														form.setValue('servingSize', val);
-													}}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-
-								<FormField
-									name='carbGrams'
-									control={form.control}
-									render={() => (
-										<FormItem className='flex flex-col items-center'>
-											<FormLabel>Carbs in grams</FormLabel>
-											<FormControl>
-												<NumberIncrementor
-													value={hasSubmitted ? 0 : form.getValues('carbGrams')}
-													onChange={(val) => {
-														form.setValue('carbGrams', val);
-													}}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-
-								<FormField
-									name='proteinGrams'
-									control={form.control}
-									render={() => (
-										<FormItem className='flex flex-col items-center'>
-											<FormLabel>Protein in grams</FormLabel>
-											<FormControl>
-												<NumberIncrementor
-													value={
-														hasSubmitted ? 0 : form.getValues('proteinGrams')
-													}
-													onChange={(val) => {
-														form.setValue('proteinGrams', val);
-													}}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-
-								<FormField
-									name='fatGrams'
-									control={form.control}
-									render={() => (
-										<FormItem className='flex flex-col items-center'>
-											<FormLabel>Fat in grams</FormLabel>
-											<FormControl>
-												<NumberIncrementor
-													value={hasSubmitted ? 0 : form.getValues('fatGrams')}
-													onChange={(val) => {
-														form.setValue('fatGrams', val);
-													}}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
-						</CardContent>
-					</Card>
-
-					<div className='flex flex-row items-end justify-end w-full'>
-						<Button
-							disabled={form.formState.isSubmitting}
-							className='w-44'>
-							{form.formState.isSubmitting ? (
-								<LoaderIcon className='w-4 h-4' />
-							) : (
-								<Plus className='w-4 h-4' />
-							)}
-							{form.formState.isSubmitting ? 'Adding...' : 'Add'}
-						</Button>
-					</div>
-				</div>
-			</form>
-		</Form>
+				</form>
+			</Form>
+		</div>
 	);
 }

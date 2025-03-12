@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import ModeToggle from './mode-toggle';
 import UserButton from './user-button';
-import { IoFastFoodOutline } from 'react-icons/io5';
 import { createDailyLog } from '@/actions/log-actions';
 import LogSheet from '../logs/log-sheet';
 import { GetLog } from '@/types';
+import { UtensilsCrossed } from 'lucide-react';
 
 export default async function SiteHeader() {
 	const log = await createDailyLog();
@@ -15,7 +15,7 @@ export default async function SiteHeader() {
 				<div className='flex flex-row items-center justify-start gap-5 portrait:gap-3'>
 					<Link href='/'>
 						<div className='flex flex-row items-center gap-2'>
-							<IoFastFoodOutline className='w-8 h-8' />
+							<UtensilsCrossed className='w-8 h-8' />
 							<div className='flex flex-col gap-0'>
 								<span className='dark:text-white text-black text-2xl font-bold portrait:hidden thin-title'>
 									You are what you eat

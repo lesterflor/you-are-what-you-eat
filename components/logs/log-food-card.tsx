@@ -17,7 +17,7 @@ export default function LogFoodCard({ item }: { item: GetFoodEntry }) {
 		<Card>
 			<CardHeader className='pb-2 flex flex-row items-center gap-2'>
 				<div className='capitalize font-semibold'>
-					{item.name}
+					<div className='text-2xl'>{item.name}</div>
 					<span className='text-muted-foreground flex flex-row items-center'>
 						{item.numServings} {item.numServings === 1 ? 'serving' : 'servings'}
 					</span>

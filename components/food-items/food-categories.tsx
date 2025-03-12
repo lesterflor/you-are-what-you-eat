@@ -22,6 +22,7 @@ export default function FoodCategoryPicker({
 	return (
 		<div className='flex flex-row gap-2 flex-wrap p-2 rounded-md border-2'>
 			<ToggleGroup
+				className='flex flex-row gap-x-2 gap-y-0 flex-wrap'
 				type='single'
 				value={selected}
 				onValueChange={setSelected}>

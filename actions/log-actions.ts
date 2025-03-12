@@ -97,7 +97,7 @@ export async function updateLog(foodEntries: FoodEntry[]) {
 			throw new Error('There was a problem updating the log');
 		}
 
-		revalidatePath('/foods');
+		revalidatePath('/');
 
 		return {
 			success: true,

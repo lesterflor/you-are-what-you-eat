@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
 import '../globals.css';
-import { ThemeProvider } from 'next-themes';
 import { Toaster } from '@/components/ui/sonner';
 import { SessionProvider } from 'next-auth/react';
 import { auth } from '@/db/auth';
 import { Suspense } from 'react';
 import SiteHeader from '@/components/header/header';
+import { ThemeProvider } from '@/components/theme-provider';
+import LogContextProvider from '@/providers/log-context-provider';
 
 export const metadata: Metadata = {
 	title: {
@@ -30,17 +31,19 @@ export default async function RootLayout({
 			<body>
 				<ThemeProvider
 					attribute='class'
-					defaultTheme='light'
+					defaultTheme='dark'
 					enableSystem={true}
 					disableTransitionOnChange>
 					<SessionProvider session={session}>
-						<SiteHeader />
-						<br />
-						<main className='flex-1 wrapper sm:w-3/4 xl:w-1/2 portrait:w-full portrait:px-3 mx-auto mt-20'>
-							<Suspense>
-								<div className='select-none'>{children}</div>
-							</Suspense>
-						</main>
+						<LogContextProvider>
+							<SiteHeader />
+							<br />
+							<main className='flex-1 wrapper sm:w-3/4 xl:w-1/2 portrait:w-full portrait:px-3 mx-auto mt-20'>
+								<Suspense>
+									<div className='select-none'>{children}</div>
+								</Suspense>
+							</main>
+						</LogContextProvider>
 					</SessionProvider>
 
 					<Toaster />
