@@ -8,6 +8,9 @@ import { formatDateTime } from '@/lib/utils';
 import { CalendarSearch } from 'lucide-react';
 
 export default function LogSheet({ log }: { log: GetLog }) {
+	if (!log) {
+		return null;
+	}
 	return (
 		<Sheet>
 			<SheetTrigger asChild>
