@@ -28,6 +28,7 @@ export default function NumberIncrementor({
 		<div className='flex flex-row items-center justify-start gap-6 rounded-md border-2 p-2'>
 			<div className='flex flex-row items-center gap-2'>
 				<Button
+					size='icon'
 					variant='outline'
 					onClick={(e) => {
 						e.preventDefault();
@@ -38,6 +39,7 @@ export default function NumberIncrementor({
 					<ChevronLeft className='w-4 h-4 cur' />
 				</Button>
 				<Button
+					size='icon'
 					variant='outline'
 					onClick={(e) => {
 						e.preventDefault();
@@ -51,6 +53,7 @@ export default function NumberIncrementor({
 			<div className='text-2xl font-bold w-12 text-center'>{val}</div>
 			<div className='flex flex-row items-center gap-2'>
 				<Button
+					size='icon'
 					variant='outline'
 					onClick={(e) => {
 						e.preventDefault();
@@ -59,6 +62,7 @@ export default function NumberIncrementor({
 					<ChevronsRight className='w-4 h-4' />
 				</Button>
 				<Button
+					size='icon'
 					variant='outline'
 					onClick={(e) => {
 						e.preventDefault();

@@ -10,7 +10,7 @@ import {
 	SheetTrigger
 } from '@/components/ui/sheet';
 import { auth } from '@/db/auth';
-import { GetFoodItem, GetLog } from '@/types';
+import { GetFoodItem } from '@/types';
 
 export default async function FoodsPage() {
 	const session = await auth();
