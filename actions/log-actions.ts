@@ -3,7 +3,8 @@
 import { auth } from '@/db/auth';
 import prisma from '@/db/prisma';
 import { formatError, getToday } from '@/lib/utils';
-import { FoodEntry, GetLog } from '@/types';
+import { FoodEntry } from '@/types';
+import { revalidatePath } from 'next/cache';
 
 export async function createDailyLog() {
 	const session = await auth();
@@ -95,6 +96,8 @@ export async function updateLog(foodEntries: FoodEntry[]) {
 		if (!update) {
 			throw new Error('There was a problem updating the log');
 		}
+
+		revalidatePath('/foods');
 
 		return {
 			success: true,

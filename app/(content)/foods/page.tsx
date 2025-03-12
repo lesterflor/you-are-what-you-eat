@@ -10,7 +10,7 @@ import {
 	SheetTrigger
 } from '@/components/ui/sheet';
 import { auth } from '@/db/auth';
-import { GetFoodItem } from '@/types';
+import { GetFoodItem, GetLog } from '@/types';
 
 export default async function FoodsPage() {
 	const session = await auth();
@@ -19,37 +19,39 @@ export default async function FoodsPage() {
 	const { data: foods = [] } = res;
 
 	return (
-		<div className='flex flex-col gap-4'>
-			<div className='text-2xl font-bold flex flex-row justify-between'>
-				Food List
-				{session && (
-					<Sheet>
-						<SheetTrigger asChild>
-							<Button>Add Food Item</Button>
-						</SheetTrigger>
-						<SheetContent side='bottom'>
-							<SheetTitle>Add Food Item</SheetTitle>
-							<ScrollArea className='h-[90vh] pr-5'>
-								<AddFoodItemForm />
-								<br />
-								<br />
-							</ScrollArea>
-						</SheetContent>
-					</Sheet>
-				)}
+		<>
+			<div className='flex flex-col gap-4'>
+				<div className='text-2xl font-bold flex flex-row justify-between'>
+					Food List
+					{session && (
+						<Sheet>
+							<SheetTrigger asChild>
+								<Button>Add Food Item</Button>
+							</SheetTrigger>
+							<SheetContent side='bottom'>
+								<SheetTitle>Add Food Item</SheetTitle>
+								<ScrollArea className='h-[90vh] pr-5'>
+									<AddFoodItemForm />
+									<br />
+									<br />
+								</ScrollArea>
+							</SheetContent>
+						</Sheet>
+					)}
+				</div>
+				<div className='flex flex-col gap-6'>
+					{foods && foods.length > 0 ? (
+						foods.map((item) => (
+							<FoodItemCard
+								item={item as GetFoodItem}
+								key={item.id}
+							/>
+						))
+					) : (
+						<div>There are currently no entered food items.</div>
+					)}
+				</div>
 			</div>
-			<div className='flex flex-col gap-6'>
-				{foods && foods.length > 0 ? (
-					foods.map((item) => (
-						<FoodItemCard
-							item={item as GetFoodItem}
-							key={item.id}
-						/>
-					))
-				) : (
-					<div>There are currently no entered food items.</div>
-				)}
-			</div>
-		</div>
+		</>
 	);
 }

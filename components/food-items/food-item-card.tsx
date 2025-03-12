@@ -24,7 +24,8 @@ export default function FoodItemCard({ item }: { item: GetFoodItem }) {
 		carbGrams: item.carbGrams,
 		fatGrams: item.fatGrams,
 		proteinGrams: item.proteinGrams,
-		calories: item.calories
+		calories: item.calories,
+		eatenAt: new Date()
 	});
 
 	const sendFoodItems = async () => {
@@ -73,7 +74,8 @@ export default function FoodItemCard({ item }: { item: GetFoodItem }) {
 										carbGrams: item.carbGrams,
 										fatGrams: item.fatGrams,
 										proteinGrams: item.proteinGrams,
-										calories: item.calories
+										calories: item.calories,
+										eatenAt: new Date()
 									};
 
 									setLogFoodItem(entry);

@@ -2,8 +2,13 @@ import Link from 'next/link';
 import ModeToggle from './mode-toggle';
 import UserButton from './user-button';
 import { IoFastFoodOutline } from 'react-icons/io5';
+import { createDailyLog } from '@/actions/log-actions';
+import LogSheet from '../logs/log-sheet';
+import { GetLog } from '@/types';
 
-export default function SiteHeader() {
+export default async function SiteHeader() {
+	const log = await createDailyLog();
+
 	return (
 		<header className='w-full border-b fixed top-0 z-50 bg-white dark:bg-green-950 select-none px-3'>
 			<div className='wrapper flex flex-between justify-between items-center w-full p-2'>
@@ -21,6 +26,10 @@ export default function SiteHeader() {
 							</div>
 						</div>
 					</Link>
+				</div>
+
+				<div>
+					<LogSheet log={log?.data as GetLog} />
 				</div>
 
 				<div className='flex flex-row justify-end gap-1 items-center'>

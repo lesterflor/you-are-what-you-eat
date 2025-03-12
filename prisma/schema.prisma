@@ -85,4 +85,5 @@ type FoodEntry {
   fatGrams     Float
   proteinGrams Float
   calories     Float
+  eatenAt      DateTime @default(now())
 }

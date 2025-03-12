@@ -28,6 +28,7 @@ export default function FoodCategoryPicker({
 				<ToggleGroupItem value='meat'>Meat</ToggleGroupItem>
 				<ToggleGroupItem value='fruit'>Fruit</ToggleGroupItem>
 				<ToggleGroupItem value='grain'>Grain</ToggleGroupItem>
+				<ToggleGroupItem value='legume'>Legume</ToggleGroupItem>
 				<ToggleGroupItem value='other'>Other</ToggleGroupItem>
 			</ToggleGroup>
 		</div>

@@ -170,7 +170,8 @@ export const foodEntrySchema = z.object({
 	}),
 	calories: z.number().refine((val) => val !== null, {
 		message: 'Calories can be 0 or greater.'
-	})
+	}),
+	eatenAt: z.date()
 });
 
 export const getFoodEntrySchema = z.object({
@@ -183,7 +184,8 @@ export const getFoodEntrySchema = z.object({
 	carbGrams: z.number(),
 	proteinGrams: z.number(),
 	fatGrams: z.number(),
-	calories: z.number()
+	calories: z.number(),
+	eatenAt: z.date()
 });
 
 export const logSchema = z.object({
