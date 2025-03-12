@@ -30,13 +30,13 @@ export default async function RootLayout({
 			<body>
 				<ThemeProvider
 					attribute='class'
-					defaultTheme='dark'
-					enableSystem
+					defaultTheme='light'
+					enableSystem={true}
 					disableTransitionOnChange>
 					<SessionProvider session={session}>
 						<SiteHeader />
 						<br />
-						<main className='flex-1 wrapper w-5/6 xl:w-1/2 portrait:w-full portrait:px-3 mx-auto mt-20'>
+						<main className='flex-1 wrapper sm:w-3/4 xl:w-1/2 portrait:w-full portrait:px-3 mx-auto mt-20'>
 							<Suspense>
 								<div className='select-none'>{children}</div>
 							</Suspense>

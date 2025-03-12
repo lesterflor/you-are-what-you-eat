@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
+import FoodCategoryIconMapper from './food-category-icon-mapper';
 
 export default function FoodCategoryPicker({
 	value = '',
@@ -24,12 +25,34 @@ export default function FoodCategoryPicker({
 				type='single'
 				value={selected}
 				onValueChange={setSelected}>
-				<ToggleGroupItem value='veg'>Vegetable</ToggleGroupItem>
-				<ToggleGroupItem value='meat'>Meat</ToggleGroupItem>
-				<ToggleGroupItem value='fruit'>Fruit</ToggleGroupItem>
-				<ToggleGroupItem value='grain'>Grain</ToggleGroupItem>
-				<ToggleGroupItem value='legume'>Legume</ToggleGroupItem>
-				<ToggleGroupItem value='other'>Other</ToggleGroupItem>
+				<ToggleGroupItem value='veg'>
+					<FoodCategoryIconMapper type='veg' />
+					Vegetable
+				</ToggleGroupItem>
+				<ToggleGroupItem value='meat'>
+					<FoodCategoryIconMapper type='meat' />
+					Meat
+				</ToggleGroupItem>
+				<ToggleGroupItem value='fruit'>
+					<FoodCategoryIconMapper type='fruit' />
+					Fruit
+				</ToggleGroupItem>
+				<ToggleGroupItem value='grain'>
+					<FoodCategoryIconMapper type='grain' />
+					Grain
+				</ToggleGroupItem>
+				<ToggleGroupItem value='legume'>
+					<FoodCategoryIconMapper type='legume' />
+					Legume
+				</ToggleGroupItem>
+				<ToggleGroupItem value='nutSeed'>
+					<FoodCategoryIconMapper type='nutSeed' />
+					Nuts
+				</ToggleGroupItem>
+				<ToggleGroupItem value='other'>
+					<FoodCategoryIconMapper type='other' />
+					Other
+				</ToggleGroupItem>
 			</ToggleGroup>
 		</div>
 	);

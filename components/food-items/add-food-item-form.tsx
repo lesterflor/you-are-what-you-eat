@@ -21,7 +21,7 @@ import CaloricGram from '@/lib/caloric-gram';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { LoaderIcon, Plus } from 'lucide-react';
-import { Card, CardContent, CardHeader } from '../ui/card';
+import { Card, CardContent } from '../ui/card';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -70,70 +70,71 @@ export default function AddFoodItemForm() {
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)}>
 				<div className='flex flex-col gap-8 w-full'>
-					<FormField
-						name='name'
-						control={form.control}
-						render={({
-							field
-						}: {
-							field: ControllerRenderProps<
-								z.infer<typeof foodItemSchema>,
-								'name'
-							>;
-						}) => (
-							<FormItem>
-								<FormLabel className='font-semibold'>Name</FormLabel>
-								<FormControl>
-									<Input {...field} />
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
+					<div className='flex flex-row gap-2 justify-between flex-wrap w-full'>
+						<FormField
+							name='name'
+							control={form.control}
+							render={({
+								field
+							}: {
+								field: ControllerRenderProps<
+									z.infer<typeof foodItemSchema>,
+									'name'
+								>;
+							}) => (
+								<FormItem className='w-[49%]'>
+									<FormLabel className='font-semibold'>Name</FormLabel>
+									<FormControl>
+										<Input {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 
-					<FormField
-						name='description'
-						control={form.control}
-						render={({
-							field
-						}: {
-							field: ControllerRenderProps<
-								z.infer<typeof foodItemSchema>,
-								'description'
-							>;
-						}) => (
-							<FormItem>
-								<FormLabel className='font-semibold'>Description</FormLabel>
-								<FormControl>
-									<Textarea {...field} />
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
+						<FormField
+							name='description'
+							control={form.control}
+							render={({
+								field
+							}: {
+								field: ControllerRenderProps<
+									z.infer<typeof foodItemSchema>,
+									'description'
+								>;
+							}) => (
+								<FormItem className='w-[49%]'>
+									<FormLabel className='font-semibold'>Description</FormLabel>
+									<FormControl>
+										<Textarea {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 
-					<FormField
-						name='category'
-						control={form.control}
-						render={() => (
-							<FormItem>
-								<FormLabel className='font-semibold'>Category</FormLabel>
-								<FormControl>
-									<FoodCategoryPicker
-										value={hasSubmitted ? '' : form.getValues('category')}
-										onSelect={(val) => {
-											form.setValue('category', val);
-										}}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
+						<FormField
+							name='category'
+							control={form.control}
+							render={() => (
+								<FormItem>
+									<FormLabel className='font-semibold'>Category</FormLabel>
+									<FormControl>
+										<FoodCategoryPicker
+											value={hasSubmitted ? '' : form.getValues('category')}
+											onSelect={(val) => {
+												form.setValue('category', val);
+											}}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					</div>
 
 					<Card>
-						<CardHeader className='text-xl font-semibold'>Macros</CardHeader>
-						<CardContent>
+						<CardContent className='p-4'>
 							<div className='w-full h-full flex flex-row flex-wrap items-center justify-center gap-4'>
 								<FormField
 									name='servingSize'

@@ -4,16 +4,21 @@ import { GetLog } from '@/types';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../ui/sheet';
 import { Button } from '../ui/button';
 import FoodLogList from './log-list';
-import { formatDateTime } from '@/lib/utils';
+import { cn, formatDateTime } from '@/lib/utils';
 import { CalendarSearch } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 export default function LogSheet({ log }: { log: GetLog }) {
+	const pathname = usePathname();
+
 	if (!log) {
 		return null;
 	}
 	return (
 		<Sheet>
-			<SheetTrigger asChild>
+			<SheetTrigger
+				asChild
+				className={cn(pathname === '/' && 'hidden')}>
 				<Button>View today&apos;s log</Button>
 			</SheetTrigger>
 			<SheetContent side='left'>

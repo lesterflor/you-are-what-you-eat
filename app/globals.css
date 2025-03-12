@@ -7,6 +7,11 @@
 	src: url('../public/fonts/Inter_18pt-Regular.ttf');
 }
 
+@font-face {
+	font-family: 'InterThin';
+	src: url('../public/fonts/Inter_18pt-Thin.ttf');
+}
+
 body {
 	font-family: 'Inter';
 }
@@ -86,82 +91,8 @@ body {
 	}
 }
 
-@layer base {
-	strong {
-		@apply text-slate-900;
-		@apply font-normal;
-		font-size: 1.2em;
-	}
-
-	.dark {
-		strong {
-			@apply text-blue-100;
-			@apply font-normal;
-			font-size: 1.2em;
-		}
-	}
-}
-
-@layer base {
-	body {
-		@apply text-sm;
-		@apply text-muted-foreground;
-	}
-}
-
-.heading-title {
-	@apply text-3xl;
-	@apply text-muted-foreground;
-	@apply font-bold;
-}
-
-.heading-title-lg {
-	@apply text-4xl;
-	@apply text-muted-foreground;
-	@apply font-bold;
-}
-
-.gradientback {
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	width: 100%;
-	height: 50px;
-	background: linear-gradient(
-		to bottom,
-		rgba(255, 255, 255, 0) 0%,
-		rgba(255, 255, 255, 1) 100%
-	);
-}
-
-.page-layer-bg {
-	background: rgba(255, 255, 255, 1) 100%;
-}
-
-.dark {
-	.gradientback {
-		position: absolute;
-		pointer-events: none;
-		bottom: 0;
-		left: 0;
-		width: 100%;
-		height: 80px;
-		background: linear-gradient(
-			to bottom,
-			rgba(2, 9, 26, 0) 0%,
-			rgba(2, 9, 26, 1) 100%
-		);
-	}
-
-	.page-layer-bg {
-		background: linear-gradient(
-			to bottom,
-			rgba(2, 9, 35, 1) 0%,
-			rgba(2, 9, 26, 1) 5%,
-			rgba(2, 9, 26, 1) 95%,
-			rgba(2, 9, 35, 1) 100%
-		);
-	}
+.thin-title {
+	font-family: 'InterThin';
 }
 
 @layer utilities {

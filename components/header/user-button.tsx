@@ -56,11 +56,11 @@ export default async function UserButton() {
 					</div>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent
-					className='w-56'
+					className='w-56 p-2'
 					align='end'
 					forceMount>
 					<DropdownMenuLabel className='font-normal'>
-						<div className='flex flex-col space-y-1'>
+						<div className='flex flex-col space-y-1 pb-5'>
 							<div className='text-sm font-medium leading-none'>
 								{session.user?.name}
 							</div>
@@ -83,10 +83,10 @@ export default async function UserButton() {
 						</>
 					)}
 
-					<DropdownMenuItem
-						className='p-0 mb-1'
-						asChild>
-						<SignOutButton />
+					<DropdownMenuItem asChild>
+						<div className=' flex flex-col items-end justify-end'>
+							<SignOutButton />
+						</div>
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>

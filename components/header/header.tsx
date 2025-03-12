@@ -17,7 +17,7 @@ export default async function SiteHeader() {
 						<div className='flex flex-row items-center gap-2'>
 							<IoFastFoodOutline className='w-8 h-8' />
 							<div className='flex flex-col gap-0'>
-								<span className='dark:text-white text-black text-3xl font-bold portrait:hidden'>
+								<span className='dark:text-white text-black text-2xl font-bold portrait:hidden thin-title'>
 									You are what you eat
 								</span>
 								<span className='text-xs portrait:hidden'>
