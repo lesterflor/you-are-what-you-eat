@@ -27,7 +27,7 @@ export default function LogSheet({ log }: { log: GetLog }) {
 					{formatDateTime(log.createdAt).dateOnly}
 				</SheetTitle>
 
-				<FoodLogList log={log} />
+				<FoodLogList />
 			</SheetContent>
 		</Sheet>
 	);
