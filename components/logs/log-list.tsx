@@ -30,7 +30,6 @@ export default function FoodLogList({
 		const res = await createDailyLog();
 
 		if (res?.success && res.data) {
-			console.log(JSON.stringify(res.data));
 			setLog(res.data as GetLog);
 			setLogList(res.data.foodItems as GetFoodEntry[]);
 		}
@@ -45,7 +44,6 @@ export default function FoodLogList({
 	const prepareLogList = () => {
 		const total = logList.reduce((acc, curr) => {
 			const sub = curr.calories * curr.numServings;
-			console.log('acc:', acc, ' curr.calories:', sub);
 			return acc + sub;
 		}, 0);
 		setTotalCals(total);

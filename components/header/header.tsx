@@ -4,8 +4,11 @@ import UserButton from './user-button';
 import { createDailyLog } from '@/actions/log-actions';
 import LogSheet from '../logs/log-sheet';
 import { GetLog } from '@/types';
-import { UtensilsCrossed } from 'lucide-react';
+import { Calculator, UtensilsCrossed } from 'lucide-react';
 import LogButton from '../logs/log-button';
+import LogMacrosSummary from '../logs/log-macros-summary';
+import { format } from 'date-fns';
+import SideMenu from './side-menu';
 
 export default async function SiteHeader() {
 	const log = await createDailyLog();
@@ -29,20 +32,33 @@ export default async function SiteHeader() {
 					</Link>
 				</div>
 
-				<div>
-					<LogSheet log={log?.data as GetLog} />
-				</div>
+				{log && log.data && log?.data.foodItems.length > 0 && (
+					<div>
+						<LogMacrosSummary compactMode={true}>
+							<div className='flex flex-row items-center gap-2'>
+								<Calculator className='w-4 h-4 animate-pulse' />
+								<div>{format(new Date(), 'PPP')}</div>
+							</div>
+						</LogMacrosSummary>
+					</div>
+				)}
 
-				<div>
+				<div className='hidden lg:block'>
 					<LogButton />
 				</div>
 
 				<div className='flex flex-row justify-end gap-1 items-center'>
-					<div className='block portrait:hidden'>
+					<div className='hidden lg:block'>
+						<LogSheet log={log?.data as GetLog} />
+					</div>
+					<div className='hidden lg:block'>
 						<ModeToggle />
 					</div>
 
 					<UserButton />
+				</div>
+				<div>
+					<SideMenu log={log?.data as GetLog} />
 				</div>
 			</div>
 		</header>

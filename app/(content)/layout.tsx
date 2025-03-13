@@ -6,6 +6,7 @@ import { SessionProvider } from 'next-auth/react';
 import { auth } from '@/db/auth';
 import { Suspense } from 'react';
 import SiteHeader from '@/components/header/header';
+import FoodItemCardSkeleton from '@/components/skeletons/food-item-card-skeleton';
 
 export const metadata: Metadata = {
 	title: {
@@ -37,7 +38,7 @@ export default async function RootLayout({
 						<SiteHeader />
 						<br />
 						<main className='flex-1 wrapper w-5/6 xl:w-1/2 portrait:w-full portrait:px-3 mx-auto mt-20'>
-							<Suspense>
+							<Suspense fallback={<FoodItemCardSkeleton />}>
 								<div className='select-none'>{children}</div>
 							</Suspense>
 						</main>

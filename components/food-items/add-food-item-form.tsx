@@ -25,7 +25,11 @@ import { Card, CardContent } from '../ui/card';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function AddFoodItemForm() {
+export default function AddFoodItemForm({
+	onSuccess
+}: {
+	onSuccess?: () => void;
+}) {
 	const form = useForm<z.infer<typeof foodItemSchema>>({
 		resolver: zodResolver(foodItemSchema),
 		defaultValues: {
@@ -60,6 +64,7 @@ export default function AddFoodItemForm() {
 			toast(res.message);
 			form.reset();
 			setHasSubmitted(true);
+			onSuccess?.();
 			router.push('/foods');
 		} else {
 			toast.error(res.message);

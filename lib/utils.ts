@@ -199,9 +199,21 @@ export function totalCalorieReducer(items: GetFoodEntry[]) {
 
 export function totalMacrosReducer(items: GetFoodEntry[]) {
 	return {
-		calories: items.reduce((acc, curr) => acc + curr.calories, 0),
-		carbs: items.reduce((acc, curr) => acc + curr.carbGrams, 0),
-		fat: items.reduce((acc, curr) => acc + curr.fatGrams, 0),
-		protein: items.reduce((acc, curr) => acc + curr.proteinGrams, 0)
+		calories: items.reduce((acc, curr) => {
+			const sub = curr.calories * curr.numServings;
+			return acc + sub;
+		}, 0),
+		carbs: items.reduce((acc, curr) => {
+			const sub = curr.carbGrams * curr.numServings;
+			return acc + sub;
+		}, 0),
+		fat: items.reduce((acc, curr) => {
+			const sub = curr.fatGrams * curr.numServings;
+			return acc + sub;
+		}, 0),
+		protein: items.reduce((acc, curr) => {
+			const sub = curr.proteinGrams * curr.numServings;
+			return acc + sub;
+		}, 0)
 	};
 }

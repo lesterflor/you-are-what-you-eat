@@ -22,7 +22,8 @@ export default async function LogsPage() {
 	const { data = [] } = res;
 
 	return (
-		<div className='flex flex-col gap-12'>
+		<div className='flex flex-col gap-4'>
+			<div className='text-xl font-semibold'>Logs</div>
 			{data &&
 				data.length > 0 &&
 				data.map((log) => (
@@ -31,11 +32,13 @@ export default async function LogsPage() {
 						className='flex flex-col gap-6'>
 						<div className='flex flex-row items-center justify-between gap-2'>
 							<div className='flex flex-row gap-2 items-center'>
-								<Calendar className='w-4 h-4' />
-								<div>{format(log.createdAt, 'PPP')}</div>
+								<Calendar className='w-4 h-4 portrait:w-10 portrait:h-10' />
+								<div className='portrait:text-sm'>
+									{format(log.createdAt, 'PPP')}
+								</div>
 							</div>
 
-							<LogMacrosSummary foodItems={log.foodItems as GetFoodEntry[]} />
+							<LogMacrosSummary />
 						</div>
 						<div className='flex portrait:flex-col md:grid grid-cols-2 flex-col gap-4'>
 							{log.foodItems.map((food, indx) => (
@@ -47,6 +50,7 @@ export default async function LogsPage() {
 						</div>
 
 						<Separator />
+						<br />
 					</div>
 				))}
 		</div>

@@ -1,30 +1,40 @@
 'use client';
 
-import { UtensilsCrossed } from 'lucide-react';
+import { Plus, UtensilsCrossed } from 'lucide-react';
 import { Button } from '../ui/button';
 import { ScrollArea } from '../ui/scroll-area';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../ui/sheet';
 import AddFoodItemForm from './add-food-item-form';
+import { useState } from 'react';
 
 export default function AddFoodSheet() {
+	const [isOpen, setIsOpen] = useState(false);
+	const [isOpenPortrait, setIsOpenPortrait] = useState(false);
+
 	return (
 		<>
 			<div className='hidden portrait:block'>
-				<Sheet>
+				<Sheet
+					open={isOpenPortrait}
+					onOpenChange={setIsOpenPortrait}>
 					<SheetTrigger asChild>
 						<Button>
-							<UtensilsCrossed className='w-6 h-6' /> Add Food Item
+							<Plus className='w-6 h-6' /> New Food Item
 						</Button>
 					</SheetTrigger>
 
 					<SheetContent side='top'>
 						<SheetTitle>
 							<div className='flex flex-row items-center gap-2'>
-								<UtensilsCrossed className='w-6 h-6' /> Add Food Item
+								<UtensilsCrossed className='w-6 h-6' /> New Food Item
 							</div>
 						</SheetTitle>
 						<ScrollArea className='h-[75vh] md:h-[75vh] xl:h-[50vh] pr-5'>
-							<AddFoodItemForm />
+							<AddFoodItemForm
+								onSuccess={() => {
+									setIsOpen(false);
+								}}
+							/>
 							<br />
 						</ScrollArea>
 					</SheetContent>
@@ -32,7 +42,9 @@ export default function AddFoodSheet() {
 			</div>
 
 			<div className='portrait:hidden'>
-				<Sheet>
+				<Sheet
+					open={isOpen}
+					onOpenChange={setIsOpen}>
 					<SheetTrigger asChild>
 						<Button>
 							<UtensilsCrossed className='w-6 h-6' /> Add Food Item
@@ -46,7 +58,11 @@ export default function AddFoodSheet() {
 							</div>
 						</SheetTitle>
 						<ScrollArea className='h-full pr-5'>
-							<AddFoodItemForm />
+							<AddFoodItemForm
+								onSuccess={() => {
+									setIsOpen(false);
+								}}
+							/>
 							<br />
 						</ScrollArea>
 					</SheetContent>
