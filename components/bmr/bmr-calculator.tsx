@@ -103,7 +103,7 @@ export default function BMRCalculatorForm() {
 								<div>
 									<div className='text-xs flex flex-row items-center gap-2'>
 										<Input
-											className='w-32'
+											className='w-24'
 											type='number'
 											onChange={(e) => {
 												setWeight(Number(e.target.value));
@@ -135,7 +135,7 @@ export default function BMRCalculatorForm() {
 							<div className='flex flex-row flex-wrap justify-between gap-2'>
 								<div>
 									<Input
-										className='w-32'
+										className='w-24'
 										type='number'
 										onChange={(e) => {
 											setAge(Number(e.target.value));
