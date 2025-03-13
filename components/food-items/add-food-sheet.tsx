@@ -8,26 +8,50 @@ import AddFoodItemForm from './add-food-item-form';
 
 export default function AddFoodSheet() {
 	return (
-		<div>
-			<Sheet>
-				<SheetTrigger asChild>
-					<Button>
-						<UtensilsCrossed className='w-6 h-6' /> Add Food Item
-					</Button>
-				</SheetTrigger>
-
-				<SheetContent side='bottom'>
-					<SheetTitle>
-						<div className='flex flex-row items-center gap-2'>
+		<>
+			<div className='hidden portrait:block'>
+				<Sheet>
+					<SheetTrigger asChild>
+						<Button>
 							<UtensilsCrossed className='w-6 h-6' /> Add Food Item
-						</div>
-					</SheetTitle>
-					<ScrollArea className='h-[90vh] md:h-[75vh] xl:h-[50vh] pr-5'>
-						<AddFoodItemForm />
-						<br />
-					</ScrollArea>
-				</SheetContent>
-			</Sheet>
-		</div>
+						</Button>
+					</SheetTrigger>
+
+					<SheetContent side='top'>
+						<SheetTitle>
+							<div className='flex flex-row items-center gap-2'>
+								<UtensilsCrossed className='w-6 h-6' /> Add Food Item
+							</div>
+						</SheetTitle>
+						<ScrollArea className='h-[75vh] md:h-[75vh] xl:h-[50vh] pr-5'>
+							<AddFoodItemForm />
+							<br />
+						</ScrollArea>
+					</SheetContent>
+				</Sheet>
+			</div>
+
+			<div className='portrait:hidden'>
+				<Sheet>
+					<SheetTrigger asChild>
+						<Button>
+							<UtensilsCrossed className='w-6 h-6' /> Add Food Item
+						</Button>
+					</SheetTrigger>
+
+					<SheetContent side='left'>
+						<SheetTitle>
+							<div className='flex flex-row items-center gap-2'>
+								<UtensilsCrossed className='w-6 h-6' /> Add Food Item
+							</div>
+						</SheetTitle>
+						<ScrollArea className='h-full pr-5'>
+							<AddFoodItemForm />
+							<br />
+						</ScrollArea>
+					</SheetContent>
+				</Sheet>
+			</div>
+		</>
 	);
 }

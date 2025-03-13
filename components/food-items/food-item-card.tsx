@@ -80,13 +80,13 @@ export default function FoodItemCard({ item }: { item: GetFoodItem }) {
 			</CardDescription>
 			<CardContent className='flex flex-row flex-wrap gap-6'>
 				<div className='flex flex-row items-center gap-2'>
-					<Badge variant='secondary'>Protein: {item.proteinGrams}g</Badge>
+					<Badge variant='secondary'>Protein: {item.proteinGrams} g</Badge>
 				</div>
 				<div className='flex flex-row items-center gap-2'>
-					<Badge variant='secondary'>Carbs: {item.carbGrams}g</Badge>
+					<Badge variant='secondary'>Carbs: {item.carbGrams} g</Badge>
 				</div>
 				<div className='flex flex-row items-center gap-2'>
-					<Badge variant='secondary'>Fat: {item.fatGrams}g</Badge>
+					<Badge variant='secondary'>Fat: {item.fatGrams} g</Badge>
 				</div>
 				<div className='flex flex-row items-center gap-2'>
 					<Badge variant='secondary'>Serving: {item.servingSize}</Badge>

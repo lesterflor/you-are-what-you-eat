@@ -21,9 +21,9 @@ export default function FoodEntryCard({ item }: { item: GetFoodEntry }) {
 			</CardHeader>
 			<CardDescription className='px-6'>{item.description}</CardDescription>
 			<CardContent>
-				<Badge>{item.carbGrams}</Badge>
-				<Badge>{item.proteinGrams}</Badge>
-				<Badge>{item.fatGrams}</Badge>
+				<Badge>{item.carbGrams} g</Badge>
+				<Badge>{item.proteinGrams} g</Badge>
+				<Badge>{item.fatGrams} g</Badge>
 				<Badge>{item.calories}</Badge>
 				<Badge></Badge>
 			</CardContent>

@@ -29,13 +29,13 @@ export default function LogFoodCard({ item }: { item: GetFoodEntry }) {
 			<CardContent>
 				<div className='flex flex-row flex-wrap gap-2'>
 					<Badge variant='secondary'>
-						Carbs: {item.carbGrams * item.numServings}
+						Carbs: {item.carbGrams * item.numServings} g
 					</Badge>
 					<Badge variant='secondary'>
-						Protein: {item.proteinGrams * item.numServings}
+						Protein: {item.proteinGrams * item.numServings} g
 					</Badge>
 					<Badge variant='secondary'>
-						Carbs: {item.fatGrams * item.numServings}
+						Carbs: {item.fatGrams * item.numServings} g
 					</Badge>
 				</div>
 			</CardContent>

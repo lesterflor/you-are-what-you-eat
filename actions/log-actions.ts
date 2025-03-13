@@ -110,3 +110,37 @@ export async function updateLog(foodEntries: FoodEntry[]) {
 		};
 	}
 }
+
+export async function getLogsByUserId(id: string) {
+	try {
+		const logs = await prisma.log.findMany({
+			where: {
+				userId: id,
+				NOT: [
+					{
+						createdAt: {
+							gte: getToday().todayStart,
+							lte: getToday().todayEnd
+						}
+					}
+				]
+			}
+		});
+
+		if (!logs) {
+			throw new Error('There was a problem fetching logs for user');
+		}
+
+		return {
+			success: true,
+			message: 'success',
+			data: logs
+		};
+	} catch (error: unknown) {
+		return {
+			success: false,
+			message: formatError(error),
+			data: null
+		};
+	}
+}

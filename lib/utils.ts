@@ -1,3 +1,4 @@
+import { GetFoodEntry } from '@/types';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -190,4 +191,17 @@ export function getToday() {
 	todayEnd.setHours(23, 59, 59, 999); // Set to the end of today
 
 	return { todayStart, todayEnd };
+}
+
+export function totalCalorieReducer(items: GetFoodEntry[]) {
+	return items.reduce((acc, curr) => acc + curr.calories, 0);
+}
+
+export function totalMacrosReducer(items: GetFoodEntry[]) {
+	return {
+		calories: items.reduce((acc, curr) => acc + curr.calories, 0),
+		carbs: items.reduce((acc, curr) => acc + curr.carbGrams, 0),
+		fat: items.reduce((acc, curr) => acc + curr.fatGrams, 0),
+		protein: items.reduce((acc, curr) => acc + curr.proteinGrams, 0)
+	};
 }
