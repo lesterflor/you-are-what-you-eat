@@ -21,7 +21,7 @@ export default function NumberIncrementor({
 	const [val, setVal] = useState(value);
 
 	useEffect(() => {
-		onChange(val);
+		onChange(Number(val % 1 > 0 ? val.toFixed(1) : val));
 	}, [val]);
 
 	return (
@@ -33,7 +33,14 @@ export default function NumberIncrementor({
 					onClick={(e) => {
 						e.preventDefault();
 						if (val > minValue) {
-							setVal((prev) => prev - 1);
+							setVal((prev) => {
+								const pre = prev - 1;
+								if (pre < minValue) {
+									return minValue;
+								}
+
+								return pre;
+							});
 						}
 					}}>
 					<ChevronLeft className='w-4 h-4 cur' />
@@ -44,20 +51,29 @@ export default function NumberIncrementor({
 					onClick={(e) => {
 						e.preventDefault();
 						if (val > minValue) {
-							setVal((prev) => prev - 0.5);
+							setVal((prev) => {
+								const pre = prev - 0.1;
+								if (pre < minValue) {
+									return minValue;
+								}
+
+								return pre;
+							});
 						}
 					}}>
 					<ChevronsLeft className='w-4 h-4 cur' />
 				</Button>
 			</div>
-			<div className='text-2xl font-bold w-12 text-center'>{val}</div>
+			<div className='text-2xl font-bold w-12 text-center'>
+				{val % 1 > 0 ? val.toFixed(1) : val}
+			</div>
 			<div className='flex flex-row items-center gap-2'>
 				<Button
 					size='icon'
 					variant='outline'
 					onClick={(e) => {
 						e.preventDefault();
-						setVal((prev) => prev + 0.5);
+						setVal((prev) => prev + 0.1);
 					}}>
 					<ChevronsRight className='w-4 h-4' />
 				</Button>

@@ -5,6 +5,7 @@ import { createDailyLog } from '@/actions/log-actions';
 import LogSheet from '../logs/log-sheet';
 import { GetLog } from '@/types';
 import { UtensilsCrossed } from 'lucide-react';
+import LogButton from '../logs/log-button';
 
 export default async function SiteHeader() {
 	const log = await createDailyLog();
@@ -30,6 +31,10 @@ export default async function SiteHeader() {
 
 				<div>
 					<LogSheet log={log?.data as GetLog} />
+				</div>
+
+				<div>
+					<LogButton />
 				</div>
 
 				<div className='flex flex-row justify-end gap-1 items-center'>

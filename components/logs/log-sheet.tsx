@@ -5,7 +5,7 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../ui/sheet';
 import { Button } from '../ui/button';
 import FoodLogList from './log-list';
 import { cn, formatDateTime } from '@/lib/utils';
-import { CalendarSearch } from 'lucide-react';
+import { CalendarSearch, FileClock } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 export default function LogSheet({ log }: { log: GetLog }) {
@@ -19,7 +19,9 @@ export default function LogSheet({ log }: { log: GetLog }) {
 			<SheetTrigger
 				asChild
 				className={cn(pathname === '/' && 'hidden')}>
-				<Button>View today&apos;s log</Button>
+				<Button>
+					<FileClock className='w-4 h-4' /> View today&apos;s log
+				</Button>
 			</SheetTrigger>
 			<SheetContent side='left'>
 				<SheetTitle className='text-md flex flex-row items-center justify-center gap-2 pb-2'>
