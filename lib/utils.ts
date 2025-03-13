@@ -1,4 +1,4 @@
-import { GetFoodEntry } from '@/types';
+import { BMRData, GetFoodEntry } from '@/types';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -216,4 +216,39 @@ export function totalMacrosReducer(items: GetFoodEntry[]) {
 			return acc + sub;
 		}, 0)
 	};
+}
+
+/* 
+Another formula, the Mifflin-St Jeor equation, is considered even more accurate by the American Dietetic Association (ADA) in 2005.
+ For men, it is BMR = 10 × weightinkg + 6.25 × heightincm − 5 × ageinyears + 5.
+ For women, the formula is BMR = 10 × weightinkg + 6.25 × heightincm − 5 × ageinyears − 161. 
+
+ 1 lb = 0.4535924 kg
+
+ 1 inch = 2.54 cm
+
+ height in cm = 170.18
+
+ weight in kilo = 71.6675992
+
+ BMR = 10 * 71.6675992 + 6.25 * 170.18 - 5 * 50 + 5
+ */
+
+export function calculateBMR(data: BMRData) {
+	const {
+		weight = 0,
+		weightUnit = 'pound',
+		height = 0,
+		heightUnit = 'inch',
+		age = 0,
+		sex = 'male'
+	} = data;
+
+	const actualWeight = weightUnit === 'pound' ? weight * 0.4535924 : weight;
+
+	const actualHeight = heightUnit === 'inch' ? height * 2.54 : height;
+
+	return sex === 'male'
+		? 10 * actualWeight + 6.25 * actualHeight - 5 * age + 5
+		: 10 * actualHeight + 6.25 * actualHeight - 5 * age - 161;
 }

@@ -69,7 +69,7 @@ export default function FoodLogList({
 				)}>
 				<Badge className='text-lg font-semibold flex flex-row gap-3'>
 					<IoFastFoodOutline className='w-5 h-5 animate-pulse' />
-					Calories for today
+					Current Calories
 					{log?.createdAt && (
 						<span className='text-xs hidden'>
 							({format(log?.createdAt as Date, 'PP')})

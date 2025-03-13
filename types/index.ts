@@ -51,3 +51,12 @@ export type GetLog = z.infer<typeof getLogSchema>;
 
 export type FoodEntry = z.infer<typeof foodEntrySchema>;
 export type GetFoodEntry = z.infer<typeof getFoodEntrySchema>;
+
+export type BMRData = {
+	weight: number;
+	weightUnit: 'pound' | 'kilo';
+	height: number;
+	heightUnit: 'inch' | 'cm';
+	age: number;
+	sex: 'male' | 'female';
+};

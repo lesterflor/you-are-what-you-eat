@@ -1,7 +1,7 @@
 'use client';
 
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../ui/sheet';
-import { Database, Menu, UtensilsCrossed } from 'lucide-react';
+import { Calculator, Database, Menu, UtensilsCrossed } from 'lucide-react';
 import Link from 'next/link';
 import { GetLog } from '@/types';
 import LogSheet from '../logs/log-sheet';
@@ -40,6 +40,13 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 					</div>
 				</SheetTitle>
 				<div className='flex flex-col gap-6 mt-4'>
+					<Button asChild>
+						<Link href='/base-metabolic-rate'>
+							<Calculator className='w-4 h-4' />
+							Calculate your BMR
+						</Link>
+					</Button>
+
 					{log && <LogSheet log={log as GetLog} />}
 
 					<LogButton title='View Past Logs' />
