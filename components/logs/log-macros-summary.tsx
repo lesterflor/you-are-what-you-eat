@@ -1,6 +1,10 @@
 'use client';
 
-import { formatUnit, totalMacrosReducer } from '@/lib/utils';
+import {
+	formatUnit,
+	getMacroPercOfCals,
+	totalMacrosReducer
+} from '@/lib/utils';
 import { GetFoodEntry, GetLog } from '@/types';
 import { useContext, useEffect, useState } from 'react';
 import { Badge } from '../ui/badge';
@@ -11,12 +15,14 @@ export default function LogMacrosSummary({
 	log,
 	children,
 	compactMode = false,
-	getTodayMode = true
+	getTodayMode = true,
+	detailedMode = false
 }: {
 	log?: GetLog;
 	children?: React.ReactNode;
 	compactMode?: boolean;
 	getTodayMode?: boolean;
+	detailedMode?: boolean;
 }) {
 	const [totalCals, setTotalCals] = useState(0);
 	const [totalCarbs, setTotalCarbs] = useState(0);
@@ -70,19 +76,59 @@ export default function LogMacrosSummary({
 						</Badge>
 						<Badge className='p-1 text-xs'>Fat: {formatUnit(totalFat)}g</Badge>
 					</div>
+					<br />
+					{detailedMode && (
+						<div className='grid grid-cols-2 gap-2 text-xs'>
+							<div className='col-span-2 border-b-2 font-semibold text-lg'>
+								Calories breakdown
+							</div>
+							<div className='flex flex-row items-center gap-2 rounded-md border-2 p-1'>
+								<span className='text-muted-foreground'>Prot:</span>{' '}
+								{formatUnit(totalProtein * 4)}
+								<span className='text-muted-foreground'>
+									{getMacroPercOfCals(totalProtein, totalCals, 'protein')}
+								</span>
+							</div>
+							<div className='flex flex-row items-center gap-2 rounded-md border-2 p-1'>
+								<span className='text-muted-foreground'>Carb:</span>{' '}
+								{formatUnit(totalCarbs * 4)}
+								<span className='text-muted-foreground'>
+									{getMacroPercOfCals(totalCarbs, totalCals, 'carb')}
+								</span>
+							</div>
+							<div className='flex flex-row items-center gap-2 rounded-md border-2 p-1'>
+								<span className='text-muted-foreground'>Fat:</span>{' '}
+								{formatUnit(totalFat * 4)}
+								<span className='text-muted-foreground'>
+									{getMacroPercOfCals(totalFat, totalCals, 'fat')}
+								</span>
+							</div>
+						</div>
+					)}
 				</div>
 			) : (
-				<div className='flex flex-row flex-wrap gap-2'>
-					<Badge className='p-2 text-md'>
-						Calories: {formatUnit(totalCals)}
-					</Badge>
-					<Badge className='p-2 text-md'>
-						Protein: {formatUnit(totalProtein)} g
-					</Badge>
-					<Badge className='p-2 text-md'>
-						Carbs: {formatUnit(totalCarbs)} g
-					</Badge>
-					<Badge className='p-2 text-md'>Fat: {formatUnit(totalFat)} g</Badge>
+				<div className='flex flex-col gap-4'>
+					<div className='flex flex-row flex-wrap gap-2'>
+						<Badge className='p-2 text-md'>
+							Calories: {formatUnit(totalCals)}
+						</Badge>
+						<Badge className='p-2 text-md'>
+							Protein: {formatUnit(totalProtein)} g
+						</Badge>
+						<Badge className='p-2 text-md'>
+							Carbs: {formatUnit(totalCarbs)} g
+						</Badge>
+						<Badge className='p-2 text-md'>Fat: {formatUnit(totalFat)} g</Badge>
+					</div>
+
+					{detailedMode && (
+						<div className='flex flex-col gap-4 text-sm'>
+							<div>Calories breakdown</div>
+							<div>Protein: {totalProtein * 4}</div>
+							<div>Carbohydrates: {totalCarbs * 4}</div>
+							<div>Fat: {totalFat * 4}</div>
+						</div>
+					)}
 				</div>
 			)}
 		</>

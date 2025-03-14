@@ -10,6 +10,9 @@ import { IoFastFoodOutline } from 'react-icons/io5';
 import { createDailyLog } from '@/actions/log-actions';
 import { LogUpdateContext } from '@/contexts/log-context';
 import { HeartPulse, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { Button } from '../ui/button';
+import LogMacrosSummary from './log-macros-summary';
 
 export default function FoodLogList({
 	useScroller = true
@@ -88,10 +91,20 @@ export default function FoodLogList({
 					useScroller ? 'absolute' : 'relative'
 				)}>
 				<div className='flex flex-col items-start w-fit gap-1'>
-					<Badge className='text-md portrait:text-sm font-semibold flex flex-row gap-3 w-full'>
-						<IoFastFoodOutline className='w-4 h-4 animate-pulse' />
-						Current Cals {totalCals}
-					</Badge>
+					<Popover>
+						<PopoverTrigger asChild>
+							<Button className='p-1 text-md portrait:text-sm font-semibold flex flex-row gap-3 w-full'>
+								<IoFastFoodOutline className='w-4 h-4 animate-pulse' />
+								Current Cals {totalCals}
+							</Button>
+						</PopoverTrigger>
+						<PopoverContent>
+							<LogMacrosSummary
+								compactMode={true}
+								detailedMode={true}
+							/>
+						</PopoverContent>
+					</Popover>
 
 					{bmr && (
 						<Badge
