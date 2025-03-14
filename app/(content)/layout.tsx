@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import '../globals.css';
-import { ThemeProvider } from 'next-themes';
 import { Toaster } from '@/components/ui/sonner';
 import { SessionProvider } from 'next-auth/react';
 import { auth } from '@/db/auth';
@@ -8,6 +7,7 @@ import { Suspense } from 'react';
 import SiteHeader from '@/components/header/header';
 import FoodItemCardSkeleton from '@/components/skeletons/food-item-card-skeleton';
 import LogContextProvider from '@/providers/log-context-provider';
+import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
 	title: {
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 		'What you put in your mouth determines what your body is composed of.  Find out the composition of your body by tracking what you eat.'
 };
 
-export default async function RootLayout({
+export default async function ContentLayout({
 	children
 }: Readonly<{
 	children: React.ReactNode;

@@ -18,6 +18,7 @@ import { createDailyLog, updateLog } from '@/actions/log-actions';
 import { toast } from 'sonner';
 import { FilePlus } from 'lucide-react';
 import { LogUpdateContext } from '@/contexts/log-context';
+import { formatUnit, getMacroPercOfCals } from '@/lib/utils';
 
 export default function FoodItemCard({ item }: { item: GetFoodItem }) {
 	const { data: session } = useSession();
@@ -36,6 +37,8 @@ export default function FoodItemCard({ item }: { item: GetFoodItem }) {
 		calories: item.calories,
 		eatenAt: new Date()
 	});
+
+	const [portionAmount, setPortionAmount] = useState(1);
 
 	const sendFoodItems = async () => {
 		const getLatestLog = await createDailyLog();
@@ -78,22 +81,59 @@ export default function FoodItemCard({ item }: { item: GetFoodItem }) {
 			<CardDescription className='px-6 pb-4'>
 				{item.description}
 			</CardDescription>
-			<CardContent className='flex flex-row flex-wrap gap-6'>
+			<CardContent className='flex flex-row flex-wrap gap-2'>
 				<div className='flex flex-row items-center gap-2'>
-					<Badge variant='secondary'>Protein: {item.proteinGrams} g</Badge>
+					<Badge
+						variant='secondary'
+						className='w-24 flex flex-col items-center justify-center'>
+						<div>
+							<span className='font-normal'>Prot:</span>{' '}
+							{formatUnit(item.proteinGrams * portionAmount)} g
+						</div>
+						<div className='text-muted-foreground text-xs font-normal'>
+							{getMacroPercOfCals(item.proteinGrams, item.calories, 'protein')}
+						</div>
+					</Badge>
 				</div>
 				<div className='flex flex-row items-center gap-2'>
-					<Badge variant='secondary'>Carbs: {item.carbGrams} g</Badge>
+					<Badge
+						variant='secondary'
+						className='w-24 flex flex-col items-center justify-center'>
+						<div>
+							<span className='font-normal'>Carb:</span>{' '}
+							{formatUnit(item.carbGrams * portionAmount)} g
+						</div>
+
+						<div className='text-muted-foreground text-xs font-normal'>
+							{getMacroPercOfCals(item.carbGrams, item.calories, 'carb')}
+						</div>
+					</Badge>
 				</div>
 				<div className='flex flex-row items-center gap-2'>
-					<Badge variant='secondary'>Fat: {item.fatGrams} g</Badge>
+					<Badge
+						variant='secondary'
+						className='w-24 flex flex-col items-center justify-center'>
+						<div>
+							<span className='font-normal'>Fat:</span>{' '}
+							{formatUnit(item.fatGrams * portionAmount)} g
+						</div>
+						<div className='text-muted-foreground text-xs font-normal'>
+							{getMacroPercOfCals(item.fatGrams, item.calories, 'fat')}
+						</div>
+					</Badge>
 				</div>
 				<div className='flex flex-row items-center gap-2'>
-					<Badge variant='secondary'>Serving: {item.servingSize}</Badge>
+					<Badge
+						variant='secondary'
+						className='w-24 flex flex-row items-center justify-center'>
+						Serving: {item.servingSize * portionAmount}
+					</Badge>
 				</div>
 
 				<div className='flex flex-row items-center gap-2'>
-					<Badge>Calories {item.calories}</Badge>
+					<Badge className='w-28 flex flex-row items-center justify-center'>
+						Calories {formatUnit(item.calories * portionAmount)}
+					</Badge>
 				</div>
 			</CardContent>
 
@@ -104,6 +144,8 @@ export default function FoodItemCard({ item }: { item: GetFoodItem }) {
 							<span className='text-sm'>Servings</span>
 							<NumberIncrementor
 								onChange={(val) => {
+									setPortionAmount(val);
+
 									const entry: FoodEntry = {
 										id: item.id,
 										name: item.name,
@@ -120,7 +162,7 @@ export default function FoodItemCard({ item }: { item: GetFoodItem }) {
 
 									setLogFoodItem(entry);
 								}}
-								minValue={0.5}
+								minValue={0.1}
 								value={1}
 							/>
 						</div>

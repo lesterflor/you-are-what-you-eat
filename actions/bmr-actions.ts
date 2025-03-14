@@ -3,6 +3,7 @@
 import prisma from '@/db/prisma';
 import { calculateBMR, formatError } from '@/lib/utils';
 import { BMRData } from '@/types';
+import { revalidatePath } from 'next/cache';
 
 export async function addUserBMR(userId: string, bmrData: BMRData) {
 	try {
@@ -33,6 +34,8 @@ export async function addUserBMR(userId: string, bmrData: BMRData) {
 		if (!newBMR) {
 			throw new Error('There was a problem creating the BMR data');
 		}
+
+		revalidatePath('/base-metabolic-rate');
 
 		return {
 			success: true,
@@ -76,6 +79,8 @@ export async function updateUserBMR(userId: string, bmrData: BMRData) {
 		if (!updateBMR) {
 			throw new Error('There was a problem updating BMR data');
 		}
+
+		revalidatePath('/base-metabolic-rate');
 
 		return {
 			success: true,

@@ -60,3 +60,31 @@ export type BMRData = {
 	age: number;
 	sex: 'male' | 'female';
 };
+
+export type ColatedBMRData = {
+	weightInPounds: number;
+	weightInKilos: number;
+	weightUnit: 'pound' | 'kilo';
+	heightInInches: number;
+	heightInFeet: number;
+	heightInCm: number;
+	heightUnit: 'inch' | 'cm';
+	age: number;
+	sex: 'male' | 'female';
+};
+
+export type MacroType = 'protein' | 'carb' | 'fat';
+
+export type BaseMetabolicRateType = {
+	id: string;
+	createdAt: Date;
+	updatedAt: Date;
+	userId: string;
+	weight: number;
+	weightUnit: string;
+	height: number;
+	heightUnit: string;
+	age: number;
+	sex: string;
+	bmr: number;
+};

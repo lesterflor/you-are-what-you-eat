@@ -77,9 +77,9 @@ export default function BMRCalculatorForm() {
 			setSex(cSex);
 			setWeight(weightInPounds);
 			setBmr(retBmr);
-
-			setHasUserData(true);
 		}
+
+		setHasUserData(true);
 	};
 
 	useEffect(() => {
@@ -256,15 +256,18 @@ export default function BMRCalculatorForm() {
 					<CardFooter>
 						{bmr > 0 && (
 							<div className='flex flex-row items-center justify-between gap-4 w-full rounded-md p-2 border-2'>
-								<Avatar>
-									<AvatarImage
-										src={user.image}
-										alt={user.name}
-									/>
-									<AvatarFallback className='capitalize'>
-										{user.name.slice(0, 1)}
-									</AvatarFallback>
-								</Avatar>
+								{user && (
+									<Avatar>
+										<AvatarImage
+											src={user.image}
+											alt={user.name}
+										/>
+										<AvatarFallback className='capitalize'>
+											{user.name.slice(0, 1)}
+										</AvatarFallback>
+									</Avatar>
+								)}
+
 								<div className='text-sm'>
 									Your BMR is <span className='font-bold text-lg'>{bmr}</span>{' '}
 									calories a day

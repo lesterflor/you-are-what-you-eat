@@ -25,6 +25,13 @@ export async function createDailyLog() {
 					gte: getToday().todayStart,
 					lt: getToday().todayEnd
 				}
+			},
+			include: {
+				user: {
+					include: {
+						BaseMetabolicRate: true
+					}
+				}
 			}
 		});
 
@@ -33,6 +40,13 @@ export async function createDailyLog() {
 			const newLog = await prisma.log.create({
 				data: {
 					userId: user.id as string
+				},
+				include: {
+					user: {
+						include: {
+							BaseMetabolicRate: true
+						}
+					}
 				}
 			});
 

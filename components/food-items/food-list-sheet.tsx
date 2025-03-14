@@ -46,7 +46,7 @@ export default function FoodListSheet() {
 				<Sheet>
 					<SheetTrigger asChild>
 						<Button>
-							<Search className='w-4 h-4' /> Browse
+							<Search className='w-4 h-4' /> Search Foods
 						</Button>
 					</SheetTrigger>
 					<SheetContent side='right'>
@@ -85,7 +85,7 @@ export default function FoodListSheet() {
 				<Sheet>
 					<SheetTrigger asChild>
 						<Button>
-							<Search className='w-4 h-4' /> Browse
+							<Search className='w-4 h-4' /> Search Foods
 						</Button>
 					</SheetTrigger>
 					<SheetContent side='top'>

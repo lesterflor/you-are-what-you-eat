@@ -1,4 +1,4 @@
-import { BMRData, ColatedBMRData, GetFoodEntry } from '@/types';
+import { BMRData, ColatedBMRData, GetFoodEntry, MacroType } from '@/types';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -315,4 +315,24 @@ export function colateBMRData(data: BMRData): ColatedBMRData {
 		age,
 		sex
 	};
+}
+
+export function formatUnit(val: number, precision: number = 10) {
+	return Math.round(val * precision) / precision;
+}
+
+export function getMacroPercOfCals(
+	macGrams: number,
+	totalCals: number,
+	type: MacroType
+) {
+	const mType = {
+		protein: 4,
+		carb: 4,
+		fat: 9
+	};
+	const macCals = macGrams * mType[type];
+	const pre = macCals / totalCals;
+	const prec = formatUnit(pre * 100, 10);
+	return prec + '%';
 }
