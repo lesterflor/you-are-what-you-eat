@@ -185,12 +185,30 @@ export function isToday(date: Date) {
 }
 
 export function getToday() {
-	const todayStart = new Date();
-	todayStart.setHours(0, 0, 0, 0); // Set to the start of today
-	const todayEnd = new Date();
-	todayEnd.setHours(23, 59, 59, 999); // Set to the end of today
+	const today = new Date();
+	const todayStart = new Date(
+		today.getFullYear(),
+		today.getMonth(),
+		today.getDate()
+	);
+	const todayEnd = new Date(
+		today.getFullYear(),
+		today.getMonth(),
+		today.getDate() + 1
+	);
+
+	// const todayStart = new Date();
+	// todayStart.setHours(0, 0, 0, 0); // Set to the start of today
+	// const todayEnd = new Date();
+	// todayEnd.setHours(23, 59, 59, 999); // Set to the end of today
 
 	return { todayStart, todayEnd };
+}
+
+export function addOneDay(date: Date) {
+	const dateCopy = new Date(date);
+	dateCopy.setDate(date.getDate() + 1);
+	return dateCopy;
 }
 
 export function totalCalorieReducer(items: GetFoodEntry[]) {

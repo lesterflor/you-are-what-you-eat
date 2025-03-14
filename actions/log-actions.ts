@@ -23,7 +23,7 @@ export async function createDailyLog() {
 				userId: user.id,
 				createdAt: {
 					gte: getToday().todayStart,
-					lte: getToday().todayEnd
+					lt: getToday().todayEnd
 				}
 			}
 		});
@@ -71,7 +71,7 @@ export async function updateLog(foodEntries: FoodEntry[]) {
 				userId: user.id,
 				createdAt: {
 					gte: getToday().todayStart,
-					lte: getToday().todayEnd
+					lt: getToday().todayEnd
 				}
 			}
 		});
@@ -120,10 +120,13 @@ export async function getLogsByUserId(id: string) {
 					{
 						createdAt: {
 							gte: getToday().todayStart,
-							lte: getToday().todayEnd
+							lt: getToday().todayEnd
 						}
 					}
 				]
+			},
+			orderBy: {
+				createdAt: 'desc'
 			}
 		});
 

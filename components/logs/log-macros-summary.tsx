@@ -1,18 +1,22 @@
 'use client';
 
 import { totalMacrosReducer } from '@/lib/utils';
-import { GetFoodEntry } from '@/types';
+import { GetFoodEntry, GetLog } from '@/types';
 import { useContext, useEffect, useState } from 'react';
 import { Badge } from '../ui/badge';
 import { createDailyLog } from '@/actions/log-actions';
 import { LogUpdateContext } from '@/contexts/log-context';
 
 export default function LogMacrosSummary({
+	log,
 	children,
-	compactMode = false
+	compactMode = false,
+	getTodayMode = true
 }: {
+	log?: GetLog;
 	children?: React.ReactNode;
 	compactMode?: boolean;
+	getTodayMode?: boolean;
 }) {
 	const [totalCals, setTotalCals] = useState(0);
 	const [totalCarbs, setTotalCarbs] = useState(0);
@@ -22,7 +26,14 @@ export default function LogMacrosSummary({
 	const logContext = useContext(LogUpdateContext);
 
 	useEffect(() => {
-		getLog();
+		if (getTodayMode) {
+			getLog();
+		} else if (!getTodayMode && log) {
+			setTotalCals(totalMacrosReducer(log.foodItems).calories);
+			setTotalCarbs(totalMacrosReducer(log.foodItems).carbs);
+			setTotalFat(totalMacrosReducer(log.foodItems).fat);
+			setTotalProtein(totalMacrosReducer(log.foodItems).protein);
+		}
 	}, []);
 
 	const getLog = async () => {
@@ -39,7 +50,7 @@ export default function LogMacrosSummary({
 	};
 
 	useEffect(() => {
-		if (logContext?.updated) {
+		if (logContext?.updated && getTodayMode) {
 			getLog();
 		}
 	}, [logContext]);

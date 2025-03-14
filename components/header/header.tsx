@@ -32,7 +32,7 @@ export default async function SiteHeader() {
 					</Link>
 				</div>
 
-				{log && log.data && log?.data.foodItems.length > 0 && (
+				{log && log.data && (
 					<div>
 						<LogMacrosSummary compactMode={true}>
 							<div className='flex flex-row items-center gap-2'>
