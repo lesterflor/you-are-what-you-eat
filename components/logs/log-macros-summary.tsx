@@ -76,9 +76,10 @@ export default function LogMacrosSummary({
 						</Badge>
 						<Badge className='p-1 text-xs'>Fat: {formatUnit(totalFat)}g</Badge>
 					</div>
-					<br />
+
 					{detailedMode && (
 						<div className='grid grid-cols-2 gap-2 text-xs'>
+							<br />
 							<div className='col-span-2 border-b-2 font-semibold text-lg'>
 								Calories breakdown
 							</div>
