@@ -170,7 +170,6 @@ export default function FoodItemCard({ item }: { item: GetFoodItem }) {
 						<Button
 							onClick={(e) => {
 								e.preventDefault();
-								console.log(logFoodItem);
 								sendFoodItems();
 							}}>
 							<FilePlus className='w-4 h-4' />
