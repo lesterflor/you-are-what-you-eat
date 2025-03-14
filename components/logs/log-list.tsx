@@ -5,7 +5,7 @@ import { Badge } from '../ui/badge';
 import { useContext, useEffect, useState } from 'react';
 import LogFoodCard from './log-food-card';
 import { ScrollArea } from '../ui/scroll-area';
-import { cn } from '@/lib/utils';
+import { cn, formatUnit } from '@/lib/utils';
 import { IoFastFoodOutline } from 'react-icons/io5';
 import { createDailyLog } from '@/actions/log-actions';
 import { LogUpdateContext } from '@/contexts/log-context';
@@ -111,7 +111,9 @@ export default function FoodLogList({
 								? 'text-green-800'
 								: 'text-red-800'
 						)}>
-						<div className='font-semibold'>{(totalCals - bmr.bmr) * -1}</div>
+						<div className='font-semibold'>
+							{formatUnit((totalCals - bmr.bmr) * -1)}
+						</div>
 						<div className='text-xs'>
 							{Math.sign(totalCals - bmr.bmr) === -1 ? 'remaining' : 'over'}
 						</div>

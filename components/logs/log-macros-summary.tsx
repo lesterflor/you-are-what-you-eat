@@ -1,6 +1,6 @@
 'use client';
 
-import { totalMacrosReducer } from '@/lib/utils';
+import { formatUnit, totalMacrosReducer } from '@/lib/utils';
 import { GetFoodEntry, GetLog } from '@/types';
 import { useContext, useEffect, useState } from 'react';
 import { Badge } from '../ui/badge';
@@ -61,18 +61,28 @@ export default function LogMacrosSummary({
 				<div className='flex flex-col gap-1'>
 					<div className='text-xs'>{children}</div>
 					<div className='flex flex-row flex-wrap gap-2'>
-						<Badge className='p-1 text-xs'>Cals: {totalCals}</Badge>
-						<Badge className='p-1 text-xs'>Prot: {totalProtein}g</Badge>
-						<Badge className='p-1 text-xs'>Carb: {totalCarbs}g</Badge>
-						<Badge className='p-1 text-xs'>Fat: {totalFat}g</Badge>
+						<Badge className='p-1 text-xs'>Cals: {formatUnit(totalCals)}</Badge>
+						<Badge className='p-1 text-xs'>
+							Prot: {formatUnit(totalProtein)}g
+						</Badge>
+						<Badge className='p-1 text-xs'>
+							Carb: {formatUnit(totalCarbs)}g
+						</Badge>
+						<Badge className='p-1 text-xs'>Fat: {formatUnit(totalFat)}g</Badge>
 					</div>
 				</div>
 			) : (
 				<div className='flex flex-row flex-wrap gap-2'>
-					<Badge className='p-2 text-md'>Calories: {totalCals}</Badge>
-					<Badge className='p-2 text-md'>Protein: {totalProtein} g</Badge>
-					<Badge className='p-2 text-md'>Carbs: {totalCarbs} g</Badge>
-					<Badge className='p-2 text-md'>Fat: {totalFat} g</Badge>
+					<Badge className='p-2 text-md'>
+						Calories: {formatUnit(totalCals)}
+					</Badge>
+					<Badge className='p-2 text-md'>
+						Protein: {formatUnit(totalProtein)} g
+					</Badge>
+					<Badge className='p-2 text-md'>
+						Carbs: {formatUnit(totalCarbs)} g
+					</Badge>
+					<Badge className='p-2 text-md'>Fat: {formatUnit(totalFat)} g</Badge>
 				</div>
 			)}
 		</>

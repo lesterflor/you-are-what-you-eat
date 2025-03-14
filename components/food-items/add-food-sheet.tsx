@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../ui/sheet';
 import AddFoodItemForm from './add-food-item-form';
 import { useState } from 'react';
 
-export default function AddFoodSheet() {
+export default function AddFoodSheet({ onAdded }: { onAdded?: () => void }) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [isOpenPortrait, setIsOpenPortrait] = useState(false);
 
@@ -33,6 +33,7 @@ export default function AddFoodSheet() {
 							<AddFoodItemForm
 								onSuccess={() => {
 									setIsOpen(false);
+									onAdded?.();
 								}}
 							/>
 							<br />

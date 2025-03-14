@@ -81,7 +81,7 @@ export default function FoodItemCard({ item }: { item: GetFoodItem }) {
 			<CardDescription className='px-6 pb-4'>
 				{item.description}
 			</CardDescription>
-			<CardContent className='flex flex-row flex-wrap gap-2'>
+			<CardContent className='flex flex-row flex-wrap gap-2 px-4'>
 				<div className='flex flex-row items-center gap-2'>
 					<Badge
 						variant='secondary'

@@ -12,19 +12,30 @@ import AddFoodSheet from '../food-items/add-food-sheet';
 import FoodListSheet from '../food-items/food-list-sheet';
 import { Separator } from '../ui/separator';
 import { Button } from '../ui/button';
+import { useState } from 'react';
 
 export default function SideMenu({ log }: { log?: GetLog }) {
 	const pathname = usePathname();
 
+	const [isOpen, setIsOpen] = useState(false);
+
+	const handleClick = () => {
+		setIsOpen(!isOpen);
+	};
+
 	return (
-		<Sheet>
+		<Sheet
+			open={isOpen}
+			onOpenChange={setIsOpen}>
 			<SheetTrigger>
 				<Menu className='w-6 h-6' />
 			</SheetTrigger>
 			<SheetContent>
 				<SheetTitle>
 					<div className='flex flex-row items-center justify-start gap-5 portrait:gap-3'>
-						<Link href='/'>
+						<Link
+							href='/'
+							onClick={handleClick}>
 							<div className='flex flex-row items-center gap-2'>
 								<UtensilsCrossed className='w-8 h-8' />
 								<div className='flex flex-col gap-0'>
@@ -41,7 +52,9 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 				</SheetTitle>
 				<div className='flex flex-col gap-6 mt-4'>
 					<Button asChild>
-						<Link href='/base-metabolic-rate'>
+						<Link
+							href='/base-metabolic-rate'
+							onClick={handleClick}>
 							<Calculator className='w-4 h-4' />
 							Calculate your BMR
 						</Link>
@@ -49,7 +62,12 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 
 					{log && <LogSheet log={log as GetLog} />}
 
-					<LogButton title='View Past Logs' />
+					<LogButton
+						onClick={() => {
+							setIsOpen(!isOpen);
+						}}
+						title='View Past Logs'
+					/>
 
 					{pathname !== '/foods' && (
 						<Button
@@ -57,6 +75,7 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 							className='w-fit'>
 							<Link
 								href='/foods'
+								onClick={handleClick}
 								className='flex flex-row items-center gap-2'>
 								<Database className='w-4 h-4' />
 								View Food Database
@@ -64,7 +83,11 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 						</Button>
 					)}
 
-					<AddFoodSheet />
+					<AddFoodSheet
+						onAdded={() => {
+							setIsOpen(!isOpen);
+						}}
+					/>
 
 					<FoodListSheet />
 

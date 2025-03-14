@@ -6,7 +6,13 @@ import { FileStack } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
-export default function LogButton({ title = 'Logs' }: { title?: string }) {
+export default function LogButton({
+	title = 'Logs',
+	onClick
+}: {
+	title?: string;
+	onClick?: () => void;
+}) {
 	const pathname = usePathname();
 
 	return (
@@ -15,6 +21,7 @@ export default function LogButton({ title = 'Logs' }: { title?: string }) {
 			className={cn(pathname === '/logs' && 'hidden')}>
 			<Link
 				href='/logs'
+				onClick={onClick}
 				className='flex flex-row items-center gap-2'>
 				<FileStack className='w-4 h-4' />
 				{title}

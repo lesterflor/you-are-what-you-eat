@@ -7,15 +7,31 @@ import FoodLogList from './log-list';
 import { cn, formatDateTime } from '@/lib/utils';
 import { CalendarSearch, FileClock } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-export default function LogSheet({ log }: { log: GetLog }) {
+export default function LogSheet({
+	log,
+	onOpen
+}: {
+	log: GetLog;
+	onOpen?: () => void;
+}) {
 	const pathname = usePathname();
+	const [isOpen, setIsOpen] = useState(false);
+
+	useEffect(() => {
+		if (isOpen) {
+			onOpen?.();
+		}
+	}, [isOpen]);
 
 	if (!log) {
 		return null;
 	}
 	return (
-		<Sheet>
+		<Sheet
+			open={isOpen}
+			onOpenChange={setIsOpen}>
 			<SheetTrigger
 				asChild
 				className={cn(pathname === '/' && 'hidden')}>

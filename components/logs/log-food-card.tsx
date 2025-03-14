@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { format } from 'date-fns';
 import { Clock } from 'lucide-react';
+import { formatUnit } from '@/lib/utils';
 
 export default function LogFoodCard({ item }: { item: GetFoodEntry }) {
 	return (
@@ -29,15 +30,17 @@ export default function LogFoodCard({ item }: { item: GetFoodEntry }) {
 			<CardContent>
 				<div className='flex flex-row flex-wrap gap-1'>
 					<Badge variant='secondary'>
-						Carbs: {item.carbGrams * item.numServings} g
+						Carbs: {formatUnit(item.carbGrams * item.numServings)} g
 					</Badge>
 					<Badge variant='secondary'>
-						Protein: {item.proteinGrams * item.numServings} g
+						Protein: {formatUnit(item.proteinGrams * item.numServings)} g
 					</Badge>
 					<Badge variant='secondary'>
-						Carbs: {item.fatGrams * item.numServings} g
+						Carbs: {formatUnit(item.fatGrams * item.numServings)} g
 					</Badge>
-					<Badge>Calories: {item.calories * item.numServings}</Badge>
+					<Badge>
+						Calories: {formatUnit(item.calories * item.numServings)}
+					</Badge>
 				</div>
 			</CardContent>
 		</Card>
