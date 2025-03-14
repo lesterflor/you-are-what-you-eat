@@ -54,7 +54,9 @@ export default async function BMRPage() {
 			</div>
 
 			<div>
-				{user && user.name && <div>{user.name}, Calculate your BMI</div>}
+				<div className='hidden'>
+					{user && user.name && <div>{user.name}, calculate your BMR</div>}
+				</div>
 				<BMRCalculatorForm />
 			</div>
 		</div>

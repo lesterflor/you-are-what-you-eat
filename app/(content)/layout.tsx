@@ -7,6 +7,7 @@ import { auth } from '@/db/auth';
 import { Suspense } from 'react';
 import SiteHeader from '@/components/header/header';
 import FoodItemCardSkeleton from '@/components/skeletons/food-item-card-skeleton';
+import LogContextProvider from '@/providers/log-context-provider';
 
 export const metadata: Metadata = {
 	title: {
@@ -35,13 +36,15 @@ export default async function RootLayout({
 					enableSystem
 					disableTransitionOnChange>
 					<SessionProvider session={session}>
-						<SiteHeader />
-						<br />
-						<main className='flex-1 wrapper w-5/6 xl:w-1/2 portrait:w-full portrait:px-3 mx-auto mt-20'>
-							<Suspense fallback={<FoodItemCardSkeleton />}>
-								<div className='select-none'>{children}</div>
-							</Suspense>
-						</main>
+						<LogContextProvider>
+							<SiteHeader />
+							<br />
+							<main className='flex-1 wrapper w-5/6 xl:w-1/2 portrait:w-full portrait:px-3 mx-auto mt-20'>
+								<Suspense fallback={<FoodItemCardSkeleton />}>
+									<div className='select-none'>{children}</div>
+								</Suspense>
+							</main>
+						</LogContextProvider>
 					</SessionProvider>
 
 					<Toaster />

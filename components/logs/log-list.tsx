@@ -42,10 +42,12 @@ export default function FoodLogList({
 	}, [logList]);
 
 	const prepareLogList = () => {
-		const total = logList.reduce((acc, curr) => {
-			const sub = curr.calories * curr.numServings;
-			return acc + sub;
-		}, 0);
+		const total = Math.round(
+			logList.reduce((acc, curr) => {
+				const sub = curr.calories * curr.numServings;
+				return acc + sub;
+			}, 0)
+		);
 		setTotalCals(total);
 
 		const sorted = logList.sort((a, b) => {

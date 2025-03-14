@@ -1,4 +1,4 @@
-import { BMRData, GetFoodEntry } from '@/types';
+import { BMRData, ColatedBMRData, GetFoodEntry } from '@/types';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -217,10 +217,12 @@ export function totalCalorieReducer(items: GetFoodEntry[]) {
 
 export function totalMacrosReducer(items: GetFoodEntry[]) {
 	return {
-		calories: items.reduce((acc, curr) => {
-			const sub = curr.calories * curr.numServings;
-			return acc + sub;
-		}, 0),
+		calories: Math.round(
+			items.reduce((acc, curr) => {
+				const sub = curr.calories * curr.numServings;
+				return acc + sub;
+			}, 0)
+		),
 		carbs: items.reduce((acc, curr) => {
 			const sub = curr.carbGrams * curr.numServings;
 			return acc + sub;
@@ -252,6 +254,12 @@ Another formula, the Mifflin-St Jeor equation, is considered even more accurate 
  BMR = 10 * 71.6675992 + 6.25 * 170.18 - 5 * 50 + 5
  */
 
+export const POUND_TO_KILO = 0.4535924;
+export const INCH_TO_CM = 2.54;
+export const CM_TO_INCH = 0.3937008;
+export const CM_TO_FEET = 0.0328084;
+export const FEET_TO_CM = 30.48;
+
 export function calculateBMR(data: BMRData) {
 	const {
 		weight = 0,
@@ -262,11 +270,49 @@ export function calculateBMR(data: BMRData) {
 		sex = 'male'
 	} = data;
 
-	const actualWeight = weightUnit === 'pound' ? weight * 0.4535924 : weight;
+	const actualWeight = weightUnit === 'pound' ? weight * POUND_TO_KILO : weight;
 
-	const actualHeight = heightUnit === 'inch' ? height * 2.54 : height;
+	const actualHeight = heightUnit === 'inch' ? height * INCH_TO_CM : height;
 
-	return sex === 'male'
-		? 10 * actualWeight + 6.25 * actualHeight - 5 * age + 5
-		: 10 * actualHeight + 6.25 * actualHeight - 5 * age - 161;
+	const formula =
+		sex === 'male'
+			? 10 * actualWeight + 6.25 * actualHeight - 5 * age + 5
+			: 10 * actualHeight + 6.25 * actualHeight - 5 * age - 161;
+
+	return Number(formula.toFixed(2));
+}
+
+export function colateBMRData(data: BMRData): ColatedBMRData {
+	const { age, weight, weightUnit, height, heightUnit, sex } = data;
+
+	const inchesFromCM = height / INCH_TO_CM;
+	const inchesToFeetAndInches = inchesFromCM / 12;
+	const remainderInches =
+		inchesToFeetAndInches - Math.floor(inchesToFeetAndInches);
+	const correctRemainder = Math.round(remainderInches * 12);
+
+	const correctFeetInch = Math.floor(inchesToFeetAndInches) * 12;
+
+	console.log(
+		'just feet:',
+		Math.floor(inchesToFeetAndInches),
+		' correctRemainder: ',
+		correctRemainder,
+		' correctFeetInch:',
+		correctFeetInch
+	);
+
+	return {
+		weightInPounds: weightUnit === 'pound' ? weight : weight / POUND_TO_KILO,
+		weightInKilos: weightUnit === 'kilo' ? weight : weight * POUND_TO_KILO,
+		weightUnit,
+		heightInInches: heightUnit === 'cm' ? correctRemainder : height,
+		heightInFeet:
+			heightUnit === 'cm' ? Math.floor(inchesToFeetAndInches) : height / 12,
+		heightInCm:
+			heightUnit === 'cm' ? Math.round(height * 10) / 10 : height * INCH_TO_CM,
+		heightUnit,
+		age,
+		sex
+	};
 }
