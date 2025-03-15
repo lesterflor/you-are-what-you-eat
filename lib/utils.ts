@@ -194,7 +194,6 @@ export function getToday() {
 	const todayEnd = new Date(
 		today.getFullYear(),
 		today.getMonth(),
-		today.getHours(),
 		today.getDate() + 1
 	);
 
@@ -327,5 +326,5 @@ export function getMacroPercOfCals(
 	const macCals = macGrams * mType[type];
 	const pre = macCals / totalCals;
 	const prec = formatUnit(pre * 100, 10);
-	return prec + '%';
+	return isNaN(prec) ? '' : prec + '%';
 }

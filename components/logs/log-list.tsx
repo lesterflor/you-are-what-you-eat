@@ -111,7 +111,7 @@ export default function FoodLogList({
 							variant='secondary'
 							className='text-md portrait:text-sm font-semibold flex flex-row gap-3'>
 							<HeartPulse className='w-5 h-5 animate-pulse' />
-							Your BMR {bmr.bmr}
+							Your BMR {formatUnit(bmr.bmr)}
 						</Badge>
 					)}
 				</div>

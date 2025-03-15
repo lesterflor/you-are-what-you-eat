@@ -8,6 +8,7 @@ import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 import {
 	calculateBMR,
 	colateBMRData,
+	formatUnit,
 	INCH_TO_CM,
 	POUND_TO_KILO
 } from '@/lib/utils';
@@ -271,7 +272,8 @@ export default function BMRCalculatorForm() {
 								)}
 
 								<div className='text-sm'>
-									Your BMR is <span className='font-bold text-lg'>{bmr}</span>{' '}
+									Your BMR is{' '}
+									<span className='font-bold text-lg'>{formatUnit(bmr)}</span>{' '}
 									calories a day
 								</div>
 
