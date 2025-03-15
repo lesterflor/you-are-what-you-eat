@@ -9,7 +9,7 @@ import { cn, formatUnit } from '@/lib/utils';
 import { IoFastFoodOutline } from 'react-icons/io5';
 import { createDailyLog } from '@/actions/log-actions';
 import { LogUpdateContext } from '@/contexts/log-context';
-import { HeartPulse, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { ThumbsDown, ThumbsUp } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
 import LogMacrosSummary from './log-macros-summary';
@@ -24,6 +24,8 @@ export default function FoodLogList({
 	const [logList, setLogList] = useState<GetFoodEntry[]>([]);
 	const [log, setLog] = useState<GetLog>();
 	const [bmr, setBmr] = useState<BaseMetabolicRateType>();
+	const [calsBurned, setCalsBurned] = useState(0);
+	const [remainingCals, setRemainingCals] = useState(0);
 
 	const logContext = useContext(LogUpdateContext);
 
@@ -41,6 +43,13 @@ export default function FoodLogList({
 			const bmrArr = res.data.user.BaseMetabolicRate as BaseMetabolicRateType[];
 
 			setBmr(bmrArr[0]);
+
+			if (
+				res.data.knownCaloriesBurned &&
+				res.data.knownCaloriesBurned.length > 0
+			) {
+				setCalsBurned(res.data.knownCaloriesBurned[0].calories);
+			}
 		}
 	};
 
@@ -66,6 +75,14 @@ export default function FoodLogList({
 	};
 
 	useEffect(() => {
+		//set remaining cals
+		const brmCals = bmr?.bmr ?? 0;
+		const rCals = brmCals + calsBurned;
+		const remainder = totalCals - rCals;
+		setRemainingCals(remainder);
+	}, [totalCals, bmr]);
+
+	useEffect(() => {
 		if (logContext?.updated) {
 			getLog();
 		}
@@ -78,7 +95,7 @@ export default function FoodLogList({
 					'flex flex-row items-center w-fit pb-4 gap-2',
 					useScroller ? 'absolute' : 'relative'
 				)}>
-				<div className='flex flex-col items-start w-fit gap-1'>
+				<div className='flex flex-col items-start w-full gap-1'>
 					<Popover>
 						<PopoverTrigger asChild>
 							<Button className='p-1 text-md portrait:text-sm font-semibold flex flex-row gap-3 w-full'>
@@ -94,32 +111,43 @@ export default function FoodLogList({
 						</PopoverContent>
 					</Popover>
 
-					{bmr && (
-						<Badge
-							variant='secondary'
-							className='text-md portrait:text-sm font-semibold flex flex-row gap-3'>
-							<HeartPulse className='w-5 h-5 animate-pulse' />
-							Your BMR {formatUnit(bmr.bmr)}
-						</Badge>
-					)}
+					<div className='flex flex-row gap-2 w-full'>
+						{bmr && (
+							<Badge
+								variant='outline'
+								className='text-sm font-normal portrait:text-sm flex flex-row gap-3'>
+								{/* <HeartPulse className='w-5 h-5 animate-pulse' /> */}
+								BMR {formatUnit(bmr.bmr)}
+							</Badge>
+						)}
+
+						{calsBurned && (
+							<Badge
+								variant='outline'
+								className='text-sm font-normal portrait:text-sm flex flex-row gap-3'>
+								{/* <HeartPulse className='w-5 h-5 animate-pulse' /> */}
+								Cals burned: {formatUnit(calsBurned)}
+							</Badge>
+						)}
+					</div>
 				</div>
 
 				{bmr && (
 					<div
 						className={cn(
 							'text-3xl portrait:text-2xl text-center flex flex-col items-center gap-0',
-							Math.sign(totalCals - bmr.bmr) === -1
+							Math.sign(remainingCals) === -1
 								? 'text-green-800'
 								: 'text-red-800'
 						)}>
 						<div className='font-semibold'>
-							{formatUnit((totalCals - bmr.bmr) * -1)}
+							{formatUnit(remainingCals * -1)}
 						</div>
 						<div className='text-xs'>
-							{Math.sign(totalCals - bmr.bmr) === -1 ? 'remaining' : 'over'}
+							{Math.sign(remainingCals) === -1 ? 'remaining' : 'over'}
 						</div>
 						<div>
-							{Math.sign(totalCals - bmr.bmr) === -1 ? (
+							{Math.sign(remainingCals) === -1 ? (
 								<ThumbsUp className='w-4 h-4 animate-ping' />
 							) : (
 								<ThumbsDown className='w-4 h-4 animate-ping' />

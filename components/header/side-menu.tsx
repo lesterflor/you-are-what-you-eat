@@ -13,6 +13,7 @@ import FoodListSheet from '../food-items/food-list-sheet';
 import { Separator } from '../ui/separator';
 import { Button } from '../ui/button';
 import { useState } from 'react';
+import KnowCaloriesBurned from '../logs/know-calories-burned';
 
 export default function SideMenu({ log }: { log?: GetLog }) {
 	const pathname = usePathname();
@@ -90,6 +91,8 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 					/>
 
 					<FoodListSheet />
+
+					<KnowCaloriesBurned />
 
 					<Separator />
 

@@ -88,3 +88,11 @@ export type BaseMetabolicRateType = {
 	sex: string;
 	bmr: number;
 };
+
+export type GetKnowCaloriesBurned = {
+	id: string;
+	createdAt: Date;
+	updatedAt: Date;
+	calories: number;
+	userId: string;
+};
