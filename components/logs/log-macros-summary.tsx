@@ -129,14 +129,14 @@ export default function LogMacrosSummary({
 								Calories breakdown
 							</div>
 							<div className='flex flex-row items-center gap-2 rounded-md border-2 p-1'>
-								<span className='text-muted-foreground'>Prot:</span>{' '}
+								<span className='text-muted-foreground'>Protein:</span>{' '}
 								{formatUnit(totalProtein * 4)}
 								<span className='text-muted-foreground'>
 									{getMacroPercOfCals(totalProtein, totalCals, 'protein')}
 								</span>
 							</div>
 							<div className='flex flex-row items-center gap-2 rounded-md border-2 p-1'>
-								<span className='text-muted-foreground'>Carb:</span>{' '}
+								<span className='text-muted-foreground'>Carbohydrates:</span>{' '}
 								{formatUnit(totalCarbs * 4)}
 								<span className='text-muted-foreground'>
 									{getMacroPercOfCals(totalCarbs, totalCals, 'carb')}

@@ -31,18 +31,6 @@ export default function FoodLogList({
 		getLog();
 	}, []);
 
-	// const getUserBMR = async () => {
-	// 	const user = session?.user as GetUser;
-
-	// 	if (user) {
-	// 		const res = await getBMRById(user.id);
-
-	// 		if (res.success && res.data) {
-	// 			setBmr(res.data);
-	// 		}
-	// 	}
-	// };
-
 	const getLog = async () => {
 		const res = await createDailyLog();
 

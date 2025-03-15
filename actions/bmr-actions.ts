@@ -1,8 +1,9 @@
 'use server';
 
+import { auth } from '@/db/auth';
 import prisma from '@/db/prisma';
 import { calculateBMR, formatError } from '@/lib/utils';
-import { BMRData } from '@/types';
+import { BMRData, GetUser } from '@/types';
 import { revalidatePath } from 'next/cache';
 
 export async function addUserBMR(userId: string, bmrData: BMRData) {
@@ -110,6 +111,39 @@ export async function getBMRById(userId: string) {
 			success: true,
 			message: 'success',
 			data: existing
+		};
+	} catch (error: unknown) {
+		return {
+			success: false,
+			message: formatError(error),
+			data: null
+		};
+	}
+}
+
+export async function getUserBMR() {
+	try {
+		const session = await auth();
+		const user = session?.user as GetUser;
+
+		if (!session) {
+			throw new Error('User is not authenticated');
+		}
+
+		const found = await prisma.baseMetabolicRate.findFirst({
+			where: {
+				userId: user.id
+			}
+		});
+
+		if (!found) {
+			throw new Error('User does not have a BMR saved');
+		}
+
+		return {
+			success: true,
+			message: 'success',
+			data: found
 		};
 	} catch (error: unknown) {
 		return {
