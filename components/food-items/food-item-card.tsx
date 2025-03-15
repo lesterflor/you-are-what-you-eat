@@ -19,10 +19,12 @@ import { toast } from 'sonner';
 import { FilePlus } from 'lucide-react';
 import { LogUpdateContext } from '@/contexts/log-context';
 import { formatUnit, getMacroPercOfCals } from '@/lib/utils';
+import { FaSpinner } from 'react-icons/fa';
 
 export default function FoodItemCard({ item }: { item: GetFoodItem }) {
 	const { data: session } = useSession();
 	const logContext = useContext(LogUpdateContext);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const [logFoodItem, setLogFoodItem] = useState<FoodEntry>({
 		id: item.id,
@@ -41,6 +43,7 @@ export default function FoodItemCard({ item }: { item: GetFoodItem }) {
 	const [portionAmount, setPortionAmount] = useState(1);
 
 	const sendFoodItems = async () => {
+		setIsSubmitting(true);
 		const getLatestLog = await createDailyLog();
 
 		const currentFoodItems = getLatestLog?.data?.foodItems || [];
@@ -68,6 +71,8 @@ export default function FoodItemCard({ item }: { item: GetFoodItem }) {
 		} else {
 			toast.error('Oops, Something went wrong with adding the item.');
 		}
+
+		setIsSubmitting(false);
 	};
 
 	return (
@@ -168,12 +173,17 @@ export default function FoodItemCard({ item }: { item: GetFoodItem }) {
 						</div>
 
 						<Button
+							disabled={isSubmitting}
 							onClick={(e) => {
 								e.preventDefault();
 								sendFoodItems();
 							}}>
-							<FilePlus className='w-4 h-4' />
-							Add to log
+							{isSubmitting ? (
+								<FaSpinner className='w-4 h-4 animate-spin' />
+							) : (
+								<FilePlus className='w-4 h-4' />
+							)}
+							{isSubmitting ? '...Adding' : 'Add to log'}
 						</Button>
 					</div>
 				)}

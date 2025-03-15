@@ -39,7 +39,7 @@ export default async function SiteHeader() {
 							useSkeleton={false}>
 							<div className='flex flex-row items-center gap-2'>
 								<Calculator className='w-4 h-4 animate-pulse' />
-								<div>{format(new Date(), 'PPP')}</div>
+								<div>{format(new Date(), 'PPPP')}</div>
 							</div>
 						</LogMacrosSummary>
 					</div>

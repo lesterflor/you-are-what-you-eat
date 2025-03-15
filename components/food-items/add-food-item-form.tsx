@@ -235,7 +235,7 @@ export default function AddFoodItemForm({
 								disabled={form.formState.isSubmitting}
 								className='w-44'>
 								{form.formState.isSubmitting ? (
-									<LoaderIcon className='w-4 h-4' />
+									<LoaderIcon className='w-4 h-4 animate-spin' />
 								) : (
 									<Plus className='w-4 h-4' />
 								)}

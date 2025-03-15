@@ -32,7 +32,7 @@ export default function AddFoodSheet({ onAdded }: { onAdded?: () => void }) {
 						<ScrollArea className='h-[75vh] md:h-[75vh] xl:h-[50vh] pr-5'>
 							<AddFoodItemForm
 								onSuccess={() => {
-									setIsOpen(false);
+									setIsOpenPortrait(false);
 									onAdded?.();
 								}}
 							/>
