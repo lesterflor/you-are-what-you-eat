@@ -203,7 +203,10 @@ export function getToday() {
 	// const todayEnd = new Date();
 	// todayEnd.setHours(23, 59, 59, 999); // Set to the end of today
 
-	return { todayStart, todayEnd };
+	return {
+		todayStart: todayStart.toISOString(),
+		todayEnd: todayEnd.toISOString()
+	};
 }
 
 export function addOneDay(date: Date) {
