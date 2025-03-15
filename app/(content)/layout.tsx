@@ -5,9 +5,9 @@ import { SessionProvider } from 'next-auth/react';
 import { auth } from '@/db/auth';
 import { Suspense } from 'react';
 import SiteHeader from '@/components/header/header';
-import FoodItemCardSkeleton from '@/components/skeletons/food-item-card-skeleton';
-import LogContextProvider from '@/providers/log-context-provider';
 import { ThemeProvider } from '@/components/theme-provider';
+import LogContextProvider from '@/providers/log-context-provider';
+import FoodItemCardSkeleton from '@/components/skeletons/food-item-card-skeleton';
 
 export const metadata: Metadata = {
 	title: {
