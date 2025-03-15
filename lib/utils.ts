@@ -194,7 +194,7 @@ export function getToday() {
 	const todayEnd = new Date(
 		today.getFullYear(),
 		today.getMonth(),
-		today.getHours() + 4,
+		today.getHours(),
 		today.getDate() + 1
 	);
 
