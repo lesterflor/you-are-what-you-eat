@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function TruncateSection({
 	children,
@@ -13,6 +13,14 @@ export default function TruncateSection({
 	pixelHeight?: number;
 }) {
 	const [hasClickedSeeMore, setHasClickedSeeMore] = useState(false);
+
+	useEffect(() => {
+		if (hasClickedSeeMore) {
+			setTimeout(() => {
+				divRef.current.style.height = 'auto';
+			}, 1000);
+		}
+	}, [hasClickedSeeMore]);
 
 	const htmlDiv = useRef({} as HTMLDivElement);
 	const divRef = useRef({} as HTMLDivElement);
