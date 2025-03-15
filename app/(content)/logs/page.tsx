@@ -19,7 +19,7 @@ export default async function LogsPage() {
 
 	return (
 		<div className='flex flex-col gap-4'>
-			<div className='text-xl font-semibold'>Logs</div>
+			<div className='text-xl font-semibold'>Log History</div>
 			{data &&
 				data.length > 0 &&
 				data.map((log) => (

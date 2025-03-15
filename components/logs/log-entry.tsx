@@ -13,9 +13,15 @@ export default async function LogEntry({ log }: { log: GetLog }) {
 	const bmrData = await getUserBMR();
 
 	const bmr = bmrData.data ? bmrData.data.bmr : 0;
+	const kcBurned =
+		(log?.knownCaloriesBurned &&
+			log.knownCaloriesBurned.length > 0 &&
+			log.knownCaloriesBurned[0].calories) ||
+		0;
 
 	const { calories } = totalMacrosReducer(log.foodItems);
-	const calDiff = formatUnit(bmr - calories);
+	const surplus = bmr + kcBurned;
+	const calDiff = formatUnit(surplus - calories);
 	const overUsedDailyCals = Math.sign(calDiff) === -1;
 
 	return (
