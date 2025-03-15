@@ -45,7 +45,9 @@ export default async function LogEntry({ log }: { log: GetLog }) {
 							<div
 								className={cn(
 									'text-2xl font-bold w-full text-center flex flex-row items-center gap-2 justify-center',
-									overUsedDailyCals ? 'text-red-800' : 'text-green-800'
+									overUsedDailyCals
+										? 'text-muted-foreground'
+										: 'text-foreground'
 								)}>
 								{calDiff}
 								{overUsedDailyCals ? (

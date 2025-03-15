@@ -39,7 +39,6 @@ export default function BMRCalculatorForm() {
 	const { data: session } = useSession();
 	const user = session?.user as GetUser;
 
-	console.log(JSON.stringify(user));
 	const getUserBMR = async () => {
 		const res = await getBMRById(user.id);
 

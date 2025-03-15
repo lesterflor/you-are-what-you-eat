@@ -15,9 +15,11 @@ import { Button } from '../ui/button';
 import LogMacrosSummary from './log-macros-summary';
 
 export default function FoodLogList({
-	useScroller = true
+	useScroller = true,
+	iconPosition = 'right'
 }: {
 	useScroller?: boolean;
+	iconPosition?: 'right' | 'top';
 }) {
 	const [totalCals, setTotalCals] = useState(0);
 	const [sortList, setSortList] = useState<GetFoodEntry[]>([]);
@@ -135,18 +137,22 @@ export default function FoodLogList({
 				{bmr && (
 					<div
 						className={cn(
-							'text-3xl portrait:text-2xl text-center flex flex-col items-center gap-0',
+							'text-3xl portrait:text-2xl text-center flex flex-col items-center gap-0 relative font-bold',
 							Math.sign(remainingCals) === -1
-								? 'text-green-800'
-								: 'text-red-800'
+								? 'text-foreground'
+								: 'text-muted-foreground'
 						)}>
 						<div className='font-semibold'>
 							{formatUnit(remainingCals * -1)}
 						</div>
-						<div className='text-xs'>
-							{Math.sign(remainingCals) === -1 ? 'remaining' : 'over'}
+						<div className='text-xs font-normal'>
+							{Math.sign(remainingCals) === -1 ? 'cals remaining' : 'cals over'}
 						</div>
-						<div>
+						<div
+							className={cn(
+								'absolute',
+								iconPosition === 'top' ? '-top-5' : 'top-4 -right-6'
+							)}>
 							{Math.sign(remainingCals) === -1 ? (
 								<ThumbsUp className='w-4 h-4 animate-ping' />
 							) : (

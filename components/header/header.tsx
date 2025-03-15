@@ -34,7 +34,9 @@ export default async function SiteHeader() {
 
 				{log && log.data && (
 					<div>
-						<LogMacrosSummary compactMode={true}>
+						<LogMacrosSummary
+							compactMode={true}
+							useSkeleton={false}>
 							<div className='flex flex-row items-center gap-2'>
 								<Calculator className='w-4 h-4 animate-pulse' />
 								<div>{format(new Date(), 'PPP')}</div>

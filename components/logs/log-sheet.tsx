@@ -45,7 +45,7 @@ export default function LogSheet({
 					{formatDateTime(log.createdAt).dateOnly}
 				</SheetTitle>
 
-				<FoodLogList />
+				<FoodLogList iconPosition='top' />
 			</SheetContent>
 		</Sheet>
 	);

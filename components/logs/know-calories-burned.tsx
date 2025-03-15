@@ -8,11 +8,13 @@ import { Plus } from 'lucide-react';
 import { FaSpinner } from 'react-icons/fa';
 import { toast } from 'sonner';
 import { LogUpdateContext } from '@/contexts/log-context';
+import { Skeleton } from '../ui/skeleton';
 
 export default function KnowCaloriesBurned() {
 	const [log, setLog] = useState<GetLog>();
 	const [caloriesBurned, setCaloriesBurned] = useState(0);
 	const [submitting, setSubmitting] = useState(false);
+	const [fetching, setFetching] = useState(true);
 	const [inputVal, setInputVal] = useState(0);
 
 	const logContext = useContext(LogUpdateContext);
@@ -23,9 +25,12 @@ export default function KnowCaloriesBurned() {
 		if (res?.success && res.data) {
 			setLog(res.data as GetLog);
 		}
+
+		setFetching(false);
 	};
 
 	useEffect(() => {
+		setFetching(true);
 		getLog();
 	}, []);
 
@@ -37,7 +42,12 @@ export default function KnowCaloriesBurned() {
 
 	return (
 		<div className='border-2 rounded-md p-2 flex flex-col items-center gap-2 text-sm'>
-			<div>Known calories burned: {caloriesBurned}</div>
+			{fetching ? (
+				<Skeleton className='w-44 h-6' />
+			) : (
+				<div className='h-6'>Known calories burned: {caloriesBurned}</div>
+			)}
+
 			<div className='flex flex-row items-center gap-2'>
 				<Input
 					defaultValue={inputVal}
