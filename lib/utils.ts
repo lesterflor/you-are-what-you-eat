@@ -184,12 +184,17 @@ export function isToday(date: Date) {
 	);
 }
 
-export function getToday(hourAdjustment: number = 4) {
-	const serverAdjustedDate = new Date(
-		new Date().setHours(new Date().getHours() - hourAdjustment)
-	);
+export function getToday() {
+	const tday = new Date();
+	const timezoneOffset = tday.getTimezoneOffset();
 
-	const timezoneOffset = serverAdjustedDate.getTimezoneOffset();
+	let serverAdjustedDate = tday;
+
+	if (timezoneOffset !== 0) {
+		serverAdjustedDate = new Date(
+			new Date().setHours(new Date().getHours() - timezoneOffset)
+		);
+	}
 
 	const todayStart = new Date(
 		serverAdjustedDate.getFullYear(),
