@@ -1,5 +1,11 @@
 import { GetFoodEntry, GetLog } from '@/types';
-import { Calendar, CookingPot, Frown, Smile } from 'lucide-react';
+import {
+	Calendar,
+	ChartColumnBig,
+	CookingPot,
+	Frown,
+	Smile
+} from 'lucide-react';
 import React from 'react';
 import LogMacrosSummary from './log-macros-summary';
 import LogFoodCard from './log-food-card';
@@ -8,6 +14,14 @@ import { format } from 'date-fns';
 import { getUserBMR } from '@/actions/bmr-actions';
 import { cn, formatUnit, totalMacrosReducer } from '@/lib/utils';
 import TruncateSection from '../truncate-section';
+import {
+	Dialog,
+	DialogContent,
+	DialogTitle,
+	DialogTrigger
+} from '../ui/dialog';
+import { Button } from '../ui/button';
+import { LogChart } from './log-chart';
 
 export default async function LogEntry({ log }: { log: GetLog }) {
 	const bmrData = await getUserBMR();
@@ -30,8 +44,8 @@ export default async function LogEntry({ log }: { log: GetLog }) {
 				<div className='flex flex-col items-center gap-2'>
 					<div className='flex flex-row gap-2 items-center justify-center'>
 						<Calendar className='w-4 h-4 portrait:w-6 portrait:h-6  ' />
-						<div className='portrait:text-sm'>
-							{format(log.createdAt, 'PPP')}
+						<div className='portrait:text-sm flex flex-row items-center gap-4 justify-between flex-wrap w-full'>
+							<div>{format(log.createdAt, 'PPP')}</div>
 						</div>
 					</div>
 					{bmrData.data && (
@@ -70,6 +84,19 @@ export default async function LogEntry({ log }: { log: GetLog }) {
 									<Smile className='w-6 h-6' />
 								)}
 							</div>
+
+							<Dialog>
+								<DialogTrigger asChild>
+									<Button>
+										<ChartColumnBig className='w-4 h-4' />
+										View Chart
+									</Button>
+								</DialogTrigger>
+								<DialogContent className='max-w-[95vw]'>
+									<DialogTitle>{format(log.createdAt, 'PPP')}</DialogTitle>
+									<LogChart log={log} />
+								</DialogContent>
+							</Dialog>
 						</div>
 					)}
 				</div>

@@ -12,7 +12,7 @@ import SideMenu from './side-menu';
 import { getToday } from '@/lib/utils';
 
 export default async function SiteHeader() {
-	const { current, offset } = getToday();
+	const { current } = getToday();
 
 	const log = await createDailyLog();
 
@@ -43,7 +43,6 @@ export default async function SiteHeader() {
 							<div className='flex flex-row items-center gap-2'>
 								<Calculator className='w-4 h-4 animate-pulse' />
 								<div>{format(current, 'PP hh:mm a')}</div>
-								<div>timezone offset: {offset}</div>
 							</div>
 						</LogMacrosSummary>
 					</div>
