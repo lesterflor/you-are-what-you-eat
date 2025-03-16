@@ -189,6 +189,8 @@ export function getToday(hourAdjustment: number = 4) {
 		new Date().setHours(new Date().getHours() - hourAdjustment)
 	);
 
+	const timezoneOffset = serverAdjustedDate.getTimezoneOffset();
+
 	const todayStart = new Date(
 		serverAdjustedDate.getFullYear(),
 		serverAdjustedDate.getMonth(),
@@ -203,7 +205,8 @@ export function getToday(hourAdjustment: number = 4) {
 	return {
 		current: serverAdjustedDate,
 		todayStart: todayStart.toISOString(),
-		todayEnd: todayEnd.toISOString()
+		todayEnd: todayEnd.toISOString(),
+		offset: timezoneOffset / 60
 	};
 }
 
