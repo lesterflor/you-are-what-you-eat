@@ -40,7 +40,9 @@ export default function LogSheet({
 					<FileClock className='w-4 h-4' /> Today&apos;s log
 				</Button>
 			</SheetTrigger>
-			<SheetContent side='left'>
+			<SheetContent
+				side='left'
+				className='portrait:min-w-[85vw]'>
 				<SheetTitle className='text-md flex flex-row items-center justify-center gap-2 pb-2'>
 					<CalendarSearch className='w-4 h-4' />
 					{format(log.createdAt, 'PP hh:mm a')}

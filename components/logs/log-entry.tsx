@@ -89,7 +89,7 @@ export default async function LogEntry({ log }: { log: GetLog }) {
 								<DialogTrigger asChild>
 									<Button>
 										<ChartColumnBig className='w-4 h-4' />
-										View Chart
+										View Charts
 									</Button>
 								</DialogTrigger>
 								<DialogContent className='max-w-[95vw]'>

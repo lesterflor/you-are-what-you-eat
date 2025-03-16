@@ -102,7 +102,7 @@ export default function FoodLogList({
 						<PopoverTrigger asChild>
 							<Button className='p-1 text-md portrait:text-sm font-semibold flex flex-row gap-3 w-full'>
 								<IoFastFoodOutline className='w-4 h-4 animate-pulse' />
-								Current Cals {totalCals}
+								Current Calories {totalCals}
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent>

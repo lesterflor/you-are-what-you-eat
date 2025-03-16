@@ -56,7 +56,7 @@ export default function KnowCaloriesBurned() {
 
 			<div className='flex flex-row items-center gap-2'>
 				<Input
-					defaultValue={inputVal}
+					//defaultValue={inputVal}
 					onChange={(e) => {
 						setInputVal(Number(e.target.value));
 					}}
