@@ -1,5 +1,5 @@
 import { GetFoodEntry, GetLog } from '@/types';
-import { Calendar, Frown, Smile } from 'lucide-react';
+import { Calendar, CookingPot, Frown, Smile } from 'lucide-react';
 import React from 'react';
 import LogMacrosSummary from './log-macros-summary';
 import LogFoodCard from './log-food-card';
@@ -14,7 +14,7 @@ export default async function LogEntry({ log }: { log: GetLog }) {
 
 	const bmr = bmrData.data ? bmrData.data.bmr : 0;
 	const kcBurned =
-		(log?.knownCaloriesBurned &&
+		(log.knownCaloriesBurned &&
 			log.knownCaloriesBurned.length > 0 &&
 			log.knownCaloriesBurned[0].calories) ||
 		0;
@@ -45,6 +45,14 @@ export default async function LogEntry({ log }: { log: GetLog }) {
 							<div className='flex flex-row items-center justify-start gap-2 rounded-md border-2 p-1'>
 								<span className='text-muted-foreground'>Total Calories:</span>{' '}
 								{formatUnit(calories)}
+								<span className='text-muted-foreground'>calories</span>
+							</div>
+
+							<div className='flex flex-row items-center justify-start gap-2 rounded-md border-2 p-1'>
+								<span className='text-muted-foreground'>
+									Known calories burned:
+								</span>{' '}
+								{formatUnit(kcBurned)}
 								<span className='text-muted-foreground'>calories</span>
 							</div>
 
@@ -83,9 +91,26 @@ export default async function LogEntry({ log }: { log: GetLog }) {
 				</div>
 			</div>
 
-			<TruncateSection
-				allowSeeMore={true}
-				pixelHeight={300}>
+			{log.foodItems.length > 1 ? (
+				<TruncateSection
+					allowSeeMore={true}
+					label='See more'
+					pixelHeight={300}>
+					<div className='flex portrait:flex-col md:grid grid-cols-2 flex-col gap-4'>
+						{log.foodItems.map((food, indx) => (
+							<LogFoodCard
+								key={`${food.id}-${indx}`}
+								item={food as GetFoodEntry}
+							/>
+						))}
+					</div>
+				</TruncateSection>
+			) : log.foodItems.length === 0 ? (
+				<div className='flex flex-row items-center gap-2 text-muted-foreground'>
+					<CookingPot className='w-4 h-4' />
+					No food was entered on this day
+				</div>
+			) : (
 				<div className='flex portrait:flex-col md:grid grid-cols-2 flex-col gap-4'>
 					{log.foodItems.map((food, indx) => (
 						<LogFoodCard
@@ -94,7 +119,7 @@ export default async function LogEntry({ log }: { log: GetLog }) {
 						/>
 					))}
 				</div>
-			</TruncateSection>
+			)}
 
 			<Separator />
 			<br />

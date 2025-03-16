@@ -6,11 +6,13 @@ import { useEffect, useRef, useState } from 'react';
 export default function TruncateSection({
 	children,
 	allowSeeMore = true,
-	pixelHeight = 120
+	pixelHeight = 120,
+	label = 'Read more'
 }: {
 	children: React.ReactNode;
 	allowSeeMore?: boolean;
 	pixelHeight?: number;
+	label?: string;
 }) {
 	const [hasClickedSeeMore, setHasClickedSeeMore] = useState(false);
 
@@ -27,9 +29,9 @@ export default function TruncateSection({
 
 	return (
 		<>
-			<div className='flex flex-col items-end'>
+			<div className='flex flex-col items-end relative'>
 				<div
-					className='w-full text-[110%] absolute opacity-0 pointer-events-none'
+					className='w-full text-[110%] absolute opacity-0 -top-[100vh] pointer-events-none'
 					ref={htmlDiv}>
 					{children}
 				</div>
@@ -59,7 +61,7 @@ export default function TruncateSection({
 							onClick={() => {
 								setHasClickedSeeMore(true);
 							}}>
-							... Read more
+							... {label}
 						</div>
 					</div>
 				) : (

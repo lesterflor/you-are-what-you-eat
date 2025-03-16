@@ -67,7 +67,7 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 						onClick={() => {
 							setIsOpen(!isOpen);
 						}}
-						title='View Past Logs'
+						title='Log History'
 					/>
 
 					{pathname !== '/foods' && (

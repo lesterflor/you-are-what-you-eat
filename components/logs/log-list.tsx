@@ -124,7 +124,7 @@ export default function FoodLogList({
 							</Badge>
 						)}
 
-						{calsBurned && (
+						{calsBurned > 0 && (
 							<Badge
 								variant='outline'
 								className='text-sm font-normal portrait:text-sm flex flex-row gap-3'>

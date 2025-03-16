@@ -37,7 +37,7 @@ export default function LogSheet({
 				asChild
 				className={cn(pathname === '/' && 'hidden')}>
 				<Button>
-					<FileClock className='w-4 h-4' /> View today&apos;s log
+					<FileClock className='w-4 h-4' /> Today&apos;s log
 				</Button>
 			</SheetTrigger>
 			<SheetContent side='left'>

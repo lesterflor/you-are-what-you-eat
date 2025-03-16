@@ -11,6 +11,8 @@ import { format } from 'date-fns';
 import SideMenu from './side-menu';
 
 export default async function SiteHeader() {
+	const currDate = new Date().setHours(new Date().getHours() + 4);
+
 	const log = await createDailyLog();
 
 	return (
@@ -39,7 +41,7 @@ export default async function SiteHeader() {
 							useSkeleton={false}>
 							<div className='flex flex-row items-center gap-2'>
 								<Calculator className='w-4 h-4 animate-pulse' />
-								<div>{format(new Date(), 'PP hh:mm a')}</div>
+								<div>{format(currDate, 'PP hh:mm a')}</div>
 							</div>
 						</LogMacrosSummary>
 					</div>
