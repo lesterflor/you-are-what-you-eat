@@ -11,7 +11,7 @@ import { format } from 'date-fns';
 import SideMenu from './side-menu';
 
 export default async function SiteHeader() {
-	const currDate = new Date().setHours(new Date().getHours() + 4);
+	const currDate = new Date().setHours(new Date().getHours() - 4);
 
 	const log = await createDailyLog();
 
