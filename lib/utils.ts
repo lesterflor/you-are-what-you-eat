@@ -184,25 +184,24 @@ export function isToday(date: Date) {
 	);
 }
 
-export function getToday() {
-	const today = new Date();
+export function getToday(hourAdjustment: number = 4) {
+	const serverAdjustedDate = new Date(
+		new Date().setHours(new Date().getHours() - hourAdjustment)
+	);
+
 	const todayStart = new Date(
-		today.getFullYear(),
-		today.getMonth(),
-		today.getDate()
+		serverAdjustedDate.getFullYear(),
+		serverAdjustedDate.getMonth(),
+		serverAdjustedDate.getDate()
 	);
 	const todayEnd = new Date(
-		today.getFullYear(),
-		today.getMonth(),
-		today.getDate() + 1
+		serverAdjustedDate.getFullYear(),
+		serverAdjustedDate.getMonth(),
+		serverAdjustedDate.getDate() + 1
 	);
 
-	// const todayStart = new Date();
-	// todayStart.setHours(0, 0, 0, 0); // Set to the start of today
-	// const todayEnd = new Date();
-	// todayEnd.setHours(23, 59, 59, 999); // Set to the end of today
-
 	return {
+		current: serverAdjustedDate,
 		todayStart: todayStart.toISOString(),
 		todayEnd: todayEnd.toISOString()
 	};
