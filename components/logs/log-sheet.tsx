@@ -4,10 +4,11 @@ import { GetLog } from '@/types';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../ui/sheet';
 import { Button } from '../ui/button';
 import FoodLogList from './log-list';
-import { cn, formatDateTime } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { CalendarSearch, FileClock } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { format } from 'date-fns';
 
 export default function LogSheet({
 	log,
@@ -42,7 +43,7 @@ export default function LogSheet({
 			<SheetContent side='left'>
 				<SheetTitle className='text-md flex flex-row items-center justify-center gap-2 pb-2'>
 					<CalendarSearch className='w-4 h-4' />
-					{formatDateTime(log.createdAt).dateOnly}
+					{format(log.createdAt, 'PP hh:mm a')}
 				</SheetTitle>
 
 				<FoodLogList iconPosition='top' />

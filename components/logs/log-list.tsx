@@ -149,17 +149,19 @@ export default function FoodLogList({
 						<div className='text-xs font-normal'>
 							{Math.sign(remainingCals) === -1 ? 'cals remaining' : 'cals over'}
 						</div>
-						<div
-							className={cn(
-								'absolute',
-								iconPosition === 'top' ? '-top-5' : 'top-4 -right-6'
-							)}>
-							{Math.sign(remainingCals) === -1 ? (
-								<ThumbsUp className='w-4 h-4 animate-ping' />
-							) : (
-								<ThumbsDown className='w-4 h-4 animate-ping' />
-							)}
-						</div>
+						{totalCals > 0 && (
+							<div
+								className={cn(
+									'absolute',
+									iconPosition === 'top' ? '-top-5' : 'top-4 -right-6'
+								)}>
+								{Math.sign(remainingCals) === -1 ? (
+									<ThumbsUp className='w-4 h-4 animate-ping' />
+								) : (
+									<ThumbsDown className='w-4 h-4 animate-ping' />
+								)}
+							</div>
+						)}
 					</div>
 				)}
 			</div>
