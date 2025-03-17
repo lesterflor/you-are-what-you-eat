@@ -29,7 +29,7 @@ export default async function Home() {
 					<div className='relative'>
 						<FoodLogList
 							useScroller={true}
-							className='portrait:h-[55vh] h-[45vh]'
+							className='portrait:h-[65vh] h-[45vh]'
 						/>
 					</div>
 				</div>
