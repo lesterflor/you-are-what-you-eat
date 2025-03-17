@@ -148,11 +148,9 @@ export default function BMRCalculatorForm() {
 	};
 
 	return (
-		<div className='flex flex-col gap-2'>
-			<div className='text-lg font-semibold'></div>
-
+		<div className='flex flex-col items-center gap-2'>
 			{hasUserData ? (
-				<Card>
+				<Card className='lg:w-[50vw]'>
 					<CardHeader className='flex flex-row items-center gap-2 font-semibold'>
 						BMR Calculator
 					</CardHeader>

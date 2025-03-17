@@ -6,14 +6,15 @@ import { foodItemSchema } from '@/lib/validators';
 import { FoodItem, GetFoodItem } from '@/types';
 import { revalidatePath } from 'next/cache';
 
-export async function getFoodItems(name: string = '') {
+export async function getFoodItems(name: string = '', category = '') {
 	try {
 		const items = await prisma.foodItem.findMany({
 			where: {
 				name: {
 					contains: name ? name : undefined,
 					mode: 'insensitive'
-				}
+				},
+				category: category ? category : undefined
 			},
 			orderBy: {
 				createdAt: 'desc'

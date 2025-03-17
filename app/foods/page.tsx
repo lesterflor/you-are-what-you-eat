@@ -1,5 +1,6 @@
 import { getFoodItems } from '@/actions/food-actions';
 import AddFoodSheet from '@/components/food-items/add-food-sheet';
+import FoodCategoryFilter from '@/components/food-items/food-category-filter';
 import FoodItemCard from '@/components/food-items/food-item-card';
 import SearchFoodInput from '@/components/food-items/search-food-input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -14,11 +15,12 @@ export const metadata: Metadata = {
 export default async function FoodsPage(props: {
 	searchParams: Promise<{
 		q: string;
+		category: string;
 	}>;
 }) {
-	const { q: searchQuery = '' } = await props.searchParams;
+	const { q: searchQuery = '', category = '' } = await props.searchParams;
 	const session = await auth();
-	const res = await getFoodItems(searchQuery);
+	const res = await getFoodItems(searchQuery, category);
 
 	const { data: foods = [] } = res;
 
@@ -29,11 +31,12 @@ export default async function FoodsPage(props: {
 					Food Database
 					{session && <AddFoodSheet />}
 				</div>
-				<div className='text-2xl font-bold flex flex-row justify-between gap-4'>
+				<div className='text-2xl font-bold flex flex-row portrait:flex-col justify-between gap-4 portrait:gap-2'>
 					<SearchFoodInput />
+					<FoodCategoryFilter compactMode={true} />
 				</div>
-				<ScrollArea className='w-full h-[60vh] pr-3'>
-					<div className='flex flex-col gap-6'>
+				<ScrollArea className='w-full h-[60vh] portrait:h-[50vh] pr-3'>
+					<div className='flex flex-col gap-6 lg:grid lg:grid-cols-2'>
 						{foods && foods.length > 0 ? (
 							foods.map((item) => (
 								<FoodItemCard

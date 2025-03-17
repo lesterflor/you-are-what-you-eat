@@ -3,13 +3,22 @@
 import { useEffect, useState } from 'react';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 import FoodCategoryIconMapper from './food-category-icon-mapper';
+import { cn } from '@/lib/utils';
+import { Badge } from '../ui/badge';
+import { Filter } from 'lucide-react';
 
 export default function FoodCategoryPicker({
 	value = '',
-	onSelect
+	onSelect,
+	compactMode = false,
+	showFilterIcon = false,
+	iconsOnly = false
 }: {
 	onSelect: (data: string) => void;
 	value?: string;
+	compactMode?: boolean;
+	showFilterIcon?: boolean;
+	iconsOnly?: boolean;
 }) {
 	const [selected, setSelected] = useState(value);
 
@@ -20,39 +29,66 @@ export default function FoodCategoryPicker({
 	}, [selected]);
 
 	return (
-		<div className='flex flex-row gap-2 flex-wrap p-2 rounded-md border-2'>
+		<div
+			className={cn(
+				'flex flex-row gap-1 p-1 rounded-md border-2',
+				compactMode && 'border-0 p-0 gap-0'
+			)}>
+			{showFilterIcon && (
+				<Badge variant='outline'>
+					<Filter className='w-4 h-4' />
+				</Badge>
+			)}
 			<ToggleGroup
-				className='flex flex-row gap-x-2 gap-y-0 flex-wrap'
+				size='sm'
+				className={cn(
+					'flex flex-row gap-x-1 gap-y-0 flex-wrap',
+					compactMode && 'gap-0'
+				)}
 				type='single'
 				value={selected}
 				onValueChange={setSelected}>
-				<ToggleGroupItem value='veg'>
+				<ToggleGroupItem
+					value='veg'
+					className={cn(compactMode && 'text-xs py-0')}>
 					<FoodCategoryIconMapper type='veg' />
-					Vegetable
+					{!iconsOnly ? (compactMode ? 'Veg' : 'Vegetable') : ''}
 				</ToggleGroupItem>
-				<ToggleGroupItem value='meat'>
+				<ToggleGroupItem
+					value='meat'
+					className={cn(compactMode && 'text-xs')}>
 					<FoodCategoryIconMapper type='meat' />
-					Meat
+					{!iconsOnly && 'Meat'}
 				</ToggleGroupItem>
-				<ToggleGroupItem value='fruit'>
+				<ToggleGroupItem
+					value='fruit'
+					className={cn(compactMode && 'text-xs')}>
 					<FoodCategoryIconMapper type='fruit' />
-					Fruit
+					{!iconsOnly && 'Fruit'}
 				</ToggleGroupItem>
-				<ToggleGroupItem value='grain'>
+				<ToggleGroupItem
+					value='grain'
+					className={cn(compactMode && 'text-xs')}>
 					<FoodCategoryIconMapper type='grain' />
-					Grain
+					{!iconsOnly && 'Grain'}
 				</ToggleGroupItem>
-				<ToggleGroupItem value='legume'>
+				<ToggleGroupItem
+					value='legume'
+					className={cn(compactMode && 'text-xs')}>
 					<FoodCategoryIconMapper type='legume' />
-					Legume
+					{!iconsOnly ? (compactMode ? 'Leg' : 'Legume') : ''}
 				</ToggleGroupItem>
-				<ToggleGroupItem value='nutSeed'>
+				<ToggleGroupItem
+					value='nutSeed'
+					className={cn(compactMode && 'text-xs')}>
 					<FoodCategoryIconMapper type='nutSeed' />
-					Nuts
+					{!iconsOnly && 'Nuts'}
 				</ToggleGroupItem>
-				<ToggleGroupItem value='other'>
+				<ToggleGroupItem
+					value='other'
+					className={cn(compactMode && 'text-xs')}>
 					<FoodCategoryIconMapper type='other' />
-					Other
+					{!iconsOnly && 'Other'}
 				</ToggleGroupItem>
 			</ToggleGroup>
 		</div>

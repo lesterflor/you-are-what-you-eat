@@ -11,14 +11,16 @@ import { ScrollArea } from '../ui/scroll-area';
 import { useDebounce } from 'use-debounce';
 import InputWithButton from '../input-with-button';
 import FoodItemCardSkeleton from '../skeletons/food-item-card-skeleton';
+import FoodCategoryPicker from './food-categories';
 
 export default function FoodListSheet() {
 	const [foods, setFoods] = useState<GetFoodItem[]>([]);
 	const [loading, setLoading] = useState(false);
+	const [category, setCategory] = useState('');
 
 	const getFoods = async (term: string = '') => {
 		setLoading(true);
-		const res = await getFoodItems(term);
+		const res = await getFoodItems(term, category);
 
 		if (res.success && res.data && res.data?.length > 0) {
 			setFoods(res.data as GetFoodItem[]);
@@ -39,6 +41,10 @@ export default function FoodListSheet() {
 	useEffect(() => {
 		getFoods(search);
 	}, [debounced]);
+
+	useEffect(() => {
+		getFoods(search);
+	}, [category]);
 
 	return (
 		<>
@@ -89,7 +95,7 @@ export default function FoodListSheet() {
 						</Button>
 					</SheetTrigger>
 					<SheetContent side='top'>
-						<SheetTitle className='flex flex-row items-center gap-2 pb-4'>
+						<SheetTitle className='flex flex-col items-center gap-2 pb-4'>
 							<InputWithButton
 								className='w-[90%]'
 								onChange={(val) => {
@@ -97,6 +103,14 @@ export default function FoodListSheet() {
 								}}>
 								<Search className='w-4 h-4 text-muted-foreground' />
 							</InputWithButton>
+							<FoodCategoryPicker
+								showFilterIcon={true}
+								iconsOnly={true}
+								onSelect={(value) => {
+									setCategory(value);
+								}}
+								compactMode={true}
+							/>
 						</SheetTitle>
 						<ScrollArea className='h-[80vh] w-full pr-5'>
 							<div className='flex flex-col gap-4 pb-5 w-[100%]'>

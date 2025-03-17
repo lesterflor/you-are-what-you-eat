@@ -13,6 +13,7 @@ import { ThumbsDown, ThumbsUp } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
 import LogMacrosSummary from './log-macros-summary';
+import LogFoodCardSkeleton from '../skeletons/log-food-card-skeleton';
 
 export default function FoodLogList({
 	useScroller = true,
@@ -30,6 +31,7 @@ export default function FoodLogList({
 	const [bmr, setBmr] = useState<BaseMetabolicRateType>();
 	const [calsBurned, setCalsBurned] = useState(0);
 	const [remainingCals, setRemainingCals] = useState(0);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const logContext = useContext(LogUpdateContext);
 
@@ -38,6 +40,7 @@ export default function FoodLogList({
 	}, []);
 
 	const getLog = async () => {
+		setIsLoading(true);
 		const res = await createDailyLog();
 
 		if (res?.success && res.data) {
@@ -55,6 +58,8 @@ export default function FoodLogList({
 				setCalsBurned(res.data.knownCaloriesBurned[0].calories);
 			}
 		}
+
+		setIsLoading(false);
 	};
 
 	useEffect(() => {
@@ -177,13 +182,21 @@ export default function FoodLogList({
 					)}>
 					<br />
 					<div className='flex flex-col gap-4 w-full'>
-						<div className='flex flex-col gap-4'>
-							{sortList.map((item, indx) => (
-								<LogFoodCard
-									item={item}
-									key={`${item}-${indx}`}
-								/>
-							))}
+						<div className='flex flex-col gap-4 lg:grid grid-cols-2'>
+							{isLoading ? (
+								Array.from({ length: 3 }).map((_v, indx) => (
+									<LogFoodCardSkeleton key={indx} />
+								))
+							) : (
+								<>
+									{sortList.map((item, indx) => (
+										<LogFoodCard
+											item={item}
+											key={`${item}-${indx}`}
+										/>
+									))}
+								</>
+							)}
 						</div>
 					</div>
 					<br />

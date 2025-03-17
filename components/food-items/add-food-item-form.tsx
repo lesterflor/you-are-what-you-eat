@@ -24,12 +24,17 @@ import { LoaderIcon, Plus } from 'lucide-react';
 import { Card, CardContent } from '../ui/card';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { GetUser } from '@/types';
 
 export default function AddFoodItemForm({
 	onSuccess
 }: {
 	onSuccess?: () => void;
 }) {
+	const { data: session } = useSession();
+	const user = session?.user as GetUser;
+
 	const form = useForm<z.infer<typeof foodItemSchema>>({
 		resolver: zodResolver(foodItemSchema),
 		defaultValues: {
@@ -41,7 +46,8 @@ export default function AddFoodItemForm({
 			proteinGrams: 0,
 			calories: 0,
 			servingSize: 1,
-			description: ''
+			description: '',
+			userId: user && user.id ? user.id : ''
 		}
 	});
 
@@ -57,6 +63,10 @@ export default function AddFoodItemForm({
 		const fatCal = CaloricGram(values.fatGrams, 'FAT').calories;
 
 		values.calories = carbCal + protCal + fatCal;
+
+		if (user.id) {
+			values.userId = user.id;
+		}
 
 		const res = await addFoodItem(values);
 
