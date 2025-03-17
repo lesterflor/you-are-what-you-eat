@@ -19,14 +19,27 @@ export default function FoodCategoryFilter({
 	}, [filter]);
 
 	return (
-		<div>
-			<FoodCategoryPicker
-				showFilterIcon={true}
-				compactMode={compactMode}
-				onSelect={(value) => {
-					setFilter(value);
-				}}
-			/>
-		</div>
+		<>
+			<div className='portrait:hidden'>
+				<FoodCategoryPicker
+					showFilterIcon={true}
+					compactMode={compactMode}
+					onSelect={(value) => {
+						setFilter(value);
+					}}
+				/>
+			</div>
+
+			<div className='hidden portrait:flex items-center flex-col'>
+				<FoodCategoryPicker
+					iconsOnly={true}
+					showFilterIcon={true}
+					compactMode={compactMode}
+					onSelect={(value) => {
+						setFilter(value);
+					}}
+				/>
+			</div>
+		</>
 	);
 }
