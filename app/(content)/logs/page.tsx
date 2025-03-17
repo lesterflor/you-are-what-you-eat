@@ -2,8 +2,13 @@ import { getLogsByUserId } from '@/actions/log-actions';
 import LogEntry from '@/components/logs/log-entry';
 import { auth } from '@/db/auth';
 import { GetLog, GetUser } from '@/types';
+import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import React from 'react';
+
+export const metadata: Metadata = {
+	title: 'Log History'
+};
 
 export default async function LogsPage() {
 	const session = await auth();

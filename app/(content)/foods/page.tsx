@@ -4,6 +4,11 @@ import FoodItemCard from '@/components/food-items/food-item-card';
 import SearchFoodInput from '@/components/food-items/search-food-input';
 import { auth } from '@/db/auth';
 import { GetFoodItem } from '@/types';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+	title: 'Food Database'
+};
 
 export default async function FoodsPage(props: {
 	searchParams: Promise<{

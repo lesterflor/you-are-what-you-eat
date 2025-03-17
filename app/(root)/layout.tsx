@@ -14,7 +14,8 @@ export const metadata: Metadata = {
 		default: 'You are what you eat'
 	},
 	description:
-		'What you put in your mouth determines what your body is composed of.  Find out the composition of your body by tracking what you eat.'
+		'What you put in your mouth determines what your body is composed of.  Find out the composition of your body by tracking what you eat.',
+	authors: [{ name: 'Lester Flor', url: 'https://lester-flor.vercel.app' }]
 };
 
 export default async function RootLayout({

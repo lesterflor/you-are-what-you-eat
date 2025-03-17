@@ -2,7 +2,12 @@ import BMRCalculatorForm from '@/components/bmr/bmr-calculator';
 import TruncateSection from '@/components/truncate-section';
 import { auth } from '@/db/auth';
 import { GetUser } from '@/types';
+import { Metadata } from 'next';
 import React from 'react';
+
+export const metadata: Metadata = {
+	title: '(BMR) Base Metabolic Rate'
+};
 
 export default async function BMRPage() {
 	const session = await auth();
