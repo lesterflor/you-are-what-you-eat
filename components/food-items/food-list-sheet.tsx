@@ -112,7 +112,7 @@ export default function FoodListSheet() {
 								compactMode={true}
 							/>
 						</SheetTitle>
-						<ScrollArea className='h-[80vh] w-full pr-5'>
+						<ScrollArea className='h-[70vh] w-full pr-5'>
 							<div className='flex flex-col gap-4 pb-5 w-[100%]'>
 								{loading ? (
 									Array.from({ length: 2 }).map((_v, indx) => (
