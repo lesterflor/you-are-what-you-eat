@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/sonner';
 import { SessionProvider } from 'next-auth/react';
@@ -16,6 +16,13 @@ export const metadata: Metadata = {
 	description:
 		'What you put in your mouth determines what your body is composed of.  Find out the composition of your body by tracking what you eat.',
 	authors: [{ name: 'Lester Flor', url: 'https://lester-flor.vercel.app' }]
+};
+
+export const viewport: Viewport = {
+	width: 'device-width',
+	initialScale: 1,
+	maximumScale: 1,
+	userScalable: false
 };
 
 export default async function RootLayout({
