@@ -81,7 +81,7 @@ export function LogChart({
 			const { carbs, protein, fat } = totalMacrosReducer(log.foodItems);
 
 			setPieData([
-				{ name: 'Carbohydrate', value: carbs },
+				{ name: 'Carbs', value: carbs },
 				{ name: 'Protein', value: protein },
 				{ name: 'Fat', value: fat }
 			]);
@@ -97,7 +97,7 @@ export function LogChart({
 					defaultValue={type}>
 					<ToggleGroupItem value='macros'>Macros</ToggleGroupItem>
 					<ToggleGroupItem value='calories'>Calories</ToggleGroupItem>
-					<ToggleGroupItem value='totals'>Macros Percentages</ToggleGroupItem>
+					<ToggleGroupItem value='totals'>Macro Percentages</ToggleGroupItem>
 				</ToggleGroup>
 			</div>
 
@@ -105,7 +105,7 @@ export function LogChart({
 				<div className='h-full w-full flex flex-col items-center justify-between'>
 					<ChartContainer
 						config={pieChartConfig}
-						className='min-h-[50vh] portrait:h-[75vh] portrait:w-[85vw] mr-4'>
+						className='min-h-[50vh] portrait:h-[75vh] portrait:w-[80vw]'>
 						<PieChart>
 							<Pie
 								data={pieData}
@@ -113,7 +113,7 @@ export function LogChart({
 								cy='50%'
 								labelLine={false}
 								label={(value) => renderCustomizedLabel(value)}
-								outerRadius={150}
+								outerRadius={140}
 								fill='#8884d8'
 								dataKey='value'>
 								{pieData.map((entry, index) => (
@@ -123,6 +123,8 @@ export function LogChart({
 									/>
 								))}
 							</Pie>
+
+							<ChartTooltip content={<ChartTooltipContent />} />
 						</PieChart>
 					</ChartContainer>
 				</div>
@@ -216,7 +218,6 @@ export function LogChart({
 									offset={10}
 									axisLine={false}
 									type='category'
-									//tickFormatter={(value) => value.slice(0, 3)}
 								/>
 
 								<YAxis
@@ -269,16 +270,14 @@ export function LogChart({
 	);
 }
 
-const RADIAN = Math.PI / 180;
+const RADIAN = Math.PI / 165;
 const renderCustomizedLabel = ({
 	cx,
 	cy,
 	midAngle,
 	innerRadius,
 	outerRadius,
-	percent,
-	value,
-	name
+	percent
 }: {
 	cx: number;
 	cy: number;
@@ -300,7 +299,7 @@ const renderCustomizedLabel = ({
 			fill='white'
 			textAnchor={x > cx ? 'start' : 'end'}
 			dominantBaseline='central'>
-			{`${name} - (${formatUnit(value)} g) ${formatUnit(percent * 100)}%`}
+			<tspan dy='1.2em'>{`${formatUnit(percent * 100)}%`}</tspan>
 		</text>
 	);
 };

@@ -48,7 +48,7 @@ export default function AddFoodSheet({ onAdded }: { onAdded?: () => void }) {
 					onOpenChange={setIsOpen}>
 					<SheetTrigger asChild>
 						<Button>
-							<UtensilsCrossed className='w-6 h-6' /> Add Food Item
+							<UtensilsCrossed className='w-6 h-6' /> New Food Item
 						</Button>
 					</SheetTrigger>
 

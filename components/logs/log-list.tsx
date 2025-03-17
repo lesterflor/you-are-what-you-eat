@@ -16,10 +16,12 @@ import LogMacrosSummary from './log-macros-summary';
 
 export default function FoodLogList({
 	useScroller = true,
-	iconPosition = 'right'
+	iconPosition = 'right',
+	className
 }: {
 	useScroller?: boolean;
 	iconPosition?: 'right' | 'top';
+	className?: string;
 }) {
 	const [totalCals, setTotalCals] = useState(0);
 	const [sortList, setSortList] = useState<GetFoodEntry[]>([]);
@@ -168,7 +170,11 @@ export default function FoodLogList({
 
 			{useScroller ? (
 				<ScrollArea
-					className={cn('h-[80vh] pr-5 mt-12 w-full', bmr && 'h-[72vh] mt-20')}>
+					className={cn(
+						'h-[80vh] pr-5 mt-12 w-full',
+						bmr && 'h-[72vh] mt-20',
+						className
+					)}>
 					<br />
 					<div className='flex flex-col gap-4 w-full'>
 						<div className='flex flex-col gap-4'>

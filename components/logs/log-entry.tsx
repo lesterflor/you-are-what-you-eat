@@ -45,7 +45,9 @@ export default async function LogEntry({ log }: { log: GetLog }) {
 					<div className='flex flex-row gap-2 items-center justify-center'>
 						<Calendar className='w-4 h-4 portrait:w-6 portrait:h-6  ' />
 						<div className='portrait:text-sm flex flex-row items-center gap-4 justify-between flex-wrap w-full'>
-							<div>{format(log.createdAt, 'PPP')}</div>
+							<div className='portrait:text-lg font-semibold'>
+								{format(log.createdAt, 'PP')}
+							</div>
 						</div>
 					</div>
 					{bmrData.data && (

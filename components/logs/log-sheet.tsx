@@ -4,7 +4,7 @@ import { GetLog } from '@/types';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../ui/sheet';
 import { Button } from '../ui/button';
 import FoodLogList from './log-list';
-import { cn } from '@/lib/utils';
+import { cn, getToday } from '@/lib/utils';
 import { CalendarSearch, FileClock } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -45,7 +45,7 @@ export default function LogSheet({
 				className='portrait:min-w-[85vw]'>
 				<SheetTitle className='text-md flex flex-row items-center justify-center gap-2 pb-2'>
 					<CalendarSearch className='w-4 h-4' />
-					{format(log.createdAt, 'PP hh:mm a')}
+					{format(getToday().current, 'PP hh:mm a')}
 				</SheetTitle>
 
 				<FoodLogList iconPosition='top' />
