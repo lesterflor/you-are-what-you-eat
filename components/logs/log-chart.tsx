@@ -3,8 +3,11 @@
 import {
 	Bar,
 	CartesianGrid,
+	Cell,
 	ComposedChart,
 	Line,
+	Pie,
+	PieChart,
 	XAxis,
 	YAxis
 } from 'recharts';
@@ -21,6 +24,7 @@ import { FoodEntry, GetLog } from '@/types';
 import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
+import { formatUnit, totalMacrosReducer } from '@/lib/utils';
 
 const chartConfig = {
 	calories: {
@@ -59,6 +63,7 @@ export function LogChart({
 }) {
 	const [logData, setLogData] = useState<LogDataType[]>();
 	const [type, setType] = useState(chartType as string);
+	const [pieData, setPieData] = useState<PieItemType[]>([]);
 
 	useEffect(() => {
 		if (log.foodItems.length > 0) {
@@ -72,84 +77,252 @@ export function LogChart({
 			}));
 
 			setLogData(dataMap);
+
+			const { carbs, protein, fat } = totalMacrosReducer(log.foodItems);
+
+			setPieData([
+				{ name: 'Carbohydrate', value: carbs },
+				{ name: 'Protein', value: protein },
+				{ name: 'Fat', value: fat }
+			]);
 		}
 	}, []);
 
 	return (
-		<div className='flex flex-col gap-2'>
-			<div>
+		<div className='flex flex-col gap-2 justify-start items-start h-full'>
+			<div className='w-full text-center'>
 				<ToggleGroup
 					type='single'
 					onValueChange={setType}
 					defaultValue={type}>
 					<ToggleGroupItem value='macros'>Macros</ToggleGroupItem>
 					<ToggleGroupItem value='calories'>Calories</ToggleGroupItem>
+					<ToggleGroupItem value='totals'>Macros Percentages</ToggleGroupItem>
 				</ToggleGroup>
 			</div>
-			<ChartContainer
-				config={chartConfig}
-				className='min-h-[200px] w-full mr-4'>
-				<ComposedChart
-					data={logData}
-					barSize={5}
-					compact={false}
-					layout='horizontal'>
-					<CartesianGrid vertical={false} />
-					<XAxis
-						angle={-70}
-						className='text-xs'
-						dataKey='eatenAt'
-						tickLine={false}
-						tickMargin={25}
-						axisLine={false}
-						//tickFormatter={(value) => value.slice(0, 3)}
-					/>
 
-					<YAxis
-						dataKey={type === 'macros' ? 'totalGrams' : 'calories'}
-						tickLine={false}
-						tickMargin={10}
-						axisLine={false}
-						label={{
-							value: type === 'macros' ? 'Total grams' : 'Calories',
-							angle: -90,
-							position: 'insideLeft'
-						}}
-					/>
-					<ChartTooltip content={<ChartTooltipContent />} />
-					<ChartLegend
-						className='mt-4'
-						content={<ChartLegendContent />}
-					/>
-					{type === 'macros' ? (
-						<>
-							<Bar
-								dataKey='carb'
-								fill='var(--color-carb)'
-								radius={2}
-							/>
-							<Bar
-								dataKey='protein'
-								fill='var(--color-protein)'
-								radius={2}
-							/>
-							<Bar
-								dataKey='fat'
-								fill='var(--color-fat)'
-								radius={2}
-							/>
-						</>
-					) : (
-						<>
-							<Line
-								type='monotone'
-								dataKey='calories'
-								stroke='#ff7300'
-							/>
-						</>
-					)}
-				</ComposedChart>
-			</ChartContainer>
+			{type === 'totals' ? (
+				<div className='h-full w-full flex flex-col items-center justify-between'>
+					<ChartContainer
+						config={pieChartConfig}
+						className='min-h-[50vh] portrait:h-[75vh] portrait:w-[85vw] mr-4'>
+						<PieChart>
+							<Pie
+								data={pieData}
+								cx='50%'
+								cy='50%'
+								labelLine={false}
+								label={(value) => renderCustomizedLabel(value)}
+								outerRadius={150}
+								fill='#8884d8'
+								dataKey='value'>
+								{pieData.map((entry, index) => (
+									<Cell
+										key={`cell-${index}`}
+										fill={COLORS[index % COLORS.length]}
+									/>
+								))}
+							</Pie>
+						</PieChart>
+					</ChartContainer>
+				</div>
+			) : (
+				<>
+					<div className='hidden portrait:block'>
+						<ChartContainer
+							config={chartConfig}
+							className='min-h-[200px] portrait:h-[75vh] portrait:w-[85vw] mr-4'>
+							<ComposedChart
+								data={logData}
+								barSize={5}
+								compact={false}
+								margin={{ top: 5, right: 0, left: 0, bottom: 5 }}
+								layout='vertical'>
+								<CartesianGrid vertical={true} />
+								<YAxis
+									width={72}
+									className='text-xs'
+									dataKey='eatenAt'
+									tickLine={false}
+									tickMargin={1}
+									axisLine={false}
+									type='category'
+								/>
+
+								<XAxis
+									type='number'
+									label={{
+										value: type === 'macros' ? 'Total grams' : 'Calories',
+										position: 'bottom'
+									}}
+								/>
+
+								<ChartTooltip content={<ChartTooltipContent />} />
+								<ChartLegend
+									className='mt-4'
+									content={<ChartLegendContent />}
+								/>
+								{type === 'macros' ? (
+									<>
+										<Bar
+											dataKey='carb'
+											fill='var(--color-carb)'
+											radius={2}
+											stackId='a'
+										/>
+										<Bar
+											dataKey='protein'
+											fill='var(--color-protein)'
+											radius={2}
+											stackId='b'
+										/>
+										<Bar
+											dataKey='fat'
+											fill='var(--color-fat)'
+											radius={2}
+											stackId='c'
+										/>
+									</>
+								) : (
+									<>
+										<Line
+											type='monotone'
+											dataKey='calories'
+											stroke='#ff7300'
+										/>
+									</>
+								)}
+							</ComposedChart>
+						</ChartContainer>
+					</div>
+
+					<div className='portrait:hidden w-full h-full'>
+						<ChartContainer
+							config={chartConfig}
+							className='min-h-[200px] portrait:h-[75vh] portrait:w-[85vw] mr-4'>
+							<ComposedChart
+								data={logData}
+								barSize={5}
+								compact={false}
+								margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+								layout='horizontal'>
+								<CartesianGrid vertical={false} />
+								<XAxis
+									angle={-90}
+									className='text-xs'
+									dataKey='eatenAt'
+									tickLine={false}
+									tickMargin={25}
+									offset={10}
+									axisLine={false}
+									type='category'
+									//tickFormatter={(value) => value.slice(0, 3)}
+								/>
+
+								<YAxis
+									type='number'
+									label={{
+										value: type === 'macros' ? 'Total grams' : 'Calories',
+										position: 'insideLeft',
+										angle: -90
+									}}
+								/>
+
+								<ChartTooltip content={<ChartTooltipContent />} />
+								<ChartLegend
+									className='mt-4'
+									content={<ChartLegendContent />}
+								/>
+								{type === 'macros' ? (
+									<>
+										<Bar
+											dataKey='carb'
+											fill='var(--color-carb)'
+											radius={2}
+										/>
+										<Bar
+											dataKey='protein'
+											fill='var(--color-protein)'
+											radius={2}
+										/>
+										<Bar
+											dataKey='fat'
+											fill='var(--color-fat)'
+											radius={2}
+										/>
+									</>
+								) : (
+									<>
+										<Line
+											type='monotone'
+											dataKey='calories'
+											stroke='#ff7300'
+										/>
+									</>
+								)}
+							</ComposedChart>
+						</ChartContainer>
+					</div>
+				</>
+			)}
 		</div>
 	);
 }
+
+const RADIAN = Math.PI / 180;
+const renderCustomizedLabel = ({
+	cx,
+	cy,
+	midAngle,
+	innerRadius,
+	outerRadius,
+	percent,
+	value,
+	name
+}: {
+	cx: number;
+	cy: number;
+	midAngle: number;
+	innerRadius: number;
+	outerRadius: number;
+	percent: number;
+	value: number;
+	name: string;
+}) => {
+	const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+	const x = cx + radius * Math.cos(-midAngle * RADIAN);
+	const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+	return (
+		<text
+			x={x}
+			y={y}
+			fill='white'
+			textAnchor={x > cx ? 'start' : 'end'}
+			dominantBaseline='central'>
+			{`${name} - (${formatUnit(value)} g) ${formatUnit(percent * 100)}%`}
+		</text>
+	);
+};
+
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+
+type PieItemType = {
+	name: string;
+	value: number;
+};
+
+const pieChartConfig = {
+	carb: {
+		label: 'Carbs',
+		color: 'hsl(var(--chart-2))'
+	},
+	protein: {
+		label: 'Protein',
+		color: 'hsl(var(--chart-4))'
+	},
+	fat: {
+		label: 'Fat',
+		color: 'hsl(var(--chart-3))'
+	}
+} satisfies ChartConfig;

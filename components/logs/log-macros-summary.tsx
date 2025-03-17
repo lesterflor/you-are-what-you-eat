@@ -39,11 +39,15 @@ export default function LogMacrosSummary({
 		if (getTodayMode) {
 			getLog();
 		} else if (!getTodayMode && log) {
+			const { calories, carbs, protein, fat } = totalMacrosReducer(
+				log.foodItems
+			);
+
 			setIsFetching(false);
-			setTotalCals(totalMacrosReducer(log.foodItems).calories);
-			setTotalCarbs(totalMacrosReducer(log.foodItems).carbs);
-			setTotalFat(totalMacrosReducer(log.foodItems).fat);
-			setTotalProtein(totalMacrosReducer(log.foodItems).protein);
+			setTotalCals(calories);
+			setTotalCarbs(carbs);
+			setTotalFat(fat);
+			setTotalProtein(protein);
 		}
 	}, []);
 

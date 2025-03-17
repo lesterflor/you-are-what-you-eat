@@ -36,7 +36,7 @@ export default function LogFoodCard({ item }: { item: GetFoodEntry }) {
 						Protein: {formatUnit(item.proteinGrams * item.numServings)} g
 					</Badge>
 					<Badge variant='secondary'>
-						Carbs: {formatUnit(item.fatGrams * item.numServings)} g
+						Fat: {formatUnit(item.fatGrams * item.numServings)} g
 					</Badge>
 					<Badge>
 						Calories: {formatUnit(item.calories * item.numServings)}

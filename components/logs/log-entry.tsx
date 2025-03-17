@@ -92,7 +92,7 @@ export default async function LogEntry({ log }: { log: GetLog }) {
 										View Charts
 									</Button>
 								</DialogTrigger>
-								<DialogContent className='max-w-[95vw]'>
+								<DialogContent className='max-w-[65vw] min-h-[70vh] portrait:max-w-[95vw] portrait:min-h-[75vh] flex flex-col justify-start'>
 									<DialogTitle>{format(log.createdAt, 'PPP')}</DialogTitle>
 									<LogChart log={log} />
 								</DialogContent>
