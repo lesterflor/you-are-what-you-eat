@@ -9,7 +9,7 @@ import { FaSpinner } from 'react-icons/fa';
 import { toast } from 'sonner';
 import { LogUpdateContext } from '@/contexts/log-context';
 import { Skeleton } from '../ui/skeleton';
-import { useSession } from 'next-auth/react';
+import { useCurrentSession } from '@/hooks/use-current-session';
 
 export default function KnowCaloriesBurned() {
 	const [log, setLog] = useState<GetLog>();
@@ -18,7 +18,7 @@ export default function KnowCaloriesBurned() {
 	const [fetching, setFetching] = useState(true);
 	const [inputVal, setInputVal] = useState(0);
 
-	const { data: session } = useSession();
+	const { status } = useCurrentSession();
 	const logContext = useContext(LogUpdateContext);
 
 	const getLog = async () => {
@@ -42,7 +42,7 @@ export default function KnowCaloriesBurned() {
 		}
 	}, [log]);
 
-	if (!session) {
+	if (status !== 'authenticated') {
 		return null;
 	}
 
