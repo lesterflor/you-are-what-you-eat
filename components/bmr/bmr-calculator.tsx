@@ -83,7 +83,7 @@ export default function BMRCalculatorForm() {
 	};
 
 	useEffect(() => {
-		if (user.id) {
+		if (user && user.id) {
 			getUserBMR();
 		} else {
 			setHasUserData(true);

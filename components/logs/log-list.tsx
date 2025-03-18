@@ -9,7 +9,7 @@ import { cn, formatUnit } from '@/lib/utils';
 import { IoFastFoodOutline } from 'react-icons/io5';
 import { createDailyLog } from '@/actions/log-actions';
 import { LogUpdateContext } from '@/contexts/log-context';
-import { ThumbsDown, ThumbsUp } from 'lucide-react';
+import { BicepsFlexed, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
 import LogMacrosSummary from './log-macros-summary';
@@ -189,12 +189,19 @@ export default function FoodLogList({
 								))
 							) : (
 								<>
-									{sortList.map((item, indx) => (
-										<LogFoodCard
-											item={item}
-											key={`${item}-${indx}`}
-										/>
-									))}
+									{sortList.length > 0 ? (
+										sortList.map((item, indx) => (
+											<LogFoodCard
+												item={item}
+												key={`${item}-${indx}`}
+											/>
+										))
+									) : (
+										<div className='flex flex-row items-center justify-center gap-2 text-muted-foreground opacity-50'>
+											<BicepsFlexed className='w-10 h-10' />
+											Nothing logged yet!
+										</div>
+									)}
 								</>
 							)}
 						</div>

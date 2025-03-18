@@ -10,8 +10,10 @@ import LogMacrosSummary from '../logs/log-macros-summary';
 import { format } from 'date-fns';
 import SideMenu from './side-menu';
 import { getToday } from '@/lib/utils';
+import { auth } from '@/db/auth';
 
 export default async function SiteHeader() {
+	const session = await auth();
 	const { current } = getToday();
 
 	const log = await createDailyLog();
@@ -24,12 +26,27 @@ export default async function SiteHeader() {
 						<div className='flex flex-row items-center gap-2'>
 							<UtensilsCrossed className='w-8 h-8' />
 							<div className='flex flex-col gap-0'>
-								<span className='dark:text-white text-black text-2xl font-bold portrait:hidden thin-title'>
-									You are what you eat
-								</span>
-								<span className='text-xs portrait:hidden'>
-									Track the food you eat and stop wondering
-								</span>
+								{!session ? (
+									<>
+										<span className='dark:text-white text-black text-2xl font-bold thin-title'>
+											You are what you eat
+										</span>
+
+										<span className='text-xs'>
+											Track the food you eat and stop wondering
+										</span>
+									</>
+								) : (
+									<>
+										<span className='dark:text-white text-black text-2xl font-bold thin-title portrait:hidden'>
+											You are what you eat
+										</span>
+
+										<span className='text-xs portrait:hidden'>
+											Track the food you eat and stop wondering
+										</span>
+									</>
+								)}
 							</div>
 						</div>
 					</Link>

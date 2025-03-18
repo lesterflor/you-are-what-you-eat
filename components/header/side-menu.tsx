@@ -14,9 +14,11 @@ import { Separator } from '../ui/separator';
 import { Button } from '../ui/button';
 import { useState } from 'react';
 import KnowCaloriesBurned from '../logs/know-calories-burned';
+import { useSession } from 'next-auth/react';
 
 export default function SideMenu({ log }: { log?: GetLog }) {
 	const pathname = usePathname();
+	const { data: session } = useSession();
 
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -63,12 +65,14 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 
 					{log && <LogSheet log={log as GetLog} />}
 
-					<LogButton
-						onClick={() => {
-							setIsOpen(!isOpen);
-						}}
-						title='Log History'
-					/>
+					{session && (
+						<LogButton
+							onClick={() => {
+								setIsOpen(!isOpen);
+							}}
+							title='Log History'
+						/>
+					)}
 
 					{pathname !== '/foods' && (
 						<Button
@@ -84,13 +88,15 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 						</Button>
 					)}
 
-					<AddFoodSheet
-						onAdded={() => {
-							setIsOpen(!isOpen);
-						}}
-					/>
+					{session && (
+						<AddFoodSheet
+							onAdded={() => {
+								setIsOpen(!isOpen);
+							}}
+						/>
+					)}
 
-					<FoodListSheet />
+					{pathname !== '/foods' && <FoodListSheet />}
 
 					<KnowCaloriesBurned />
 

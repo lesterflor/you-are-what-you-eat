@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { auth } from '@/db/auth';
 import CredentialsSignInForm from './sign-in-form';
-import { IoFastFoodOutline } from 'react-icons/io5';
+import { UtensilsCrossed } from 'lucide-react';
 
 export const metadata: Metadata = {
 	title: 'Sign In'
@@ -31,9 +31,11 @@ export default async function SignInPage(props: {
 					<Link
 						href='/'
 						className='flex-center'>
-						<IoFastFoodOutline className='w-12 h-12' />
+						<UtensilsCrossed className='w-12 h-12' />
 					</Link>
-					<CardTitle className='text-center'>Sign In</CardTitle>
+					<CardTitle className='text-center'>
+						Sign In to start logging calories
+					</CardTitle>
 				</CardHeader>
 				<CardContent className='space-y-2'>
 					<CredentialsSignInForm />
