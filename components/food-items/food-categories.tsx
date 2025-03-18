@@ -1,11 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 import FoodCategoryIconMapper from './food-category-icon-mapper';
 import { cn } from '@/lib/utils';
-import { Badge } from '../ui/badge';
-import { Filter } from 'lucide-react';
+import { FilterX } from 'lucide-react';
+import { Button } from '../ui/button';
+import {
+	FoodContextSearchType,
+	FoodSearchContext
+} from '@/contexts/food-search-context';
 
 export default function FoodCategoryPicker({
 	value = '',
@@ -21,12 +25,27 @@ export default function FoodCategoryPicker({
 	iconsOnly?: boolean;
 }) {
 	const [selected, setSelected] = useState(value);
+	const foodContext = useContext(FoodSearchContext);
 
 	useEffect(() => {
-		if (selected) {
-			onSelect(selected);
+		onSelect(selected);
+
+		if (foodContext && foodContext.updateSearchType) {
+			const update = {
+				...foodContext,
+				searchType:
+					selected !== '' ? ('category' as FoodContextSearchType) : null
+			};
+
+			foodContext.updateSearchType(update);
 		}
 	}, [selected]);
+
+	useEffect(() => {
+		if (foodContext && foodContext.searchType === 'input') {
+			setSelected('');
+		}
+	}, [foodContext]);
 
 	return (
 		<div
@@ -35,9 +54,14 @@ export default function FoodCategoryPicker({
 				compactMode && 'border-0 p-0 gap-0'
 			)}>
 			{showFilterIcon && (
-				<Badge variant='outline'>
-					<Filter className='w-4 h-4' />
-				</Badge>
+				<Button
+					size='icon'
+					variant='outline'
+					onClick={() => {
+						setSelected('');
+					}}>
+					<FilterX className='w-4 h-4' />
+				</Button>
 			)}
 			<ToggleGroup
 				size='sm'

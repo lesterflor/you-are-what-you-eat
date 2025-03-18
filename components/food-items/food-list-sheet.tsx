@@ -3,7 +3,7 @@
 import { Search } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../ui/sheet';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { GetFoodItem } from '@/types';
 import { getFoodItems } from '@/actions/food-actions';
 import FoodItemCard from './food-item-card';
@@ -12,23 +12,25 @@ import { useDebounce } from 'use-debounce';
 import InputWithButton from '../input-with-button';
 import FoodItemCardSkeleton from '../skeletons/food-item-card-skeleton';
 import FoodCategoryPicker from './food-categories';
+import { FoodSearchContext } from '@/contexts/food-search-context';
 
 export default function FoodListSheet() {
 	const [foods, setFoods] = useState<GetFoodItem[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [category, setCategory] = useState('');
+	const foodContext = useContext(FoodSearchContext);
 
-	const getFoods = async (term: string = '') => {
+	const getFoods = async (term: string = '', cat: string = '') => {
 		setLoading(true);
-		const res = await getFoodItems(term, category);
+
+		console.log(term, cat);
+		const res = await getFoodItems(term, cat);
 
 		if (res.success && res.data && res.data?.length > 0) {
 			setFoods(res.data as GetFoodItem[]);
 		}
 
-		setTimeout(() => {
-			setLoading(false);
-		}, 2000);
+		setLoading(false);
 	};
 
 	useEffect(() => {
@@ -39,11 +41,16 @@ export default function FoodListSheet() {
 	const [debounced] = useDebounce(search, 1000);
 
 	useEffect(() => {
-		getFoods(search);
+		if (foodContext) {
+			if (foodContext.searchType === 'input') {
+				getFoods(debounced);
+			}
+		}
 	}, [debounced]);
 
 	useEffect(() => {
-		getFoods(search);
+		console.log('category: ', category);
+		getFoods('', category);
 	}, [category]);
 
 	return (
