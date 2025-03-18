@@ -82,7 +82,7 @@ export default function AddFoodItemForm({
 	};
 
 	return (
-		<div className='portrait:w-[81vw]'>
+		<div>
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)}>
 					<div className='flex flex-col gap-8 w-full'>

@@ -126,7 +126,6 @@ export default function FoodLogList({
 							<Badge
 								variant='outline'
 								className='text-sm font-normal portrait:text-sm flex flex-row gap-3'>
-								{/* <HeartPulse className='w-5 h-5 animate-pulse' /> */}
 								BMR {formatUnit(bmr.bmr)}
 							</Badge>
 						)}
@@ -135,7 +134,6 @@ export default function FoodLogList({
 							<Badge
 								variant='outline'
 								className='text-sm font-normal portrait:text-sm flex flex-row gap-3'>
-								{/* <HeartPulse className='w-5 h-5 animate-pulse' /> */}
 								Cals burned: {formatUnit(calsBurned)}
 							</Badge>
 						)}
@@ -176,7 +174,7 @@ export default function FoodLogList({
 			{useScroller ? (
 				<ScrollArea
 					className={cn(
-						'h-[80vh] pr-5 mt-12 w-full',
+						'h-[80vh] pr-3 mt-12 w-full',
 						bmr && 'h-[72vh] mt-20',
 						className
 					)}>
@@ -197,8 +195,8 @@ export default function FoodLogList({
 											/>
 										))
 									) : (
-										<div className='flex flex-row items-center justify-center gap-2 text-muted-foreground opacity-50'>
-											<BicepsFlexed className='w-10 h-10' />
+										<div className='flex flex-row items-center justify-center gap-2 text-muted-foreground opacity-50 col-span-2'>
+											<BicepsFlexed className='w-16 h-16' />
 											Nothing logged yet!
 										</div>
 									)}

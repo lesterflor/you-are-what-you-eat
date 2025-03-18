@@ -85,7 +85,7 @@ export default function AddFoodSheet({ onAdded }: { onAdded?: () => void }) {
 						</SheetTitle>
 
 						{status === 'authenticated' ? (
-							<ScrollArea className='h-full pr-5'>
+							<ScrollArea className='h-full pr-2'>
 								<AddFoodItemForm
 									onSuccess={() => {
 										setIsOpen(false);

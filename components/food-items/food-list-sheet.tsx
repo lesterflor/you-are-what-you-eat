@@ -56,7 +56,7 @@ export default function FoodListSheet() {
 						</Button>
 					</SheetTrigger>
 					<SheetContent side='right'>
-						<SheetTitle className='flex flex-row items-center gap-2 pb-4'>
+						<SheetTitle className='flex flex-col items-center gap-2 pb-4'>
 							<InputWithButton
 								className='w-[90%]'
 								onChange={(val) => {
@@ -64,9 +64,17 @@ export default function FoodListSheet() {
 								}}>
 								<Search className='w-4 h-4 text-muted-foreground' />
 							</InputWithButton>
+							<FoodCategoryPicker
+								showFilterIcon={true}
+								iconsOnly={true}
+								onSelect={(value) => {
+									setCategory(value);
+								}}
+								compactMode={true}
+							/>
 						</SheetTitle>
-						<ScrollArea className='h-full w-full pr-5'>
-							<div className='flex flex-col gap-4 pb-5 w-[95%]'>
+						<ScrollArea className='h-[80vh] w-full pr-0'>
+							<div className='flex flex-col gap-4 pb-5 w-[97%]'>
 								{loading ? (
 									Array.from({ length: 2 }).map((_v, indx) => (
 										<FoodItemCardSkeleton key={indx} />
@@ -112,7 +120,7 @@ export default function FoodListSheet() {
 								compactMode={true}
 							/>
 						</SheetTitle>
-						<ScrollArea className='h-[70vh] w-full pr-5'>
+						<ScrollArea className='h-[70vh] w-full pr-3'>
 							<div className='flex flex-col gap-4 pb-5 w-[100%]'>
 								{loading ? (
 									Array.from({ length: 2 }).map((_v, indx) => (
