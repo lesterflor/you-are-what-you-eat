@@ -52,9 +52,10 @@ export default async function SiteHeader() {
 					</Link>
 				</div>
 
-				{log && log.data && (
+				{session && log && log.data && (
 					<div>
 						<LogMacrosSummary
+							log={log.data as GetLog}
 							compactMode={true}
 							useSkeleton={false}>
 							<div className='flex flex-row items-center gap-2'>

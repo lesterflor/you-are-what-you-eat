@@ -36,9 +36,7 @@ export default function LogMacrosSummary({
 	const logContext = useContext(LogUpdateContext);
 
 	useEffect(() => {
-		if (getTodayMode) {
-			getLog();
-		} else if (!getTodayMode && log) {
+		if (log) {
 			const { calories, carbs, protein, fat } = totalMacrosReducer(
 				log.foodItems
 			);
