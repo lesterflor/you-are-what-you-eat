@@ -121,19 +121,21 @@ export default async function LogEntry({ log }: { log: GetLog }) {
 			</div>
 
 			{log.foodItems.length > 1 ? (
-				<TruncateSection
-					allowSeeMore={true}
-					label='See more'
-					pixelHeight={300}>
-					<div className='flex portrait:flex-col md:grid grid-cols-2 flex-col gap-4'>
-						{log.foodItems.map((food, indx) => (
-							<LogFoodCard
-								key={`${food.id}-${indx}`}
-								item={food as GetFoodEntry}
-							/>
-						))}
-					</div>
-				</TruncateSection>
+				<div className='flex flex-col items-center gap-4 w-full'>
+					<TruncateSection
+						allowSeeMore={true}
+						label='See more'
+						pixelHeight={300}>
+						<div className='flex flex-col sm:grid grid-cols-2 lg:grid-cols-3 gap-4 w-full'>
+							{log.foodItems.map((food, indx) => (
+								<LogFoodCard
+									key={`${food.id}-${indx}`}
+									item={food as GetFoodEntry}
+								/>
+							))}
+						</div>
+					</TruncateSection>
+				</div>
 			) : log.foodItems.length === 0 ? (
 				<div className='flex flex-row items-center gap-2 text-muted-foreground'>
 					<CookingPot className='w-4 h-4' />

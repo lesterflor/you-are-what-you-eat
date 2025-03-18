@@ -27,6 +27,7 @@ export default async function Home() {
 					<Separator />
 					<div className='relative'>
 						<FoodLogList
+							forceColumn={false}
 							useScroller={true}
 							className='portrait:h-[65vh] h-[45vh]'
 						/>

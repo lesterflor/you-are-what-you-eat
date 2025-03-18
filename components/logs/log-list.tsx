@@ -16,6 +16,7 @@ import LogMacrosSummary from './log-macros-summary';
 import LogFoodCardSkeleton from '../skeletons/log-food-card-skeleton';
 
 export default function FoodLogList({
+	forceColumn = true,
 	useScroller = true,
 	iconPosition = 'right',
 	className
@@ -23,6 +24,7 @@ export default function FoodLogList({
 	useScroller?: boolean;
 	iconPosition?: 'right' | 'top';
 	className?: string;
+	forceColumn?: boolean;
 }) {
 	const [totalCals, setTotalCals] = useState(0);
 	const [sortList, setSortList] = useState<GetFoodEntry[]>([]);
@@ -181,7 +183,13 @@ export default function FoodLogList({
 					)}>
 					<br />
 					<div className='flex flex-col gap-4 w-full'>
-						<div className='flex flex-col gap-4 lg:grid grid-cols-2'>
+						<div
+							className={cn(
+								'gap-4',
+								forceColumn
+									? 'flex flex-col'
+									: 'grid grid-cols-2 lg:grid-cols-3 portrait:flex flex-col'
+							)}>
 							{isLoading ? (
 								Array.from({ length: 3 }).map((_v, indx) => (
 									<LogFoodCardSkeleton key={indx} />

@@ -13,8 +13,13 @@ import InputWithButton from '../input-with-button';
 import FoodItemCardSkeleton from '../skeletons/food-item-card-skeleton';
 import FoodCategoryPicker from './food-categories';
 import { FoodSearchContext } from '@/contexts/food-search-context';
+import { cn } from '@/lib/utils';
 
-export default function FoodListSheet() {
+export default function FoodListSheet({
+	forceColumn = true
+}: {
+	forceColumn?: boolean;
+}) {
 	const [foods, setFoods] = useState<GetFoodItem[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [category, setCategory] = useState('');
@@ -81,7 +86,13 @@ export default function FoodListSheet() {
 							/>
 						</SheetTitle>
 						<ScrollArea className='h-[80vh] w-full pr-0'>
-							<div className='flex flex-col gap-4 pb-5 w-[97%]'>
+							<div
+								className={cn(
+									'gap-4 pb-5 w-[97%]',
+									forceColumn
+										? 'flex flex-col'
+										: 'grid grid-cols-2 lg:grid-cols-3'
+								)}>
 								{loading ? (
 									Array.from({ length: 2 }).map((_v, indx) => (
 										<FoodItemCardSkeleton key={indx} />
@@ -128,7 +139,11 @@ export default function FoodListSheet() {
 							/>
 						</SheetTitle>
 						<ScrollArea className='h-[70vh] w-full pr-3'>
-							<div className='flex flex-col gap-4 pb-5 w-[100%]'>
+							<div
+								className={cn(
+									'gap-4 pb-5 w-[100%]',
+									forceColumn ? 'flex flex-col' : 'grid grid-cols-2'
+								)}>
 								{loading ? (
 									Array.from({ length: 2 }).map((_v, indx) => (
 										<FoodItemCardSkeleton key={indx} />
