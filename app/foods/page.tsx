@@ -43,8 +43,9 @@ export default async function FoodsPage(props: {
 				<ScrollArea className='w-full h-[60vh] portrait:h-[65vh] pr-3'>
 					<div className='flex flex-col gap-6 lg:grid lg:grid-cols-2'>
 						{foods && foods.length > 0 ? (
-							foods.map((item) => (
+							foods.map((item, indx) => (
 								<FoodItemCard
+									indx={indx}
 									item={item as GetFoodItem}
 									key={item.id}
 								/>

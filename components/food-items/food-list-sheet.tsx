@@ -16,7 +16,6 @@ import FoodItemCard from './food-item-card';
 import { ScrollArea } from '../ui/scroll-area';
 import { useDebounce } from 'use-debounce';
 import InputWithButton from '../input-with-button';
-import FoodItemCardSkeleton from '../skeletons/food-item-card-skeleton';
 import FoodCategoryPicker from './food-categories';
 import { FoodSearchContext } from '@/contexts/food-search-context';
 import { cn } from '@/lib/utils';
@@ -28,20 +27,15 @@ export default function FoodListSheet({
 	forceColumn?: boolean;
 }) {
 	const [foods, setFoods] = useState<GetFoodItem[]>([]);
-	const [loading, setLoading] = useState(false);
 	const [category, setCategory] = useState('');
 	const foodContext = useContext(FoodSearchContext);
 
 	const getFoods = async (term: string = '', cat: string = '', user = '') => {
-		setLoading(true);
-
 		const res = await getFoodItems(term, cat, user);
 
 		if (res.success && res.data && res.data?.length > 0) {
 			setFoods(res.data as GetFoodItem[]);
 		}
-
-		setLoading(false);
 	};
 
 	useEffect(() => {
@@ -109,13 +103,10 @@ export default function FoodListSheet({
 										? 'flex flex-col'
 										: 'grid grid-cols-2 lg:grid-cols-3'
 								)}>
-								{loading ? (
-									Array.from({ length: 2 }).map((_v, indx) => (
-										<FoodItemCardSkeleton key={indx} />
-									))
-								) : foods && foods.length > 0 ? (
-									foods.map((item) => (
+								{foods && foods.length > 0 ? (
+									foods.map((item, indx) => (
 										<FoodItemCard
+											indx={indx}
 											item={item as GetFoodItem}
 											key={item.id}
 											selfSearch={true}
@@ -162,13 +153,10 @@ export default function FoodListSheet({
 									'gap-4 pb-5 w-[100%]',
 									forceColumn ? 'flex flex-col' : 'grid grid-cols-2'
 								)}>
-								{loading ? (
-									Array.from({ length: 2 }).map((_v, indx) => (
-										<FoodItemCardSkeleton key={indx} />
-									))
-								) : foods && foods.length > 0 ? (
-									foods.map((item) => (
+								{foods && foods.length > 0 ? (
+									foods.map((item, indx) => (
 										<FoodItemCard
+											indx={indx}
 											item={item as GetFoodItem}
 											key={item.id}
 											selfSearch={true}

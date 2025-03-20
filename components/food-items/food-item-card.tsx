@@ -13,7 +13,7 @@ import { Badge } from '../ui/badge';
 import { useSession } from 'next-auth/react';
 import { Button } from '../ui/button';
 import NumberIncrementor from '../number-incrementor';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { createDailyLog, updateLog } from '@/actions/log-actions';
 import { toast } from 'sonner';
 import { FilePlus } from 'lucide-react';
@@ -24,10 +24,12 @@ import FoodUserAvatar from './food-user-avatar';
 
 export default function FoodItemCard({
 	item,
-	selfSearch = false
+	selfSearch = false,
+	indx = 0
 }: {
 	item: GetFoodItem;
 	selfSearch?: boolean;
+	indx?: number;
 }) {
 	const { data: session } = useSession();
 	const logContext = useContext(LogUpdateContext);
@@ -82,8 +84,22 @@ export default function FoodItemCard({
 		setIsSubmitting(false);
 	};
 
+	const [fadeClass, setFadeClass] = useState(false);
+	useEffect(() => {
+		setTimeout(
+			() => {
+				setFadeClass(true);
+			},
+			indx === 0 ? 1 : indx * 800
+		);
+	}, []);
+
 	return (
-		<Card className='relative select-none'>
+		<Card
+			className='relative select-none transition-opacity opacity-0 duration-1000'
+			style={{
+				opacity: fadeClass ? 1 : 0
+			}}>
 			<CardHeader className='text-2xl font-semibold capitalize pb-2 pr-4'>
 				<div className='flex flex-row items-center justify-start gap-2 pr-8'>
 					<FoodCategoryIconMapper type={item.category} />
