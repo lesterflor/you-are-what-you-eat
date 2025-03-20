@@ -2,7 +2,13 @@
 
 import { Search } from 'lucide-react';
 import { Button } from '../ui/button';
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../ui/sheet';
+import {
+	Sheet,
+	SheetContent,
+	SheetDescription,
+	SheetTitle,
+	SheetTrigger
+} from '../ui/sheet';
 import { useContext, useEffect, useState } from 'react';
 import { GetFoodItem } from '@/types';
 import { getFoodItems } from '@/actions/food-actions';
@@ -28,7 +34,6 @@ export default function FoodListSheet({
 	const getFoods = async (term: string = '', cat: string = '') => {
 		setLoading(true);
 
-		console.log(term, cat);
 		const res = await getFoodItems(term, cat);
 
 		if (res.success && res.data && res.data?.length > 0) {
@@ -54,7 +59,6 @@ export default function FoodListSheet({
 	}, [debounced]);
 
 	useEffect(() => {
-		console.log('category: ', category);
 		getFoods('', category);
 	}, [category]);
 
@@ -68,6 +72,7 @@ export default function FoodListSheet({
 						</Button>
 					</SheetTrigger>
 					<SheetContent side='right'>
+						<SheetDescription></SheetDescription>
 						<SheetTitle className='flex flex-col items-center gap-2 pb-4'>
 							<InputWithButton
 								className='w-[90%]'
@@ -121,6 +126,7 @@ export default function FoodListSheet({
 						</Button>
 					</SheetTrigger>
 					<SheetContent side='top'>
+						<SheetDescription></SheetDescription>
 						<SheetTitle className='flex flex-col items-center gap-2 pb-4'>
 							<InputWithButton
 								className='w-[90%]'

@@ -1,7 +1,13 @@
 'use client';
 
 import { GetLog } from '@/types';
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../ui/sheet';
+import {
+	Sheet,
+	SheetContent,
+	SheetDescription,
+	SheetTitle,
+	SheetTrigger
+} from '../ui/sheet';
 import { Button } from '../ui/button';
 import FoodLogList from './log-list';
 import { cn, getToday } from '@/lib/utils';
@@ -43,7 +49,8 @@ export default function LogSheet({
 			<SheetContent
 				side='left'
 				className='portrait:min-w-[85vw]'>
-				<SheetTitle className='text-md flex flex-row items-center justify-center gap-2 pb-2'>
+				<SheetDescription></SheetDescription>
+				<SheetTitle className='text-md flex flex-row items-center justify-start gap-2 pb-2'>
 					<CalendarSearch className='w-4 h-4' />
 					{format(getToday().current, 'PP hh:mm a')}
 				</SheetTitle>

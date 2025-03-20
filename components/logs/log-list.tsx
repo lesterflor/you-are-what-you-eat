@@ -13,7 +13,7 @@ import { BicepsFlexed, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
 import LogMacrosSummary from './log-macros-summary';
-import LogFoodCardSkeleton from '../skeletons/log-food-card-skeleton';
+// import LogFoodCardSkeleton from '../skeletons/log-food-card-skeleton';
 
 export default function FoodLogList({
 	forceColumn = true,
@@ -27,13 +27,11 @@ export default function FoodLogList({
 	forceColumn?: boolean;
 }) {
 	const [totalCals, setTotalCals] = useState(0);
-	const [sortList, setSortList] = useState<GetFoodEntry[]>([]);
 	const [logList, setLogList] = useState<GetFoodEntry[]>([]);
 	const [log, setLog] = useState<GetLog>();
 	const [bmr, setBmr] = useState<BaseMetabolicRateType>();
 	const [calsBurned, setCalsBurned] = useState(0);
 	const [remainingCals, setRemainingCals] = useState(0);
-	const [isLoading, setIsLoading] = useState(false);
 
 	const logContext = useContext(LogUpdateContext);
 
@@ -42,13 +40,18 @@ export default function FoodLogList({
 	}, []);
 
 	const getLog = async () => {
-		setIsLoading(true);
 		const res = await createDailyLog();
 
 		if (res?.success && res.data) {
 			setLog(res.data as GetLog);
-			setLogList(res.data.foodItems as GetFoodEntry[]);
 
+			const list = [...(res.data.foodItems as GetFoodEntry[])];
+
+			list.sort((a, b) => {
+				return b.eatenAt.getTime() - a.eatenAt.getTime();
+			});
+
+			setLogList(list);
 			const bmrArr = res.data.user.BaseMetabolicRate as BaseMetabolicRateType[];
 
 			setBmr(bmrArr[0]);
@@ -60,14 +63,10 @@ export default function FoodLogList({
 				setCalsBurned(res.data.knownCaloriesBurned[0].calories);
 			}
 		}
-
-		setIsLoading(false);
 	};
 
 	useEffect(() => {
-		if (logList.length > 0) {
-			prepareLogList();
-		}
+		prepareLogList();
 	}, [logList]);
 
 	const prepareLogList = () => {
@@ -78,11 +77,6 @@ export default function FoodLogList({
 			}, 0)
 		);
 		setTotalCals(total);
-
-		const sorted = logList.sort((a, b) => {
-			return b.eatenAt.getTime() - a.eatenAt.getTime();
-		});
-		setSortList(sorted);
 	};
 
 	useEffect(() => {
@@ -109,9 +103,10 @@ export default function FoodLogList({
 				<div className='flex flex-col items-start w-full gap-1'>
 					<Popover>
 						<PopoverTrigger asChild>
-							<Button className='p-1 text-md portrait:text-sm font-semibold flex flex-row gap-3 w-full'>
+							<Button className='p-1 portrait:text-sm flex flex-row gap-2 w-56'>
 								<IoFastFoodOutline className='w-4 h-4 animate-pulse' />
-								Current Calories {totalCals}
+								Current Calories
+								<span className='font-semibold'> {totalCals}</span>
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent>
@@ -190,27 +185,23 @@ export default function FoodLogList({
 									? 'flex flex-col'
 									: 'grid grid-cols-2 lg:grid-cols-3 portrait:flex flex-col'
 							)}>
-							{isLoading ? (
-								Array.from({ length: 3 }).map((_v, indx) => (
-									<LogFoodCardSkeleton key={indx} />
-								))
-							) : (
-								<>
-									{sortList.length > 0 ? (
-										sortList.map((item, indx) => (
-											<LogFoodCard
-												item={item}
-												key={`${item}-${indx}`}
-											/>
-										))
-									) : (
-										<div className='flex flex-row items-center justify-center gap-2 text-muted-foreground opacity-50 col-span-2'>
-											<BicepsFlexed className='w-16 h-16' />
-											Nothing logged yet!
-										</div>
-									)}
-								</>
-							)}
+							<>
+								{logList.length > 0 ? (
+									logList.map((item, indx) => (
+										<LogFoodCard
+											allowEdit={true}
+											indx={indx}
+											item={item}
+											key={`${item}-${indx}`}
+										/>
+									))
+								) : (
+									<div className='flex flex-row items-center justify-center gap-2 text-muted-foreground opacity-50 col-span-2'>
+										<BicepsFlexed className='w-16 h-16' />
+										Nothing logged yet!
+									</div>
+								)}
+							</>
 						</div>
 					</div>
 					<br />
@@ -218,8 +209,10 @@ export default function FoodLogList({
 			) : (
 				<div className='flex flex-col gap-4 w-full'>
 					<div className='flex flex-col gap-4'>
-						{sortList.map((item, indx) => (
+						{logList.map((item, indx) => (
 							<LogFoodCard
+								allowEdit={true}
+								indx={indx}
 								item={item}
 								key={`${item}-${indx}`}
 							/>

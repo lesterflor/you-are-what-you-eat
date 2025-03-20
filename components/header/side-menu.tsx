@@ -1,6 +1,12 @@
 'use client';
 
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../ui/sheet';
+import {
+	Sheet,
+	SheetContent,
+	SheetDescription,
+	SheetTitle,
+	SheetTrigger
+} from '../ui/sheet';
 import { Calculator, Database, Menu, UtensilsCrossed } from 'lucide-react';
 import Link from 'next/link';
 import { GetLog } from '@/types';
@@ -34,6 +40,7 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 				<Menu className='w-6 h-6' />
 			</SheetTrigger>
 			<SheetContent>
+				<SheetDescription></SheetDescription>
 				<SheetTitle>
 					<div className='flex flex-row items-center justify-start gap-5 portrait:gap-3'>
 						<Link

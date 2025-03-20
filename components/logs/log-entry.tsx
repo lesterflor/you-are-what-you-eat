@@ -129,6 +129,7 @@ export default async function LogEntry({ log }: { log: GetLog }) {
 						<div className='flex flex-col sm:grid grid-cols-2 lg:grid-cols-3 gap-4 w-full'>
 							{log.foodItems.map((food, indx) => (
 								<LogFoodCard
+									indx={indx}
 									key={`${food.id}-${indx}`}
 									item={food as GetFoodEntry}
 								/>
@@ -145,6 +146,7 @@ export default async function LogEntry({ log }: { log: GetLog }) {
 				<div className='flex portrait:flex-col md:grid grid-cols-2 flex-col gap-4'>
 					{log.foodItems.map((food, indx) => (
 						<LogFoodCard
+							indx={indx}
 							key={`${food.id}-${indx}`}
 							item={food as GetFoodEntry}
 						/>
