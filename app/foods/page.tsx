@@ -40,7 +40,7 @@ export default async function FoodsPage(props: {
 					<SearchFoodInput />
 					<FoodCategoryFilter compactMode={true} />
 				</div>
-				<ScrollArea className='w-full h-[60vh] portrait:h-[65vh] pr-3'>
+				<ScrollArea className='w-full h-[55] portrait:h-[50vh] pr-3'>
 					<div className='flex flex-col gap-6 lg:grid lg:grid-cols-2'>
 						{foods && foods.length > 0 ? (
 							foods.map((item, indx) => (

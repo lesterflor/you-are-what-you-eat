@@ -32,7 +32,7 @@ export default async function Image() {
 					alignItems: 'center',
 					justifyContent: 'center'
 				}}>
-				<UtensilsCrossed className='w-20 h-20' />
+				Y-R-W-Y-E
 			</div>
 		),
 		// ImageResponse options
