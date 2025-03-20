@@ -20,6 +20,7 @@ import FoodItemCardSkeleton from '../skeletons/food-item-card-skeleton';
 import FoodCategoryPicker from './food-categories';
 import { FoodSearchContext } from '@/contexts/food-search-context';
 import { cn } from '@/lib/utils';
+import { SearchContext } from '@/contexts/search-context';
 
 export default function FoodListSheet({
 	forceColumn = true
@@ -31,10 +32,10 @@ export default function FoodListSheet({
 	const [category, setCategory] = useState('');
 	const foodContext = useContext(FoodSearchContext);
 
-	const getFoods = async (term: string = '', cat: string = '') => {
+	const getFoods = async (term: string = '', cat: string = '', user = '') => {
 		setLoading(true);
 
-		const res = await getFoodItems(term, cat);
+		const res = await getFoodItems(term, cat, user);
 
 		if (res.success && res.data && res.data?.length > 0) {
 			setFoods(res.data as GetFoodItem[]);
@@ -61,6 +62,16 @@ export default function FoodListSheet({
 	useEffect(() => {
 		getFoods('', category);
 	}, [category]);
+
+	const searchContext = useContext(SearchContext);
+
+	useEffect(() => {
+		if (searchContext && searchContext.searchType.name) {
+			getFoods(searchContext.searchType.name);
+		} else if (searchContext && searchContext.searchType.userId) {
+			getFoods('', '', searchContext.searchType.userId);
+		}
+	}, [searchContext]);
 
 	return (
 		<>
@@ -107,6 +118,7 @@ export default function FoodListSheet({
 										<FoodItemCard
 											item={item as GetFoodItem}
 											key={item.id}
+											selfSearch={true}
 										/>
 									))
 								) : (
@@ -159,6 +171,7 @@ export default function FoodListSheet({
 										<FoodItemCard
 											item={item as GetFoodItem}
 											key={item.id}
+											selfSearch={true}
 										/>
 									))
 								) : (

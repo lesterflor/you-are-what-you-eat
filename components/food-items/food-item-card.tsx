@@ -22,7 +22,13 @@ import { formatUnit, getMacroPercOfCals } from '@/lib/utils';
 import { FaSpinner } from 'react-icons/fa';
 import FoodUserAvatar from './food-user-avatar';
 
-export default function FoodItemCard({ item }: { item: GetFoodItem }) {
+export default function FoodItemCard({
+	item,
+	selfSearch = false
+}: {
+	item: GetFoodItem;
+	selfSearch?: boolean;
+}) {
 	const { data: session } = useSession();
 	const logContext = useContext(LogUpdateContext);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -91,6 +97,7 @@ export default function FoodItemCard({ item }: { item: GetFoodItem }) {
 				{session && item.user && (
 					<div className='absolute top-2 right-2'>
 						<FoodUserAvatar
+							selfSearch={selfSearch}
 							user={item.user}
 							foodItemId={item.id}
 						/>

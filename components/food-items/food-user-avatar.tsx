@@ -3,17 +3,20 @@
 import { GetFoodItem } from '@/types';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import Link from 'next/link';
 import { UtensilsCrossed } from 'lucide-react';
+import { SearchContext } from '@/contexts/search-context';
 
 export default function FoodUserAvatar({
 	user,
-	foodItemId
+	foodItemId,
+	selfSearch = false
 }: {
 	user: { name: string; image: string; id: string; FoodItems: GetFoodItem[] };
 	foodItemId: string;
+	selfSearch?: boolean;
 }) {
 	const DISPLAY_LIMIT = 2;
 	const { name, image = '', id, FoodItems: items = [] } = user;
@@ -31,6 +34,8 @@ export default function FoodUserAvatar({
 
 		setFoods(limit);
 	}, []);
+
+	const searchContext = useContext(SearchContext);
 
 	return (
 		<Popover
@@ -54,25 +59,60 @@ export default function FoodUserAvatar({
 							<Button
 								onClick={() => {
 									setPopOpen(false);
+
+									if (selfSearch) {
+										//onLinkClick?.({ name: item.name });
+										if (searchContext && searchContext.updateSearchType) {
+											const update = {
+												...searchContext,
+												searchType: { name: item.name }
+											};
+
+											searchContext.updateSearchType(update);
+										}
+									}
 								}}
 								size='sm'
 								variant='secondary'
-								key={item.id}
-								asChild>
-								<Link href={`/foods?q=${item.name}`}>{item.name}</Link>
+								key={item.id}>
+								{!selfSearch ? (
+									<Link href={`/foods?q=${item.name}`}>{item.name}</Link>
+								) : (
+									item.name
+								)}
 							</Button>
 						))}
 				</div>
 				{showSeeMore && (
 					<div className='w-full flex flex-row justify-end'>
-						<Link
+						<Button
+							variant='ghost'
 							onClick={() => {
 								setPopOpen(false);
-							}}
-							href={`/foods?user=${id}`}
-							className='text-xs'>
-							...See more
-						</Link>
+
+								if (selfSearch) {
+									//onLinkClick?.({ userId: id });
+
+									if (searchContext && searchContext.updateSearchType) {
+										const update = {
+											...searchContext,
+											searchType: { userId: id }
+										};
+
+										searchContext.updateSearchType(update);
+									}
+								}
+							}}>
+							{!selfSearch ? (
+								<Link
+									href={`/foods?user=${id}`}
+									className='text-xs'>
+									...See all
+								</Link>
+							) : (
+								'...See all'
+							)}
+						</Button>
 					</div>
 				)}
 			</PopoverContent>
