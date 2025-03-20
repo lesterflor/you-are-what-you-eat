@@ -74,6 +74,12 @@ export default function FoodUserAvatar({
 		}
 	}, [logContext]);
 
+	useEffect(() => {
+		if (!editFormOpen) {
+			setPopOpen(false);
+		}
+	}, [editFormOpen]);
+
 	return (
 		<Popover
 			open={popOpen}
@@ -100,7 +106,8 @@ export default function FoodUserAvatar({
 									Edit {truncate(currentFood[0].name, 20)}
 								</Button>
 							</SheetTrigger>
-							<SheetContent>
+
+							<SheetContent className='max-w-[95vw] portrait:w-[95vw]'>
 								<SheetTitle className='flex flex-col items-start justify-center gap-2 pb-4'>
 									<div className='flex flex-row items-center gap-2 justify-start'>
 										<FilePenLine className='w-4 h-4' /> Edit
@@ -112,7 +119,7 @@ export default function FoodUserAvatar({
 									</Badge>
 								</SheetTitle>
 								<SheetDescription></SheetDescription>
-								<ScrollArea className='h-[80vh] w-full pr-3'>
+								<ScrollArea className='h-[80vh] portrait:h-[65vh] w-full pr-3'>
 									{editFoodItem && (
 										<UpdateFoodItemForm
 											item={editFoodItem as GetFoodItem}

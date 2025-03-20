@@ -48,7 +48,7 @@ export default function LogSheet({
 			</SheetTrigger>
 			<SheetContent
 				side='left'
-				className='portrait:min-w-[85vw]'>
+				className='portrait:min-w-[85vw] max-w-[95vw] portrait:w-[95vw]'>
 				<SheetDescription></SheetDescription>
 				<SheetTitle className='text-md flex flex-row items-center justify-start gap-2 pb-2'>
 					<CalendarSearch className='w-4 h-4' />

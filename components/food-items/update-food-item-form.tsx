@@ -196,7 +196,7 @@ export default function UpdateFoodItemForm({
 						<div className='flex flex-row items-end justify-end w-full'>
 							<Button
 								disabled={form.formState.isSubmitting}
-								className='w-44'>
+								className='w-44 portrait:w-full'>
 								{form.formState.isSubmitting ? (
 									<LoaderIcon className='w-4 h-4 animate-spin' />
 								) : (
