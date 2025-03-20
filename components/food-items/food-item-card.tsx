@@ -20,7 +20,7 @@ import { FilePlus } from 'lucide-react';
 import { LogUpdateContext } from '@/contexts/log-context';
 import { formatUnit, getMacroPercOfCals } from '@/lib/utils';
 import { FaSpinner } from 'react-icons/fa';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import FoodUserAvatar from './food-user-avatar';
 
 export default function FoodItemCard({ item }: { item: GetFoodItem }) {
 	const { data: session } = useSession();
@@ -88,12 +88,12 @@ export default function FoodItemCard({ item }: { item: GetFoodItem }) {
 				{item.description}
 			</CardDescription>
 			<CardContent className='flex flex-row flex-wrap gap-2 px-4'>
-				{item.user && (
+				{session && item.user && (
 					<div className='absolute top-2 right-2'>
-						<Avatar>
-							<AvatarImage src={item.user?.image as string} />
-							<AvatarFallback>{item.user?.name?.slice(0, 1)}</AvatarFallback>
-						</Avatar>
+						<FoodUserAvatar
+							user={item.user}
+							foodItemId={item.id}
+						/>
 					</div>
 				)}
 

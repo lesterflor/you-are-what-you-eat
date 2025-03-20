@@ -341,8 +341,6 @@ export async function updateFoodLogEntry(foodEntry: GetFoodEntry) {
 
 		updatedFoodItems.push(updatedFoodItem[0]);
 
-		console.log('updatedFoodItems: ', updatedFoodItems);
-
 		// update the log
 		const update = await prisma.log.update({
 			where: {

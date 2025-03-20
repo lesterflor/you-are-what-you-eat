@@ -16,11 +16,16 @@ export default async function FoodsPage(props: {
 	searchParams: Promise<{
 		q: string;
 		category: string;
+		user: string;
 	}>;
 }) {
-	const { q: searchQuery = '', category = '' } = await props.searchParams;
+	const {
+		q: searchQuery = '',
+		category = '',
+		user = ''
+	} = await props.searchParams;
 	const session = await auth();
-	const res = await getFoodItems(searchQuery, category);
+	const res = await getFoodItems(searchQuery, category, user);
 
 	const { data: foods = [] } = res;
 
