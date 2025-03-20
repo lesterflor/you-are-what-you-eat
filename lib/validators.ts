@@ -150,7 +150,8 @@ export const getFoodItemSchema = z.object({
 	description: z.string(),
 	servingSize: z.number(),
 	userId: z.string().optional(),
-	user: getUserSchema.optional()
+	//user: getUserSchema.optional()
+	user: z.any()
 });
 
 export const foodEntrySchema = z.object({

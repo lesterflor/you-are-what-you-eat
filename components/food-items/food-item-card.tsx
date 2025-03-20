@@ -20,6 +20,7 @@ import { FilePlus } from 'lucide-react';
 import { LogUpdateContext } from '@/contexts/log-context';
 import { formatUnit, getMacroPercOfCals } from '@/lib/utils';
 import { FaSpinner } from 'react-icons/fa';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 export default function FoodItemCard({ item }: { item: GetFoodItem }) {
 	const { data: session } = useSession();
@@ -76,9 +77,9 @@ export default function FoodItemCard({ item }: { item: GetFoodItem }) {
 	};
 
 	return (
-		<Card>
-			<CardHeader className='text-2xl font-semibold capitalize pb-2 flex flex-row items-end justify-between gap-2'>
-				<div className='flex flex-row items-center gap-2'>
+		<Card className='relative select-none'>
+			<CardHeader className='text-2xl font-semibold capitalize pb-2 pr-4'>
+				<div className='flex flex-row items-center justify-start gap-2 pr-8'>
 					<FoodCategoryIconMapper type={item.category} />
 					{item.name}
 				</div>
@@ -87,6 +88,15 @@ export default function FoodItemCard({ item }: { item: GetFoodItem }) {
 				{item.description}
 			</CardDescription>
 			<CardContent className='flex flex-row flex-wrap gap-2 px-4'>
+				{item.user && (
+					<div className='absolute top-2 right-2'>
+						<Avatar>
+							<AvatarImage src={item.user?.image as string} />
+							<AvatarFallback>{item.user?.name?.slice(0, 1)}</AvatarFallback>
+						</Avatar>
+					</div>
+				)}
+
 				<div className='flex flex-row items-center gap-2'>
 					<Badge
 						variant='secondary'

@@ -16,6 +16,15 @@ export async function getFoodItems(name: string = '', category = '') {
 				},
 				category: category ? category : undefined
 			},
+			include: {
+				user: {
+					select: {
+						name: true,
+						image: true,
+						FoodItems: true
+					}
+				}
+			},
 			orderBy: {
 				createdAt: 'desc'
 			}

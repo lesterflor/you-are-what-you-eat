@@ -208,7 +208,6 @@ export default function BMRCalculatorForm() {
 											<Input
 												className='w-24'
 												type='number'
-												defaultValue={weight}
 												min={1}
 												onChange={(e) => {
 													setWeight(Number(e.target.value));
@@ -243,7 +242,6 @@ export default function BMRCalculatorForm() {
 											className='w-24'
 											type='number'
 											min={1}
-											defaultValue={age}
 											onChange={(e) => {
 												setAge(Number(e.target.value));
 											}}
