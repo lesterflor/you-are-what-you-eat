@@ -1,3 +1,4 @@
+import { UtensilsCrossed } from 'lucide-react';
 import { ImageResponse } from 'next/og';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -24,14 +25,15 @@ export default async function Image() {
 			<div
 				style={{
 					fontSize: 128,
-					background: 'white',
+					background: 'green',
 					width: '100%',
 					height: '100%',
 					display: 'flex',
 					alignItems: 'center',
 					justifyContent: 'center'
 				}}>
-				About Acme
+				<UtensilsCrossed className='w-12 h-12' />
+				You Are What You Eat
 			</div>
 		),
 		// ImageResponse options
