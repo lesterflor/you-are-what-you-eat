@@ -15,7 +15,7 @@ export const contentType = 'image/png';
 export default async function Image() {
 	// Font loading, process.cwd() is Next.js project directory
 	const interSemiBold = await readFile(
-		join(process.cwd(), 'assets/Inter-SemiBold.ttf')
+		join(process.cwd(), 'public/fonts/Inter_18pt-Regular.ttf')
 	);
 
 	return new ImageResponse(
