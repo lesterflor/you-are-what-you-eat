@@ -20,6 +20,7 @@ import FoodCategoryPicker from './food-categories';
 import { FoodSearchContext } from '@/contexts/food-search-context';
 import { cn } from '@/lib/utils';
 import { SearchContext } from '@/contexts/search-context';
+import { LogUpdateContext } from '@/contexts/log-context';
 
 export default function FoodListSheet({
 	forceColumn = true
@@ -29,6 +30,7 @@ export default function FoodListSheet({
 	const [foods, setFoods] = useState<GetFoodItem[]>([]);
 	const [category, setCategory] = useState('');
 	const foodContext = useContext(FoodSearchContext);
+	const logContext = useContext(LogUpdateContext);
 
 	const getFoods = async (term: string = '', cat: string = '', user = '') => {
 		const res = await getFoodItems(term, cat, user);
@@ -66,6 +68,12 @@ export default function FoodListSheet({
 			getFoods('', '', searchContext.searchType.userId);
 		}
 	}, [searchContext]);
+
+	useEffect(() => {
+		if (logContext?.updated) {
+			getFoods();
+		}
+	}, [logContext]);
 
 	return (
 		<>

@@ -171,3 +171,33 @@ export async function updateProfileAction(user: {
 		};
 	}
 }
+
+export async function getUserFoods(id: string) {
+	try {
+		const session = await auth();
+
+		if (!session) {
+			throw new Error('User must authenticated');
+		}
+
+		const userFoods = await prisma.user.findFirst({
+			where: { id },
+			include: {
+				FoodItems: true
+			}
+		});
+
+		const foods = userFoods?.FoodItems ?? [];
+
+		return {
+			success: true,
+			message: 'success',
+			data: foods
+		};
+	} catch (error: unknown) {
+		return {
+			success: false,
+			message: formatError(error)
+		};
+	}
+}

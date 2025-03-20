@@ -63,7 +63,7 @@ export default function LogFoodCard({
 			() => {
 				setFadeClass(true);
 			},
-			indx === 0 ? 1 : indx * 800
+			indx === 0 ? 1 : indx * 500
 		);
 	}, []);
 
@@ -107,6 +107,7 @@ export default function LogFoodCard({
 				{isEditing && (
 					<div className='flex flex-col items-center gap-2 mt-4'>
 						<NumberIncrementor
+							compactMode={true}
 							onChange={(value) => {
 								setServingSize(value);
 							}}

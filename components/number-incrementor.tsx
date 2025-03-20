@@ -8,19 +8,22 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Button } from './ui/button';
+import { cn } from '@/lib/utils';
 
 export default function NumberIncrementor({
 	value = 0,
 	onChange,
 	minValue = 0,
 	maxValue = Infinity,
-	allowDecimalIncrement = true
+	allowDecimalIncrement = true,
+	compactMode = false
 }: {
 	value?: number;
 	onChange: (val: number) => void;
 	minValue?: number;
 	allowDecimalIncrement?: boolean;
 	maxValue?: number;
+	compactMode?: boolean;
 }) {
 	const [val, setVal] = useState(value);
 
@@ -29,7 +32,11 @@ export default function NumberIncrementor({
 	}, [val]);
 
 	return (
-		<div className='flex flex-row items-center justify-start gap-6 rounded-md border-2 p-2'>
+		<div
+			className={cn(
+				'flex flex-row items-center justify-start  rounded-md border-2 p-2',
+				compactMode ? 'gap-1' : 'gap-6'
+			)}>
 			<div className='flex flex-row items-center gap-2'>
 				<Button
 					size='icon'

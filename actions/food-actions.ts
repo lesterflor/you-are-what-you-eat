@@ -1,5 +1,6 @@
 'use server';
 
+import { auth } from '@/db/auth';
 import prisma from '@/db/prisma';
 import { formatError } from '@/lib/utils';
 import { foodItemSchema } from '@/lib/validators';
@@ -82,6 +83,12 @@ export async function addFoodItem(item: FoodItem) {
 
 export async function updateFoodItem(item: GetFoodItem) {
 	try {
+		const session = await auth();
+
+		if (!session) {
+			throw new Error('User must be authenticated');
+		}
+
 		const existing = await prisma.foodItem.findFirst({
 			where: {
 				id: item.id
@@ -97,7 +104,6 @@ export async function updateFoodItem(item: GetFoodItem) {
 				id: existing.id
 			},
 			data: {
-				name: item.name,
 				category: item.category,
 				image: item.image,
 				carbGrams: item.carbGrams,
@@ -105,13 +111,16 @@ export async function updateFoodItem(item: GetFoodItem) {
 				proteinGrams: item.proteinGrams,
 				calories: item.calories,
 				description: item.description,
-				servingSize: item.servingSize
+				servingSize: item.servingSize,
+				userId: item.userId
 			}
 		});
 
 		if (!update) {
 			throw new Error('There was a problem updating the food item');
 		}
+
+		revalidatePath('/foods');
 
 		return {
 			success: true,
@@ -150,6 +159,31 @@ export async function deleteFoodItem(id: string) {
 		return {
 			success: true,
 			message: 'Food item deleted successfully'
+		};
+	} catch (error: unknown) {
+		return {
+			success: false,
+			message: formatError(error)
+		};
+	}
+}
+
+export async function getFoodItemById(id: string) {
+	try {
+		const existing = await prisma.foodItem.findFirst({
+			where: {
+				id
+			}
+		});
+
+		if (!existing) {
+			throw new Error('The food item was not found');
+		}
+
+		return {
+			success: true,
+			message: 'success',
+			data: existing
 		};
 	} catch (error: unknown) {
 		return {

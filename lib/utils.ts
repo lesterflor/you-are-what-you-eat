@@ -334,3 +334,7 @@ export function getMacroPercOfCals(
 	const prec = formatUnit(pre * 100, 10);
 	return isNaN(prec) ? '' : prec + '%';
 }
+
+export function truncate(str: string, maxlength: typeof Infinity) {
+	return str.length > maxlength ? str.slice(0, maxlength - 3) + '…' : str;
+}
