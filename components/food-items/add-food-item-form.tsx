@@ -101,7 +101,10 @@ export default function AddFoodItemForm({
 									<FormItem className='w-64'>
 										<FormLabel className='font-semibold'>Name</FormLabel>
 										<FormControl>
-											<Input {...field} />
+											<Input
+												{...field}
+												className='w-80 portrait:w-96'
+											/>
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -122,7 +125,10 @@ export default function AddFoodItemForm({
 									<FormItem className='w-64'>
 										<FormLabel className='font-semibold'>Description</FormLabel>
 										<FormControl>
-											<Textarea {...field} />
+											<Textarea
+												{...field}
+												className='w-80 portrait:w-96'
+											/>
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -243,7 +249,7 @@ export default function AddFoodItemForm({
 						<div className='flex flex-row items-end justify-end w-full'>
 							<Button
 								disabled={form.formState.isSubmitting}
-								className='w-44'>
+								className='w-44 portrait:w-full'>
 								{form.formState.isSubmitting ? (
 									<LoaderIcon className='w-4 h-4 animate-spin' />
 								) : (

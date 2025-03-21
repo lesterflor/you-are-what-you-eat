@@ -141,7 +141,7 @@ export default function FoodUserAvatar({
 									</Badge>
 								</SheetTitle>
 								<SheetDescription></SheetDescription>
-								<ScrollArea className='h-[80vh] portrait:h-[65vh] w-full pr-3'>
+								<ScrollArea className='h-[80vh] portrait:h-[70vh] w-full pr-3'>
 									{editFoodItem && (
 										<UpdateFoodItemForm
 											item={editFoodItem as GetFoodItem}

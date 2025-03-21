@@ -83,7 +83,10 @@ export default function UpdateFoodItemForm({
 									<FormItem className='w-64'>
 										<FormLabel className='font-semibold'>Description</FormLabel>
 										<FormControl>
-											<Textarea {...field} />
+											<Textarea
+												{...field}
+												className='w-80 portrait:w-96'
+											/>
 										</FormControl>
 										<FormMessage />
 									</FormItem>

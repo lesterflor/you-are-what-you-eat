@@ -28,7 +28,7 @@ export default function AddFoodSheet({ onAdded }: { onAdded?: () => void }) {
 					onOpenChange={setIsOpenPortrait}>
 					<SheetTrigger asChild>
 						<Button>
-							<Plus className='w-6 h-6' /> New Food Item
+							<Plus className='w-6 h-6' /> New
 						</Button>
 					</SheetTrigger>
 
