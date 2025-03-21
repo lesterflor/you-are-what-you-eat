@@ -86,12 +86,12 @@ export default function FoodUserAvatar({
 	}, [editFormOpen]);
 
 	const [ref, isIntersecting] = useInView({
-		rootMargin: '-50% 0% -25% 0%'
+		rootMargin: '-0% 0% -25% 0%'
 	});
 
 	useEffect(() => {
 		if (!isIntersecting) {
-			setPopOpen(false);
+			//setPopOpen(false);
 		}
 	}, [isIntersecting]);
 
