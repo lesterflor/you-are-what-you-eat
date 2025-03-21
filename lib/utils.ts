@@ -268,6 +268,7 @@ export const INCH_TO_CM = 2.54;
 export const CM_TO_INCH = 0.3937008;
 export const CM_TO_FEET = 0.0328084;
 export const FEET_TO_CM = 30.48;
+export const GRAMS_TO_POUND = 0.002204623;
 
 export function calculateBMR(data: BMRData) {
 	const {

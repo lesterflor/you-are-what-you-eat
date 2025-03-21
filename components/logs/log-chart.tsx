@@ -24,7 +24,9 @@ import { FoodEntry, GetLog } from '@/types';
 import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
-import { formatUnit, totalMacrosReducer } from '@/lib/utils';
+import { formatUnit, GRAMS_TO_POUND, totalMacrosReducer } from '@/lib/utils';
+import { Weight } from 'lucide-react';
+import { Badge } from '../ui/badge';
 
 const chartConfig = {
 	calories: {
@@ -64,6 +66,7 @@ export function LogChart({
 	const [logData, setLogData] = useState<LogDataType[]>();
 	const [type, setType] = useState(chartType as string);
 	const [pieData, setPieData] = useState<PieItemType[]>([]);
+	const [totalGrams, setTotalGrams] = useState(0);
 
 	useEffect(() => {
 		if (log.foodItems.length > 0) {
@@ -77,6 +80,14 @@ export function LogChart({
 			}));
 
 			setLogData(dataMap);
+
+			setTotalGrams(
+				log.foodItems.reduce(
+					(acc, curr) =>
+						acc + curr.carbGrams + curr.proteinGrams + curr.fatGrams,
+					0
+				)
+			);
 
 			const { carbs, protein, fat } = totalMacrosReducer(log.foodItems);
 
@@ -103,9 +114,25 @@ export function LogChart({
 
 			{type === 'totals' ? (
 				<div className='h-full w-full flex flex-col items-center justify-between'>
+					<div className='flex flex-row items-center gap-2 flex-wrap text-xs mt-2'>
+						<Weight className='w-6 h-6' />
+						Total weight:
+						<Badge
+							variant='outline'
+							className='p-2 font-normal'>
+							{formatUnit(totalGrams)} grams
+						</Badge>{' '}
+						or{' '}
+						<Badge
+							variant='outline'
+							className='p-2 font-normal'>
+							{formatUnit(totalGrams * GRAMS_TO_POUND)} pounds
+						</Badge>
+						of food
+					</div>
 					<ChartContainer
 						config={pieChartConfig}
-						className='min-h-[50vh] portrait:h-[75vh] portrait:w-[80vw]'>
+						className='min-h-[45vh] portrait:h-[75vh] portrait:w-[80vw]'>
 						<PieChart>
 							<Pie
 								data={pieData}
@@ -124,7 +151,22 @@ export function LogChart({
 								))}
 							</Pie>
 
-							<ChartTooltip content={<ChartTooltipContent />} />
+							<ChartTooltip
+								formatter={(value, name, props) => (
+									<div className='flex flex-row items-center gap-2'>
+										<div
+											className='w-2 h-2 rounded-sm'
+											style={{
+												backgroundColor: `${props.payload.fill}`
+											}}></div>
+										<div>{name}</div>
+										<div className='text-xs'>
+											{formatUnit(Number(value))} grams
+										</div>
+									</div>
+								)}
+								content={<ChartTooltipContent />}
+							/>
 						</PieChart>
 					</ChartContainer>
 				</div>
@@ -270,7 +312,7 @@ export function LogChart({
 	);
 }
 
-const RADIAN = Math.PI / 165;
+const RADIAN = Math.PI / 180;
 const renderCustomizedLabel = ({
 	cx,
 	cy,

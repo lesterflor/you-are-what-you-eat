@@ -6,7 +6,11 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { useContext, useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import Link from 'next/link';
-import { FilePenLine, UtensilsCrossed } from 'lucide-react';
+import {
+	FilePenLine,
+	SquareArrowOutUpRight,
+	UtensilsCrossed
+} from 'lucide-react';
 import { SearchContext } from '@/contexts/search-context';
 import { useSession } from 'next-auth/react';
 import { truncate } from '@/lib/utils';
@@ -90,25 +94,30 @@ export default function FoodUserAvatar({
 					<AvatarFallback>{name.slice(0, 1)}</AvatarFallback>
 				</Avatar>
 			</PopoverTrigger>
-			<PopoverContent className='flex flex-col gap-2 max-h-[30vh] h-auto items-center'>
+			<PopoverContent className='flex flex-col gap-4 max-h-[50vh] h-auto items-center'>
 				{sessionUser.id === id && currentFood && currentFood.length === 1 && (
 					<div>
 						<Sheet
 							open={editFormOpen}
 							onOpenChange={setEditFormOpen}>
-							<SheetTrigger asChild>
+							<SheetTrigger
+								asChild
+								className='mb-5'>
 								<Button
 									size='sm'
 									onClick={() => {
 										getCurrentFood();
 									}}>
 									<FilePenLine className='w-4 h-4' />
-									Edit {truncate(currentFood[0].name, 20)}
+									Edit{' '}
+									<span className='font-semibold'>
+										{truncate(currentFood[0].name, 20)}
+									</span>
 								</Button>
 							</SheetTrigger>
 
 							<SheetContent className='max-w-[95vw] portrait:w-[95vw]'>
-								<SheetTitle className='flex flex-col items-start justify-center gap-2 pb-4'>
+								<SheetTitle className='flex flex-row items-center justify-start flex-wrap gap-2 pb-4'>
 									<div className='flex flex-row items-center gap-2 justify-start'>
 										<FilePenLine className='w-4 h-4' /> Edit
 									</div>
@@ -157,7 +166,6 @@ export default function FoodUserAvatar({
 									setPopOpen(false);
 
 									if (selfSearch) {
-										//onLinkClick?.({ name: item.name });
 										if (searchContext && searchContext.updateSearchType) {
 											const update = {
 												...searchContext,
@@ -172,7 +180,11 @@ export default function FoodUserAvatar({
 								variant='secondary'
 								key={item.id}>
 								{!selfSearch ? (
-									<Link href={`/foods?q=${item.name}`}>{item.name}</Link>
+									<Link
+										className='flex flex-row items-center gap-2 flex-wrap'
+										href={`/foods?q=${item.name}`}>
+										{item.name} <SquareArrowOutUpRight className='w-4 h-4' />
+									</Link>
 								) : (
 									item.name
 								)}
@@ -182,7 +194,7 @@ export default function FoodUserAvatar({
 				{showSeeMore && (
 					<div className='w-full flex flex-row justify-end'>
 						<Button
-							variant='ghost'
+							variant='outline'
 							onClick={() => {
 								setPopOpen(false);
 
@@ -202,8 +214,8 @@ export default function FoodUserAvatar({
 							{!selfSearch ? (
 								<Link
 									href={`/foods?user=${id}`}
-									className='text-xs'>
-									...See all
+									className='text-xs flex flex-row items-center gap-2 flex-wrap'>
+									See all <SquareArrowOutUpRight className='w-4 h-4' />
 								</Link>
 							) : (
 								'...See all'
