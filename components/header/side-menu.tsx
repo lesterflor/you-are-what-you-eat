@@ -7,9 +7,9 @@ import {
 	SheetTitle,
 	SheetTrigger
 } from '../ui/sheet';
-import { Calculator, Database, Menu, UtensilsCrossed } from 'lucide-react';
+import { Calculator, Menu, UtensilsCrossed } from 'lucide-react';
 import Link from 'next/link';
-import { GetLog } from '@/types';
+import { GetLog, GetUser } from '@/types';
 import LogSheet from '../logs/log-sheet';
 import ModeToggle from './mode-toggle';
 import LogButton from '../logs/log-button';
@@ -21,10 +21,14 @@ import { Button } from '../ui/button';
 import { useState } from 'react';
 import KnowCaloriesBurned from '../logs/know-calories-burned';
 import { useCurrentSession } from '@/hooks/use-current-session';
+import { useSession } from 'next-auth/react';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 export default function SideMenu({ log }: { log?: GetLog }) {
 	const pathname = usePathname();
 	const { status } = useCurrentSession();
+	const { data: session } = useSession();
+	const user = session?.user as GetUser;
 
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -61,6 +65,16 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 					</div>
 				</SheetTitle>
 				<div className='flex flex-col gap-6 mt-4'>
+					{user && (
+						<div className='flex flex-row items-center gap-4'>
+							<Avatar>
+								<AvatarImage src={user.image ? user.image : ''} />
+								<AvatarFallback>{user.name.slice(0, 1)}</AvatarFallback>
+							</Avatar>
+							<div>Hello, {user.name}</div>
+						</div>
+					)}
+
 					<Button asChild>
 						<Link
 							href='/base-metabolic-rate'
@@ -81,7 +95,7 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 						/>
 					)}
 
-					{pathname !== '/foods' && (
+					{/* {pathname !== '/foods' && (
 						<Button
 							asChild
 							className='w-fit'>
@@ -93,7 +107,7 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 								View Food Database
 							</Link>
 						</Button>
-					)}
+					)} */}
 
 					{status === 'authenticated' && (
 						<AddFoodSheet

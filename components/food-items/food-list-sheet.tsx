@@ -9,7 +9,7 @@ import {
 	SheetTitle,
 	SheetTrigger
 } from '../ui/sheet';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { GetFoodItem } from '@/types';
 import { getFoodItems } from '@/actions/food-actions';
 import FoodItemCard from './food-item-card';
@@ -59,6 +59,10 @@ export default function FoodListSheet({
 		getFoods('', category);
 	}, [category]);
 
+	useEffect(() => {
+		scrollToTop();
+	}, [foods]);
+
 	const searchContext = useContext(SearchContext);
 
 	useEffect(() => {
@@ -74,6 +78,25 @@ export default function FoodListSheet({
 			getFoods();
 		}
 	}, [foodUpdateContext]);
+
+	const scrollAreaRef = useRef<HTMLDivElement>(null);
+	const scrollAreaRefD = useRef<HTMLDivElement>(null);
+
+	const scrollToTop = () => {
+		if (scrollAreaRef.current) {
+			scrollAreaRef.current.scrollIntoView({
+				behavior: 'smooth',
+				block: 'start'
+			});
+		}
+
+		if (scrollAreaRefD.current) {
+			scrollAreaRefD.current.scrollIntoView({
+				behavior: 'smooth',
+				block: 'start'
+			});
+		}
+	};
 
 	return (
 		<>
@@ -105,6 +128,7 @@ export default function FoodListSheet({
 						</SheetTitle>
 						<ScrollArea className='h-[80vh] w-full pr-0'>
 							<div
+								ref={scrollAreaRefD}
 								className={cn(
 									'gap-4 pb-5 w-[97%]',
 									forceColumn
@@ -157,6 +181,7 @@ export default function FoodListSheet({
 						</SheetTitle>
 						<ScrollArea className='h-[70vh] w-full pr-3'>
 							<div
+								ref={scrollAreaRef}
 								className={cn(
 									'gap-4 pb-5 w-[100%]',
 									forceColumn ? 'flex flex-col' : 'grid grid-cols-2'
