@@ -168,8 +168,8 @@ export default function BMRCalculatorForm() {
 						</div>
 
 						<div className='font-semibold'>Height</div>
-						<div className='flex flex-row portrait:flex-col portait:justify-center flex-wrap justify-between gap-2'>
-							<div className='flex flex-col portrait:flex-row-reverse portrait:justify-end gap-4 items-center'>
+						<div className='flex flex-row portrait:flex-col portait:justify-center flex-wrap justify-between gap-2 items-center'>
+							<div className='flex flex-col portrait:flex-row-reverse portrait:justify-end gap-2 items-center'>
 								<div className='text-xs'>Feet</div>
 								<NumberIncrementor
 									allowDecimalIncrement={false}
@@ -181,7 +181,7 @@ export default function BMRCalculatorForm() {
 								/>
 							</div>
 
-							<div className='flex flex-col portrait:flex-row-reverse portrait:justify-end gap-4 items-center'>
+							<div className='flex flex-col portrait:flex-row-reverse portrait:justify-end gap-2 items-center'>
 								<div className='text-xs'>inches</div>
 								<NumberIncrementor
 									allowDecimalIncrement={false}
