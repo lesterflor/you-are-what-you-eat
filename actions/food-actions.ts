@@ -13,29 +13,33 @@ export async function getFoodItems(
 	user = ''
 ) {
 	try {
-		const items = await prisma.foodItem.findMany({
-			where: {
-				name: {
-					contains: name ? name : undefined,
-					mode: 'insensitive'
-				},
-				category: category ? category : undefined,
-				userId: user ? user : undefined
-			},
-			include: {
-				user: {
-					select: {
-						id: true,
-						name: true,
-						image: true,
-						FoodItems: true
+		const noFields = !name && !category && !user;
+
+		const items = !noFields
+			? await prisma.foodItem.findMany({
+					where: {
+						name: {
+							contains: name ? name : undefined,
+							mode: 'insensitive'
+						},
+						category: category ? category : undefined,
+						userId: user ? user : undefined
+					},
+					include: {
+						user: {
+							select: {
+								id: true,
+								name: true,
+								image: true,
+								FoodItems: true
+							}
+						}
+					},
+					orderBy: {
+						createdAt: 'desc'
 					}
-				}
-			},
-			orderBy: {
-				createdAt: 'desc'
-			}
-		});
+			  })
+			: await prisma.foodItem.findMany();
 
 		if (!items) {
 			throw new Error('There was a problem fetching food items');
