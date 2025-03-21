@@ -90,7 +90,7 @@ export default function FoodItemCard({
 			() => {
 				setFadeClass(true);
 			},
-			indx === 0 ? 1 : indx * 500
+			indx === 0 ? 1 : indx * 150
 		);
 	}, []);
 
@@ -181,6 +181,7 @@ export default function FoodItemCard({
 						<div className='flex flex-col items-center'>
 							<span className='text-sm'>Servings</span>
 							<NumberIncrementor
+								compactMode={true}
 								onChange={(val) => {
 									setPortionAmount(val);
 

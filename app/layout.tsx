@@ -9,6 +9,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import LogContextProvider from '@/providers/log-context-provider';
 import FoodSearchProvider from '@/providers/food-search-provider';
 import SearchFoodProvider from '@/providers/search-food-provider';
+import FoodUpdateProvider from '@/providers/food-update-provider';
 
 export const metadata: Metadata = {
 	title: {
@@ -48,13 +49,15 @@ export default async function RootLayout({
 						<LogContextProvider>
 							<FoodSearchProvider>
 								<SearchFoodProvider>
-									<SiteHeader />
-									<br />
-									<main className='flex-1 wrapper w-5/6 portrait:w-full portrait:px-3 mx-auto mt-20'>
-										<Suspense>
-											<div className='select-none'>{children}</div>
-										</Suspense>
-									</main>
+									<FoodUpdateProvider>
+										<SiteHeader />
+										<br />
+										<main className='flex-1 wrapper w-5/6 portrait:w-full portrait:px-3 mx-auto mt-20'>
+											<Suspense>
+												<div className='select-none'>{children}</div>
+											</Suspense>
+										</main>
+									</FoodUpdateProvider>
 								</SearchFoodProvider>
 							</FoodSearchProvider>
 						</LogContextProvider>

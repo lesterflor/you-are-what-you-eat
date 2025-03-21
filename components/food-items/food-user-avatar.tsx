@@ -20,8 +20,8 @@ import {
 import UpdateFoodItemForm from './update-food-item-form';
 import { ScrollArea } from '../ui/scroll-area';
 import { Badge } from '../ui/badge';
-import { LogUpdateContext } from '@/contexts/log-context';
 import { getFoodItemById } from '@/actions/food-actions';
+import { UpdateFoodContext } from '@/contexts/food-update-context';
 
 export default function FoodUserAvatar({
 	user,
@@ -63,16 +63,16 @@ export default function FoodUserAvatar({
 	}, []);
 
 	const searchContext = useContext(SearchContext);
-	const logContext = useContext(LogUpdateContext);
+	const foodUpdateContext = useContext(UpdateFoodContext);
 
 	const { data: session } = useSession();
 	const sessionUser = session?.user as GetUser;
 
 	useEffect(() => {
-		if (logContext?.updated) {
+		if (foodUpdateContext?.updated) {
 			getCurrentFood();
 		}
-	}, [logContext]);
+	}, [foodUpdateContext]);
 
 	useEffect(() => {
 		if (!editFormOpen) {
@@ -126,12 +126,12 @@ export default function FoodUserAvatar({
 											onSuccess={() => {
 												setEditFormOpen(false);
 
-												if (logContext && logContext.isUpdated) {
+												if (foodUpdateContext && foodUpdateContext.isUpdated) {
 													const update = {
-														...logContext,
+														...foodUpdateContext,
 														updated: true
 													};
-													logContext.isUpdated(update);
+													foodUpdateContext.isUpdated(update);
 												}
 											}}
 										/>
