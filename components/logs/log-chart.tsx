@@ -243,12 +243,13 @@ export function LogChart({
 					<div className='portrait:hidden w-full h-full'>
 						<ChartContainer
 							config={chartConfig}
-							className='min-h-[200px] portrait:h-[75vh] portrait:w-[85vw] mr-4'>
+							className='min-h-[200px] h-[50vh] w-[60vw] mr-4'>
 							<ComposedChart
+								height={800}
 								data={logData}
 								barSize={5}
 								compact={false}
-								margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+								margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
 								layout='horizontal'>
 								<CartesianGrid vertical={false} />
 								<XAxis
@@ -264,11 +265,14 @@ export function LogChart({
 
 								<YAxis
 									type='number'
+									offset={0}
+									tickMargin={5}
 									label={{
 										value: type === 'macros' ? 'Total grams' : 'Calories',
 										position: 'insideLeft',
 										angle: -90
 									}}
+									width={55}
 								/>
 
 								<ChartTooltip content={<ChartTooltipContent />} />
