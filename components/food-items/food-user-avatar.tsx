@@ -26,6 +26,7 @@ import { ScrollArea } from '../ui/scroll-area';
 import { Badge } from '../ui/badge';
 import { getFoodItemById } from '@/actions/food-actions';
 import { UpdateFoodContext } from '@/contexts/food-update-context';
+import { useInView } from 'react-intersection-observer';
 
 export default function FoodUserAvatar({
 	user,
@@ -84,6 +85,16 @@ export default function FoodUserAvatar({
 		}
 	}, [editFormOpen]);
 
+	const [ref, isIntersecting] = useInView({
+		rootMargin: '-50% 0% -25% 0%'
+	});
+
+	useEffect(() => {
+		if (!isIntersecting) {
+			setPopOpen(false);
+		}
+	}, [isIntersecting]);
+
 	return (
 		<Popover
 			open={popOpen}
@@ -94,7 +105,9 @@ export default function FoodUserAvatar({
 					<AvatarFallback>{name.slice(0, 1)}</AvatarFallback>
 				</Avatar>
 			</PopoverTrigger>
-			<PopoverContent className='flex flex-col gap-4 max-h-[50vh] h-auto items-center'>
+			<PopoverContent
+				ref={ref}
+				className='flex flex-col gap-4 max-h-[50vh] h-auto items-center'>
 				{sessionUser.id === id && currentFood && currentFood.length === 1 && (
 					<div>
 						<Sheet
@@ -186,7 +199,9 @@ export default function FoodUserAvatar({
 										{item.name} <SquareArrowOutUpRight className='w-4 h-4' />
 									</Link>
 								) : (
-									item.name
+									<>
+										<SquareArrowOutUpRight className='w-4 h-4' /> {item.name}
+									</>
 								)}
 							</Button>
 						))}
@@ -218,7 +233,9 @@ export default function FoodUserAvatar({
 									See all <SquareArrowOutUpRight className='w-4 h-4' />
 								</Link>
 							) : (
-								'...See all'
+								<>
+									<SquareArrowOutUpRight className='w-4 h-4' /> See all
+								</>
 							)}
 						</Button>
 					</div>
