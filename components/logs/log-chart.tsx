@@ -2,10 +2,11 @@
 
 import {
 	Bar,
+	BarChart,
 	CartesianGrid,
-	ComposedChart,
 	Label,
 	Line,
+	LineChart,
 	Pie,
 	PieChart,
 	XAxis,
@@ -172,143 +173,238 @@ export function LogChart({
 			) : (
 				<div className='w-full h-full'>
 					<div className='hidden portrait:block w-full h-full'>
-						<ChartContainer
-							config={chartConfig}
-							className='min-h-[200px] min-w-[200px] portrait:h-[75vh] portrait:w-[85vw] mr-4'>
-							<ComposedChart
-								data={logData}
-								barSize={5}
-								compact={false}
-								margin={{ top: 5, right: 0, left: 0, bottom: 5 }}
-								layout='vertical'>
-								<CartesianGrid vertical={true} />
-								<YAxis
-									width={72}
-									className='text-xs'
-									dataKey='eatenAt'
-									tickLine={false}
-									tickMargin={1}
-									axisLine={false}
-									type='category'
-								/>
+						{type === 'macros' ? (
+							<ChartContainer
+								config={chartConfig}
+								className='min-h-[200px] min-w-[200px] portrait:h-[75vh] portrait:w-[85vw] mr-4'>
+								<BarChart
+									height={800}
+									data={logData}
+									barSize={30}
+									compact={false}
+									margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
+									layout='vertical'>
+									<CartesianGrid vertical={false} />
+									<XAxis
+										angle={-90}
+										className='text-xs'
+										tickLine={false}
+										tickMargin={5}
+										offset={10}
+										tickCount={120}
+										axisLine={false}
+										type='number'
+										label={{
+											value: 'Total grams',
+											position: 'bottom'
+										}}
+									/>
 
-								<XAxis
-									type='number'
-									label={{
-										value: type === 'macros' ? 'Total grams' : 'Calories',
-										position: 'bottom'
-									}}
-								/>
+									<YAxis
+										tickCount={10}
+										dataKey='eatenAt'
+										type='category'
+										offset={0}
+										tickMargin={1}
+										width={70}
+										label={{
+											value: 'Eaten At',
+											position: 'insideLeft',
+											angle: -90
+										}}
+									/>
 
-								<ChartTooltip content={<ChartTooltipContent />} />
-								<ChartLegend
-									className='mt-4'
-									content={<ChartLegendContent />}
-								/>
+									<ChartTooltip content={<ChartTooltipContent />} />
+									<ChartLegend
+										className='mt-4'
+										content={<ChartLegendContent />}
+									/>
 
-								{type === 'macros' ? (
-									<>
-										<Bar
-											dataKey='carb'
-											fill='var(--color-carb)'
-											radius={2}
-											stackId='a'
-										/>
-										<Bar
-											dataKey='protein'
-											fill='var(--color-protein)'
-											radius={2}
-											stackId='b'
-										/>
-										<Bar
-											dataKey='fat'
-											fill='var(--color-fat)'
-											radius={2}
-											stackId='c'
-										/>
-									</>
-								) : (
-									<>
-										<Line
-											type='monotone'
-											dataKey='calories'
-											stroke='#ff7300'
-										/>
-									</>
-								)}
-							</ComposedChart>
-						</ChartContainer>
+									<Bar
+										dataKey='carb'
+										fill='var(--color-carb)'
+										stackId='a'
+									/>
+									<Bar
+										dataKey='protein'
+										fill='var(--color-protein)'
+										stackId='a'
+									/>
+									<Bar
+										dataKey='fat'
+										fill='var(--color-fat)'
+										radius={[2, 2, 0, 0]}
+										stackId='a'
+									/>
+								</BarChart>
+							</ChartContainer>
+						) : (
+							<ChartContainer
+								config={chartConfig}
+								className='min-h-[200px] min-w-[200px] portrait:h-[75vh] portrait:w-[85vw] mr-4'>
+								<LineChart
+									height={800}
+									data={logData}
+									barSize={5}
+									compact={false}
+									margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
+									layout='vertical'>
+									<CartesianGrid vertical={false} />
+									<XAxis
+										angle={-90}
+										className='text-xs'
+										tickLine={false}
+										tickMargin={5}
+										offset={10}
+										tickCount={120}
+										axisLine={false}
+										type='number'
+										label={{
+											value: 'Calories',
+											position: 'bottom'
+										}}
+									/>
+
+									<YAxis
+										tickCount={10}
+										dataKey='eatenAt'
+										type='category'
+										offset={0}
+										tickMargin={1}
+										width={70}
+										label={{
+											value: 'Eaten At',
+											position: 'insideLeft',
+											angle: -90
+										}}
+									/>
+
+									<ChartTooltip content={<ChartTooltipContent />} />
+									<ChartLegend
+										className='mt-4'
+										content={<ChartLegendContent />}
+									/>
+
+									<Line
+										type='monotone'
+										dataKey='calories'
+										stroke='#ff7300'
+									/>
+								</LineChart>
+							</ChartContainer>
+						)}
 					</div>
 
 					<div className='portrait:hidden w-full h-full'>
-						<ChartContainer
-							config={chartConfig}
-							className='min-h-[200px] h-[50vh] w-[60vw] mr-4'>
-							<ComposedChart
-								height={800}
-								data={logData}
-								barSize={5}
-								compact={false}
-								margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
-								layout='horizontal'>
-								<CartesianGrid vertical={false} />
-								<XAxis
-									angle={-90}
-									className='text-xs'
-									dataKey='eatenAt'
-									tickLine={false}
-									tickMargin={25}
-									offset={10}
-									axisLine={false}
-									type='category'
-								/>
+						{type === 'macros' ? (
+							<ChartContainer
+								config={chartConfig}
+								className='min-h-[200px] h-[56vh] w-[60vw] mr-4'>
+								<BarChart
+									height={800}
+									data={logData}
+									barSize={30}
+									compact={false}
+									margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
+									layout='horizontal'>
+									<CartesianGrid vertical={false} />
+									<XAxis
+										angle={-90}
+										className='text-xs'
+										dataKey='eatenAt'
+										tickLine={false}
+										tickMargin={25}
+										offset={10}
+										axisLine={false}
+										type='category'
+									/>
 
-								<YAxis
-									type='number'
-									offset={0}
-									tickMargin={5}
-									label={{
-										value: type === 'macros' ? 'Total grams' : 'Calories',
-										position: 'insideLeft',
-										angle: -90
-									}}
-									width={55}
-								/>
+									<YAxis
+										tickCount={120}
+										type='number'
+										offset={0}
+										tickMargin={5}
+										label={{
+											value: type === 'macros' ? 'Total grams' : 'Calories',
+											position: 'insideLeft',
+											angle: -90
+										}}
+										width={55}
+									/>
 
-								<ChartTooltip content={<ChartTooltipContent />} />
-								<ChartLegend
-									className='mt-4'
-									content={<ChartLegendContent />}
-								/>
-								{type === 'macros' ? (
-									<>
-										<Bar
-											dataKey='carb'
-											fill='var(--color-carb)'
-											radius={2}
-										/>
-										<Bar
-											dataKey='protein'
-											fill='var(--color-protein)'
-											radius={2}
-										/>
-										<Bar
-											dataKey='fat'
-											fill='var(--color-fat)'
-											radius={2}
-										/>
-									</>
-								) : (
-									<>
-										<Line
-											type='monotone'
-											dataKey='calories'
-											stroke='#ff7300'
-										/>
-									</>
-								)}
-							</ComposedChart>
-						</ChartContainer>
+									<ChartTooltip content={<ChartTooltipContent />} />
+									<ChartLegend
+										className='mt-4'
+										content={<ChartLegendContent />}
+									/>
+
+									<Bar
+										dataKey='carb'
+										fill='var(--color-carb)'
+										stackId='a'
+									/>
+									<Bar
+										dataKey='protein'
+										fill='var(--color-protein)'
+										stackId='a'
+									/>
+									<Bar
+										dataKey='fat'
+										fill='var(--color-fat)'
+										radius={[2, 2, 0, 0]}
+										stackId='a'
+									/>
+								</BarChart>
+							</ChartContainer>
+						) : (
+							<ChartContainer
+								config={chartConfig}
+								className='min-h-[200px] h-[56vh] w-[60vw] mr-4'>
+								<LineChart
+									height={800}
+									data={logData}
+									barSize={5}
+									compact={false}
+									margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
+									layout='horizontal'>
+									<CartesianGrid vertical={false} />
+									<XAxis
+										angle={-90}
+										className='text-xs'
+										dataKey='eatenAt'
+										tickLine={false}
+										tickMargin={25}
+										offset={10}
+										axisLine={false}
+										type='category'
+									/>
+
+									<YAxis
+										type='number'
+										offset={0}
+										tickMargin={5}
+										label={{
+											value: type === 'macros' ? 'Total grams' : 'Calories',
+											position: 'insideLeft',
+											angle: -90
+										}}
+										width={55}
+									/>
+
+									<ChartTooltip content={<ChartTooltipContent />} />
+									<ChartLegend
+										className='mt-4'
+										content={<ChartLegendContent />}
+									/>
+
+									<Line
+										type='monotone'
+										dataKey='calories'
+										stroke='#ff7300'
+									/>
+								</LineChart>
+							</ChartContainer>
+						)}
 					</div>
 				</div>
 			)}
