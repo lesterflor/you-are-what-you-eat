@@ -88,7 +88,7 @@ export default function LogMacrosSummary({
 	}, [logContext]);
 
 	return (
-		<>
+		<div className='flex portrait:flex-col flex-row gap-2'>
 			{compactMode ? (
 				isFetching && useSkeleton ? (
 					<LogMacrosSkeleton detailedMode={detailedMode} />
@@ -191,10 +191,10 @@ export default function LogMacrosSummary({
 			)}
 
 			{showPie && (
-				<div>
+				<div className='w-auto'>
 					<ChartContainer
 						config={pieChartConfig}
-						className='mx-auto aspect-square min-h-[25vh] portrait:h-[35vh]'>
+						className='mx-auto aspect-square w-[35vw] md:w-[28vw] lg:w-[22vw] xl:w-[18vw] h-[25vh] min-h-[25vh] portrait:w-full portrait:h-[25vh]'>
 						<PieChart>
 							<ChartTooltip
 								formatter={(value, name, props) => (
@@ -255,7 +255,7 @@ export default function LogMacrosSummary({
 					</ChartContainer>
 				</div>
 			)}
-		</>
+		</div>
 	);
 }
 
