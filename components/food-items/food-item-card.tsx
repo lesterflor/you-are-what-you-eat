@@ -90,7 +90,7 @@ export default function FoodItemCard({
 			() => {
 				setFadeClass(true);
 			},
-			indx === 0 ? 1 : indx * 800
+			indx === 0 ? 1 : indx * 500
 		);
 	}, []);
 

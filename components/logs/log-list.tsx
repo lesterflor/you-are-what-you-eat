@@ -13,7 +13,6 @@ import { BicepsFlexed, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
 import LogMacrosSummary from './log-macros-summary';
-// import LogFoodCardSkeleton from '../skeletons/log-food-card-skeleton';
 
 export default function FoodLogList({
 	forceColumn = true,
