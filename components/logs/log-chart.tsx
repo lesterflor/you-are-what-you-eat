@@ -114,7 +114,7 @@ export function LogChart({
 
 			{type === 'totals' ? (
 				<div className='h-full w-full flex flex-col items-center justify-between'>
-					<div className='flex flex-row items-center gap-2 flex-wrap text-xs mt-2'>
+					<div className='flex flex-row items-center gap-2 portrait:gap-1 flex-wrap text-xs mt-2'>
 						<Weight className='w-6 h-6' />
 						Total weight:
 						<Badge
