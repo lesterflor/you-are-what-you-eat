@@ -96,3 +96,18 @@ export type GetKnowCaloriesBurned = {
 	calories: number;
 	userId: string;
 };
+
+export type PieItemType = {
+	name: string;
+	value: number;
+	fill: string;
+};
+
+export type LogDataType = {
+	eatenAt: string;
+	calories: number;
+	carb: number;
+	protein: number;
+	fat: number;
+	totalGrams: number;
+};

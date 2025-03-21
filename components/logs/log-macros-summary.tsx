@@ -3,14 +3,18 @@
 import {
 	formatUnit,
 	getMacroPercOfCals,
+	RADIAN,
 	totalMacrosReducer
 } from '@/lib/utils';
-import { GetFoodEntry, GetLog } from '@/types';
+import { GetFoodEntry, GetLog, PieItemType } from '@/types';
 import { useContext, useEffect, useState } from 'react';
 import { Badge } from '../ui/badge';
 import { createDailyLog } from '@/actions/log-actions';
 import { LogUpdateContext } from '@/contexts/log-context';
 import LogMacrosSkeleton from '../skeletons/log-macros-skeleton';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '../ui/chart';
+import { Label, Pie, PieChart } from 'recharts';
+import { pieChartConfig } from '@/config';
 
 export default function LogMacrosSummary({
 	log,
@@ -18,7 +22,8 @@ export default function LogMacrosSummary({
 	compactMode = false,
 	getTodayMode = true,
 	detailedMode = false,
-	useSkeleton = false
+	useSkeleton = false,
+	showPie = false
 }: {
 	log?: GetLog;
 	children?: React.ReactNode;
@@ -26,12 +31,16 @@ export default function LogMacrosSummary({
 	getTodayMode?: boolean;
 	detailedMode?: boolean;
 	useSkeleton?: boolean;
+	showPie?: boolean;
 }) {
 	const [totalCals, setTotalCals] = useState(0);
 	const [totalCarbs, setTotalCarbs] = useState(0);
 	const [totalFat, setTotalFat] = useState(0);
 	const [totalProtein, setTotalProtein] = useState(0);
+	const [totalGrams, setTotalGrams] = useState(0);
 	const [isFetching, setIsFetching] = useState(false);
+
+	const [pieData, setPieData] = useState<PieItemType[]>([]);
 
 	const logContext = useContext(LogUpdateContext);
 
@@ -46,6 +55,14 @@ export default function LogMacrosSummary({
 			setTotalCarbs(carbs);
 			setTotalFat(fat);
 			setTotalProtein(protein);
+
+			setTotalGrams(carbs + protein + fat);
+
+			setPieData([
+				{ name: 'Carbs', value: carbs, fill: 'var(--color-carb)' },
+				{ name: 'Protein', value: protein, fill: 'var(--color-protein)' },
+				{ name: 'Fat', value: fat, fill: 'var(--color-fat)' }
+			]);
 		}
 	}, []);
 
@@ -172,6 +189,116 @@ export default function LogMacrosSummary({
 					)}
 				</div>
 			)}
+
+			{showPie && (
+				<div>
+					<ChartContainer
+						config={pieChartConfig}
+						className='mx-auto aspect-square min-h-[25vh] portrait:h-[35vh]'>
+						<PieChart>
+							<ChartTooltip
+								formatter={(value, name, props) => (
+									<div className='flex flex-row items-center gap-2'>
+										<div
+											className='w-2 h-2 rounded-sm'
+											style={{
+												backgroundColor: `${props.payload.fill}`
+											}}>
+											{props.payload.color}
+										</div>
+										<div>{props.payload.name}</div>
+										<div className='text-xs'>
+											{formatUnit(Number(value))} grams
+										</div>
+									</div>
+								)}
+								cursor={false}
+								content={<ChartTooltipContent />}
+							/>
+							<Pie
+								data={pieData}
+								dataKey='value'
+								nameKey='name'
+								labelLine={true}
+								label={(value) => renderCustomizedLabel(value)}
+								innerRadius={45}
+								outerRadius={70}
+								strokeWidth={1}>
+								<Label
+									content={({ viewBox }) => {
+										if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+											return (
+												<text
+													x={viewBox.cx}
+													y={viewBox.cy}
+													textAnchor='middle'
+													dominantBaseline='middle'>
+													<tspan
+														x={viewBox.cx}
+														y={viewBox.cy}
+														className='fill-foreground text-2xl font-bold'>
+														{formatUnit(totalGrams)}
+													</tspan>
+													<tspan
+														x={viewBox.cx}
+														y={(viewBox.cy || 0) + 18}
+														className='fill-muted-foreground'>
+														Total grams
+													</tspan>
+												</text>
+											);
+										}
+									}}
+								/>
+							</Pie>
+						</PieChart>
+					</ChartContainer>
+				</div>
+			)}
 		</>
 	);
 }
+
+const renderCustomizedLabel = ({
+	cx,
+	cy,
+	midAngle,
+	innerRadius,
+	outerRadius,
+	percent,
+	name
+}: {
+	cx: number;
+	cy: number;
+	midAngle: number;
+	innerRadius: number;
+	outerRadius: number;
+	percent: number;
+	value: number;
+	name: string;
+}) => {
+	const radius = innerRadius + (outerRadius - innerRadius) * 1.8;
+	const x = cx + radius * Math.cos(-midAngle * RADIAN);
+	const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+	return (
+		<text
+			x={x}
+			y={y}
+			fill='white'
+			textAnchor={x > cx ? 'start' : 'end'}
+			dominantBaseline='middle'>
+			<tspan
+				x={x}
+				y={y}
+				className='font-bold'>
+				{name}
+			</tspan>
+			<tspan
+				x={x}
+				y={(y || 0) + 15}>
+				{`${formatUnit(percent * 100)}%`}
+			</tspan>
+		</text>
+	);
+};

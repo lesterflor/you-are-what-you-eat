@@ -3,8 +3,8 @@
 import {
 	Bar,
 	CartesianGrid,
-	Cell,
 	ComposedChart,
+	Label,
 	Line,
 	Pie,
 	PieChart,
@@ -19,42 +19,19 @@ import {
 	ChartTooltipContent
 } from '@/components/ui/chart';
 
-import { type ChartConfig } from '@/components/ui/chart';
-import { FoodEntry, GetLog } from '@/types';
+import { FoodEntry, GetLog, LogDataType, PieItemType } from '@/types';
 import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
-import { formatUnit, GRAMS_TO_POUND, totalMacrosReducer } from '@/lib/utils';
+import {
+	formatUnit,
+	GRAMS_TO_POUND,
+	RADIAN,
+	totalMacrosReducer
+} from '@/lib/utils';
 import { Weight } from 'lucide-react';
 import { Badge } from '../ui/badge';
-
-const chartConfig = {
-	calories: {
-		label: 'Calories',
-		color: 'hsl(var(--chart-1))'
-	},
-	carb: {
-		label: 'Carbs',
-		color: 'hsl(var(--chart-2))'
-	},
-	protein: {
-		label: 'Protein',
-		color: 'hsl(var(--chart-4))'
-	},
-	fat: {
-		label: 'Fat',
-		color: 'hsl(var(--chart-3))'
-	}
-} satisfies ChartConfig;
-
-type LogDataType = {
-	eatenAt: string;
-	calories: number;
-	carb: number;
-	protein: number;
-	fat: number;
-	totalGrams: number;
-};
+import { chartConfig, pieChartConfig } from '@/config';
 
 export function LogChart({
 	log,
@@ -92,9 +69,9 @@ export function LogChart({
 			const { carbs, protein, fat } = totalMacrosReducer(log.foodItems);
 
 			setPieData([
-				{ name: 'Carbs', value: carbs },
-				{ name: 'Protein', value: protein },
-				{ name: 'Fat', value: fat }
+				{ name: 'Carbs', value: carbs, fill: 'var(--color-carb)' },
+				{ name: 'Protein', value: protein, fill: 'var(--color-protein)' },
+				{ name: 'Fat', value: fat, fill: 'var(--color-fat)' }
 			]);
 		}
 	}, []);
@@ -132,25 +109,8 @@ export function LogChart({
 					</div>
 					<ChartContainer
 						config={pieChartConfig}
-						className='min-h-[45vh] portrait:h-[75vh] portrait:w-[80vw]'>
+						className='md:aspect-square mx-auto h-[50vh] min-h-[200px] portrait:h-[69vh] portrait:w-[90vw]'>
 						<PieChart>
-							<Pie
-								data={pieData}
-								cx='50%'
-								cy='50%'
-								labelLine={false}
-								label={(value) => renderCustomizedLabel(value)}
-								outerRadius={140}
-								fill='#8884d8'
-								dataKey='value'>
-								{pieData.map((entry, index) => (
-									<Cell
-										key={`cell-${index}`}
-										fill={COLORS[index % COLORS.length]}
-									/>
-								))}
-							</Pie>
-
 							<ChartTooltip
 								formatter={(value, name, props) => (
 									<div className='flex flex-row items-center gap-2'>
@@ -158,24 +118,63 @@ export function LogChart({
 											className='w-2 h-2 rounded-sm'
 											style={{
 												backgroundColor: `${props.payload.fill}`
-											}}></div>
-										<div>{name}</div>
+											}}>
+											{props.payload.color}
+										</div>
+										<div>{props.payload.name}</div>
 										<div className='text-xs'>
 											{formatUnit(Number(value))} grams
 										</div>
 									</div>
 								)}
+								cursor={false}
 								content={<ChartTooltipContent />}
 							/>
+							<Pie
+								data={pieData}
+								dataKey='value'
+								nameKey='name'
+								labelLine={true}
+								label={(value) => renderCustomizedLabel(value)}
+								innerRadius={55}
+								outerRadius={130}
+								strokeWidth={1}>
+								<Label
+									content={({ viewBox }) => {
+										if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+											return (
+												<text
+													x={viewBox.cx}
+													y={viewBox.cy}
+													textAnchor='middle'
+													dominantBaseline='middle'>
+													<tspan
+														x={viewBox.cx}
+														y={viewBox.cy}
+														className='fill-foreground text-3xl font-bold'>
+														{formatUnit(totalGrams)}
+													</tspan>
+													<tspan
+														x={viewBox.cx}
+														y={(viewBox.cy || 0) + 24}
+														className='fill-muted-foreground'>
+														Total grams
+													</tspan>
+												</text>
+											);
+										}
+									}}
+								/>
+							</Pie>
 						</PieChart>
 					</ChartContainer>
 				</div>
 			) : (
-				<>
-					<div className='hidden portrait:block'>
+				<div className='w-full h-full'>
+					<div className='hidden portrait:block w-full h-full'>
 						<ChartContainer
 							config={chartConfig}
-							className='min-h-[200px] portrait:h-[75vh] portrait:w-[85vw] mr-4'>
+							className='min-h-[200px] min-w-[200px] portrait:h-[75vh] portrait:w-[85vw] mr-4'>
 							<ComposedChart
 								data={logData}
 								barSize={5}
@@ -206,6 +205,7 @@ export function LogChart({
 									className='mt-4'
 									content={<ChartLegendContent />}
 								/>
+
 								{type === 'macros' ? (
 									<>
 										<Bar
@@ -310,20 +310,20 @@ export function LogChart({
 							</ComposedChart>
 						</ChartContainer>
 					</div>
-				</>
+				</div>
 			)}
 		</div>
 	);
 }
 
-const RADIAN = Math.PI / 180;
 const renderCustomizedLabel = ({
 	cx,
 	cy,
 	midAngle,
 	innerRadius,
 	outerRadius,
-	percent
+	percent,
+	name
 }: {
 	cx: number;
 	cy: number;
@@ -334,7 +334,7 @@ const renderCustomizedLabel = ({
 	value: number;
 	name: string;
 }) => {
-	const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+	const radius = innerRadius + (outerRadius - innerRadius) * 1.5;
 	const x = cx + radius * Math.cos(-midAngle * RADIAN);
 	const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
@@ -344,30 +344,18 @@ const renderCustomizedLabel = ({
 			y={y}
 			fill='white'
 			textAnchor={x > cx ? 'start' : 'end'}
-			dominantBaseline='central'>
-			<tspan dy='1.2em'>{`${formatUnit(percent * 100)}%`}</tspan>
+			dominantBaseline='middle'>
+			<tspan
+				x={x}
+				y={y}
+				className='font-bold'>
+				{name}
+			</tspan>
+			<tspan
+				x={x}
+				y={(y || 0) + 15}>
+				{`${formatUnit(percent * 100)}%`}
+			</tspan>
 		</text>
 	);
 };
-
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-
-type PieItemType = {
-	name: string;
-	value: number;
-};
-
-const pieChartConfig = {
-	carb: {
-		label: 'Carbs',
-		color: 'hsl(var(--chart-2))'
-	},
-	protein: {
-		label: 'Protein',
-		color: 'hsl(var(--chart-4))'
-	},
-	fat: {
-		label: 'Fat',
-		color: 'hsl(var(--chart-3))'
-	}
-} satisfies ChartConfig;

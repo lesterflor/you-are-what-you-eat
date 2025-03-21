@@ -110,6 +110,7 @@ export default function FoodLogList({
 						</PopoverTrigger>
 						<PopoverContent>
 							<LogMacrosSummary
+								showPie={true}
 								log={log}
 								compactMode={true}
 								detailedMode={true}
