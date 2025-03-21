@@ -16,7 +16,6 @@ import LogButton from '../logs/log-button';
 import { usePathname } from 'next/navigation';
 import AddFoodSheet from '../food-items/add-food-sheet';
 import FoodListSheet from '../food-items/food-list-sheet';
-import { Separator } from '../ui/separator';
 import { Button } from '../ui/button';
 import { useState } from 'react';
 import KnowCaloriesBurned from '../logs/know-calories-burned';
@@ -72,28 +71,38 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 								<AvatarFallback>{user.name.slice(0, 1)}</AvatarFallback>
 							</Avatar>
 							<div>Hello, {user.name}</div>
+
+							<ModeToggle />
 						</div>
 					)}
 
-					<Button asChild>
-						<Link
-							href='/base-metabolic-rate'
-							onClick={handleClick}>
-							<Calculator className='w-4 h-4' />
-							Calculate your BMR
-						</Link>
-					</Button>
-
-					{log && <LogSheet log={log as GetLog} />}
-
 					{status === 'authenticated' && (
-						<LogButton
-							onClick={() => {
-								setIsOpen(!isOpen);
-							}}
-							title='Log History'
-						/>
+						<div className='flex flex-col item-center gap-1 w-full'>
+							<div>Log Info</div>
+							<div className='flex flex-col items-stretch gap-4 w-full'>
+								{log && <LogSheet log={log as GetLog} />}
+
+								<LogButton
+									onClick={() => {
+										setIsOpen(!isOpen);
+									}}
+									title='Log History'
+								/>
+							</div>
+						</div>
 					)}
+
+					<div className='flex flex-col items-stretch gap-1'>
+						<div>Tools</div>
+						<Button asChild>
+							<Link
+								href='/base-metabolic-rate'
+								onClick={handleClick}>
+								<Calculator className='w-4 h-4' />
+								Calculate your BMR
+							</Link>
+						</Button>
+					</div>
 
 					{/* {pathname !== '/foods' && (
 						<Button
@@ -109,21 +118,22 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 						</Button>
 					)} */}
 
-					{status === 'authenticated' && (
-						<AddFoodSheet
-							onAdded={() => {
-								setIsOpen(!isOpen);
-							}}
-						/>
-					)}
+					<div className='flex flex-col item-center gap-1'>
+						<div>Food</div>
+						<div className='flex flex-row items-center justify-between gap-2'>
+							{status === 'authenticated' && (
+								<AddFoodSheet
+									onAdded={() => {
+										setIsOpen(!isOpen);
+									}}
+								/>
+							)}
 
-					{pathname !== '/foods' && <FoodListSheet />}
+							{pathname !== '/foods' && <FoodListSheet />}
+						</div>
+					</div>
 
 					<KnowCaloriesBurned />
-
-					<Separator />
-
-					<ModeToggle />
 				</div>
 			</SheetContent>
 		</Sheet>
