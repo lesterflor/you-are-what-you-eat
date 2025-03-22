@@ -96,17 +96,29 @@ export default function LogMacrosSummary({
 					<div className='flex flex-col gap-1'>
 						<div className='text-xs'>{children}</div>
 						<div className='flex flex-row flex-wrap gap-2'>
-							<Badge className='p-1 text-xs'>
-								Cals: {formatUnit(totalCals)}
+							<Badge className='p-1 text-xs w-14'>
+								<div className='flex flex-col items-center w-full'>
+									<div className='font-normal'>Calories</div>
+									<div>{formatUnit(totalCals)}</div>
+								</div>
 							</Badge>
-							<Badge className='p-1 text-xs'>
-								Prot: {formatUnit(totalProtein)}g
+							<Badge className='p-1 text-xs w-14'>
+								<div className='flex flex-col items-center w-full'>
+									<div className='font-normal'>Protein</div>
+									<div>{formatUnit(totalProtein)} g</div>
+								</div>
 							</Badge>
-							<Badge className='p-1 text-xs'>
-								Carb: {formatUnit(totalCarbs)}g
+							<Badge className='p-1 text-xs w-14'>
+								<div className='flex flex-col items-center w-full'>
+									<div className='font-normal'>Carbs</div>
+									<div>{formatUnit(totalCarbs)} g</div>
+								</div>
 							</Badge>
-							<Badge className='p-1 text-xs'>
-								Fat: {formatUnit(totalFat)}g
+							<Badge className='p-1 text-xs w-14'>
+								<div className='flex flex-col items-center w-full'>
+									<div className='font-normal'>Fat</div>
+									<div>{formatUnit(totalFat)} g</div>
+								</div>
 							</Badge>
 						</div>
 
@@ -145,17 +157,31 @@ export default function LogMacrosSummary({
 				<LogMacrosSkeleton detailedMode={detailedMode} />
 			) : (
 				<div className='flex flex-col gap-4'>
-					<div className='flex flex-row flex-wrap gap-2'>
+					<div className='flex flex-row flex-wrap gap-2 items-start justify-start'>
 						<Badge className='p-2 text-md'>
-							Calories: {formatUnit(totalCals)}
+							<div className='flex flex-col items-center w-full'>
+								<div className='font-normal'>Calories</div>
+								<div>{formatUnit(totalCals)}</div>
+							</div>
 						</Badge>
 						<Badge className='p-2 text-md'>
-							Protein: {formatUnit(totalProtein)} g
+							<div className='flex flex-col items-center w-full'>
+								<div className='font-normal'>Protein</div>
+								<div>{formatUnit(totalProtein)} g</div>
+							</div>
 						</Badge>
 						<Badge className='p-2 text-md'>
-							Carbs: {formatUnit(totalCarbs)} g
+							<div className='flex flex-col items-center w-full'>
+								<div className='font-normal'>Carbs</div>
+								<div>{formatUnit(totalCarbs)} g</div>
+							</div>
 						</Badge>
-						<Badge className='p-2 text-md'>Fat: {formatUnit(totalFat)} g</Badge>
+						<Badge className='p-2 text-md'>
+							<div className='flex flex-col items-center w-full'>
+								<div className='font-normal'>Fat</div>
+								<div>{formatUnit(totalFat)} g</div>
+							</div>
+						</Badge>
 					</div>
 
 					{detailedMode && (

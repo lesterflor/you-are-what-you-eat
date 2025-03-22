@@ -41,7 +41,7 @@ export default async function LogEntry({ log }: { log: GetLog }) {
 
 	return (
 		<div className='flex flex-col gap-6'>
-			<div className='flex flex-row portrait:flex-col items-center justify-between gap-4 rounded-md border-2 p-2'>
+			<div className='flex flex-row portrait:flex-col items-center justify-start gap-8 rounded-md border-2 p-2'>
 				<div className='flex flex-col items-center gap-2'>
 					<div className='flex flex-row gap-2 items-center justify-center'>
 						<Calendar className='w-4 h-4 portrait:w-6 portrait:h-6  ' />
@@ -53,15 +53,15 @@ export default async function LogEntry({ log }: { log: GetLog }) {
 					</div>
 					{bmrData.data && (
 						<div className='flex flex-col gap-2 text-xs'>
-							<div className='flex flex-row items-center gap-2 rounded-md border-2 p-1'>
-								<span className='text-muted-foreground'>BMR:</span>{' '}
-								{formatUnit(bmr)}
-								<span className='text-muted-foreground'>calories</span>
-							</div>
-
 							<div className='flex flex-row items-center justify-start gap-2 rounded-md border-2 p-1'>
 								<span className='text-muted-foreground'>Total Calories:</span>{' '}
 								{formatUnit(calories)}
+								<span className='text-muted-foreground'>calories</span>
+							</div>
+
+							<div className='flex flex-row items-center gap-2 rounded-md border-2 p-1'>
+								<span className='text-muted-foreground'>BMR:</span>{' '}
+								{formatUnit(bmr)}
 								<span className='text-muted-foreground'>calories</span>
 							</div>
 

@@ -19,7 +19,7 @@ export default async function SiteHeader() {
 	const log = await createDailyLog();
 
 	return (
-		<header className='w-full border-b fixed top-0 z-50 bg-white dark:bg-green-950 select-none px-3'>
+		<header className='w-full border-b fixed top-0 z-50 bg-white dark:bg-green-950 select-none px-0'>
 			<div className='wrapper flex flex-between justify-between items-center w-full p-2'>
 				<div className='flex flex-row items-center justify-start gap-5 portrait:gap-3'>
 					<Link href='/'>
