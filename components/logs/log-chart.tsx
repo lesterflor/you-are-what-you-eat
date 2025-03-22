@@ -135,10 +135,10 @@ export function LogChart({
 								data={pieData}
 								dataKey='value'
 								nameKey='name'
-								labelLine={true}
+								labelLine={false}
 								label={(value) => renderCustomizedLabel(value)}
 								innerRadius={55}
-								outerRadius={130}
+								outerRadius={140}
 								strokeWidth={1}>
 								<Label
 									content={({ viewBox }) => {
@@ -430,7 +430,7 @@ const renderCustomizedLabel = ({
 	value: number;
 	name: string;
 }) => {
-	const radius = innerRadius + (outerRadius - innerRadius) * 1.5;
+	const radius = innerRadius + (outerRadius - innerRadius) * 0.4;
 	const x = cx + radius * Math.cos(-midAngle * RADIAN);
 	const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
