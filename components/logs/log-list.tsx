@@ -150,7 +150,9 @@ export default function FoodLogList({
 							{formatUnit(remainingCals * -1)}
 						</div>
 						<div className='text-xs font-normal'>
-							{Math.sign(remainingCals) === -1 ? 'cals remaining' : 'cals over'}
+							{Math.sign(remainingCals) === -1
+								? 'calories remaining'
+								: 'calories over'}
 						</div>
 						{totalCals > 0 && (
 							<div

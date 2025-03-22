@@ -10,7 +10,7 @@ import {
 } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { format } from 'date-fns';
-import { Clock, Trash2 } from 'lucide-react';
+import { Clock, FilePenLine, RefreshCwOff, Trash2, X } from 'lucide-react';
 import { cn, formatUnit } from '@/lib/utils';
 import { Button } from '../ui/button';
 import {
@@ -87,21 +87,41 @@ export default function LogFoodCard({
 					{format(item.eatenAt, 'hh:mm a')}
 				</Badge>
 			</CardHeader>
-			<CardDescription className='px-6 pb-4'>
+			<CardDescription className='px-6 pb-4 text-xs'>
 				{item.description}
 			</CardDescription>
 			<CardContent>
-				<div className='flex flex-row flex-wrap gap-1'>
-					<Badge variant='secondary'>
-						Carbs: {formatUnit(item.carbGrams * servingSize)} g
+				<div className='flex flex-row flex-wrap gap-2 items-center'>
+					<Badge
+						variant='secondary'
+						className='w-16'>
+						<div className='flex flex-col items-center w-full'>
+							<div className='font-normal'>Carbs</div>
+							<div>{formatUnit(item.carbGrams * servingSize)} g</div>
+						</div>
 					</Badge>
-					<Badge variant='secondary'>
-						Protein: {formatUnit(item.proteinGrams * servingSize)} g
+					<Badge
+						variant='secondary'
+						className='w-16'>
+						<div className='flex flex-col items-center w-full'>
+							<div className='font-normal'>Protein</div>
+							<div>{formatUnit(item.proteinGrams * servingSize)} g</div>
+						</div>
 					</Badge>
-					<Badge variant='secondary'>
-						Fat: {formatUnit(item.fatGrams * servingSize)} g
+					<Badge
+						variant='secondary'
+						className='w-16'>
+						<div className='flex flex-col items-center w-full'>
+							<div className='font-normal'>Fat</div>
+							<div>{formatUnit(item.fatGrams * servingSize)} g</div>
+						</div>
 					</Badge>
-					<Badge>Calories: {formatUnit(item.calories * servingSize)}</Badge>
+					<Badge className='w-16	'>
+						<div className='flex flex-col items-center w-full'>
+							<div className='font-normal'>Calories</div>
+							<div>{formatUnit(item.calories * servingSize)}</div>
+						</div>
+					</Badge>
 				</div>
 
 				{isEditing && (
@@ -123,6 +143,7 @@ export default function LogFoodCard({
 									setIsEditing(false);
 									setServingSize(item.numServings);
 								}}>
+								<RefreshCwOff className='w-4 h-4' />
 								Cancel
 							</Button>
 							<Button
@@ -166,17 +187,21 @@ export default function LogFoodCard({
 			{!isEditing && allowEdit && (
 				<CardFooter className='flex flex-row flex-wrap gap-2 justify-between'>
 					<Button
-						variant='secondary'
+						variant='outline'
 						onClick={() => {
 							setIsEditing(!isEditing);
 						}}>
+						<FilePenLine className='w-4 h-4' />
 						Edit
 					</Button>
 					<Dialog
 						open={dialogOpen}
 						onOpenChange={setDialogOpen}>
 						<DialogTrigger asChild>
-							<Button variant='outline'>Delete</Button>
+							<Button variant='outline'>
+								<X className='w-4 h-4' />
+								Delete
+							</Button>
 						</DialogTrigger>
 						<DialogContent>
 							<DialogTitle>Confirm Delete</DialogTitle>
