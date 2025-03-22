@@ -219,10 +219,10 @@ export default function LogMacrosSummary({
 								data={pieData}
 								dataKey='value'
 								nameKey='name'
-								labelLine={true}
+								labelLine={false}
 								label={(value) => renderCustomizedLabel(value)}
 								innerRadius={45}
-								outerRadius={70}
+								outerRadius={85}
 								strokeWidth={1}>
 								<Label
 									content={({ viewBox }) => {
@@ -277,7 +277,7 @@ const renderCustomizedLabel = ({
 	value: number;
 	name: string;
 }) => {
-	const radius = innerRadius + (outerRadius - innerRadius) * 1.8;
+	const radius = innerRadius + (outerRadius - innerRadius) * 0.4;
 	const x = cx + radius * Math.cos(-midAngle * RADIAN);
 	const y = cy + radius * Math.sin(-midAngle * RADIAN);
 

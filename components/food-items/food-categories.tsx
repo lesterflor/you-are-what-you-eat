@@ -10,6 +10,10 @@ import {
 	FoodContextSearchType,
 	FoodSearchContext
 } from '@/contexts/food-search-context';
+import { useSession } from 'next-auth/react';
+import { GetUser } from '@/types';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { SearchContext } from '@/contexts/search-context';
 
 export default function FoodCategoryPicker({
 	value = '',
@@ -26,11 +30,14 @@ export default function FoodCategoryPicker({
 }) {
 	const [selected, setSelected] = useState(value);
 	const foodContext = useContext(FoodSearchContext);
+	const searchContext = useContext(SearchContext);
+	const { data: session } = useSession();
+	const user = session?.user as GetUser;
 
 	useEffect(() => {
 		onSelect(selected);
 
-		if (foodContext && foodContext.updateSearchType) {
+		if (selected !== 'user' && foodContext && foodContext.updateSearchType) {
 			const update = {
 				...foodContext,
 				searchType:
@@ -38,6 +45,15 @@ export default function FoodCategoryPicker({
 			};
 
 			foodContext.updateSearchType(update);
+		} else {
+			if (searchContext && searchContext.updateSearchType) {
+				const update = {
+					...searchContext,
+					searchType: { userId: user.id }
+				};
+
+				searchContext.updateSearchType(update);
+			}
 		}
 	}, [selected]);
 
@@ -114,6 +130,16 @@ export default function FoodCategoryPicker({
 					<FoodCategoryIconMapper type='other' />
 					{!iconsOnly && 'Other'}
 				</ToggleGroupItem>
+				{user && (
+					<ToggleGroupItem
+						value='user'
+						className={cn(compactMode && 'text-xs')}>
+						<Avatar className='w-6 h-6'>
+							<AvatarImage src={user.image} />
+							<AvatarFallback>{user.name.slice(0, 1)}</AvatarFallback>
+						</Avatar>
+					</ToggleGroupItem>
+				)}
 			</ToggleGroup>
 		</div>
 	);
