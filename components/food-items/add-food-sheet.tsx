@@ -44,7 +44,7 @@ export default function AddFoodSheet({ onAdded }: { onAdded?: () => void }) {
 						</SheetTitle>
 
 						{status === 'authenticated' ? (
-							<ScrollArea className='h-[75vh] md:h-[75vh] xl:h-[50vh] pr-5'>
+							<ScrollArea className='h-[82vh] md:h-[75vh] xl:h-[50vh] pr-5'>
 								<AddFoodItemForm
 									onSuccess={() => {
 										setIsOpenPortrait(false);

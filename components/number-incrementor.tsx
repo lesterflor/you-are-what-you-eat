@@ -7,8 +7,8 @@ import {
 	ChevronsRight
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
+import IncrementButton from './increment-button';
 
 export default function NumberIncrementor({
 	value = 0,
@@ -16,7 +16,9 @@ export default function NumberIncrementor({
 	minValue = 0,
 	maxValue = Infinity,
 	allowDecimalIncrement = true,
-	compactMode = false
+	compactMode = false,
+	children,
+	allowLongPress = true
 }: {
 	value?: number;
 	onChange: (val: number) => void;
@@ -24,6 +26,8 @@ export default function NumberIncrementor({
 	allowDecimalIncrement?: boolean;
 	maxValue?: number;
 	compactMode?: boolean;
+	children?: React.ReactNode;
+	allowLongPress?: boolean;
 }) {
 	const [val, setVal] = useState(value);
 
@@ -32,40 +36,25 @@ export default function NumberIncrementor({
 	}, [val]);
 
 	return (
-		<div
-			className={cn(
-				'flex flex-row items-center justify-start  rounded-md border-2 p-2',
-				compactMode ? 'gap-1' : 'gap-6'
-			)}>
-			<div className='flex flex-row items-center gap-2'>
-				<Button
-					size='icon'
-					variant='outline'
-					onClick={(e) => {
-						e.preventDefault();
-						if (val > minValue) {
-							setVal((prev) => {
-								const pre = prev - 1;
-								if (pre < minValue) {
-									return minValue;
-								}
-
-								return pre;
-							});
-						}
-					}}>
-					<ChevronLeft className='w-4 h-4 cur' />
-				</Button>
-
-				{allowDecimalIncrement && (
-					<Button
-						size='icon'
-						variant='outline'
-						onClick={(e) => {
-							e.preventDefault();
+		<div className='flex flex-col items-center gap-1'>
+			<div>{children}</div>
+			<div
+				className={cn(
+					'flex flex-row items-center justify-start rounded-md border-2 p-1 select-none',
+					compactMode ? 'gap-1' : 'gap-6'
+				)}>
+				<div
+					className={cn(
+						'flex flex-row items-center gap-2',
+						compactMode && 'gap-1'
+					)}>
+					<IncrementButton
+						allowLongPress={allowLongPress}
+						increment={-1}
+						onChange={(rVal) => {
 							if (val > minValue) {
 								setVal((prev) => {
-									const pre = prev - 0.1;
+									const pre = prev + rVal;
 									if (pre < minValue) {
 										return minValue;
 									}
@@ -74,47 +63,73 @@ export default function NumberIncrementor({
 								});
 							}
 						}}>
-						<ChevronsLeft className='w-4 h-4 cur' />
-					</Button>
-				)}
-			</div>
-			<div className='text-2xl font-bold w-12 text-center'>
-				{val % 1 > 0 ? val.toFixed(1) : val}
-			</div>
-			<div className='flex flex-row items-center gap-2'>
-				{allowDecimalIncrement && (
-					<Button
-						size='icon'
-						variant='outline'
-						onClick={(e) => {
-							e.preventDefault();
+						<ChevronLeft className='w-4 h-4' />
+					</IncrementButton>
+
+					{allowDecimalIncrement && (
+						<IncrementButton
+							allowLongPress={allowLongPress}
+							increment={-0.1}
+							onChange={(rVal) => {
+								if (val > minValue) {
+									setVal((prev) => {
+										const pre = prev + rVal;
+										if (pre < minValue) {
+											return minValue;
+										}
+
+										return pre;
+									});
+								}
+							}}>
+							<ChevronsLeft className='w-4 h-4' />
+						</IncrementButton>
+					)}
+				</div>
+				<div
+					className={cn(
+						'text-2xl font-bold w-12 text-center',
+						compactMode && 'text-lg w-7'
+					)}>
+					{val % 1 > 0 ? val.toFixed(1) : val}
+				</div>
+				<div
+					className={cn(
+						'flex flex-row items-center gap-2',
+						compactMode && 'gap-1'
+					)}>
+					{allowDecimalIncrement && (
+						<IncrementButton
+							allowLongPress={allowLongPress}
+							increment={0.1}
+							onChange={(rVal) => {
+								setVal((prev) => {
+									const pre = prev + rVal;
+									if (pre > maxValue) {
+										return maxValue;
+									}
+									return pre;
+								});
+							}}>
+							<ChevronsRight className='w-4 h-4' />
+						</IncrementButton>
+					)}
+
+					<IncrementButton
+						allowLongPress={allowLongPress}
+						increment={1}
+						onChange={(rVal) => {
 							setVal((prev) => {
-								const pre = prev + 0.1;
+								const pre = prev + rVal;
 								if (pre > maxValue) {
 									return maxValue;
 								}
 								return pre;
 							});
 						}}>
-						<ChevronsRight className='w-4 h-4' />
-					</Button>
-				)}
-
-				<Button
-					size='icon'
-					variant='outline'
-					onClick={(e) => {
-						e.preventDefault();
-						setVal((prev) => {
-							const pre = prev + 1;
-							if (pre > maxValue) {
-								return maxValue;
-							}
-							return pre;
-						});
-					}}>
-					<ChevronRight className='w-4 h-4' />
-				</Button>
+						<ChevronRight className='w-4 h-4' />
+					</IncrementButton>
+				</div>
 			</div>
 		</div>
 	);

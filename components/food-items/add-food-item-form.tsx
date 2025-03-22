@@ -84,7 +84,9 @@ export default function AddFoodItemForm({
 	return (
 		<div>
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)}>
+				<form
+					onSubmit={form.handleSubmit(onSubmit)}
+					className='ml-1'>
 					<div className='flex flex-col gap-8 w-full'>
 						<div className='flex flex-row gap-2 justify-between flex-wrap w-full'>
 							<FormField
@@ -98,13 +100,10 @@ export default function AddFoodItemForm({
 										'name'
 									>;
 								}) => (
-									<FormItem className='w-64'>
+									<FormItem className='w-60 portrait:w-[80vw]'>
 										<FormLabel className='font-semibold'>Name</FormLabel>
 										<FormControl>
-											<Input
-												{...field}
-												className='w-80 portrait:w-96'
-											/>
+											<Input {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -122,13 +121,10 @@ export default function AddFoodItemForm({
 										'description'
 									>;
 								}) => (
-									<FormItem className='w-64'>
+									<FormItem className='w-60 portrait:w-[80vw]'>
 										<FormLabel className='font-semibold'>Description</FormLabel>
 										<FormControl>
-											<Textarea
-												{...field}
-												className='w-80 portrait:w-96'
-											/>
+											<Textarea {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -155,25 +151,26 @@ export default function AddFoodItemForm({
 							/>
 						</div>
 
-						<Card>
-							<CardContent className='p-4'>
-								<div className='w-full h-full flex flex-row flex-wrap items-center justify-center gap-4'>
+						<Card className='px-0'>
+							<CardContent className='px-0 py-4'>
+								<div className='w-full h-full flex flex-row flex-wrap items-center justify-center gap-3'>
 									<FormField
 										name='servingSize'
 										control={form.control}
 										render={() => (
 											<FormItem className='flex flex-col items-center'>
-												<FormLabel>Serving Size</FormLabel>
 												<FormControl>
 													<NumberIncrementor
+														compactMode={false}
 														minValue={1}
 														value={
 															hasSubmitted ? 1 : form.getValues('servingSize')
 														}
 														onChange={(val) => {
 															form.setValue('servingSize', val);
-														}}
-													/>
+														}}>
+														<div className='text-sm'>Serving Size</div>
+													</NumberIncrementor>
 												</FormControl>
 												<FormMessage />
 											</FormItem>
@@ -185,16 +182,17 @@ export default function AddFoodItemForm({
 										control={form.control}
 										render={() => (
 											<FormItem className='flex flex-col items-center'>
-												<FormLabel>Carbs in grams</FormLabel>
 												<FormControl>
 													<NumberIncrementor
+														compactMode={false}
 														value={
 															hasSubmitted ? 0 : form.getValues('carbGrams')
 														}
 														onChange={(val) => {
 															form.setValue('carbGrams', val);
-														}}
-													/>
+														}}>
+														<div className='text-sm'>Carbs in grams</div>
+													</NumberIncrementor>
 												</FormControl>
 												<FormMessage />
 											</FormItem>
@@ -206,16 +204,17 @@ export default function AddFoodItemForm({
 										control={form.control}
 										render={() => (
 											<FormItem className='flex flex-col items-center'>
-												<FormLabel>Protein in grams</FormLabel>
 												<FormControl>
 													<NumberIncrementor
+														compactMode={false}
 														value={
 															hasSubmitted ? 0 : form.getValues('proteinGrams')
 														}
 														onChange={(val) => {
 															form.setValue('proteinGrams', val);
-														}}
-													/>
+														}}>
+														<div className='text-sm'>Protein in grams</div>
+													</NumberIncrementor>
 												</FormControl>
 												<FormMessage />
 											</FormItem>
@@ -227,16 +226,17 @@ export default function AddFoodItemForm({
 										control={form.control}
 										render={() => (
 											<FormItem className='flex flex-col items-center'>
-												<FormLabel>Fat in grams</FormLabel>
 												<FormControl>
 													<NumberIncrementor
+														compactMode={false}
 														value={
 															hasSubmitted ? 0 : form.getValues('fatGrams')
 														}
 														onChange={(val) => {
 															form.setValue('fatGrams', val);
-														}}
-													/>
+														}}>
+														<div className='text-sm'>Fat in grams</div>
+													</NumberIncrementor>
 												</FormControl>
 												<FormMessage />
 											</FormItem>

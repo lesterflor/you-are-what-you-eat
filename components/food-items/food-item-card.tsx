@@ -164,7 +164,8 @@ export default function FoodItemCard({
 					<Badge
 						variant='secondary'
 						className='w-24 flex flex-row items-center justify-center'>
-						Serving: {item.servingSize * portionAmount}
+						{item.servingSize * portionAmount === 1 ? 'Serving:' : 'Servings:'}{' '}
+						{item.servingSize * portionAmount}
 					</Badge>
 				</div>
 
@@ -181,7 +182,8 @@ export default function FoodItemCard({
 						<div className='flex flex-col items-center'>
 							<span className='text-sm'>Servings</span>
 							<NumberIncrementor
-								compactMode={true}
+								allowLongPress={false}
+								compactMode={false}
 								onChange={(val) => {
 									setPortionAmount(val);
 
