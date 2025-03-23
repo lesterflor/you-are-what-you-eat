@@ -189,9 +189,10 @@ export function LogChart({
 										angle={-90}
 										className='text-xs'
 										tickLine={false}
-										tickMargin={5}
+										tickMargin={10}
 										offset={10}
 										tickCount={120}
+										height={35}
 										axisLine={false}
 										type='number'
 										label={{

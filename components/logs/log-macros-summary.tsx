@@ -223,7 +223,7 @@ export default function LogMacrosSummary({
 				</div>
 			)}
 
-			{showPie && (
+			{showPie && totalCals > 0 && (
 				<div className='w-auto'>
 					<ChartContainer
 						config={pieChartConfig}
@@ -255,7 +255,7 @@ export default function LogMacrosSummary({
 								labelLine={false}
 								label={(value) => renderCustomizedLabel(value)}
 								innerRadius={45}
-								outerRadius={85}
+								outerRadius={82}
 								strokeWidth={1}>
 								<Label
 									content={({ viewBox }) => {

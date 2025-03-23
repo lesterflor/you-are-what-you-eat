@@ -1,8 +1,17 @@
 import { getLogsByUserId } from '@/actions/log-actions';
+import DayLogChart from '@/components/logs/day-log-chart';
 import LogEntry from '@/components/logs/log-entry';
+import { Button } from '@/components/ui/button';
+import {
+	Sheet,
+	SheetContent,
+	SheetDescription,
+	SheetTitle,
+	SheetTrigger
+} from '@/components/ui/sheet';
 import { auth } from '@/db/auth';
 import { GetLog, GetUser } from '@/types';
-import { CalendarOff } from 'lucide-react';
+import { CalendarOff, ChartArea } from 'lucide-react';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import React from 'react';
@@ -25,7 +34,23 @@ export default async function LogsPage() {
 
 	return (
 		<div className='flex flex-col gap-4'>
-			<div className='text-xl font-semibold'>Log History</div>
+			<div className='text-xl font-semibold flex flex-row items-center justify-between relative'>
+				<div>Log History</div>
+				<div>
+					<Sheet>
+						<SheetTrigger asChild>
+							<Button size='icon'>
+								<ChartArea className='w-6 h-6' />
+							</Button>
+						</SheetTrigger>
+						<SheetContent className='portrait:max-w-[100vw] portrait:w-[100vw]'>
+							<SheetDescription />
+							<SheetTitle className='pb-4'>Log Data</SheetTitle>
+							<DayLogChart fetchSelf={true} />
+						</SheetContent>
+					</Sheet>
+				</div>
+			</div>
 			{data && data.length > 0 ? (
 				data.map((log) => (
 					<LogEntry

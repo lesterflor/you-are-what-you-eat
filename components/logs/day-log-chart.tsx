@@ -1,6 +1,6 @@
 'use client';
 
-import { DayLogDataType } from '@/types';
+import { DayLogDataType, GetUser } from '@/types';
 import React, { useEffect, useState } from 'react';
 import {
 	ChartConfig,
@@ -10,16 +10,62 @@ import {
 } from '../ui/chart';
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { formatUnit } from '@/lib/utils';
+import { useSession } from 'next-auth/react';
+import { getLogsByUserId } from '@/actions/log-actions';
+import { format } from 'date-fns';
+import { Badge } from '../ui/badge';
 
-export default function DayLogChart({ data }: { data: DayLogDataType[] }) {
+export default function DayLogChart({
+	data,
+	fetchSelf = false
+}: {
+	data?: DayLogDataType[];
+	fetchSelf?: boolean;
+}) {
 	const [logs, setLogs] = useState<DayLogDataType[]>([]);
 	const [dates, setDates] = useState({
 		earliest: '',
 		latest: ''
 	});
 
+	const { data: session } = useSession();
+	const user = session?.user as GetUser;
+
+	const getLogs = async () => {
+		const res = await getLogsByUserId(user.id);
+
+		if (res.success && res.data) {
+			const mapData: DayLogDataType[] = res.data.map((log) => ({
+				day: format(log.createdAt, 'eee PP'),
+				Expended:
+					log.knownCaloriesBurned && log.knownCaloriesBurned.length > 0
+						? log.knownCaloriesBurned[0].calories +
+						  log.user.BaseMetabolicRate[0].bmr
+						: log.user.BaseMetabolicRate[0].bmr,
+				Calories: log.foodItems.reduce((acc, curr) => acc + curr.calories, 0),
+				carb: log.foodItems.reduce((acc, curr) => acc + curr.carbGrams, 0),
+				protein: log.foodItems.reduce(
+					(acc, curr) => acc + curr.proteinGrams,
+					0
+				),
+				fat: log.foodItems.reduce((acc, curr) => acc + curr.fatGrams, 0),
+				totalGrams: log.foodItems.reduce(
+					(acc, curr) =>
+						acc + curr.fatGrams + curr.carbGrams + curr.proteinGrams,
+					0
+				)
+			}));
+
+			setLogs(mapData.reverse());
+		}
+	};
+
 	useEffect(() => {
-		setLogs(data.reverse());
+		if (!fetchSelf && data && data.length > 0) {
+			setLogs(data.reverse());
+		} else {
+			getLogs();
+		}
 	}, []);
 
 	useEffect(() => {
@@ -32,8 +78,9 @@ export default function DayLogChart({ data }: { data: DayLogDataType[] }) {
 
 	return (
 		<div className='flex flex-col gap-4'>
-			<div>
-				Showing data for {dates.earliest} - {dates.latest}
+			<div className='flex flex-row items-center justify-start gap-0 text-xs font-normal'>
+				<Badge variant='outline'>{dates.earliest}</Badge>-
+				<Badge variant='outline'>{dates.latest}</Badge>
 			</div>
 
 			<div>

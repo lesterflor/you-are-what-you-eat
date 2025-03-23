@@ -90,33 +90,39 @@ export default function LogFoodCard({
 			<CardDescription className='px-6 pb-4 text-xs'>
 				{item.description}
 			</CardDescription>
-			<CardContent>
+			<CardContent className='px-4'>
 				<div className='flex flex-row flex-wrap gap-2 items-center'>
 					<Badge
 						variant='secondary'
 						className='w-16'>
 						<div className='flex flex-col items-center w-full'>
-							<div className='font-normal'>Carbs</div>
-							<div>{formatUnit(item.carbGrams * servingSize)} g</div>
+							<div className='font-normal text-muted-foreground'>Carbs</div>
+							<div className='whitespace-nowrap'>
+								{formatUnit(item.carbGrams * servingSize)} g
+							</div>
 						</div>
 					</Badge>
 					<Badge
 						variant='secondary'
 						className='w-16'>
 						<div className='flex flex-col items-center w-full'>
-							<div className='font-normal'>Protein</div>
-							<div>{formatUnit(item.proteinGrams * servingSize)} g</div>
+							<div className='font-normal text-muted-foreground'>Protein</div>
+							<div className='whitespace-nowrap'>
+								{formatUnit(item.proteinGrams * servingSize)} g
+							</div>
 						</div>
 					</Badge>
 					<Badge
 						variant='secondary'
 						className='w-16'>
 						<div className='flex flex-col items-center w-full'>
-							<div className='font-normal'>Fat</div>
-							<div>{formatUnit(item.fatGrams * servingSize)} g</div>
+							<div className='font-normal text-muted-foreground'>Fat</div>
+							<div className='whitespace-nowrap'>
+								{formatUnit(item.fatGrams * servingSize)} g
+							</div>
 						</div>
 					</Badge>
-					<Badge className='w-16	'>
+					<Badge className='w-16'>
 						<div className='flex flex-col items-center w-full'>
 							<div className='font-normal'>Calories</div>
 							<div>{formatUnit(item.calories * servingSize)}</div>
