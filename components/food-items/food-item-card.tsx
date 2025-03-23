@@ -21,6 +21,7 @@ import { LogUpdateContext } from '@/contexts/log-context';
 import { formatUnit, getMacroPercOfCals } from '@/lib/utils';
 import { FaSpinner } from 'react-icons/fa';
 import FoodUserAvatar from './food-user-avatar';
+import { GiSpoon } from 'react-icons/gi';
 
 export default function FoodItemCard({
 	item,
@@ -109,7 +110,7 @@ export default function FoodItemCard({
 			<CardDescription className='px-6 pb-4'>
 				{item.description}
 			</CardDescription>
-			<CardContent className='flex flex-row flex-wrap gap-2 px-4'>
+			<CardContent className='flex flex-row flex-wrap gap-2 px-4 pb-0'>
 				{session && item.user && (
 					<div className='absolute top-2 right-2'>
 						<FoodUserAvatar
@@ -120,12 +121,12 @@ export default function FoodItemCard({
 					</div>
 				)}
 
-				<div className='flex flex-row items-center gap-2'>
+				<div className='flex flex-row items-center gap-2 portrait:gap-1'>
 					<Badge
 						variant='secondary'
-						className='w-24 flex flex-col items-center justify-center'>
-						<div>
-							<span className='font-normal'>Prot:</span>{' '}
+						className='w-16 flex flex-col items-center justify-center'>
+						<div className='font-normal text-muted-foreground'>Protein</div>
+						<div className='whitespace-nowrap'>
 							{formatUnit(item.proteinGrams * portionAmount)} g
 						</div>
 						<div className='text-muted-foreground text-xs font-normal'>
@@ -136,9 +137,9 @@ export default function FoodItemCard({
 				<div className='flex flex-row items-center gap-2'>
 					<Badge
 						variant='secondary'
-						className='w-24 flex flex-col items-center justify-center'>
-						<div>
-							<span className='font-normal'>Carb:</span>{' '}
+						className='w-16 flex flex-col items-center justify-center'>
+						<div className='font-normal text-muted-foreground'>Carb</div>
+						<div className='whitespace-nowrap'>
 							{formatUnit(item.carbGrams * portionAmount)} g
 						</div>
 
@@ -150,9 +151,9 @@ export default function FoodItemCard({
 				<div className='flex flex-row items-center gap-2'>
 					<Badge
 						variant='secondary'
-						className='w-24 flex flex-col items-center justify-center'>
-						<div>
-							<span className='font-normal'>Fat:</span>{' '}
+						className='w-16 flex flex-col items-center justify-center'>
+						<div className='font-normal text-muted-foreground'>Fat</div>
+						<div className='whitespace-nowrap'>
 							{formatUnit(item.fatGrams * portionAmount)} g
 						</div>
 						<div className='text-muted-foreground text-xs font-normal'>
@@ -163,15 +164,21 @@ export default function FoodItemCard({
 				<div className='flex flex-row items-center gap-2'>
 					<Badge
 						variant='secondary'
-						className='w-24 flex flex-row items-center justify-center'>
-						{item.servingSize * portionAmount === 1 ? 'Serving:' : 'Servings:'}{' '}
-						{item.servingSize * portionAmount}
+						className='w-16 flex flex-col items-center justify-center'>
+						<div className='font-normal text-muted-foreground'>
+							{item.servingSize * portionAmount === 1 ? 'Serving' : 'Servings'}
+						</div>
+						<div>{item.servingSize * portionAmount}</div>
+						<div>
+							<GiSpoon className='w-4 h-4 text-muted-foreground' />
+						</div>
 					</Badge>
 				</div>
 
 				<div className='flex flex-row items-center gap-2'>
-					<Badge className='w-28 flex flex-row items-center justify-center'>
-						Calories {formatUnit(item.calories * portionAmount)}
+					<Badge className='flex flex-col items-center justify-center'>
+						<div className='font-normal'>Calories</div>
+						<div>{formatUnit(item.calories * portionAmount)}</div>
 					</Badge>
 				</div>
 			</CardContent>
@@ -180,7 +187,6 @@ export default function FoodItemCard({
 				{session && (
 					<div className='flex flex-row items-end justify-center gap-2 flex-wrap'>
 						<div className='flex flex-col items-center'>
-							<span className='text-sm'>Servings</span>
 							<NumberIncrementor
 								allowLongPress={false}
 								compactMode={false}
@@ -204,8 +210,9 @@ export default function FoodItemCard({
 									setLogFoodItem(entry);
 								}}
 								minValue={0.1}
-								value={1}
-							/>
+								value={1}>
+								<span className='text-xs'>Servings</span>
+							</NumberIncrementor>
 						</div>
 
 						<Button

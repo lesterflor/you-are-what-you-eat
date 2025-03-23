@@ -65,12 +65,12 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 				</SheetTitle>
 				<div className='flex flex-col gap-6 mt-4'>
 					{user && (
-						<div className='flex flex-row items-center gap-4'>
+						<div className='flex flex-row items-center justify-between gap-4 portrait:gap-0'>
 							<Avatar>
 								<AvatarImage src={user.image ? user.image : ''} />
 								<AvatarFallback>{user.name.slice(0, 1)}</AvatarFallback>
 							</Avatar>
-							<div>Hello, {user.name}</div>
+							<div>Hi, {user.name}</div>
 
 							<ModeToggle />
 						</div>
