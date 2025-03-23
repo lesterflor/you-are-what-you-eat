@@ -77,7 +77,7 @@ export default function DayLogChart({
 	}, [logs]);
 
 	return (
-		<div className='flex flex-col gap-4'>
+		<div className='flex flex-col gap-4 w-fit'>
 			<div className='flex flex-row items-center justify-start gap-0 text-xs font-normal'>
 				<Badge variant='outline'>{dates.earliest}</Badge>-
 				<Badge variant='outline'>{dates.latest}</Badge>
@@ -87,7 +87,7 @@ export default function DayLogChart({
 				<div>Calories</div>
 				<ChartContainer
 					config={caloriesConfig}
-					className='h-[65vh] w-full portrait:w-[85vw]'>
+					className='h-[65vh] w-[60vw] portrait:w-[85vw]'>
 					<AreaChart
 						accessibilityLayer
 						data={logs}
