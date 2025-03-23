@@ -21,7 +21,7 @@ export default async function SiteHeader() {
 	return (
 		<header className='w-full border-b fixed top-0 z-50 bg-white dark:bg-green-950 select-none px-0'>
 			<div className='wrapper flex flex-between justify-between items-center w-full p-2'>
-				<div className='flex flex-row items-center justify-start gap-5 portrait:gap-3'>
+				<div className='flex flex-row items-center justify-start gap-5 portrait:gap-0'>
 					<Link href='/'>
 						<div className='flex flex-row items-center gap-2'>
 							<UtensilsCrossed className='w-8 h-8' />
@@ -70,7 +70,7 @@ export default async function SiteHeader() {
 					<LogButton />
 				</div>
 
-				<div className='flex flex-row justify-end gap-1 items-center'>
+				<div className='flex flex-row portrait:flex-col justify-end gap-2 items-center'>
 					<div className='hidden lg:block'>
 						<LogSheet log={log?.data as GetLog} />
 					</div>
@@ -79,9 +79,10 @@ export default async function SiteHeader() {
 					</div>
 
 					<UserButton />
-				</div>
-				<div>
-					<SideMenu log={log?.data as GetLog} />
+
+					<div>
+						<SideMenu log={log?.data as GetLog} />
+					</div>
 				</div>
 			</div>
 		</header>

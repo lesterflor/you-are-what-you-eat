@@ -70,7 +70,7 @@ export default function LogMacrosSummary({
 		setIsFetching(true);
 		const res = await createDailyLog();
 
-		if (res?.success && res.data && res.data.foodItems.length > 0) {
+		if (res?.success && res.data) {
 			const { foodItems } = res.data;
 			const items = foodItems as GetFoodEntry[];
 			setTotalCals(totalMacrosReducer(items).calories);
@@ -83,6 +83,7 @@ export default function LogMacrosSummary({
 
 	useEffect(() => {
 		if (logContext?.updated && getTodayMode) {
+			console.log('getting new log');
 			getLog();
 		}
 	}, [logContext]);
@@ -95,7 +96,7 @@ export default function LogMacrosSummary({
 				) : (
 					<div className='flex flex-col gap-1'>
 						<div className='text-xs'>{children}</div>
-						<div className='flex flex-row flex-wrap gap-2'>
+						<div className='flex flex-row flex-wrap gap-2 portrait:gap-1'>
 							<Badge className='p-1 text-xs w-14'>
 								<div className='flex flex-col items-center w-full'>
 									<div className='font-normal'>Calories</div>
@@ -105,19 +106,25 @@ export default function LogMacrosSummary({
 							<Badge className='p-1 text-xs w-14'>
 								<div className='flex flex-col items-center w-full'>
 									<div className='font-normal'>Protein</div>
-									<div>{formatUnit(totalProtein)} g</div>
+									<div className='whitespace-nowrap'>
+										{formatUnit(totalProtein)} g
+									</div>
 								</div>
 							</Badge>
 							<Badge className='p-1 text-xs w-14'>
 								<div className='flex flex-col items-center w-full'>
 									<div className='font-normal'>Carbs</div>
-									<div>{formatUnit(totalCarbs)} g</div>
+									<div className='whitespace-nowrap'>
+										{formatUnit(totalCarbs)} g
+									</div>
 								</div>
 							</Badge>
 							<Badge className='p-1 text-xs w-14'>
 								<div className='flex flex-col items-center w-full'>
 									<div className='font-normal'>Fat</div>
-									<div>{formatUnit(totalFat)} g</div>
+									<div className='whitespace-nowrap'>
+										{formatUnit(totalFat)} g
+									</div>
 								</div>
 							</Badge>
 						</div>

@@ -37,7 +37,7 @@ export default async function UserButton() {
 		<div className='flex gap-2 items-center'>
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>
-					<div className='flex items-center w-[50px]'>
+					<div className='flex items-center w-[50px] portrait:w-auto'>
 						{!user.image ? (
 							<Button
 								variant='ghost'

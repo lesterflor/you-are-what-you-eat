@@ -111,3 +111,13 @@ export type LogDataType = {
 	fat: number;
 	totalGrams: number;
 };
+
+export type DayLogDataType = {
+	day: string;
+	Calories: number;
+	carb: number;
+	protein: number;
+	fat: number;
+	totalGrams: number;
+	Expended: number;
+};

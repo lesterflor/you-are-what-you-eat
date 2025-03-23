@@ -143,7 +143,14 @@ export async function getLogsByUserId(id: string) {
 					}
 				]
 			},
-			include: { knownCaloriesBurned: true },
+			include: {
+				knownCaloriesBurned: true,
+				user: {
+					select: {
+						BaseMetabolicRate: true
+					}
+				}
+			},
 			orderBy: {
 				createdAt: 'desc'
 			}
