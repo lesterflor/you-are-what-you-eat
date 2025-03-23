@@ -3,12 +3,12 @@ import DayLogChart from '@/components/logs/day-log-chart';
 import LogEntry from '@/components/logs/log-entry';
 import { Button } from '@/components/ui/button';
 import {
-	Sheet,
-	SheetContent,
-	SheetDescription,
-	SheetTitle,
-	SheetTrigger
-} from '@/components/ui/sheet';
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogTitle,
+	DialogTrigger
+} from '@/components/ui/dialog';
 import { auth } from '@/db/auth';
 import { GetLog, GetUser } from '@/types';
 import { CalendarOff, ChartArea } from 'lucide-react';
@@ -37,18 +37,18 @@ export default async function LogsPage() {
 			<div className='text-xl font-semibold flex flex-row items-center justify-between relative'>
 				<div>Log History</div>
 				<div>
-					<Sheet>
-						<SheetTrigger asChild>
+					<Dialog>
+						<DialogTrigger asChild>
 							<Button size='icon'>
 								<ChartArea className='w-6 h-6' />
 							</Button>
-						</SheetTrigger>
-						<SheetContent className='portrait:max-w-[100vw] portrait:w-[100vw]'>
-							<SheetDescription />
-							<SheetTitle className='pb-4'>Log Data</SheetTitle>
+						</DialogTrigger>
+						<DialogContent className='max-w-[65vw] min-h-[70vh] portrait:max-w-[95vw] portrait:min-h-[75vh]'>
+							<DialogDescription />
+							<DialogTitle>Log Data</DialogTitle>
 							<DayLogChart fetchSelf={true} />
-						</SheetContent>
-					</Sheet>
+						</DialogContent>
+					</Dialog>
 				</div>
 			</div>
 			{data && data.length > 0 ? (

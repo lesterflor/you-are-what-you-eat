@@ -87,7 +87,7 @@ export default function DayLogChart({
 				<div>Calories</div>
 				<ChartContainer
 					config={caloriesConfig}
-					className='h-[65vh] w-full'>
+					className='h-[65vh] w-full portrait:w-[85vw]'>
 					<AreaChart
 						accessibilityLayer
 						data={logs}
