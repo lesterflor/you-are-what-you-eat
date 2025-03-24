@@ -161,7 +161,7 @@ export async function getLogsByUserId(id: string, logId: string = '') {
 			throw new Error('There was a problem fetching logs for user');
 		}
 
-		await new Promise((res) => setTimeout(res, 2000));
+		//await new Promise((res) => setTimeout(res, 2000));
 
 		return {
 			success: true,
