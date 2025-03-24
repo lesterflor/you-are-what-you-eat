@@ -110,7 +110,7 @@ export default function FoodItemCard({
 			<CardDescription className='px-6 pb-4'>
 				{item.description}
 			</CardDescription>
-			<CardContent className='flex flex-row flex-wrap gap-2 px-4 pb-0'>
+			<CardContent className='flex flex-row items-center justify-center flex-wrap gap-2 px-3 pb-0'>
 				{session && item.user && (
 					<div className='absolute top-2 right-2'>
 						<FoodUserAvatar
@@ -124,7 +124,7 @@ export default function FoodItemCard({
 				<div className='flex flex-row items-center gap-2 portrait:gap-1'>
 					<Badge
 						variant='secondary'
-						className='w-16 flex flex-col items-center justify-center'>
+						className='w-14 flex flex-col items-center justify-center'>
 						<div className='font-normal text-muted-foreground'>Protein</div>
 						<div className='whitespace-nowrap'>
 							{formatUnit(item.proteinGrams * portionAmount)} g
@@ -137,7 +137,7 @@ export default function FoodItemCard({
 				<div className='flex flex-row items-center gap-2'>
 					<Badge
 						variant='secondary'
-						className='w-16 flex flex-col items-center justify-center'>
+						className='w-14 flex flex-col items-center justify-center'>
 						<div className='font-normal text-muted-foreground'>Carb</div>
 						<div className='whitespace-nowrap'>
 							{formatUnit(item.carbGrams * portionAmount)} g
@@ -151,7 +151,7 @@ export default function FoodItemCard({
 				<div className='flex flex-row items-center gap-2'>
 					<Badge
 						variant='secondary'
-						className='w-16 flex flex-col items-center justify-center'>
+						className='w-14 flex flex-col items-center justify-center'>
 						<div className='font-normal text-muted-foreground'>Fat</div>
 						<div className='whitespace-nowrap'>
 							{formatUnit(item.fatGrams * portionAmount)} g
@@ -164,7 +164,7 @@ export default function FoodItemCard({
 				<div className='flex flex-row items-center gap-2'>
 					<Badge
 						variant='secondary'
-						className='w-16 flex flex-col items-center justify-center'>
+						className='w-14 flex flex-col items-center justify-center'>
 						<div className='font-normal text-muted-foreground'>
 							{item.servingSize * portionAmount === 1 ? 'Serving' : 'Servings'}
 						</div>

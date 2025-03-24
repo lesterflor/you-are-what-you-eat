@@ -164,7 +164,7 @@ export default function FoodListSheet({
 						<SheetDescription></SheetDescription>
 						<SheetTitle className='flex flex-col items-center gap-2 pb-4'>
 							<InputWithButton
-								className='w-[90%]'
+								className='w-[80%]'
 								onChange={(val) => {
 									setSearch(val);
 								}}>
@@ -179,12 +179,14 @@ export default function FoodListSheet({
 								compactMode={true}
 							/>
 						</SheetTitle>
-						<ScrollArea className='h-[70vh] w-full pr-3'>
+						<ScrollArea className='h-[70vh] w-[100%]'>
 							<div
 								ref={scrollAreaRef}
 								className={cn(
-									'gap-4 pb-5 w-[100%]',
-									forceColumn ? 'flex flex-col' : 'grid grid-cols-2'
+									'gap-4 pb-5 w-[97%]',
+									forceColumn
+										? 'flex flex-col items-center justify-center'
+										: 'grid grid-cols-2'
 								)}>
 								{foods && foods.length > 0 ? (
 									foods.map((item, indx) => (

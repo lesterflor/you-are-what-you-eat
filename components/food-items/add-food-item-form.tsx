@@ -139,6 +139,7 @@ export default function AddFoodItemForm({
 										<FormLabel className='font-semibold'>Category</FormLabel>
 										<FormControl>
 											<FoodCategoryPicker
+												suppressUser={true}
 												value={hasSubmitted ? '' : form.getValues('category')}
 												onSelect={(val) => {
 													form.setValue('category', val);

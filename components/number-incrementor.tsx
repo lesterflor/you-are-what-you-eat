@@ -41,7 +41,7 @@ export default function NumberIncrementor({
 			<div
 				className={cn(
 					'flex flex-row items-center justify-start rounded-md border-2 p-1 select-none',
-					compactMode ? 'gap-1' : 'gap-6'
+					compactMode ? 'gap-1' : 'gap-2'
 				)}>
 				<div
 					className={cn(

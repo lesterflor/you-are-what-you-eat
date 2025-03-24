@@ -63,7 +63,7 @@ export default function LogFoodCard({
 			() => {
 				setFadeClass(true);
 			},
-			indx === 0 ? 1 : indx * 500
+			indx === 0 ? 1 : indx * 10
 		);
 	}, []);
 

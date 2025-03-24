@@ -43,7 +43,11 @@ export default function FoodLogList({
 		if (res?.success && res.data) {
 			setLog(res.data as GetLog);
 
-			setLogList(res.data.foodItems as GetFoodEntry[]);
+			const sortedFoodList = [...res.data.foodItems].sort(
+				(a, b) => b.eatenAt.getTime() - a.eatenAt.getTime()
+			);
+
+			setLogList(sortedFoodList as GetFoodEntry[]);
 			const bmrArr = res.data.user.BaseMetabolicRate as BaseMetabolicRateType[];
 
 			setBmr(bmrArr[0]);
@@ -169,7 +173,6 @@ export default function FoodLogList({
 						bmr && 'h-[60vh] mt-24',
 						className
 					)}>
-					<br />
 					<div className='flex flex-col gap-2 w-full'>
 						{logList.length > 0 && (
 							<div className='flex flex-row items-center gap-2'>
@@ -185,13 +188,13 @@ export default function FoodLogList({
 							)}>
 							<>
 								{logList.length > 0 ? (
-									<div className='flex flex-col-reverse gap-4'>
+									<div className='flex flex-col gap-4'>
 										{logList.map((item, indx) => (
 											<LogFoodCard
 												allowEdit={true}
 												indx={indx}
 												item={item}
-												key={`${item}-${indx}`}
+												key={`${item.id}-${item.eatenAt.getTime()}`}
 											/>
 										))}
 									</div>
@@ -208,13 +211,13 @@ export default function FoodLogList({
 				</ScrollArea>
 			) : (
 				<div className='flex flex-col gap-4 w-full'>
-					<div className='flex flex-col-reverse gap-4'>
+					<div className='flex flex-col gap-4'>
 						{logList.map((item, indx) => (
 							<LogFoodCard
 								allowEdit={true}
 								indx={indx}
 								item={item}
-								key={`${item}-${indx}`}
+								key={`${item.id}-${item.eatenAt.getTime()}`}
 							/>
 						))}
 					</div>

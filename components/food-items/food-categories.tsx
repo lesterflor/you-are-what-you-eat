@@ -20,13 +20,15 @@ export default function FoodCategoryPicker({
 	onSelect,
 	compactMode = false,
 	showFilterIcon = false,
-	iconsOnly = false
+	iconsOnly = false,
+	suppressUser = false
 }: {
 	onSelect: (data: string) => void;
 	value?: string;
 	compactMode?: boolean;
 	showFilterIcon?: boolean;
 	iconsOnly?: boolean;
+	suppressUser?: boolean;
 }) {
 	const [selected, setSelected] = useState(value);
 	const foodContext = useContext(FoodSearchContext);
@@ -130,7 +132,7 @@ export default function FoodCategoryPicker({
 					<FoodCategoryIconMapper type='other' />
 					{!iconsOnly && 'Other'}
 				</ToggleGroupItem>
-				{user && (
+				{user && !suppressUser && (
 					<ToggleGroupItem
 						value='user'
 						className={cn(compactMode && 'text-xs')}>
