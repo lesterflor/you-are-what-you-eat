@@ -12,6 +12,7 @@ import { BicepsFlexed, Calendar, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
 import LogMacrosSummary from './log-macros-summary';
+import LogRemainderBadge from './log-remainder-badge';
 
 export default function FoodLogList({
 	forceColumn = true,
@@ -118,18 +119,20 @@ export default function FoodLogList({
 
 					<div className='flex flex-row gap-2 w-full'>
 						{bmr && (
-							<div className='p-1 rounded-md border-2 text-sm items-center font-normal portrait:text-xs flex flex-col gap-0 w-20'>
+							<div className='p-1 rounded-md border-2 text-sm items-center font-normal portrait:text-xs flex flex-col gap-0 w-16'>
 								<span>BMR</span>
 								<span>{formatUnit(bmr.bmr)}</span>
 							</div>
 						)}
 
 						{calsBurned > 0 && (
-							<div className='p-1 rounded-md border-2 text-sm font-normal portrait:text-xs flex flex-col gap-0 items-center w-20'>
+							<div className='p-1 rounded-md border-2 text-sm font-normal portrait:text-xs flex flex-col gap-0 items-center w-16'>
 								<span>Expended</span>
 								<span>{formatUnit(calsBurned)}</span>
 							</div>
 						)}
+
+						<LogRemainderBadge />
 					</div>
 				</div>
 
@@ -182,13 +185,14 @@ export default function FoodLogList({
 						)}
 						<div
 							className={cn(
+								'w-full',
 								forceColumn
 									? 'flex flex-col gap-4'
-									: 'grid grid-cols-2 lg:grid-cols-3 gap-2 portrait:flex flex-col'
+									: 'flex flex-row flex-wrap gap-4 portrait:flex-col'
 							)}>
 							<>
 								{logList.length > 0 ? (
-									<div className='flex flex-col gap-4'>
+									<>
 										{logList.map((item, indx) => (
 											<LogFoodCard
 												allowEdit={true}
@@ -197,7 +201,7 @@ export default function FoodLogList({
 												key={`${item.id}-${item.eatenAt.getTime()}`}
 											/>
 										))}
-									</div>
+									</>
 								) : (
 									<div className='flex flex-row items-center justify-center gap-2 text-muted-foreground opacity-50 col-span-2'>
 										<BicepsFlexed className='w-16 h-16' />

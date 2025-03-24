@@ -2,8 +2,13 @@
 
 import { auth } from '@/db/auth';
 import prisma from '@/db/prisma';
-import { formatError, getToday } from '@/lib/utils';
-import { FoodEntry, GetFoodEntry, GetUser } from '@/types';
+import { formatError, getToday, totalMacrosReducer } from '@/lib/utils';
+import {
+	FoodEntry,
+	GetFoodEntry,
+	GetUser,
+	LogRemainderDataType
+} from '@/types';
 import { revalidatePath } from 'next/cache';
 
 export async function createDailyLog() {
@@ -420,6 +425,145 @@ export async function updateFoodLogEntry(foodEntry: GetFoodEntry) {
 			success: true,
 			message: 'Log updated successfully',
 			data: theUpdate[0]
+		};
+	} catch (error: unknown) {
+		return {
+			success: false,
+			message: formatError(error)
+		};
+	}
+}
+
+export async function getLogRemainder() {
+	try {
+		const session = await auth();
+		const user = session?.user as GetUser;
+
+		if (!session || !user) {
+			throw new Error('User must be authenticated');
+		}
+
+		const yesterdayLog = await prisma.log.findFirst({
+			where: {
+				createdAt: {
+					gte: getToday().yesterday,
+					lt: getToday().todayStart
+				}
+			},
+			include: {
+				user: {
+					select: {
+						BaseMetabolicRate: {
+							select: {
+								bmr: true
+							}
+						}
+					}
+				},
+				knownCaloriesBurned: {
+					select: {
+						calories: true
+					}
+				},
+				logRemainder: {
+					select: {
+						calories: true
+					}
+				}
+			}
+		});
+
+		if (!yesterdayLog) {
+			throw new Error('There was a problem getting the most recent log');
+		}
+
+		const bmrCalories = yesterdayLog.user.BaseMetabolicRate[0].bmr ?? 0;
+		const expendedCals = yesterdayLog.knownCaloriesBurned[0].calories ?? 0;
+		const yesterdayConsumed = totalMacrosReducer(
+			yesterdayLog.foodItems as GetFoodEntry[]
+		).calories;
+		const remainder = bmrCalories + expendedCals - yesterdayConsumed;
+
+		const todaysLog = await createDailyLog();
+
+		if (!todaysLog) {
+			throw new Error('There was a problem getting todays log');
+		}
+
+		const todaysBMRCals = todaysLog.data?.user.BaseMetabolicRate[0].bmr ?? 0;
+		const todaysExpendedCals =
+			todaysLog.data?.knownCaloriesBurned[0].calories ?? 0;
+		const todaysExpended = todaysBMRCals + todaysExpendedCals;
+
+		const todaysFood = todaysLog.data?.foodItems ?? [];
+		const todaysConsumed = totalMacrosReducer(
+			todaysFood as GetFoodEntry[]
+		).calories;
+
+		const logRemainder = remainder + todaysExpended;
+		const realRemainder = logRemainder - todaysConsumed;
+
+		// console.log(
+		// 	'BMR: ',
+		// 	bmrCalories,
+		// 	' expended: ',
+		// 	expendedCals,
+		// 	' yesterday consumed: ',
+		// 	yesterdayConsumed,
+		// 	' remainder: ',
+		// 	remainder,
+		// 	' consumed today: ',
+		// 	todaysConsumed,
+		// 	' LOG REMAINDER: ',
+		// 	realRemainder
+		// );
+
+		// get today's remainder record
+		if (todaysLog.data?.id) {
+			const todaysRemainder = await prisma.logRemainder.findFirst({
+				where: {
+					userId: user.id,
+					logId: todaysLog.data.id
+				}
+			});
+
+			//console.log(todaysRemainder);
+
+			if (todaysRemainder) {
+				const update = await prisma.logRemainder.update({
+					where: {
+						id: todaysRemainder.id
+					},
+					data: {
+						calories: realRemainder
+					}
+				});
+
+				if (!update) {
+					throw new Error('There was a problem updating todays remainder');
+				}
+
+				const data: LogRemainderDataType = {
+					remainder: update.calories,
+					yesterdaysConsumed: yesterdayConsumed,
+					yesterdaysExpended: expendedCals,
+					bmr: bmrCalories,
+					todaysConsumed,
+					yesterdaysRemainder: remainder
+				};
+
+				return {
+					success: true,
+					message: 'success',
+					data
+				};
+			}
+		}
+
+		return {
+			success: true,
+			message: 'success',
+			data: null
 		};
 	} catch (error: unknown) {
 		return {

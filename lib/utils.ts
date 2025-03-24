@@ -196,6 +196,13 @@ export function getToday(hourAdjustment: number = 4) {
 		serverAdjustedDate.getMonth(),
 		serverAdjustedDate.getDate()
 	);
+
+	const yesterday = new Date(
+		serverAdjustedDate.getFullYear(),
+		serverAdjustedDate.getMonth(),
+		serverAdjustedDate.getDate() - 1
+	);
+
 	const todayEnd = new Date(
 		serverAdjustedDate.getFullYear(),
 		serverAdjustedDate.getMonth(),
@@ -207,6 +214,7 @@ export function getToday(hourAdjustment: number = 4) {
 	);
 
 	return {
+		yesterday,
 		current: adjustedCurrent,
 		todayStart: todayStart.toISOString(),
 		todayEnd: todayEnd.toISOString(),

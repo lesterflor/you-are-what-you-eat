@@ -126,3 +126,12 @@ export type DayLogDataType = {
 	totalGrams: number;
 	Expended: number;
 };
+
+export type LogRemainderDataType = {
+	remainder: number;
+	yesterdaysConsumed: number;
+	todaysConsumed: number;
+	bmr: number;
+	yesterdaysExpended: number;
+	yesterdaysRemainder: number;
+};
