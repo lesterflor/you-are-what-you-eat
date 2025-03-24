@@ -38,7 +38,7 @@ export default function LogRemainderBadge() {
 					<PopoverTrigger>
 						<Badge
 							variant='secondary'
-							className='select-none p-1 rounded-md border-2 text-sm font-normal portrait:text-xs flex flex-row gap-2 items-start'>
+							className='select-none p-1 rounded-md border-2 font-normal text-xs flex flex-row gap-1 items-start'>
 							<Info className='w-4 h-4' />
 							<div className='flex flex-col gap-0'>
 								<span className='whitespace-nowrap'>Carry-over</span>

@@ -119,14 +119,14 @@ export default function FoodLogList({
 
 					<div className='flex flex-row gap-2 w-full'>
 						{bmr && (
-							<div className='p-1 rounded-md border-2 text-sm items-center font-normal portrait:text-xs flex flex-col gap-0 w-16'>
+							<div className='p-1 rounded-md border-2 items-center font-normal text-xs flex flex-col gap-0 w-16'>
 								<span>BMR</span>
 								<span>{formatUnit(bmr.bmr)}</span>
 							</div>
 						)}
 
 						{calsBurned > 0 && (
-							<div className='p-1 rounded-md border-2 text-sm font-normal portrait:text-xs flex flex-col gap-0 items-center w-16'>
+							<div className='p-1 rounded-md border-2 font-normal text-xs flex flex-col gap-0 items-center w-16'>
 								<span>Expended</span>
 								<span>{formatUnit(calsBurned)}</span>
 							</div>
