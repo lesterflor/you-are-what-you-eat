@@ -51,7 +51,7 @@ export default function LogFilter() {
 
 	return (
 		<>
-			{logs.length > 0 && (
+			{logs && logs.length > 0 && (
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<Button variant='secondary'>
