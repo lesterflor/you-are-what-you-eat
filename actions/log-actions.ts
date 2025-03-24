@@ -129,11 +129,12 @@ export async function updateLog(foodEntries: FoodEntry[]) {
 	}
 }
 
-export async function getLogsByUserId(id: string) {
+export async function getLogsByUserId(id: string, logId: string = '') {
 	try {
 		const logs = await prisma.log.findMany({
 			where: {
 				userId: id,
+				id: logId ? logId : undefined,
 				NOT: [
 					{
 						createdAt: {
@@ -159,6 +160,8 @@ export async function getLogsByUserId(id: string) {
 		if (!logs) {
 			throw new Error('There was a problem fetching logs for user');
 		}
+
+		await new Promise((res) => setTimeout(res, 2000));
 
 		return {
 			success: true,
