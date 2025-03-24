@@ -130,31 +130,43 @@ export default function LogMacrosSummary({
 						</div>
 
 						{detailedMode && (
-							<div className='grid grid-cols-2 gap-2 text-xs'>
+							<div className='flex flex-col gap-2 text-xs'>
 								<br />
-								<div className='col-span-2 border-b-2 font-semibold text-lg'>
+								<div className='col-span-2 font-semibold text-md'>
 									Calories breakdown
 								</div>
-								<div className='flex flex-row items-center gap-2 rounded-md border-2 p-1'>
-									<span className='text-muted-foreground'>Prot:</span>{' '}
-									{formatUnit(totalProtein * 4)}
-									<span className='text-muted-foreground'>
-										{getMacroPercOfCals(totalProtein, totalCals, 'protein')}
-									</span>
-								</div>
-								<div className='flex flex-row items-center gap-2 rounded-md border-2 p-1'>
-									<span className='text-muted-foreground'>Carb:</span>{' '}
-									{formatUnit(totalCarbs * 4)}
-									<span className='text-muted-foreground'>
-										{getMacroPercOfCals(totalCarbs, totalCals, 'carb')}
-									</span>
-								</div>
-								<div className='flex flex-row items-center gap-2 rounded-md border-2 p-1'>
-									<span className='text-muted-foreground'>Fat:</span>{' '}
-									{formatUnit(totalFat * 4)}
-									<span className='text-muted-foreground'>
-										{getMacroPercOfCals(totalFat, totalCals, 'fat')}
-									</span>
+
+								<div className='flex flex-row items-center gap-2 flex-wrap'>
+									<div className='flex flex-col items-center gap-0 rounded-md border-2 p-1'>
+										<span className='text-muted-foreground'>Carbohydrates</span>
+										<div className='flex flex-row items-center gap-1'>
+											<span>{formatUnit(totalCarbs * 4)}</span>
+											<span className='text-muted-foreground'>
+												({getMacroPercOfCals(totalCarbs, totalCals, 'carb')})
+											</span>
+										</div>
+									</div>
+									<div className='flex flex-col items-center gap-0 rounded-md border-2 p-1'>
+										<span className='text-muted-foreground'>Fat</span>
+										<div className='flex flex-row items-center gap-1'>
+											<span>{formatUnit(totalFat * 4)}</span>
+											<span className='text-muted-foreground'>
+												({getMacroPercOfCals(totalFat, totalCals, 'fat')})
+											</span>
+										</div>
+									</div>
+
+									<div className='flex flex-col items-center gap-0 rounded-md border-2 p-1'>
+										<span className='text-muted-foreground'>Protein</span>{' '}
+										<div className='flex flex-row items-center gap-1'>
+											<span>{formatUnit(totalProtein * 4)}</span>
+											<span className='text-muted-foreground'>
+												(
+												{getMacroPercOfCals(totalProtein, totalCals, 'protein')}
+												)
+											</span>
+										</div>
+									</div>
 								</div>
 							</div>
 						)}
@@ -192,31 +204,40 @@ export default function LogMacrosSummary({
 					</div>
 
 					{detailedMode && (
-						<div className='grid grid-cols-2 gap-2 text-xs'>
-							<br />
-							<div className='col-span-2 border-b-2 font-semibold text-lg'>
+						<div className='flex flex-col gap-2 text-xs'>
+							<div className='col-span-2 font-semibold text-lg'>
 								Calories breakdown
 							</div>
-							<div className='flex flex-row items-center gap-2 rounded-md border-2 p-1'>
-								<span className='text-muted-foreground'>Protein:</span>{' '}
-								{formatUnit(totalProtein * 4)}
-								<span className='text-muted-foreground'>
-									{getMacroPercOfCals(totalProtein, totalCals, 'protein')}
-								</span>
-							</div>
-							<div className='flex flex-row items-center gap-2 rounded-md border-2 p-1'>
-								<span className='text-muted-foreground'>Carbohydrates:</span>{' '}
-								{formatUnit(totalCarbs * 4)}
-								<span className='text-muted-foreground'>
-									{getMacroPercOfCals(totalCarbs, totalCals, 'carb')}
-								</span>
-							</div>
-							<div className='flex flex-row items-center gap-2 rounded-md border-2 p-1'>
-								<span className='text-muted-foreground'>Fat:</span>{' '}
-								{formatUnit(totalFat * 4)}
-								<span className='text-muted-foreground'>
-									{getMacroPercOfCals(totalFat, totalCals, 'fat')}
-								</span>
+
+							<div className='flex flex-row items-center gap-2 flex-wrap'>
+								<div className='flex flex-col items-center gap-0 rounded-md border-2 p-1'>
+									<span className='text-muted-foreground'>Carbohydrates</span>
+									<div className='flex flex-row items-center gap-1'>
+										<span>{formatUnit(totalCarbs * 4)}</span>
+										<span className='text-muted-foreground'>
+											({getMacroPercOfCals(totalCarbs, totalCals, 'carb')})
+										</span>
+									</div>
+								</div>
+								<div className='flex flex-col items-center gap-0 rounded-md border-2 p-1'>
+									<span className='text-muted-foreground'>Fat</span>
+									<div className='flex flex-row items-center gap-1'>
+										<span>{formatUnit(totalFat * 4)}</span>
+										<span className='text-muted-foreground'>
+											({getMacroPercOfCals(totalFat, totalCals, 'fat')})
+										</span>
+									</div>
+								</div>
+
+								<div className='flex flex-col items-center gap-0 rounded-md border-2 p-1'>
+									<span className='text-muted-foreground'>Protein</span>{' '}
+									<div className='flex flex-row items-center gap-1'>
+										<span>{formatUnit(totalProtein * 4)}</span>
+										<span className='text-muted-foreground'>
+											({getMacroPercOfCals(totalProtein, totalCals, 'protein')})
+										</span>
+									</div>
+								</div>
 							</div>
 						</div>
 					)}

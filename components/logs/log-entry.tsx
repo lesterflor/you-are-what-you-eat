@@ -40,37 +40,32 @@ export default async function LogEntry({ log }: { log: GetLog }) {
 	const overUsedDailyCals = Math.sign(calDiff) === -1;
 
 	return (
-		<div className='flex flex-col gap-6'>
-			<div className='flex flex-row portrait:flex-col items-center justify-start gap-8 rounded-md border-2 p-2'>
-				<div className='flex flex-col items-center gap-2'>
-					<div className='flex flex-row gap-2 items-center justify-center'>
-						<Calendar className='w-4 h-4 portrait:w-6 portrait:h-6  ' />
-						<div className='portrait:text-sm flex flex-row items-center gap-4 justify-between flex-wrap w-full'>
-							<div className='portrait:text-lg font-semibold'>
-								{format(log.createdAt, 'PP')}
-							</div>
-						</div>
+		<div className='flex flex-col gap-2'>
+			<div className='flex flex-row gap-2 items-center justify-center'>
+				<Calendar className='w-4 h-4 portrait:w-6 portrait:h-6  ' />
+				<div className='portrait:text-sm flex flex-row items-center gap-4 justify-between flex-wrap w-full'>
+					<div className='portrait:text-lg font-semibold'>
+						{format(log.createdAt, 'eee PP')}
 					</div>
+				</div>
+			</div>
+			<div className='flex flex-row items-center justify-start portrait:gap-3 gap-8 rounded-md border-2 p-2'>
+				<div className='flex flex-col items-center gap-2'>
 					{bmrData.data && (
 						<div className='flex flex-col gap-2 text-xs'>
-							<div className='flex flex-row items-center justify-start gap-2 rounded-md border-2 p-1'>
-								<span className='text-muted-foreground'>Total Calories:</span>{' '}
-								{formatUnit(calories)}
-								<span className='text-muted-foreground'>calories</span>
+							<div className='flex flex-col items-center justify-center gap-0 rounded-md border-2 p-1'>
+								<span className='text-muted-foreground'>Total Calories</span>{' '}
+								<span>{formatUnit(calories)}</span>
 							</div>
 
-							<div className='flex flex-row items-center gap-2 rounded-md border-2 p-1'>
-								<span className='text-muted-foreground'>BMR:</span>{' '}
+							<div className='flex flex-col items-center justify-center gap-0 rounded-md border-2 p-1'>
+								<span className='text-muted-foreground'>BMR</span>{' '}
 								{formatUnit(bmr)}
-								<span className='text-muted-foreground'>calories</span>
 							</div>
 
-							<div className='flex flex-row items-center justify-start gap-2 rounded-md border-2 p-1'>
-								<span className='text-muted-foreground'>
-									Known calories burned:
-								</span>{' '}
+							<div className='flex flex-col items-center justify-center gap-0 rounded-md border-2 p-1'>
+								<span className='text-muted-foreground'>Calories expended</span>{' '}
 								{formatUnit(kcBurned)}
-								<span className='text-muted-foreground'>calories</span>
 							</div>
 
 							<div
@@ -97,7 +92,7 @@ export default async function LogEntry({ log }: { log: GetLog }) {
 								</DialogTrigger>
 								<DialogContent className='max-w-[65vw] min-h-[70vh] portrait:max-w-[95vw] portrait:min-h-[75vh] flex flex-col justify-start'>
 									<DialogDescription></DialogDescription>
-									<DialogTitle>{format(log.createdAt, 'PPP')}</DialogTitle>
+									<DialogTitle>{format(log.createdAt, 'eee PPP')}</DialogTitle>
 									<LogChart log={log} />
 								</DialogContent>
 							</Dialog>
@@ -123,22 +118,31 @@ export default async function LogEntry({ log }: { log: GetLog }) {
 			</div>
 
 			{log.foodItems.length > 1 ? (
-				<div className='flex flex-col items-center gap-4 w-full'>
-					<TruncateSection
-						allowSeeMore={true}
-						label='See more'
-						pixelHeight={300}>
-						<div className='flex flex-col sm:grid grid-cols-2 lg:grid-cols-3 gap-4 w-full'>
-							{log.foodItems.map((food, indx) => (
-								<LogFoodCard
-									indx={indx}
-									key={`${food.id}-${indx}`}
-									item={food as GetFoodEntry}
-								/>
-							))}
-						</div>
-					</TruncateSection>
-				</div>
+				<>
+					<div className='text-md font-semibold'>
+						Food logged{' '}
+						<span className='text-muted-foreground font-normal'>
+							({log.foodItems.length}{' '}
+							{log.foodItems.length === 1 ? 'item' : 'items'})
+						</span>
+					</div>
+					<div className='flex flex-col items-center gap-4 w-full'>
+						<TruncateSection
+							allowSeeMore={true}
+							label='See more'
+							pixelHeight={300}>
+							<div className='flex flex-col sm:grid grid-cols-2 lg:grid-cols-3 gap-4 w-full'>
+								{log.foodItems.map((food, indx) => (
+									<LogFoodCard
+										indx={indx}
+										key={`${food.id}-${indx}`}
+										item={food as GetFoodEntry}
+									/>
+								))}
+							</div>
+						</TruncateSection>
+					</div>
+				</>
 			) : log.foodItems.length === 0 ? (
 				<div className='flex flex-row items-center gap-2 text-muted-foreground'>
 					<CookingPot className='w-4 h-4' />
