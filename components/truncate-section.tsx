@@ -31,7 +31,7 @@ export default function TruncateSection({
 		<>
 			<div className='flex flex-col items-end relative'>
 				<div
-					className='w-full text-[110%] absolute opacity-0 -top-[100vh] pointer-events-none'
+					className='w-full text-[110%] absolute opacity-0 -top-[500vh] pointer-events-none'
 					ref={htmlDiv}>
 					{children}
 				</div>
