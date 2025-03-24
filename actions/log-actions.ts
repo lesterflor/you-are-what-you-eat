@@ -58,6 +58,7 @@ export async function createDailyLog() {
 		}
 
 		createKnowDailyCalories(logForToday.id);
+		createLogRemainder(logForToday.id);
 
 		return {
 			success: true,
@@ -207,6 +208,51 @@ export async function createKnowDailyCalories(logId: string) {
 				throw new Error(
 					'There was a problem creating the Known Calories Burned'
 				);
+			}
+		}
+
+		return {
+			success: true,
+			message: 'success'
+		};
+	} catch (error: unknown) {
+		return {
+			success: false,
+			message: formatError(error)
+		};
+	}
+}
+
+export async function createLogRemainder(logId: string) {
+	try {
+		const session = await auth();
+		const user = session?.user as GetUser;
+
+		if (!session || !user) {
+			throw new Error('User must be authenticated');
+		}
+
+		const existing = await prisma.logRemainder.findFirst({
+			where: {
+				logId,
+				userId: user.id,
+				createdAt: {
+					gte: getToday().todayStart,
+					lt: getToday().todayEnd
+				}
+			}
+		});
+
+		if (!existing) {
+			const newRemainder = await prisma.logRemainder.create({
+				data: {
+					logId,
+					userId: user.id
+				}
+			});
+
+			if (!newRemainder) {
+				throw new Error('There was a problem creating the log remainder');
 			}
 		}
 

@@ -1,7 +1,6 @@
 'use client';
 
 import { BaseMetabolicRateType, GetFoodEntry, GetLog } from '@/types';
-import { Badge } from '../ui/badge';
 import { useContext, useEffect, useState } from 'react';
 import LogFoodCard from './log-food-card';
 import { ScrollArea } from '../ui/scroll-area';
@@ -44,13 +43,7 @@ export default function FoodLogList({
 		if (res?.success && res.data) {
 			setLog(res.data as GetLog);
 
-			const list = [...(res.data.foodItems as GetFoodEntry[])];
-
-			list.sort((a, b) => {
-				return b.eatenAt.getTime() - a.eatenAt.getTime();
-			});
-
-			setLogList(list);
+			setLogList(res.data.foodItems as GetFoodEntry[]);
 			const bmrArr = res.data.user.BaseMetabolicRate as BaseMetabolicRateType[];
 
 			setBmr(bmrArr[0]);
@@ -96,15 +89,15 @@ export default function FoodLogList({
 		<>
 			<div
 				className={cn(
-					'flex flex-row items-center w-fit pb-4 gap-2',
+					'flex flex-row items-center w-fit portrait:w-[85vw] pb-4 gap-2',
 					useScroller ? 'absolute' : 'relative'
 				)}>
 				<div className='flex flex-col items-start w-full gap-1'>
 					<Popover modal={true}>
 						<PopoverTrigger asChild>
-							<Button className='p-1 portrait:text-sm flex flex-row gap-2 w-48'>
+							<Button className='p-1 portrait:text-sm flex flex-row gap-2 w-60'>
 								<IoFastFoodOutline className='w-4 h-4 animate-pulse' />
-								Current Calories
+								Calories Consumed
 								<span className='font-semibold'> {totalCals}</span>
 							</Button>
 						</PopoverTrigger>
@@ -121,19 +114,17 @@ export default function FoodLogList({
 
 					<div className='flex flex-row gap-2 w-full'>
 						{bmr && (
-							<Badge
-								variant='outline'
-								className='text-sm font-normal portrait:text-sm flex flex-row gap-3'>
-								BMR {formatUnit(bmr.bmr)}
-							</Badge>
+							<div className='p-1 rounded-md border-2 text-sm items-center font-normal portrait:text-xs flex flex-col gap-0 w-20'>
+								<span>BMR</span>
+								<span>{formatUnit(bmr.bmr)}</span>
+							</div>
 						)}
 
 						{calsBurned > 0 && (
-							<Badge
-								variant='outline'
-								className='text-sm font-normal portrait:text-sm flex flex-row gap-3'>
-								Cals burned: {formatUnit(calsBurned)}
-							</Badge>
+							<div className='p-1 rounded-md border-2 text-sm font-normal portrait:text-xs flex flex-col gap-0 items-center w-20'>
+								<span>Expended</span>
+								<span>{formatUnit(calsBurned)}</span>
+							</div>
 						)}
 					</div>
 				</div>
@@ -175,25 +166,26 @@ export default function FoodLogList({
 				<ScrollArea
 					className={cn(
 						'h-[80vh] pr-3 mt-12 w-full',
-						bmr && 'h-[72vh] mt-20',
+						bmr && 'h-[60vh] mt-24',
 						className
 					)}>
 					<br />
-					<div className='flex flex-col gap-4 w-full'>
+					<div className='flex flex-col gap-2 w-full'>
+						{logList.length > 0 && (
+							<div className='flex flex-row items-center gap-2'>
+								<Calendar className='w-4 h-4' />
+								Today&apos;s Log
+							</div>
+						)}
 						<div
 							className={cn(
-								'gap-4',
 								forceColumn
-									? 'flex flex-col'
-									: 'grid grid-cols-2 lg:grid-cols-3 portrait:flex flex-col'
+									? 'flex flex-col gap-4'
+									: 'grid grid-cols-2 lg:grid-cols-3 gap-2 portrait:flex flex-col'
 							)}>
 							<>
 								{logList.length > 0 ? (
-									<div className='flex flex-col gap-2'>
-										<div className='flex flex-row items-center gap-2'>
-											<Calendar className='w-4 h-4' />
-											Today&apos;s Log
-										</div>
+									<div className='flex flex-col-reverse gap-4'>
 										{logList.map((item, indx) => (
 											<LogFoodCard
 												allowEdit={true}
@@ -216,7 +208,7 @@ export default function FoodLogList({
 				</ScrollArea>
 			) : (
 				<div className='flex flex-col gap-4 w-full'>
-					<div className='flex flex-col gap-4'>
+					<div className='flex flex-col-reverse gap-4'>
 						{logList.map((item, indx) => (
 							<LogFoodCard
 								allowEdit={true}

@@ -3,9 +3,11 @@ import {
 	foodItemSchema,
 	getFoodEntrySchema,
 	getFoodItemSchema,
+	getLogRemainderSchema,
 	getLogSchema,
 	getTrackingSchema,
 	getUserSchema,
+	logRemainderSchema,
 	logSchema,
 	trackingSchema,
 	updateContentSchema,
@@ -51,6 +53,9 @@ export type GetLog = z.infer<typeof getLogSchema>;
 
 export type FoodEntry = z.infer<typeof foodEntrySchema>;
 export type GetFoodEntry = z.infer<typeof getFoodEntrySchema>;
+
+export type LogRemainder = z.infer<typeof logRemainderSchema>;
+export type GetLogRemainder = z.infer<typeof getLogRemainderSchema>;
 
 export type BMRData = {
 	weight: number;

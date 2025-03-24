@@ -212,5 +212,25 @@ export const getLogSchema = z.object({
 	updatedAt: z.date(),
 	userId: z.string(),
 	foodItems: z.array(getFoodEntrySchema),
-	knownCaloriesBurned: z.array(getKnownCaloriesBurnedSchema)
+	knownCaloriesBurned: z.array(getKnownCaloriesBurnedSchema),
+	logRemainder: z.array(z.any()).optional()
+});
+
+export const logRemainderSchema = z.object({
+	userId: z.string().min(1, 'userId is required'),
+	logId: z.string().min(1, 'logId is required'),
+	calories: z.number().refine((val) => val !== null, {
+		message: 'Calories can be 0 or greater.'
+	})
+});
+
+export const getLogRemainderSchema = z.object({
+	id: z.string(),
+	createdAt: z.date(),
+	updatedAt: z.date(),
+	calories: z.number(),
+	logId: z.string(),
+	log: getLogSchema.optional(),
+	userId: z.string(),
+	user: getUserSchema.optional()
 });

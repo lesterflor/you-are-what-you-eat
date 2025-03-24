@@ -29,7 +29,7 @@ export default async function Home() {
 						<FoodLogList
 							forceColumn={false}
 							useScroller={true}
-							className='portrait:h-[65vh] h-[45vh]'
+							className='portrait:h-[50vh] h-[45vh]'
 						/>
 					</div>
 				</div>
