@@ -54,12 +54,14 @@ export default async function LogEntry({ log }: { log: GetLog }) {
 					{bmrData.data && (
 						<div className='flex flex-col gap-2 text-xs'>
 							<div className='flex flex-col items-center justify-center gap-0 rounded-md border-2 p-1'>
-								<span className='text-muted-foreground'>Total Calories</span>{' '}
+								<span className='text-muted-foreground'>Calories Consumed</span>{' '}
 								<span>{formatUnit(calories)}</span>
 							</div>
 
 							<div className='flex flex-col items-center justify-center gap-0 rounded-md border-2 p-1'>
-								<span className='text-muted-foreground'>BMR</span>{' '}
+								<span className='text-muted-foreground'>
+									Base Metabolic Rate
+								</span>{' '}
 								{formatUnit(bmr)}
 							</div>
 
