@@ -302,7 +302,7 @@ export default function FoodLogList({
 						{bmr ? (
 							<div
 								className={cn(
-									'text-xl text-center flex flex-col items-center gap-0 relative font-bold',
+									'text-2xl text-center flex flex-col items-center gap-0 relative font-bold',
 									Math.sign(remainingCals) === -1
 										? 'text-foreground'
 										: 'text-muted-foreground'
