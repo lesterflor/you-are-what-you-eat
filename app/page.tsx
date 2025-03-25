@@ -11,7 +11,7 @@ export default async function Home() {
 	return (
 		<>
 			{session ? (
-				<div className='flex flex-col gap-4 w-full'>
+				<div className='flex flex-col gap-4 w-full h-full'>
 					<div className='text-lg'>
 						You are what you eat,{' '}
 						<span className='font-semibold'>{session.user?.name}</span>
@@ -27,6 +27,7 @@ export default async function Home() {
 					<Separator />
 					<div className='relative'>
 						<FoodLogList
+							useFloaterNav={true}
 							iconPosition='top'
 							forceColumn={false}
 							useScroller={true}

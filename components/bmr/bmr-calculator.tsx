@@ -20,6 +20,8 @@ import { toast } from 'sonner';
 import BMRCalculatorSkeleton from '../skeletons/bmr-calculator-skeleton';
 import { Avatar, AvatarImage } from '../ui/avatar';
 import { AvatarFallback } from '@radix-ui/react-avatar';
+import { NotebookPenIcon } from 'lucide-react';
+import { FaSpinner } from 'react-icons/fa';
 
 export default function BMRCalculatorForm() {
 	const [feet, setFeet] = useState(1);
@@ -255,7 +257,7 @@ export default function BMRCalculatorForm() {
 					</CardContent>
 					<CardFooter>
 						{bmr > 0 && (
-							<div className='flex flex-row items-center justify-between gap-4 w-full rounded-md p-2 border-2'>
+							<div className='flex portrait:flex-col flex-row items-center justify-between gap-4 w-full rounded-md p-2 border-2'>
 								{user && (
 									<Avatar>
 										<AvatarImage
@@ -277,12 +279,17 @@ export default function BMRCalculatorForm() {
 								{user?.id && (
 									<div>
 										<Button
-											className='w-32'
+											className='w-28'
 											disabled={submitting}
 											onClick={() => {
 												setSubmitting(true);
 												handleSaveBMR();
 											}}>
+											{submitting ? (
+												<FaSpinner className='w-4 h-4 animate-spin' />
+											) : (
+												<NotebookPenIcon className='w-4 h-4' />
+											)}
 											{submitting
 												? userHasSavedBMR
 													? 'Updating...'
