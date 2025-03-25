@@ -22,6 +22,7 @@ import KnowCaloriesBurned from '../logs/know-calories-burned';
 import { useCurrentSession } from '@/hooks/use-current-session';
 import { useSession } from 'next-auth/react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import NoteSheet from '../notes/note-sheet';
 
 export default function SideMenu({ log }: { log?: GetLog }) {
 	const pathname = usePathname();
@@ -94,14 +95,17 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 
 					<div className='flex flex-col items-stretch gap-1'>
 						<div>Tools</div>
+
 						<Button asChild>
 							<Link
 								href='/base-metabolic-rate'
 								onClick={handleClick}>
 								<Calculator className='w-4 h-4' />
-								Calculate your BMR
+								BMR Calculator
 							</Link>
 						</Button>
+
+						<NoteSheet />
 					</div>
 
 					{/* {pathname !== '/foods' && (

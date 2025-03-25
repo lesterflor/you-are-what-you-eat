@@ -46,7 +46,8 @@ export const getUserSchema = z.object({
 	email: z.string(),
 	image: z.string(),
 	role: z.string(),
-	logs: z.array(z.any())
+	logs: z.array(z.any()),
+	userNotes: z.array(z.any())
 });
 
 export const updateContentSchema = z.object({
@@ -233,4 +234,19 @@ export const getLogRemainderSchema = z.object({
 	log: getLogSchema.optional(),
 	userId: z.string(),
 	user: getUserSchema.optional()
+});
+
+export const userNoteSchema = z.object({
+	title: z.string().optional(),
+	note: z.string().min(1, 'note is required'),
+	userId: z.string().min(1, 'userId is required')
+});
+
+export const getUserNoteSchema = z.object({
+	id: z.string(),
+	createdAt: z.date(),
+	updatedAt: z.date(),
+	title: z.string().optional(),
+	note: z.string(),
+	userId: z.string()
 });

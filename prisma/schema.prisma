@@ -51,6 +51,7 @@ model User {
   KnownCaloriesBurned KnownCaloriesBurned[]
   FoodItems           FoodItem[]
   LogRemainder        LogRemainder[]
+  userNotes           UserNote[]
 }
 
 model FoodItem {
@@ -132,4 +133,14 @@ model LogRemainder {
   userId    String   @db.ObjectId
   log       Log      @relation(fields: [logId], references: [id])
   logId     String   @db.ObjectId
+}
+
+model UserNote {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String?
+  note      String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
 }

@@ -6,12 +6,14 @@ import {
 	getLogRemainderSchema,
 	getLogSchema,
 	getTrackingSchema,
+	getUserNoteSchema,
 	getUserSchema,
 	logRemainderSchema,
 	logSchema,
 	trackingSchema,
 	updateContentSchema,
-	uploadedImageSchema
+	uploadedImageSchema,
+	userNoteSchema
 } from './../lib/validators';
 import { userSchema } from '@/lib/validators';
 import { z } from 'zod';
@@ -56,6 +58,9 @@ export type GetFoodEntry = z.infer<typeof getFoodEntrySchema>;
 
 export type LogRemainder = z.infer<typeof logRemainderSchema>;
 export type GetLogRemainder = z.infer<typeof getLogRemainderSchema>;
+
+export type UserNote = z.infer<typeof userNoteSchema>;
+export type GetUserNote = z.infer<typeof getUserNoteSchema>;
 
 export type BMRData = {
 	weight: number;

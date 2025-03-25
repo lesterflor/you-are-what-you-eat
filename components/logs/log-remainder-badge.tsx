@@ -41,7 +41,7 @@ export default function LogRemainderBadge() {
 							className='select-none p-1 rounded-md border-2 font-normal text-xs flex flex-row gap-1 items-start'>
 							<Info className='w-4 h-4' />
 							<div className='flex flex-col gap-0'>
-								<span className='whitespace-nowrap'>Carry-over</span>
+								<span className='whitespace-nowrap'>Cumulative</span>
 								<span>{formatUnit(logRemainder.remainder)}</span>
 							</div>
 						</Badge>
@@ -52,8 +52,8 @@ export default function LogRemainderBadge() {
 							<span className='text-foreground'>What&apos;s this?</span>
 						</div>
 						<div>
-							The carry-over are the calories that you left off with from
-							yesterday&apos;s total calories consumed, minues your BMR and the
+							The cumulative value are the calories that you left off with from
+							yesterday&apos;s total calories consumed, minus your BMR and the
 							calories expended that you may or may not have entered.
 						</div>
 						<div className='grid grid-cols-[75%,25%] gap-2 w-full pt-4'>

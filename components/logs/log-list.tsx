@@ -13,6 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
 import LogMacrosSummary from './log-macros-summary';
 import LogRemainderBadge from './log-remainder-badge';
+import { Skeleton } from '../ui/skeleton';
 
 export default function FoodLogList({
 	forceColumn = true,
@@ -118,10 +119,15 @@ export default function FoodLogList({
 					</Popover>
 
 					<div className='flex flex-row gap-2 w-full'>
-						{bmr && (
+						{bmr ? (
 							<div className='p-1 rounded-md border-2 items-center font-normal text-xs flex flex-col gap-0 w-16'>
 								<span>BMR</span>
 								<span>{formatUnit(bmr.bmr)}</span>
+							</div>
+						) : (
+							<div className='flex flex-row gap-2'>
+								<Skeleton className='w-16 h-10' />
+								<Skeleton className='w-16 h-10' />
 							</div>
 						)}
 
@@ -132,11 +138,11 @@ export default function FoodLogList({
 							</div>
 						)}
 
-						<LogRemainderBadge />
+						{bmr && <LogRemainderBadge />}
 					</div>
 				</div>
 
-				{bmr && (
+				{bmr ? (
 					<div
 						className={cn(
 							'text-3xl portrait:text-2xl text-center flex flex-col items-center gap-0 relative font-bold',
@@ -166,6 +172,8 @@ export default function FoodLogList({
 							</div>
 						)}
 					</div>
+				) : (
+					<Skeleton className='w-14 h-14' />
 				)}
 			</div>
 
@@ -203,7 +211,7 @@ export default function FoodLogList({
 										))}
 									</>
 								) : (
-									<div className='flex flex-row items-center justify-center gap-2 text-muted-foreground opacity-50 col-span-2'>
+									<div className='flex flex-row items-center justify-center gap-2 text-muted-foreground opacity-40 fixed top-[45vh]'>
 										<BicepsFlexed className='w-16 h-16' />
 										Nothing logged yet!
 									</div>
