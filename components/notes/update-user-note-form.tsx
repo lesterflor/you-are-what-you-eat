@@ -100,7 +100,7 @@ export default function UpdateUserNoteForm({
 							>;
 						}) => (
 							<FormItem>
-								<FormLabel>Title (optional)</FormLabel>
+								<FormLabel>Note</FormLabel>
 								<FormControl>
 									<Textarea
 										{...field}

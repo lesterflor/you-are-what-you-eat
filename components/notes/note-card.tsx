@@ -4,7 +4,7 @@ import { GetUserNote } from '@/types';
 import { format } from 'date-fns';
 import React, { useContext, useEffect, useState } from 'react';
 import { Button } from '../ui/button';
-import { NotebookPenIcon, RefreshCwOff, X } from 'lucide-react';
+import { Calendar, NotebookPenIcon, RefreshCwOff, X } from 'lucide-react';
 import {
 	Dialog,
 	DialogContent,
@@ -67,17 +67,20 @@ export default function NoteCard({
 	return (
 		<>
 			<div
-				className='rounded-md border-2 p-2 flex flex-col gap-4 transition-opacity opacity-0 duration-1000 select-none'
+				className='rounded-md border-2 px-3 pb-6 pt-3 flex flex-col gap-4 transition-opacity opacity-0 duration-1000 select-none'
 				style={{
 					opacity: fadeClass ? 1 : 0
 				}}>
-				<div className='text-xs text-muted-foreground'>
+				<div className='text-xs text-muted-foreground flex flex-row items-center gap-2'>
+					<Calendar className='w-4 h-4' />
 					{format(note.createdAt, 'eee PP h:mm a')}
 				</div>
 
 				{!isEditing ? (
 					<>
-						{note.title && <div>{note.title}</div>}
+						{note.title && (
+							<div className='text-muted-foreground'>{note.title}</div>
+						)}
 						<div className='whitespace-pre-line'>{note.note}</div>
 					</>
 				) : (
