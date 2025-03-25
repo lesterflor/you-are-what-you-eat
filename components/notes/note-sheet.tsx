@@ -73,7 +73,7 @@ export default function NoteSheet() {
 						onOpenChange={setPopOpen}>
 						<PopoverTrigger asChild>
 							<Button>
-								<NotebookPen className='w-4 h-4' /> New Note
+								<NotebookPen className='w-4 h-4' /> New
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent>
