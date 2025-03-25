@@ -134,13 +134,15 @@ export default async function LogEntry({ log }: { log: GetLog }) {
 							label='See more'
 							pixelHeight={300}>
 							<div className='flex flex-col sm:grid grid-cols-2 lg:grid-cols-3 gap-4 w-full'>
-								{log.foodItems.map((food, indx) => (
-									<LogFoodCard
-										indx={indx}
-										key={`${food.id}-${indx}`}
-										item={food as GetFoodEntry}
-									/>
-								))}
+								{log.foodItems
+									.sort((a, b) => a.eatenAt.getTime() - b.eatenAt.getTime())
+									.map((food, indx) => (
+										<LogFoodCard
+											indx={indx}
+											key={`${food.id}-${food.eatenAt.getTime()}`}
+											item={food as GetFoodEntry}
+										/>
+									))}
 							</div>
 						</TruncateSection>
 					</div>
