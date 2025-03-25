@@ -95,7 +95,7 @@ export default function FoodLogList({
 		<>
 			<div
 				className={cn(
-					'flex flex-row items-center w-fit portrait:w-[85vw] pb-4 gap-2',
+					'flex flex-row items-center w-fit pb-4 gap-2',
 					useScroller ? 'absolute' : 'relative'
 				)}>
 				<div className='flex flex-col items-start w-full gap-1'>
@@ -180,7 +180,7 @@ export default function FoodLogList({
 			{useScroller ? (
 				<ScrollArea
 					className={cn(
-						'h-[80vh] pr-3 mt-12 w-full',
+						'h-[80vh] pr-0 mt-12 w-full',
 						bmr && 'h-[60vh] mt-24',
 						className
 					)}>

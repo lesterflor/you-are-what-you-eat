@@ -55,7 +55,10 @@ export default function LogSheet({
 					{format(getToday().current, 'PP hh:mm a')}
 				</SheetTitle>
 
-				<FoodLogList iconPosition='top' />
+				<FoodLogList
+					iconPosition='top'
+					className='portrait:h-[85%]'
+				/>
 			</SheetContent>
 		</Sheet>
 	);

@@ -27,9 +27,10 @@ export default async function Home() {
 					<Separator />
 					<div className='relative'>
 						<FoodLogList
+							iconPosition='top'
 							forceColumn={false}
 							useScroller={true}
-							className='portrait:h-[50vh] h-[45vh]'
+							className='portrait:h-[100%] h-[45vh] portrait:w-[100%]'
 						/>
 					</div>
 				</div>
