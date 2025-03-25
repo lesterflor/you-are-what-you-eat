@@ -445,6 +445,7 @@ export async function getLogRemainder() {
 
 		const yesterdayLog = await prisma.log.findFirst({
 			where: {
+				userId: user.id,
 				createdAt: {
 					gte: getToday().yesterday,
 					lt: getToday().todayStart
@@ -502,6 +503,8 @@ export async function getLogRemainder() {
 
 		const logRemainder = remainder + todaysExpended;
 		const realRemainder = logRemainder - todaysConsumed;
+
+		//console.log('yesterdays log: ', yesterdayLog);
 
 		// console.log(
 		// 	'BMR: ',

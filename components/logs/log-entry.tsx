@@ -49,7 +49,7 @@ export default async function LogEntry({ log }: { log: GetLog }) {
 					</div>
 				</div>
 			</div>
-			<div className='flex flex-row items-center justify-start portrait:gap-3 gap-8 rounded-md border-2 p-2'>
+			<div className='flex flex-row items-center justify-start gap-8 rounded-md border-2 p-2'>
 				<div className='flex flex-col items-center gap-2'>
 					{bmrData.data && (
 						<div className='flex flex-col gap-2 text-xs'>
