@@ -15,8 +15,7 @@ import LogMacrosSkeleton from '../skeletons/log-macros-skeleton';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '../ui/chart';
 import { Label, Pie, PieChart } from 'recharts';
 import { pieChartConfig } from '@/config';
-import { ArrowDown, ArrowUp } from 'lucide-react';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import ComparisonPopover from './comparison-popover';
 
 export default function LogMacrosSummary({
 	log,
@@ -114,44 +113,10 @@ export default function LogMacrosSummary({
 									<div className='font-normal'>Calories</div>
 									<div className='flex flex-row items-center gap-0'>
 										{totalCals > 0 && comparisonData && (
-											<Popover>
-												<PopoverTrigger>
-													<div>
-														{comparisonData &&
-														comparisonData.calories.belowYesterday ? (
-															<ArrowDown className='w-3 h-3 text-green-100' />
-														) : (
-															<ArrowUp className='w-3 h-3 text-red-600' />
-														)}
-													</div>
-												</PopoverTrigger>
-												<PopoverContent className='flex flex-col gap-1 items-center text-xs w-32 py-2 pr-4 pl-2'>
-													<div>Calories</div>
-													<div className='flex flex-row justify-between w-full'>
-														<div className='text-muted-foreground'>
-															Yesterday
-														</div>
-														<div>
-															{formatUnit(comparisonData.calories.yesterday)}
-														</div>
-													</div>
-													<div className='flex flex-row justify-between w-full relative pr-1'>
-														<div className='text-muted-foreground'>Today</div>
-														<div className='flex flex-row gap-0 items-end justify-end'>
-															<div>
-																{formatUnit(comparisonData.calories.today)}
-															</div>
-															<div className='absolute -right-4'>
-																{comparisonData.calories.belowYesterday ? (
-																	<ArrowDown className='w-4 h-4 text-green-600 animate-bounce' />
-																) : (
-																	<ArrowUp className='w-4 h-4 text-red-600 animate-bounce' />
-																)}
-															</div>
-														</div>
-													</div>
-												</PopoverContent>
-											</Popover>
+											<ComparisonPopover
+												data={comparisonData}
+												field='calories'
+											/>
 										)}
 
 										<div>{formatUnit(totalCals)}</div>
@@ -164,44 +129,10 @@ export default function LogMacrosSummary({
 									<div className='font-normal whitespace-nowrap'>Protein g</div>
 									<div className='flex flex-row items-center gap-0'>
 										{totalProtein > 0 && comparisonData && (
-											<Popover>
-												<PopoverTrigger>
-													<div>
-														{comparisonData &&
-														comparisonData.protein.belowYesterday ? (
-															<ArrowDown className='w-3 h-3 text-green-100' />
-														) : (
-															<ArrowUp className='w-3 h-3 text-red-600' />
-														)}
-													</div>
-												</PopoverTrigger>
-												<PopoverContent className='flex flex-col gap-1 items-center text-xs w-32 py-2 pr-4 pl-2'>
-													<div>Protein</div>
-													<div className='flex flex-row justify-between w-full'>
-														<div className='text-muted-foreground'>
-															Yesterday
-														</div>
-														<div>
-															{formatUnit(comparisonData.protein.yesterday)} g
-														</div>
-													</div>
-													<div className='flex flex-row justify-between w-full relative pr-1'>
-														<div className='text-muted-foreground'>Today</div>
-														<div className='flex flex-row gap-0 items-end justify-end'>
-															<div>
-																{formatUnit(comparisonData.protein.today)} g
-															</div>
-															<div className='absolute -right-4'>
-																{comparisonData.protein.belowYesterday ? (
-																	<ArrowDown className='w-4 h-4 text-green-600 animate-bounce' />
-																) : (
-																	<ArrowUp className='w-4 h-4 text-red-600 animate-bounce' />
-																)}
-															</div>
-														</div>
-													</div>
-												</PopoverContent>
-											</Popover>
+											<ComparisonPopover
+												data={comparisonData}
+												field='protein'
+											/>
 										)}
 
 										<div className='whitespace-nowrap'>
@@ -216,44 +147,10 @@ export default function LogMacrosSummary({
 									<div className='font-normal whitespace-nowrap'>Carb g</div>
 									<div className='flex flex-row items-center gap-0'>
 										{totalCarbs > 0 && comparisonData && (
-											<Popover>
-												<PopoverTrigger>
-													<div>
-														{comparisonData &&
-														comparisonData.carbs.belowYesterday ? (
-															<ArrowDown className='w-3 h-3 text-green-100' />
-														) : (
-															<ArrowUp className='w-3 h-3 text-red-600' />
-														)}
-													</div>
-												</PopoverTrigger>
-												<PopoverContent className='flex flex-col items-center gap-1 text-xs w-32 py-2 pr-4 pl-2'>
-													<div>Carbohydrates</div>
-													<div className='flex flex-row justify-between w-full'>
-														<div className='text-muted-foreground'>
-															Yesterday
-														</div>
-														<div>
-															{formatUnit(comparisonData.carbs.yesterday)} g
-														</div>
-													</div>
-													<div className='flex flex-row justify-between w-full relative pr-1'>
-														<div className='text-muted-foreground'>Today</div>
-														<div className='flex flex-row gap-0 items-end justify-end'>
-															<div>
-																{formatUnit(comparisonData.carbs.today)} g
-															</div>
-															<div className='absolute -right-4'>
-																{comparisonData.protein.belowYesterday ? (
-																	<ArrowDown className='w-4 h-4 text-green-600 animate-bounce' />
-																) : (
-																	<ArrowUp className='w-4 h-4 text-red-600 animate-bounce' />
-																)}
-															</div>
-														</div>
-													</div>
-												</PopoverContent>
-											</Popover>
+											<ComparisonPopover
+												data={comparisonData}
+												field='carbs'
+											/>
 										)}
 
 										<div className='whitespace-nowrap'>
@@ -268,44 +165,10 @@ export default function LogMacrosSummary({
 									<div className='font-normal whitespace-nowrap'>Fat g</div>
 									<div className='flex flex-row items-center gap-0'>
 										{totalFat > 0 && comparisonData && (
-											<Popover>
-												<PopoverTrigger>
-													<div>
-														{comparisonData &&
-														comparisonData.fat.belowYesterday ? (
-															<ArrowDown className='w-3 h-3 text-green-100' />
-														) : (
-															<ArrowUp className='w-3 h-3 text-red-600' />
-														)}
-													</div>
-												</PopoverTrigger>
-												<PopoverContent className='flex flex-col items-center gap-1 text-xs w-32 py-2 pr-4 pl-2'>
-													<div>Fat</div>
-													<div className='flex flex-row justify-between w-full'>
-														<div className='text-muted-foreground'>
-															Yesterday
-														</div>
-														<div>
-															{formatUnit(comparisonData.fat.yesterday)} g
-														</div>
-													</div>
-													<div className='flex flex-row justify-between w-full relative pr-1'>
-														<div className='text-muted-foreground'>Today</div>
-														<div className='flex flex-row gap-0 items-end justify-end'>
-															<div>
-																{formatUnit(comparisonData.fat.today)} g
-															</div>
-															<div className='absolute -right-4'>
-																{comparisonData.fat.belowYesterday ? (
-																	<ArrowDown className='w-4 h-4 text-green-600 animate-bounce' />
-																) : (
-																	<ArrowUp className='w-4 h-4 text-red-600 animate-bounce' />
-																)}
-															</div>
-														</div>
-													</div>
-												</PopoverContent>
-											</Popover>
+											<ComparisonPopover
+												data={comparisonData}
+												field='fat'
+											/>
 										)}
 
 										<div className='whitespace-nowrap'>
