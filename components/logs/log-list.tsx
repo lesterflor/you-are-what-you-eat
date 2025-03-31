@@ -162,7 +162,7 @@ export default function FoodLogList({
 							useFloaterNav && 'hidden'
 						)}>
 						<div className='font-semibold'>
-							{formatUnit(remainingCals * -1)}
+							{Math.abs(formatUnit(remainingCals))}
 						</div>
 						<div className='text-xs font-normal'>
 							{Math.sign(remainingCals) === -1
@@ -310,7 +310,7 @@ export default function FoodLogList({
 											: 'text-muted-foreground'
 									)}>
 									<div className='font-semibold'>
-										{formatUnit(remainingCals * -1)}
+										{Math.abs(formatUnit(remainingCals))}
 									</div>
 									<div className='text-xs font-normal'>
 										{Math.sign(remainingCals) === -1

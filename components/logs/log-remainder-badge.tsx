@@ -1,6 +1,6 @@
 'use client';
 
-import { Info } from 'lucide-react';
+import { ArrowDown, ArrowUp, Info } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { formatUnit } from '@/lib/utils';
@@ -42,7 +42,14 @@ export default function LogRemainderBadge() {
 							<Info className='w-4 h-4' />
 							<div className='flex flex-col gap-0'>
 								<span className='whitespace-nowrap'>Cumulative</span>
-								<span>{formatUnit(logRemainder.remainder)}</span>
+								<div className='flex flex-row gap-1 items-center'>
+									{Math.sign(formatUnit(logRemainder.remainder)) === -1 ? (
+										<ArrowUp className='w-3 h-3 text-red-600 animate-bounce' />
+									) : (
+										<ArrowDown className='w-3 h-3 text-green-600 animate-bounce' />
+									)}
+									<span>{Math.abs(formatUnit(logRemainder.remainder))}</span>
+								</div>
 							</div>
 						</Badge>
 					</PopoverTrigger>

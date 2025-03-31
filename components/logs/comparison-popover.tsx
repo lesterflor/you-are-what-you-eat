@@ -45,7 +45,7 @@ export default function ComparisonPopover({
 					</div>
 					<div className='flex flex-row gap-0 items-end justify-end'>
 						<div className='font-semibold'>
-							{formatUnit(fieldData.yesterday - fieldData.today)}
+							{Math.abs(formatUnit(fieldData.yesterday - fieldData.today))}
 						</div>
 						<div className='absolute -right-4'>
 							{fieldData.belowYesterday ? (
