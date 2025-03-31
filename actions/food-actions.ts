@@ -36,10 +36,14 @@ export async function getFoodItems(
 						}
 					},
 					orderBy: {
-						createdAt: 'desc'
+						name: 'asc'
 					}
 			  })
-			: await prisma.foodItem.findMany();
+			: await prisma.foodItem.findMany({
+					orderBy: {
+						name: 'asc'
+					}
+			  });
 
 		if (!items) {
 			throw new Error('There was a problem fetching food items');

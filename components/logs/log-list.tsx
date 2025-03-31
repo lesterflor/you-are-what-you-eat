@@ -26,6 +26,8 @@ import { Skeleton } from '../ui/skeleton';
 import { useScrolling } from '@/hooks/use-scroll';
 import { Card, CardContent } from '../ui/card';
 import { FaSpinner } from 'react-icons/fa';
+import FoodListSheet from '../food-items/food-list-sheet';
+import { TbDatabaseSearch } from 'react-icons/tb';
 
 export default function FoodLogList({
 	forceColumn = true,
@@ -264,7 +266,14 @@ export default function FoodLogList({
 						!scrollingUp ? 'bottom-0' : '-bottom-96',
 						delta === 0 && 'bottom-0'
 					)}>
-					<CardContent className='p-2 pt-5 flex flex-row items-center gap-2'>
+					<CardContent className='p-2 pt-5 flex flex-row items-center gap-2 relative'>
+						<div className='absolute -top-6 left-40'>
+							<FoodListSheet>
+								<div className='rounded-full bg-green-950 p-3'>
+									<TbDatabaseSearch className='w-6 h-6' />
+								</div>
+							</FoodListSheet>
+						</div>
 						<div className={cn('flex flex-col items-start w-full gap-1')}>
 							<Popover modal={true}>
 								<PopoverTrigger asChild>

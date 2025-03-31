@@ -23,9 +23,11 @@ import { SearchContext } from '@/contexts/search-context';
 import { UpdateFoodContext } from '@/contexts/food-update-context';
 
 export default function FoodListSheet({
-	forceColumn = true
+	forceColumn = true,
+	children
 }: {
 	forceColumn?: boolean;
+	children?: React.ReactNode;
 }) {
 	const [foods, setFoods] = useState<GetFoodItem[]>([]);
 	const [category, setCategory] = useState('');
@@ -103,9 +105,13 @@ export default function FoodListSheet({
 			<div className='portrait:hidden'>
 				<Sheet>
 					<SheetTrigger asChild>
-						<Button>
-							<Search className='w-4 h-4' /> Search
-						</Button>
+						{children ? (
+							children
+						) : (
+							<Button>
+								<Search className='w-4 h-4' /> Search
+							</Button>
+						)}
 					</SheetTrigger>
 					<SheetContent side='right'>
 						<SheetDescription></SheetDescription>
@@ -156,9 +162,13 @@ export default function FoodListSheet({
 			<div className='hidden portrait:block'>
 				<Sheet>
 					<SheetTrigger asChild>
-						<Button>
-							<Search className='w-4 h-4' /> Search
-						</Button>
+						{children ? (
+							children
+						) : (
+							<Button>
+								<Search className='w-4 h-4' /> Search
+							</Button>
+						)}
 					</SheetTrigger>
 					<SheetContent side='top'>
 						<SheetDescription></SheetDescription>

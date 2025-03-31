@@ -1,5 +1,6 @@
 'use client';
 
+import { Plus } from 'lucide-react';
 import { Button } from '../ui/button';
 import {
 	Sheet,
@@ -29,7 +30,20 @@ export default function GrocerListSheet() {
 					<div>
 						<MdOutlineLocalGroceryStore className='h-6 w-6' />
 					</div>
-					<div></div>
+					<div>
+						<Sheet>
+							<SheetTrigger asChild>
+								<Button>
+									<Plus className='w-4 h-4' />
+									New
+								</Button>
+							</SheetTrigger>
+							<SheetContent>
+								<SheetTitle>New List</SheetTitle>
+								<SheetDescription></SheetDescription>
+							</SheetContent>
+						</Sheet>
+					</div>
 				</div>
 			</SheetContent>
 		</Sheet>
