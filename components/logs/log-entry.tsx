@@ -1,5 +1,7 @@
 import { GetFoodEntry, GetLog } from '@/types';
 import {
+	ArrowDown,
+	ArrowUp,
 	Calendar,
 	ChartColumnBig,
 	CookingPot,
@@ -77,7 +79,12 @@ export default async function LogEntry({ log }: { log: GetLog }) {
 										? 'text-muted-foreground'
 										: 'text-foreground'
 								)}>
-								{calDiff}
+								{overUsedDailyCals ? (
+									<ArrowUp className='w-6 h-6 text-red-600' />
+								) : (
+									<ArrowDown className='w-6 h-6 text-green-600' />
+								)}
+								{Math.abs(calDiff)}
 								{overUsedDailyCals ? (
 									<Frown className='w-6 h-6' />
 								) : (
