@@ -214,7 +214,8 @@ export const getLogSchema = z.object({
 	userId: z.string(),
 	foodItems: z.array(getFoodEntrySchema),
 	knownCaloriesBurned: z.array(getKnownCaloriesBurnedSchema),
-	logRemainder: z.array(z.any()).optional()
+	logRemainder: z.array(z.any()).optional(),
+	comparisons: z.any().optional().nullable()
 });
 
 export const logRemainderSchema = z.object({

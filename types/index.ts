@@ -140,3 +140,26 @@ export type LogRemainderDataType = {
 	yesterdaysExpended: number;
 	yesterdaysRemainder: number;
 };
+
+export type LogComparisonType = {
+	calories: {
+		yesterday: number;
+		today: number;
+		belowYesterday: boolean;
+	};
+	protein: {
+		yesterday: number;
+		today: number;
+		belowYesterday: boolean;
+	};
+	carbs: {
+		yesterday: number;
+		today: number;
+		belowYesterday: boolean;
+	};
+	fat: {
+		yesterday: number;
+		today: number;
+		belowYesterday: boolean;
+	};
+} | null;

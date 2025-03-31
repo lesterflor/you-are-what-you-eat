@@ -6,7 +6,7 @@ import {
 	RADIAN,
 	totalMacrosReducer
 } from '@/lib/utils';
-import { GetFoodEntry, GetLog, PieItemType } from '@/types';
+import { GetFoodEntry, GetLog, LogComparisonType, PieItemType } from '@/types';
 import { useContext, useEffect, useState } from 'react';
 import { Badge } from '../ui/badge';
 import { createDailyLog } from '@/actions/log-actions';
@@ -15,6 +15,8 @@ import LogMacrosSkeleton from '../skeletons/log-macros-skeleton';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '../ui/chart';
 import { Label, Pie, PieChart } from 'recharts';
 import { pieChartConfig } from '@/config';
+import { ArrowDown, ArrowUp } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
 export default function LogMacrosSummary({
 	log,
@@ -41,6 +43,7 @@ export default function LogMacrosSummary({
 	const [isFetching, setIsFetching] = useState(false);
 
 	const [pieData, setPieData] = useState<PieItemType[]>([]);
+	const [comparisonData, setComparisonData] = useState<LogComparisonType>(null);
 
 	const logContext = useContext(LogUpdateContext);
 
@@ -63,27 +66,36 @@ export default function LogMacrosSummary({
 				{ name: 'Protein', value: protein, fill: 'var(--color-protein)' },
 				{ name: 'Fat', value: fat, fill: 'var(--color-fat)' }
 			]);
+
+			setComparisonData(log.comparisons);
 		}
 	}, []);
 
+	useEffect(() => {
+		if (comparisonData) {
+			console.log('comparisonData: ', comparisonData);
+		}
+	}, [comparisonData]);
+
 	const getLog = async () => {
 		setIsFetching(true);
-		const res = await createDailyLog();
+		const res = await createDailyLog(getTodayMode);
 
 		if (res?.success && res.data) {
-			const { foodItems } = res.data;
+			const { foodItems, comparisons } = res.data;
 			const items = foodItems as GetFoodEntry[];
 			setTotalCals(totalMacrosReducer(items).calories);
 			setTotalCarbs(totalMacrosReducer(items).carbs);
 			setTotalFat(totalMacrosReducer(items).fat);
 			setTotalProtein(totalMacrosReducer(items).protein);
+
+			setComparisonData(comparisons);
 		}
 		setIsFetching(false);
 	};
 
 	useEffect(() => {
 		if (logContext?.updated && getTodayMode) {
-			console.log('getting new log');
 			getLog();
 		}
 	}, [logContext]);
@@ -100,30 +112,205 @@ export default function LogMacrosSummary({
 							<Badge className='p-1 text-xs w-14'>
 								<div className='flex flex-col items-center w-full'>
 									<div className='font-normal'>Calories</div>
-									<div>{formatUnit(totalCals)}</div>
-								</div>
-							</Badge>
-							<Badge className='p-1 text-xs w-14'>
-								<div className='flex flex-col items-center w-full'>
-									<div className='font-normal'>Protein</div>
-									<div className='whitespace-nowrap'>
-										{formatUnit(totalProtein)} g
+									<div className='flex flex-row items-center gap-0'>
+										{totalCals > 0 && comparisonData && (
+											<Popover>
+												<PopoverTrigger>
+													<div>
+														{comparisonData &&
+														comparisonData.calories.belowYesterday ? (
+															<ArrowDown className='w-3 h-3 text-green-100' />
+														) : (
+															<ArrowUp className='w-3 h-3 text-red-600' />
+														)}
+													</div>
+												</PopoverTrigger>
+												<PopoverContent className='flex flex-col gap-1 items-center text-xs w-32 py-2 pr-4 pl-2'>
+													<div>Calories</div>
+													<div className='flex flex-row justify-between w-full'>
+														<div className='text-muted-foreground'>
+															Yesterday
+														</div>
+														<div>
+															{formatUnit(comparisonData.calories.yesterday)}
+														</div>
+													</div>
+													<div className='flex flex-row justify-between w-full relative pr-1'>
+														<div className='text-muted-foreground'>Today</div>
+														<div className='flex flex-row gap-0 items-end justify-end'>
+															<div>
+																{formatUnit(comparisonData.calories.today)}
+															</div>
+															<div className='absolute -right-4'>
+																{comparisonData.calories.belowYesterday ? (
+																	<ArrowDown className='w-4 h-4 text-green-600 animate-bounce' />
+																) : (
+																	<ArrowUp className='w-4 h-4 text-red-600 animate-bounce' />
+																)}
+															</div>
+														</div>
+													</div>
+												</PopoverContent>
+											</Popover>
+										)}
+
+										<div>{formatUnit(totalCals)}</div>
 									</div>
 								</div>
 							</Badge>
+
 							<Badge className='p-1 text-xs w-14'>
 								<div className='flex flex-col items-center w-full'>
-									<div className='font-normal'>Carbs</div>
-									<div className='whitespace-nowrap'>
-										{formatUnit(totalCarbs)} g
+									<div className='font-normal whitespace-nowrap'>Protein g</div>
+									<div className='flex flex-row items-center gap-0'>
+										{totalProtein > 0 && comparisonData && (
+											<Popover>
+												<PopoverTrigger>
+													<div>
+														{comparisonData &&
+														comparisonData.protein.belowYesterday ? (
+															<ArrowDown className='w-3 h-3 text-green-100' />
+														) : (
+															<ArrowUp className='w-3 h-3 text-red-600' />
+														)}
+													</div>
+												</PopoverTrigger>
+												<PopoverContent className='flex flex-col gap-1 items-center text-xs w-32 py-2 pr-4 pl-2'>
+													<div>Protein</div>
+													<div className='flex flex-row justify-between w-full'>
+														<div className='text-muted-foreground'>
+															Yesterday
+														</div>
+														<div>
+															{formatUnit(comparisonData.protein.yesterday)} g
+														</div>
+													</div>
+													<div className='flex flex-row justify-between w-full relative pr-1'>
+														<div className='text-muted-foreground'>Today</div>
+														<div className='flex flex-row gap-0 items-end justify-end'>
+															<div>
+																{formatUnit(comparisonData.protein.today)} g
+															</div>
+															<div className='absolute -right-4'>
+																{comparisonData.protein.belowYesterday ? (
+																	<ArrowDown className='w-4 h-4 text-green-600 animate-bounce' />
+																) : (
+																	<ArrowUp className='w-4 h-4 text-red-600 animate-bounce' />
+																)}
+															</div>
+														</div>
+													</div>
+												</PopoverContent>
+											</Popover>
+										)}
+
+										<div className='whitespace-nowrap'>
+											{formatUnit(totalProtein)}
+										</div>
 									</div>
 								</div>
 							</Badge>
+
 							<Badge className='p-1 text-xs w-14'>
 								<div className='flex flex-col items-center w-full'>
-									<div className='font-normal'>Fat</div>
-									<div className='whitespace-nowrap'>
-										{formatUnit(totalFat)} g
+									<div className='font-normal whitespace-nowrap'>Carb g</div>
+									<div className='flex flex-row items-center gap-0'>
+										{totalCarbs > 0 && comparisonData && (
+											<Popover>
+												<PopoverTrigger>
+													<div>
+														{comparisonData &&
+														comparisonData.carbs.belowYesterday ? (
+															<ArrowDown className='w-3 h-3 text-green-100' />
+														) : (
+															<ArrowUp className='w-3 h-3 text-red-600' />
+														)}
+													</div>
+												</PopoverTrigger>
+												<PopoverContent className='flex flex-col items-center gap-1 text-xs w-32 py-2 pr-4 pl-2'>
+													<div>Carbohydrates</div>
+													<div className='flex flex-row justify-between w-full'>
+														<div className='text-muted-foreground'>
+															Yesterday
+														</div>
+														<div>
+															{formatUnit(comparisonData.carbs.yesterday)} g
+														</div>
+													</div>
+													<div className='flex flex-row justify-between w-full relative pr-1'>
+														<div className='text-muted-foreground'>Today</div>
+														<div className='flex flex-row gap-0 items-end justify-end'>
+															<div>
+																{formatUnit(comparisonData.carbs.today)} g
+															</div>
+															<div className='absolute -right-4'>
+																{comparisonData.protein.belowYesterday ? (
+																	<ArrowDown className='w-4 h-4 text-green-600 animate-bounce' />
+																) : (
+																	<ArrowUp className='w-4 h-4 text-red-600 animate-bounce' />
+																)}
+															</div>
+														</div>
+													</div>
+												</PopoverContent>
+											</Popover>
+										)}
+
+										<div className='whitespace-nowrap'>
+											{formatUnit(totalCarbs)}
+										</div>
+									</div>
+								</div>
+							</Badge>
+
+							<Badge className='p-1 text-xs w-14'>
+								<div className='flex flex-col items-center w-full'>
+									<div className='font-normal whitespace-nowrap'>Fat g</div>
+									<div className='flex flex-row items-center gap-0'>
+										{totalFat > 0 && comparisonData && (
+											<Popover>
+												<PopoverTrigger>
+													<div>
+														{comparisonData &&
+														comparisonData.fat.belowYesterday ? (
+															<ArrowDown className='w-3 h-3 text-green-100' />
+														) : (
+															<ArrowUp className='w-3 h-3 text-red-600' />
+														)}
+													</div>
+												</PopoverTrigger>
+												<PopoverContent className='flex flex-col items-center gap-1 text-xs w-32 py-2 pr-4 pl-2'>
+													<div>Fat</div>
+													<div className='flex flex-row justify-between w-full'>
+														<div className='text-muted-foreground'>
+															Yesterday
+														</div>
+														<div>
+															{formatUnit(comparisonData.fat.yesterday)} g
+														</div>
+													</div>
+													<div className='flex flex-row justify-between w-full relative pr-1'>
+														<div className='text-muted-foreground'>Today</div>
+														<div className='flex flex-row gap-0 items-end justify-end'>
+															<div>
+																{formatUnit(comparisonData.fat.today)} g
+															</div>
+															<div className='absolute -right-4'>
+																{comparisonData.fat.belowYesterday ? (
+																	<ArrowDown className='w-4 h-4 text-green-600 animate-bounce' />
+																) : (
+																	<ArrowUp className='w-4 h-4 text-red-600 animate-bounce' />
+																)}
+															</div>
+														</div>
+													</div>
+												</PopoverContent>
+											</Popover>
+										)}
+
+										<div className='whitespace-nowrap'>
+											{formatUnit(totalFat)}
+										</div>
 									</div>
 								</div>
 							</Badge>

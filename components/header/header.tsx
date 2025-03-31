@@ -16,7 +16,7 @@ export default async function SiteHeader() {
 	const session = await auth();
 	const { current } = getToday();
 
-	const log = await createDailyLog();
+	const log = await createDailyLog(true);
 
 	return (
 		<header className='w-full border-b fixed top-0 z-50 bg-white dark:bg-green-950 select-none px-0'>

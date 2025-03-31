@@ -7,11 +7,12 @@ import {
 	FoodEntry,
 	GetFoodEntry,
 	GetUser,
+	LogComparisonType,
 	LogRemainderDataType
 } from '@/types';
 import { revalidatePath } from 'next/cache';
 
-export async function createDailyLog() {
+export async function createDailyLog(compareToYesterday: boolean = false) {
 	const session = await auth();
 	const user = session?.user;
 
@@ -65,10 +66,92 @@ export async function createDailyLog() {
 		createKnowDailyCalories(logForToday.id);
 		createLogRemainder(logForToday.id);
 
+		let comparisons: LogComparisonType = null;
+
+		if (compareToYesterday) {
+			const yLog = await prisma.log.findFirst({
+				where: {
+					userId: user.id,
+					createdAt: {
+						gte: getToday().yesterday,
+						lt: getToday().todayStart
+					}
+				},
+				include: {
+					user: {
+						select: {
+							BaseMetabolicRate: {
+								select: {
+									bmr: true
+								}
+							}
+						}
+					},
+					knownCaloriesBurned: {
+						select: {
+							calories: true
+						}
+					},
+					logRemainder: {
+						select: {
+							calories: true
+						}
+					}
+				}
+			});
+
+			if (yLog) {
+				const yfood = yLog.foodItems as GetFoodEntry[];
+				const todaysFood = logForToday.foodItems as GetFoodEntry[];
+
+				comparisons = {
+					calories: {
+						yesterday: totalMacrosReducer(yfood).calories,
+						today: totalMacrosReducer(todaysFood).calories,
+						belowYesterday:
+							totalMacrosReducer(todaysFood).calories <
+							totalMacrosReducer(yfood).calories
+					},
+					protein: {
+						yesterday: totalMacrosReducer(yfood).protein,
+						today: totalMacrosReducer(todaysFood).protein,
+						belowYesterday:
+							totalMacrosReducer(todaysFood).protein <
+							totalMacrosReducer(yfood).protein
+					},
+					carbs: {
+						yesterday: totalMacrosReducer(yfood).carbs,
+						today: totalMacrosReducer(todaysFood).carbs,
+						belowYesterday:
+							totalMacrosReducer(todaysFood).carbs <
+							totalMacrosReducer(yfood).carbs
+					},
+					fat: {
+						yesterday: totalMacrosReducer(yfood).fat,
+						today: totalMacrosReducer(todaysFood).fat,
+						belowYesterday:
+							totalMacrosReducer(todaysFood).fat < totalMacrosReducer(yfood).fat
+					}
+				};
+			}
+		}
+
+		// console.log(
+		// 	'compareToYesterday: ',
+		// 	compareToYesterday,
+		// 	' comparisons: ',
+		// 	comparisons
+		// );
+
+		const revisedLog = {
+			...logForToday,
+			comparisons
+		};
+
 		return {
 			success: true,
 			message: 'success',
-			data: logForToday
+			data: revisedLog
 		};
 	} catch (error: unknown) {
 		return {

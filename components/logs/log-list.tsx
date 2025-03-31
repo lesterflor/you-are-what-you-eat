@@ -16,6 +16,7 @@ import LogRemainderBadge from './log-remainder-badge';
 import { Skeleton } from '../ui/skeleton';
 import { useScrolling } from '@/hooks/use-scroll';
 import { Card, CardContent } from '../ui/card';
+import { FaSpinner } from 'react-icons/fa';
 
 export default function FoodLogList({
 	forceColumn = true,
@@ -299,39 +300,43 @@ export default function FoodLogList({
 							</div>
 						</div>
 						{/*calories remaining  */}
-						{bmr ? (
-							<div
-								className={cn(
-									'text-2xl text-center flex flex-col items-center gap-0 relative font-bold',
-									Math.sign(remainingCals) === -1
-										? 'text-foreground'
-										: 'text-muted-foreground'
-								)}>
-								<div className='font-semibold'>
-									{formatUnit(remainingCals * -1)}
-								</div>
-								<div className='text-xs font-normal'>
-									{Math.sign(remainingCals) === -1
-										? 'calories remaining'
-										: 'calories over'}
-								</div>
-								{totalCals > 0 && (
-									<div
-										className={cn(
-											'absolute',
-											iconPosition === 'top' ? '-top-5' : 'top-4 -right-6'
-										)}>
-										{Math.sign(remainingCals) === -1 ? (
-											<ThumbsUp className='w-4 h-4 animate-ping' />
-										) : (
-											<ThumbsDown className='w-4 h-4 animate-ping' />
-										)}
+						<div className='portrait:w-[100%]'>
+							{bmr ? (
+								<div
+									className={cn(
+										'text-2xl text-center flex flex-col items-center gap-0 relative font-bold',
+										Math.sign(remainingCals) === -1
+											? 'text-foreground'
+											: 'text-muted-foreground'
+									)}>
+									<div className='font-semibold'>
+										{formatUnit(remainingCals * -1)}
 									</div>
-								)}
-							</div>
-						) : (
-							<Skeleton className='w-14 h-14' />
-						)}
+									<div className='text-xs font-normal'>
+										{Math.sign(remainingCals) === -1
+											? 'calories remaining'
+											: 'calories over'}
+									</div>
+									{totalCals > 0 && (
+										<div
+											className={cn(
+												'absolute',
+												iconPosition === 'top' ? '-top-5' : 'top-4 -right-6'
+											)}>
+											{Math.sign(remainingCals) === -1 ? (
+												<ThumbsUp className='w-4 h-4 animate-ping' />
+											) : (
+												<ThumbsDown className='w-4 h-4 animate-ping' />
+											)}
+										</div>
+									)}
+								</div>
+							) : (
+								<div className='flex flex-col items-center justify-center w-[27vw]'>
+									<FaSpinner className='w-14 h-14 animate-spin opacity-30' />
+								</div>
+							)}
+						</div>
 					</CardContent>
 				</Card>
 			)}
