@@ -270,7 +270,7 @@ export default function FoodLogList({
 						<div className='absolute -top-6 left-40'>
 							<FoodListSheet>
 								<div className='rounded-full bg-green-950 p-3'>
-									<TbDatabaseSearch className='w-6 h-6' />
+									<TbDatabaseSearch className='w-6 h-6 animate-pulse' />
 								</div>
 							</FoodListSheet>
 						</div>
