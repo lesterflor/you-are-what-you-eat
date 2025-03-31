@@ -8,7 +8,16 @@ import { cn, formatUnit } from '@/lib/utils';
 import { IoFastFoodOutline } from 'react-icons/io5';
 import { createDailyLog } from '@/actions/log-actions';
 import { LogUpdateContext } from '@/contexts/log-context';
-import { BicepsFlexed, Calendar, ThumbsDown, ThumbsUp } from 'lucide-react';
+import {
+	ArrowDown,
+	ArrowUp,
+	BicepsFlexed,
+	Calendar,
+	Frown,
+	Smile,
+	ThumbsDown,
+	ThumbsUp
+} from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
 import LogMacrosSummary from './log-macros-summary';
@@ -320,20 +329,26 @@ export default function FoodLogList({
 									{totalCals > 0 && (
 										<div
 											className={cn(
-												'absolute',
-												iconPosition === 'top' ? '-top-5' : 'top-4 -right-6'
+												'absolute flex flex-row items-center gap-0',
+												iconPosition === 'top' ? '-top-6' : 'top-4 -right-6'
 											)}>
 											{Math.sign(remainingCals) === -1 ? (
-												<ThumbsUp className='w-4 h-4 animate-ping' />
+												<>
+													<ArrowDown className='w-6 h-6 text-green-600 animate-bounce' />
+													<Smile className='w-6 h-6' />
+												</>
 											) : (
-												<ThumbsDown className='w-4 h-4 animate-ping' />
+												<>
+													<ArrowUp className='w-6 h-6 text-red-600 animate-bounce' />
+													<Frown className='w-6 h-6' />
+												</>
 											)}
 										</div>
 									)}
 								</div>
 							) : (
-								<div className='flex flex-col items-center justify-center w-[27vw]'>
-									<FaSpinner className='w-14 h-14 animate-spin opacity-30' />
+								<div className='flex flex-col items-center justify-center w-[25vw]'>
+									<FaSpinner className='w-10 h-10 animate-spin opacity-30' />
 								</div>
 							)}
 						</div>
