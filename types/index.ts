@@ -3,11 +3,15 @@ import {
 	foodItemSchema,
 	getFoodEntrySchema,
 	getFoodItemSchema,
+	getGroceryItemSchema,
+	getGroceryListSchema,
 	getLogRemainderSchema,
 	getLogSchema,
 	getTrackingSchema,
 	getUserNoteSchema,
 	getUserSchema,
+	groceryItemSchema,
+	groceryListSchema,
 	logRemainderSchema,
 	logSchema,
 	trackingSchema,
@@ -46,6 +50,7 @@ export type TrackingItemType = {
 };
 
 export type TrackingType = 'page' | 'form';
+export type GroceryListStatus = 'pending' | 'completed';
 
 export type FoodItem = z.infer<typeof foodItemSchema>;
 export type GetFoodItem = z.infer<typeof getFoodItemSchema>;
@@ -61,6 +66,12 @@ export type GetLogRemainder = z.infer<typeof getLogRemainderSchema>;
 
 export type UserNote = z.infer<typeof userNoteSchema>;
 export type GetUserNote = z.infer<typeof getUserNoteSchema>;
+
+export type GroceryList = z.infer<typeof groceryListSchema>;
+export type GetGroceryList = z.infer<typeof getGroceryListSchema>;
+
+export type GroceryItem = z.infer<typeof groceryItemSchema>;
+export type GetGroceryItem = z.infer<typeof getGroceryItemSchema>;
 
 export type BMRData = {
 	weight: number;

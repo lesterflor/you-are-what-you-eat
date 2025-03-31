@@ -251,3 +251,41 @@ export const getUserNoteSchema = z.object({
 	note: z.string(),
 	userId: z.string()
 });
+
+export const groceryItemSchema = z.object({
+	name: z.string().min(1, 'name is required'),
+	description: z.string().optional(),
+	qty: z.number().refine((val) => val !== null || val !== 0, {
+		message: 'quantity can be 1 or greater.'
+	}),
+	status: z.string().min(1, 'status is required'),
+	groceryListId: z.string().optional()
+});
+
+export const getGroceryItemSchema = z.object({
+	id: z.string(),
+	createdAt: z.date(),
+	updatedAt: z.date(),
+	name: z.string(),
+	description: z.string().optional().nullable(),
+	qty: z.number(),
+	status: z.string(),
+	groceryListId: z.string().optional().nullable()
+});
+
+export const groceryListSchema = z.object({
+	status: z.string().min(1, 'Status is required'),
+	sharedUsers: z.array(z.string()).optional(),
+	groceryItems: z.array(groceryItemSchema).optional()
+});
+
+export const getGroceryListSchema = z.object({
+	id: z.string(),
+	createdAt: z.date(),
+	updatedAt: z.date(),
+	sharedUsers: z.array(z.string()),
+	groceryItems: z.array(z.string()),
+	user: getUserSchema.optional(),
+	userId: z.string(),
+	status: z.string()
+});
