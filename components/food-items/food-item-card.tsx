@@ -91,7 +91,7 @@ export default function FoodItemCard({
 
 	const [fadeClass, setFadeClass] = useState(false);
 	useEffect(() => {
-		if (item.name.length >= 16) {
+		if (item.name.length >= 20) {
 			setTextSize('text-md');
 		}
 
