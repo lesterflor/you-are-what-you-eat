@@ -27,6 +27,7 @@ import { FaSpinner } from 'react-icons/fa';
 import { toast } from 'sonner';
 import { LogUpdateContext } from '@/contexts/log-context';
 import { RxUpdate } from 'react-icons/rx';
+import FoodCategoryIconMapper from '../food-items/food-category-icon-mapper';
 
 export default function LogFoodCard({
 	item,
@@ -75,7 +76,10 @@ export default function LogFoodCard({
 			}}>
 			<CardHeader className='pb-2 flex flex-row items-center justify-between gap-2 pt-2'>
 				<div className='capitalize font-semibold '>
-					<div className='text-2xl portrait:text-lg'>{item.name}</div>
+					<div className='text-2xl portrait:text-lg flex flex-row items-center gap-2'>
+						<FoodCategoryIconMapper type={item.category} />
+						<div className='leading-tight'>{item.name}</div>
+					</div>
 					<span className='text-muted-foreground flex flex-row items-center'>
 						{servingSize} {servingSize === 1 ? 'serving' : 'servings'}
 					</span>

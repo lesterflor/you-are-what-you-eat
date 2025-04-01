@@ -116,13 +116,18 @@ export default function FoodListSheet({
 					<SheetContent side='right'>
 						<SheetDescription></SheetDescription>
 						<SheetTitle className='flex flex-col items-center gap-2 pb-4'>
-							<InputWithButton
-								className='w-[90%]'
-								onChange={(val) => {
-									setSearch(val);
-								}}>
-								<Search className='w-4 h-4 text-muted-foreground' />
-							</InputWithButton>
+							<div className='flex flex-row gap-2 justify-between items-center pt-2'>
+								<InputWithButton
+									className='w-[90%]'
+									onChange={(val) => {
+										setSearch(val);
+									}}>
+									<Search className='w-4 h-4 text-muted-foreground' />
+								</InputWithButton>
+								<div className='text-xs font-normal'>
+									{foods.length} {foods.length === 1 ? 'result' : 'results'}
+								</div>
+							</div>
 							<FoodCategoryPicker
 								showFilterIcon={true}
 								iconsOnly={true}
@@ -173,13 +178,19 @@ export default function FoodListSheet({
 					<SheetContent side='top'>
 						<SheetDescription></SheetDescription>
 						<SheetTitle className='flex flex-col items-center gap-2 pb-4'>
-							<InputWithButton
-								className='w-[80%]'
-								onChange={(val) => {
-									setSearch(val);
-								}}>
-								<Search className='w-4 h-4 text-muted-foreground' />
-							</InputWithButton>
+							<div className='flex flex-row gap-2 justify-between items-center pt-2'>
+								<InputWithButton
+									className='w-[70%]'
+									onChange={(val) => {
+										setSearch(val);
+									}}>
+									<Search className='w-4 h-4 text-muted-foreground' />
+								</InputWithButton>
+								<div className='text-xs font-normal'>
+									{foods.length} {foods.length === 1 ? 'result' : 'results'}
+								</div>
+							</div>
+
 							<FoodCategoryPicker
 								showFilterIcon={true}
 								iconsOnly={true}

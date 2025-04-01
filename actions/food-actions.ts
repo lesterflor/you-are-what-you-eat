@@ -42,6 +42,16 @@ export async function getFoodItems(
 			: await prisma.foodItem.findMany({
 					orderBy: {
 						name: 'asc'
+					},
+					include: {
+						user: {
+							select: {
+								id: true,
+								name: true,
+								image: true,
+								FoodItems: true
+							}
+						}
 					}
 			  });
 

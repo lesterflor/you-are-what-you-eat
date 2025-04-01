@@ -3,7 +3,7 @@
 import {
 	Bean,
 	Citrus,
-	Cookie,
+	CookingPot,
 	Ham,
 	LeafyGreen,
 	Nut,
@@ -17,25 +17,25 @@ export default function FoodCategoryIconMapper({ type }: { type: string }) {
 	useEffect(() => {
 		switch (type) {
 			case 'veg':
-				setIcon(<LeafyGreen className='w-6 h-6' />);
+				setIcon(<LeafyGreen className='w-6 h-6 !text-green-800' />);
 				break;
 			case 'meat':
-				setIcon(<Ham className='w-6 h-6' />);
+				setIcon(<Ham className='w-6 h-6 !text-amber-700' />);
 				break;
 			case 'fruit':
-				setIcon(<Citrus className='w-6 h-6' />);
+				setIcon(<Citrus className='w-6 h-6 !text-yellow-500' />);
 				break;
 			case 'grain':
-				setIcon(<Wheat className='w-6 h-6' />);
+				setIcon(<Wheat className='w-6 h-6 !text-yellow-300' />);
 				break;
 			case 'legume':
-				setIcon(<Bean className='w-6 h-6' />);
+				setIcon(<Bean className='w-6 h-6 !text-amber-500' />);
 				break;
 			case 'nutSeed':
-				setIcon(<Nut className='w-6 h-6' />);
+				setIcon(<Nut className='w-6 h-6 !text-amber-900' />);
 				break;
 			case 'other':
-				setIcon(<Cookie className='w-6 h-6' />);
+				setIcon(<CookingPot className='w-6 h-6 !text-slate-500' />);
 				break;
 		}
 	}, []);

@@ -18,7 +18,7 @@ import { createDailyLog, updateLog } from '@/actions/log-actions';
 import { toast } from 'sonner';
 import { FilePlus } from 'lucide-react';
 import { LogUpdateContext } from '@/contexts/log-context';
-import { formatUnit, getMacroPercOfCals } from '@/lib/utils';
+import { cn, formatUnit, getMacroPercOfCals } from '@/lib/utils';
 import { FaSpinner } from 'react-icons/fa';
 import FoodUserAvatar from './food-user-avatar';
 import { GiSpoon } from 'react-icons/gi';
@@ -35,6 +35,8 @@ export default function FoodItemCard({
 	const { data: session } = useSession();
 	const logContext = useContext(LogUpdateContext);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [showDetails, setShowDetails] = useState(false);
+	const [textSize, setTextSize] = useState('text-xl');
 
 	const [logFoodItem, setLogFoodItem] = useState<FoodEntry>({
 		id: item.id,
@@ -87,6 +89,10 @@ export default function FoodItemCard({
 
 	const [fadeClass, setFadeClass] = useState(false);
 	useEffect(() => {
+		if (item.name.length >= 16) {
+			setTextSize('text-md');
+		}
+
 		setTimeout(
 			() => {
 				setFadeClass(true);
@@ -97,22 +103,27 @@ export default function FoodItemCard({
 
 	return (
 		<Card
-			className='relative select-none transition-opacity opacity-0 duration-1000'
+			className='p-0 w-full relative select-none transition-opacity opacity-0 duration-1000'
 			style={{
 				opacity: fadeClass ? 1 : 0
 			}}>
-			<CardHeader className='text-2xl font-semibold capitalize pb-2 pr-4'>
-				<div className='flex flex-row items-center justify-start gap-2 pr-8'>
+			<CardHeader
+				className={cn(
+					'font-semibold capitalize pt-2 pl-2 pb-2 pr-4',
+					showDetails ? 'text-foreground' : 'text-muted-foreground',
+					textSize
+				)}>
+				<div
+					onClick={(e) => {
+						e.preventDefault();
+						setShowDetails(!showDetails);
+					}}
+					className='flex flex-row items-start justify-start gap-2 pr-8 leading-tight'>
 					<FoodCategoryIconMapper type={item.category} />
 					{item.name}
 				</div>
-			</CardHeader>
-			<CardDescription className='px-6 pb-4'>
-				{item.description}
-			</CardDescription>
-			<CardContent className='flex flex-row items-center justify-center flex-wrap gap-2 px-3 pb-0'>
 				{session && item.user && (
-					<div className='absolute top-2 right-2'>
+					<div className='absolute top-1 right-1'>
 						<FoodUserAvatar
 							selfSearch={selfSearch}
 							user={item.user}
@@ -120,117 +131,132 @@ export default function FoodItemCard({
 						/>
 					</div>
 				)}
+			</CardHeader>
 
-				<div className='flex flex-row items-center gap-2 portrait:gap-1'>
-					<Badge
-						variant='secondary'
-						className='w-14 flex flex-col items-center justify-center'>
-						<div className='font-normal text-muted-foreground'>Protein</div>
-						<div className='whitespace-nowrap'>
-							{formatUnit(item.proteinGrams * portionAmount)} g
+			{showDetails && (
+				<>
+					<CardDescription className='px-4 pb-4 leading-tight'>
+						{item.description}
+					</CardDescription>
+					<CardContent className='flex flex-row items-center justify-center flex-wrap gap-2 p-0'>
+						<div className='flex flex-row items-center gap-2 portrait:gap-1'>
+							<Badge
+								variant='secondary'
+								className='w-14 flex flex-col items-center justify-center'>
+								<div className='font-normal text-muted-foreground'>Protein</div>
+								<div className='whitespace-nowrap'>
+									{formatUnit(item.proteinGrams * portionAmount)} g
+								</div>
+								<div className='text-muted-foreground text-xs font-normal'>
+									{getMacroPercOfCals(
+										item.proteinGrams,
+										item.calories,
+										'protein'
+									)}
+								</div>
+							</Badge>
 						</div>
-						<div className='text-muted-foreground text-xs font-normal'>
-							{getMacroPercOfCals(item.proteinGrams, item.calories, 'protein')}
-						</div>
-					</Badge>
-				</div>
-				<div className='flex flex-row items-center gap-2'>
-					<Badge
-						variant='secondary'
-						className='w-14 flex flex-col items-center justify-center'>
-						<div className='font-normal text-muted-foreground'>Carb</div>
-						<div className='whitespace-nowrap'>
-							{formatUnit(item.carbGrams * portionAmount)} g
-						</div>
+						<div className='flex flex-row items-center gap-2'>
+							<Badge
+								variant='secondary'
+								className='w-14 flex flex-col items-center justify-center'>
+								<div className='font-normal text-muted-foreground'>Carb</div>
+								<div className='whitespace-nowrap'>
+									{formatUnit(item.carbGrams * portionAmount)} g
+								</div>
 
-						<div className='text-muted-foreground text-xs font-normal'>
-							{getMacroPercOfCals(item.carbGrams, item.calories, 'carb')}
+								<div className='text-muted-foreground text-xs font-normal'>
+									{getMacroPercOfCals(item.carbGrams, item.calories, 'carb')}
+								</div>
+							</Badge>
 						</div>
-					</Badge>
-				</div>
-				<div className='flex flex-row items-center gap-2'>
-					<Badge
-						variant='secondary'
-						className='w-14 flex flex-col items-center justify-center'>
-						<div className='font-normal text-muted-foreground'>Fat</div>
-						<div className='whitespace-nowrap'>
-							{formatUnit(item.fatGrams * portionAmount)} g
+						<div className='flex flex-row items-center gap-2'>
+							<Badge
+								variant='secondary'
+								className='w-14 flex flex-col items-center justify-center'>
+								<div className='font-normal text-muted-foreground'>Fat</div>
+								<div className='whitespace-nowrap'>
+									{formatUnit(item.fatGrams * portionAmount)} g
+								</div>
+								<div className='text-muted-foreground text-xs font-normal'>
+									{getMacroPercOfCals(item.fatGrams, item.calories, 'fat')}
+								</div>
+							</Badge>
 						</div>
-						<div className='text-muted-foreground text-xs font-normal'>
-							{getMacroPercOfCals(item.fatGrams, item.calories, 'fat')}
-						</div>
-					</Badge>
-				</div>
-				<div className='flex flex-row items-center gap-2'>
-					<Badge
-						variant='secondary'
-						className='w-14 flex flex-col items-center justify-center'>
-						<div className='font-normal text-muted-foreground'>
-							{item.servingSize * portionAmount === 1 ? 'Serving' : 'Servings'}
-						</div>
-						<div>{item.servingSize * portionAmount}</div>
-						<div>
-							<GiSpoon className='w-4 h-4 text-muted-foreground' />
-						</div>
-					</Badge>
-				</div>
-
-				<div className='flex flex-row items-center gap-2'>
-					<Badge className='flex flex-col items-center justify-center'>
-						<div className='font-normal'>Calories</div>
-						<div>{formatUnit(item.calories * portionAmount)}</div>
-					</Badge>
-				</div>
-			</CardContent>
-
-			<CardFooter className='flex flex-row items-center justify-end'>
-				{session && (
-					<div className='flex flex-row items-end justify-center gap-2 flex-wrap'>
-						<div className='flex flex-col items-center'>
-							<NumberIncrementor
-								allowLongPress={false}
-								compactMode={false}
-								onChange={(val) => {
-									setPortionAmount(val);
-
-									const entry: FoodEntry = {
-										id: item.id,
-										name: item.name,
-										category: item.category,
-										description: item.description ?? '',
-										numServings: val,
-										image: (item.image as string) ?? '',
-										carbGrams: item.carbGrams,
-										fatGrams: item.fatGrams,
-										proteinGrams: item.proteinGrams,
-										calories: item.calories,
-										eatenAt: new Date()
-									};
-
-									setLogFoodItem(entry);
-								}}
-								minValue={0.1}
-								value={1}>
-								<span className='text-xs'>Servings</span>
-							</NumberIncrementor>
+						<div className='flex flex-row items-center gap-2'>
+							<Badge
+								variant='secondary'
+								className='w-14 flex flex-col items-center justify-center'>
+								<div className='font-normal text-muted-foreground'>
+									{item.servingSize * portionAmount === 1
+										? 'Serving'
+										: 'Servings'}
+								</div>
+								<div>{item.servingSize * portionAmount}</div>
+								<div>
+									<GiSpoon className='w-4 h-4 text-muted-foreground' />
+								</div>
+							</Badge>
 						</div>
 
-						<Button
-							disabled={isSubmitting}
-							onClick={(e) => {
-								e.preventDefault();
-								sendFoodItems();
-							}}>
-							{isSubmitting ? (
-								<FaSpinner className='w-4 h-4 animate-spin' />
-							) : (
-								<FilePlus className='w-4 h-4' />
-							)}
-							{isSubmitting ? '...Adding' : 'Add to log'}
-						</Button>
-					</div>
-				)}
-			</CardFooter>
+						<div className='flex flex-row items-center gap-2'>
+							<Badge className='flex flex-col items-center justify-center'>
+								<div className='font-normal'>Calories</div>
+								<div>{formatUnit(item.calories * portionAmount)}</div>
+							</Badge>
+						</div>
+					</CardContent>
+
+					<CardFooter className='flex flex-row items-center justify-end'>
+						{session && (
+							<div className='flex flex-row items-end justify-center gap-2 flex-wrap'>
+								<div className='flex flex-col items-center'>
+									<NumberIncrementor
+										allowLongPress={false}
+										compactMode={false}
+										onChange={(val) => {
+											setPortionAmount(val);
+
+											const entry: FoodEntry = {
+												id: item.id,
+												name: item.name,
+												category: item.category,
+												description: item.description ?? '',
+												numServings: val,
+												image: (item.image as string) ?? '',
+												carbGrams: item.carbGrams,
+												fatGrams: item.fatGrams,
+												proteinGrams: item.proteinGrams,
+												calories: item.calories,
+												eatenAt: new Date()
+											};
+
+											setLogFoodItem(entry);
+										}}
+										minValue={0.1}
+										value={1}>
+										<span className='text-xs'>Servings</span>
+									</NumberIncrementor>
+								</div>
+
+								<Button
+									disabled={isSubmitting}
+									onClick={(e) => {
+										e.preventDefault();
+										sendFoodItems();
+									}}>
+									{isSubmitting ? (
+										<FaSpinner className='w-4 h-4 animate-spin' />
+									) : (
+										<FilePlus className='w-4 h-4' />
+									)}
+									{isSubmitting ? '...Adding' : 'Add to log'}
+								</Button>
+							</div>
+						)}
+					</CardFooter>
+				</>
+			)}
 		</Card>
 	);
 }
