@@ -269,7 +269,7 @@ export default function FoodLogList({
 					<CardContent className='p-2 pt-5 flex flex-row items-center gap-2 relative'>
 						<div className='absolute -top-6 left-40'>
 							<FoodListSheet>
-								<div className='rounded-full bg-green-950 p-3'>
+								<div className='rounded-full dark:bg-green-950 bg-green-500 p-3'>
 									<TbDatabaseSearch className='w-6 h-6 animate-pulse' />
 								</div>
 							</FoodListSheet>

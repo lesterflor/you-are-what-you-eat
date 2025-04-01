@@ -102,7 +102,9 @@ export default function FoodUserAvatar({
 			<PopoverTrigger>
 				<Avatar className='w-6 h-6'>
 					<AvatarImage src={image as string} />
-					<AvatarFallback>{name.slice(0, 1)}</AvatarFallback>
+					<AvatarFallback className='!text-lg'>
+						{name.slice(0, 1)}
+					</AvatarFallback>
 				</Avatar>
 			</PopoverTrigger>
 			<PopoverContent

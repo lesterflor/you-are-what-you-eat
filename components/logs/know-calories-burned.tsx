@@ -1,7 +1,7 @@
 'use client';
 import { addKnownCaloriesBurned, createDailyLog } from '@/actions/log-actions';
 import { Input } from '../ui/input';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { GetLog } from '@/types';
 import { Button } from '../ui/button';
 import { Plus } from 'lucide-react';
@@ -17,6 +17,7 @@ export default function KnowCaloriesBurned() {
 	const [submitting, setSubmitting] = useState(false);
 	const [fetching, setFetching] = useState(true);
 	const [inputVal, setInputVal] = useState(0);
+	const inputRef = useRef<HTMLInputElement>(null);
 
 	const { status } = useCurrentSession();
 	const logContext = useContext(LogUpdateContext);
@@ -54,14 +55,14 @@ export default function KnowCaloriesBurned() {
 				<div className='h-6'>Known calories burned: {caloriesBurned}</div>
 			)}
 
-			<div className='flex flex-row items-center gap-2'>
+			<div className='flex flex-row items-center justify-between gap-2 w-full'>
 				<Input
-					//defaultValue={inputVal}
+					ref={inputRef}
 					onChange={(e) => {
 						setInputVal(Number(e.target.value));
 					}}
 					type='number'
-					className='w-32'
+					className='w-16'
 				/>
 				<Button
 					disabled={submitting}
@@ -80,6 +81,10 @@ export default function KnowCaloriesBurned() {
 									updated: true
 								};
 								logContext.isUpdated(update);
+							}
+
+							if (inputRef.current) {
+								inputRef.current.value = '';
 							}
 						} else {
 							toast.error(res.message);
