@@ -49,7 +49,7 @@ export default function UserNoteForm({
 
 		if (res.success) {
 			form.reset();
-			toast(res.message);
+			toast.success(res.message);
 
 			if (noteContext && noteContext.isUpdated) {
 				const update = {

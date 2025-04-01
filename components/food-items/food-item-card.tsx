@@ -71,7 +71,7 @@ export default function FoodItemCard({
 		const res = await updateLog(foodItems);
 
 		if (res.success) {
-			toast('Added to your daily log!');
+			toast.success('Added to your daily log!');
 
 			if (logContext && logContext.isUpdated) {
 				const update = {
@@ -80,6 +80,8 @@ export default function FoodItemCard({
 				};
 				logContext.isUpdated(update);
 			}
+
+			setShowDetails(false);
 		} else {
 			toast.error('Oops, Something went wrong with adding the item.');
 		}
@@ -97,7 +99,7 @@ export default function FoodItemCard({
 			() => {
 				setFadeClass(true);
 			},
-			indx === 0 ? 1 : indx * 100
+			indx === 0 ? 1 : indx * 25
 		);
 	}, []);
 

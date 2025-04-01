@@ -66,7 +66,7 @@ export default async function RootLayout({
 						</LogContextProvider>
 					</SessionProvider>
 
-					<Toaster />
+					<Toaster expand={true} />
 				</ThemeProvider>
 				<br />
 				<br />

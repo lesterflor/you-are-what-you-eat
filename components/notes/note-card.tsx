@@ -45,7 +45,7 @@ export default function NoteCard({
 		const res = await deleteNote(note.id);
 
 		if (res.success) {
-			toast(res.message);
+			toast.success(res.message);
 
 			if (noteContext?.isUpdated) {
 				const update = {

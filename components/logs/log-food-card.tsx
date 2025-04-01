@@ -168,7 +168,7 @@ export default function LogFoodCard({
 									const res = await updateFoodLogEntry(updatedEntry);
 
 									if (res.success) {
-										toast(res.message);
+										toast.success(res.message);
 
 										if (res.data) {
 											const { numServings } = res.data;
@@ -226,7 +226,7 @@ export default function LogFoodCard({
 										const res = await deleteFoodLogEntry(item.id);
 
 										if (res.success) {
-											toast(res.message);
+											toast.success(res.message);
 
 											updateLogContext();
 										} else {

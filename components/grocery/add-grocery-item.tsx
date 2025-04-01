@@ -33,7 +33,7 @@ export default function AddGroceryItem({
 		const res = await createGroceryItem(newItem);
 
 		if (res.success && res.data) {
-			toast(res.message);
+			toast.success(res.message);
 			onAdd(res.data);
 		} else {
 			toast.error(res.message);

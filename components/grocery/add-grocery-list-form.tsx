@@ -35,7 +35,7 @@ export default function AddGroceryListForm({
 		const res = await createGroceryList(groceryItems);
 
 		if (res.success) {
-			toast(res.message);
+			toast.success(res.message);
 			onSuccess?.();
 
 			form.reset();

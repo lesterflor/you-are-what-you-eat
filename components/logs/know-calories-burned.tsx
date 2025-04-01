@@ -70,7 +70,7 @@ export default function KnowCaloriesBurned() {
 						const res = await addKnownCaloriesBurned(inputVal);
 
 						if (res.success) {
-							toast(res.message);
+							toast.success(res.message);
 							getLog();
 
 							// upate context so other components know something changed in the log

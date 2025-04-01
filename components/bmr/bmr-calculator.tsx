@@ -141,7 +141,7 @@ export default function BMRCalculatorForm() {
 			: await updateUserBMR(user.id, bmrData as BMRData);
 
 		if (res.success) {
-			toast(res.message);
+			toast.success(res.message);
 		} else {
 			toast.error(res.message);
 		}

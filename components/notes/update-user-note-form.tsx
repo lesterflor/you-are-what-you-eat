@@ -45,7 +45,7 @@ export default function UpdateUserNoteForm({
 		const res = await updateNote(values);
 
 		if (res.success) {
-			toast(res.message);
+			toast.success(res.message);
 			onSuccess?.();
 
 			if (noteContext?.isUpdated) {

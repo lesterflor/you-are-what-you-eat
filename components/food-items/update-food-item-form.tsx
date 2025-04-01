@@ -55,7 +55,7 @@ export default function UpdateFoodItemForm({
 		const res = await updateFoodItem(values);
 
 		if (res.success) {
-			toast(res.message);
+			toast.success(res.message);
 			form.reset();
 			onSuccess?.();
 		} else {

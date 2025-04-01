@@ -71,7 +71,7 @@ export default function AddFoodItemForm({
 		const res = await addFoodItem(values);
 
 		if (res.success) {
-			toast(res.message);
+			toast.success(res.message);
 			form.reset();
 			setHasSubmitted(true);
 			onSuccess?.();
