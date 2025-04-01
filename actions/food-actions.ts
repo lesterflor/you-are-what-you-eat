@@ -59,6 +59,9 @@ export async function getFoodItems(
 			throw new Error('There was a problem fetching food items');
 		}
 
+		// sort here again since some food items have been capitalized when added
+		items.sort((a, b) => a.name.localeCompare(b.name));
+
 		return {
 			success: true,
 			message: 'success',

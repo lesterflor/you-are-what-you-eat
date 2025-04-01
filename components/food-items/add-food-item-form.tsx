@@ -22,10 +22,11 @@ import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { LoaderIcon, Plus } from 'lucide-react';
 import { Card, CardContent } from '../ui/card';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { GetUser } from '@/types';
+import { UpdateFoodContext } from '@/contexts/food-update-context';
 
 export default function AddFoodItemForm({
 	onSuccess
@@ -34,6 +35,8 @@ export default function AddFoodItemForm({
 }) {
 	const { data: session } = useSession();
 	const user = session?.user as GetUser;
+
+	const foodUpdateContext = useContext(UpdateFoodContext);
 
 	const form = useForm<z.infer<typeof foodItemSchema>>({
 		resolver: zodResolver(foodItemSchema),
@@ -76,6 +79,14 @@ export default function AddFoodItemForm({
 			setHasSubmitted(true);
 			onSuccess?.();
 			router.push('/foods');
+
+			if (foodUpdateContext && foodUpdateContext.isUpdated) {
+				const update = {
+					...foodUpdateContext,
+					updated: true
+				};
+				foodUpdateContext.isUpdated(update);
+			}
 		} else {
 			toast.error(res.message);
 		}

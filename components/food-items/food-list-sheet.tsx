@@ -21,6 +21,7 @@ import { FoodSearchContext } from '@/contexts/food-search-context';
 import { cn } from '@/lib/utils';
 import { SearchContext } from '@/contexts/search-context';
 import { UpdateFoodContext } from '@/contexts/food-update-context';
+import { FaSpinner } from 'react-icons/fa';
 
 export default function FoodListSheet({
 	forceColumn = true,
@@ -34,12 +35,17 @@ export default function FoodListSheet({
 	const foodContext = useContext(FoodSearchContext);
 	const foodUpdateContext = useContext(UpdateFoodContext);
 
+	const [isFetching, setIsFetching] = useState(true);
+
 	const getFoods = async (term: string = '', cat: string = '', user = '') => {
+		setIsFetching(true);
 		const res = await getFoodItems(term, cat, user);
 
 		if (res.success && res.data && res.data?.length > 0) {
 			setFoods(res.data as GetFoodItem[]);
 		}
+
+		setIsFetching(false);
 	};
 
 	useEffect(() => {
@@ -186,6 +192,13 @@ export default function FoodListSheet({
 									}}>
 									<Search className='w-4 h-4 text-muted-foreground' />
 								</InputWithButton>
+
+								{isFetching && (
+									<div>
+										<FaSpinner className='w-4 h-4 animate-spin' />
+									</div>
+								)}
+
 								<div className='text-xs font-normal'>
 									{foods.length} {foods.length === 1 ? 'result' : 'results'}
 								</div>
