@@ -17,18 +17,25 @@ import { getGroceryListsByUser } from '@/actions/grocery-actions';
 import GroceryListItemCard from './grocery-list-item-card';
 import { ScrollArea } from '../ui/scroll-area';
 import { UpdateGroceryListContext } from '@/contexts/update-grocery-list-context';
+import { FaSpinner } from 'react-icons/fa';
 
 export default function GrocerListSheet() {
 	const [sheetOpen, setSheetOpen] = useState(false);
 	const [lists, setLists] = useState<GetGroceryList[]>([]);
+	const [isFetching, setIsFetching] = useState(true);
+
 	const groceryContext = useContext(UpdateGroceryListContext);
 
 	const fetchLists = async () => {
+		setIsFetching(true);
 		const res = await getGroceryListsByUser(true);
 
 		if (res.success && res.data) {
+			console.log('state update should trigger: ', res.data);
 			setLists(res.data as GetGroceryList[]);
 		}
+
+		setIsFetching(false);
 	};
 
 	useEffect(() => {
@@ -89,23 +96,31 @@ export default function GrocerListSheet() {
 
 				<div className='flex flex-col items-center justify-between gap-4 w-full mt-5'>
 					<ScrollArea className='w-full portrait:h-[75vh] pr-2'>
-						<div className='w-full flex flex-col gap-6 pb-2'>
-							{lists.length > 0 ? (
-								lists.map((item) => (
-									<GroceryListItemCard
-										key={item.id}
-										list={item}
-										onComplete={() => {
-											fetchLists();
-										}}
-									/>
-								))
-							) : (
-								<div className='w-full flex flex-col items-center justify-center'>
-									<ShoppingCart className='w-60 h-60 opacity-5' />
+						{isFetching ? (
+							<div className='w-full h-full flex flex-col items-center justify-center'>
+								<FaSpinner className='w-36 h-36 animate-spin opacity-10' />
+							</div>
+						) : (
+							<>
+								<div className='w-full flex flex-col gap-6 pb-2'>
+									{lists.length > 0 ? (
+										lists.map((item) => (
+											<GroceryListItemCard
+												key={item.id}
+												list={item}
+												onComplete={() => {
+													fetchLists();
+												}}
+											/>
+										))
+									) : (
+										<div className='w-full flex flex-col items-center justify-center'>
+											<ShoppingCart className='w-60 h-60 opacity-5' />
+										</div>
+									)}
 								</div>
-							)}
-						</div>
+							</>
+						)}
 					</ScrollArea>
 				</div>
 			</SheetContent>

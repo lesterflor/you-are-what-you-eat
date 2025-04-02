@@ -70,12 +70,6 @@ export default function LogMacrosSummary({
 		}
 	}, []);
 
-	useEffect(() => {
-		if (comparisonData) {
-			console.log('comparisonData: ', comparisonData);
-		}
-	}, [comparisonData]);
-
 	const getLog = async () => {
 		setIsFetching(true);
 		const res = await createDailyLog(getTodayMode);

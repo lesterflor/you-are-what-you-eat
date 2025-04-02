@@ -30,7 +30,7 @@ export default function UpdateGroceryListForm({
 	const [groceryItems, setGroceryItems] = useState<GetGroceryItem[]>([]);
 	const [addMinified, setAddMinified] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [sharedUsers, setSharedUsers] = useState<string[]>([]);
+	const [sharedUsers, setSharedUsers] = useState<string[]>(list.sharedUsers);
 	const groceryContext = useContext(UpdateGroceryListContext);
 
 	useEffect(() => {
@@ -80,6 +80,7 @@ export default function UpdateGroceryListForm({
 		<div className='flex flex-col justify-between w-full h-full gap-6 relative'>
 			<div className='absolute -top-12 right-8'>
 				<ShareListButton
+					value={list.sharedUsers}
 					onSelect={(userId) => {
 						const update = [...sharedUsers];
 						update.push(userId);
