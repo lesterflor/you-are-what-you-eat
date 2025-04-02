@@ -47,6 +47,10 @@ export default function AddGroceryItem({
 		}
 	}, [qty]);
 
+	useEffect(() => {
+		onMinify?.(minified);
+	}, [minified]);
+
 	const form = useForm<z.infer<typeof groceryItemSchema>>({
 		resolver: zodResolver(groceryItemSchema),
 		defaultValues: {
@@ -70,6 +74,7 @@ export default function AddGroceryItem({
 			// reset fields
 			form.reset();
 			setQty(1);
+			setMinified(true);
 		} else {
 			toast.error(res.message);
 		}
@@ -85,7 +90,6 @@ export default function AddGroceryItem({
 							onClick={(e) => {
 								e.preventDefault();
 								setMinified(!minified);
-								onMinify?.(!minified);
 							}}
 							className='absolute -top-4 right-0 rounded-full w-8 h-8 p-2 z-30'>
 							<FaCartPlus className='w-4 h-4' />

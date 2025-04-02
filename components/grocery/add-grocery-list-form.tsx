@@ -8,7 +8,7 @@ import { Form } from '../ui/form';
 import { createGroceryList } from '@/actions/grocery-actions';
 import { GetGroceryItem } from '@/types';
 import { toast } from 'sonner';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '../ui/button';
 import { FaSpinner } from 'react-icons/fa';
 import { ShoppingCart } from 'lucide-react';
@@ -27,6 +27,8 @@ export default function AddGroceryListForm({
 	const [groceryItems, setGroceryItems] = useState<GetGroceryItem[]>([]);
 	const [addMinified, setAddMinified] = useState(false);
 	const [sharedUsers, setSharedUsers] = useState<string[]>([]);
+
+	const scrollRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		form.setValue('sharedUsers', sharedUsers);
@@ -56,6 +58,16 @@ export default function AddGroceryListForm({
 			form.reset();
 		} else {
 			toast.error(res.message);
+		}
+	};
+
+	const scrollRefIntoView = () => {
+		if (scrollRef.current) {
+			scrollRef.current.scrollIntoView({
+				behavior: 'smooth',
+				block: 'end',
+				inline: 'nearest'
+			});
 		}
 	};
 
@@ -93,6 +105,11 @@ export default function AddGroceryListForm({
 												);
 
 												setGroceryItems(update);
+
+												scrollRefIntoView();
+											}}
+											onChange={() => {
+												scrollRefIntoView();
 											}}
 										/>
 									))
@@ -102,6 +119,7 @@ export default function AddGroceryListForm({
 									</div>
 								)}
 							</div>
+							<div ref={scrollRef}></div>
 						</ScrollArea>
 					</form>
 				</Form>

@@ -15,12 +15,14 @@ export default function GroceryItemCard({
 	displayOnly = false,
 	enableRemove = false,
 	onRemove,
-	listId
+	listId,
+	onChange
 }: {
 	item: GetGroceryItem;
 	displayOnly?: boolean;
 	enableRemove?: boolean;
 	onRemove?: (item: GetGroceryItem) => void;
+	onChange?: () => void;
 	listId?: string;
 }) {
 	const [updating, setUpdating] = useState(false);
@@ -35,6 +37,7 @@ export default function GroceryItemCard({
 		if (res.success && res.data) {
 			toast.success(res.message);
 			setGroceryItem(res.data);
+			onChange?.();
 		} else {
 			toast.error(res.message);
 		}
@@ -54,6 +57,7 @@ export default function GroceryItemCard({
 		if (res.success && res.data) {
 			toast.success(res.message);
 			setGroceryItem(res.data);
+			onChange?.();
 		} else {
 			toast.error(res.message);
 		}
