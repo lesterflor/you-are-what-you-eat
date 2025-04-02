@@ -4,6 +4,7 @@ import { auth, signIn, signOut } from '@/db/auth';
 import prisma from '@/db/prisma';
 import { formatError } from '@/lib/utils';
 import { signInFormSchema, signUpFormSchema } from '@/lib/validators';
+import { GetUser } from '@/types';
 import { hashSync } from 'bcrypt-ts-edge';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 
@@ -193,6 +194,76 @@ export async function getUserFoods(id: string) {
 			success: true,
 			message: 'success',
 			data: foods
+		};
+	} catch (error: unknown) {
+		return {
+			success: false,
+			message: formatError(error)
+		};
+	}
+}
+
+export async function getShareableUsers() {
+	try {
+		const session = await auth();
+		const user = session?.user as GetUser;
+
+		if (!session || !user) {
+			throw new Error('User must authenticated');
+		}
+
+		const users = await prisma.user.findMany({
+			where: {
+				id: {
+					not: user.id
+				}
+			},
+			select: {
+				name: true,
+				image: true,
+				id: true
+			}
+		});
+
+		return {
+			success: true,
+			message: 'success',
+			data: users
+		};
+	} catch (error: unknown) {
+		return {
+			success: false,
+			message: formatError(error)
+		};
+	}
+}
+
+export async function getUserAvatars(userIds: string[]) {
+	try {
+		const session = await auth();
+		const user = session?.user as GetUser;
+
+		if (!session || !user) {
+			throw new Error('User must authenticated');
+		}
+
+		const filtered = userIds.filter((us) => us !== '');
+		if (!filtered.includes(user.id)) {
+			filtered.push(user.id);
+		}
+
+		const allUsers = await prisma.user.findMany({
+			where: {
+				id: {
+					in: filtered
+				}
+			}
+		});
+
+		return {
+			success: true,
+			message: 'success',
+			data: allUsers
 		};
 	} catch (error: unknown) {
 		return {

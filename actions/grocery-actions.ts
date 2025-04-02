@@ -11,7 +11,10 @@ import {
 	GroceryListStatus
 } from '@/types';
 
-export async function createGroceryList(items: GetGroceryItem[]) {
+export async function createGroceryList(
+	items: GetGroceryItem[],
+	sharedUsers: string[] = []
+) {
 	try {
 		const session = await auth();
 		const user = session?.user as GetUser;
@@ -22,10 +25,14 @@ export async function createGroceryList(items: GetGroceryItem[]) {
 
 		const status: GroceryListStatus = 'pending';
 
+		const filteredUsers = sharedUsers.filter((us) => us !== '');
+		filteredUsers.push(user.id);
+
 		const newList = await prisma.groceryList.create({
 			data: {
 				userId: user.id,
-				status
+				status,
+				sharedUsers: filteredUsers
 			},
 			include: {
 				groceryItems: true
@@ -126,6 +133,9 @@ export async function updateGroceryList(list: GetGroceryList) {
 			data: {
 				sharedUsers: list.sharedUsers,
 				status: list.status
+			},
+			include: {
+				groceryItems: true
 			}
 		});
 
@@ -289,6 +299,54 @@ export async function getGroceryListById(listId: string) {
 		const existingList = await prisma.groceryList.findFirst({
 			where: {
 				id: listId
+			}
+		});
+
+		if (!existingList) {
+			throw new Error('The grocery list was not found');
+		}
+
+		return {
+			success: true,
+			message: 'Successfully got grocery list',
+			data: existingList
+		};
+	} catch (error: unknown) {
+		return {
+			success: false,
+			message: formatError(error)
+		};
+	}
+}
+
+export async function getGroceryListsByUser(activeOnly = false) {
+	try {
+		const session = await auth();
+		const user = session?.user as GetUser;
+
+		if (!session || !user) {
+			throw new Error('User must be authenticated');
+		}
+
+		const existingList = await prisma.groceryList.findMany({
+			where: {
+				status: activeOnly ? 'pending' : undefined,
+				OR: [
+					{
+						userId: user.id
+					},
+					{
+						sharedUsers: {
+							hasSome: [user.id]
+						}
+					}
+				]
+			},
+			include: {
+				groceryItems: true
+			},
+			orderBy: {
+				createdAt: 'desc'
 			}
 		});
 

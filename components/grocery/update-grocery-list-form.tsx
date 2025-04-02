@@ -1,14 +1,14 @@
 'use client';
 
-import { groceryListSchema } from '@/lib/validators';
+import { getGroceryListSchema } from '@/lib/validators';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Form } from '../ui/form';
-import { createGroceryList } from '@/actions/grocery-actions';
-import { GetGroceryItem } from '@/types';
+import { updateGroceryList } from '@/actions/grocery-actions';
+import { GetGroceryItem, GetGroceryList, GroceryList } from '@/types';
 import { toast } from 'sonner';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import { FaSpinner } from 'react-icons/fa';
 import { ShoppingCart } from 'lucide-react';
@@ -18,45 +18,62 @@ import { BsFillCartCheckFill } from 'react-icons/bs';
 import { ScrollArea } from '../ui/scroll-area';
 import { cn } from '@/lib/utils';
 import ShareListButton from './share-list-button';
+import { UpdateGroceryListContext } from '@/contexts/update-grocery-list-context';
 
-export default function AddGroceryListForm({
+export default function UpdateGroceryListForm({
+	list,
 	onSuccess
 }: {
-	onSuccess?: () => void;
+	list: GetGroceryList;
+	onSuccess?: (list: GroceryList) => void;
 }) {
 	const [groceryItems, setGroceryItems] = useState<GetGroceryItem[]>([]);
 	const [addMinified, setAddMinified] = useState(false);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [sharedUsers, setSharedUsers] = useState<string[]>([]);
+	const groceryContext = useContext(UpdateGroceryListContext);
+
+	useEffect(() => {
+		if (list.groceryItems && list.groceryItems.length > 0) {
+			setGroceryItems(list.groceryItems);
+		}
+	}, []);
 
 	useEffect(() => {
 		form.setValue('sharedUsers', sharedUsers);
 	}, [sharedUsers]);
 
-	const form = useForm<z.infer<typeof groceryListSchema>>({
-		resolver: zodResolver(groceryListSchema),
-		defaultValues: {
-			status: 'pending',
-			sharedUsers: [],
-			groceryItems: []
-		}
+	const form = useForm<z.infer<typeof getGroceryListSchema>>({
+		resolver: zodResolver(getGroceryListSchema),
+		defaultValues: list
 	});
 
-	const onSubmit: SubmitHandler<
-		z.infer<typeof groceryListSchema>
-	> = async () => {
-		const res = await createGroceryList(groceryItems, sharedUsers);
+	const onSubmit: SubmitHandler<z.infer<typeof getGroceryListSchema>> = async (
+		values
+	) => {
+		setIsSubmitting(true);
+		const res = await updateGroceryList(values);
 
 		if (res.success) {
 			toast.success(res.message);
 
-			setTimeout(() => {
-				onSuccess?.();
-			}, 1000);
+			onSuccess?.(res.data as GroceryList);
 
 			form.reset();
+
+			if (groceryContext?.isUpdated) {
+				const update = {
+					...groceryContext,
+					updated: true
+				};
+
+				groceryContext.isUpdated(update);
+			}
 		} else {
 			toast.error(res.message);
 		}
+
+		setIsSubmitting(false);
 	};
 
 	return (
@@ -83,6 +100,7 @@ export default function AddGroceryListForm({
 								{groceryItems.length > 0 ? (
 									groceryItems.map((item) => (
 										<GroceryItemCard
+											listId={list.id}
 											enableRemove={true}
 											displayOnly={true}
 											key={item.id}
@@ -109,6 +127,7 @@ export default function AddGroceryListForm({
 
 			<div className='flex flex-col items-stretch justify-center w-full'>
 				<AddGroceryItem
+					listId={list.id}
 					onAdd={(item: GetGroceryItem) => {
 						const update = [...groceryItems];
 						update.push(item);
@@ -121,17 +140,17 @@ export default function AddGroceryListForm({
 				/>
 				<div className='w-full mt-4'>
 					<Button
-						disabled={form.formState.isSubmitting}
+						disabled={isSubmitting}
 						onClick={(e) => {
 							e.preventDefault();
 							onSubmit(form.getValues());
 						}}>
-						{form.formState.isSubmitting ? (
+						{isSubmitting ? (
 							<FaSpinner className='w-4 h-4 animate-spin' />
 						) : (
 							<BsFillCartCheckFill className='w-4 h-4' />
 						)}
-						{form.formState.isSubmitting ? 'Finishing...' : 'Finish List'}
+						{isSubmitting ? 'Updating...' : 'Update List'}
 					</Button>
 				</div>
 			</div>

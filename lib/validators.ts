@@ -284,7 +284,7 @@ export const getGroceryListSchema = z.object({
 	createdAt: z.date(),
 	updatedAt: z.date(),
 	sharedUsers: z.array(z.string()),
-	groceryItems: z.array(z.string()),
+	groceryItems: z.array(getGroceryItemSchema).optional(),
 	user: getUserSchema.optional(),
 	userId: z.string(),
 	status: z.string()

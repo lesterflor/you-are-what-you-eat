@@ -23,6 +23,7 @@ import { useCurrentSession } from '@/hooks/use-current-session';
 import { useSession } from 'next-auth/react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import NoteSheet from '../notes/note-sheet';
+import GrocerListSheet from '../grocery/grocery-list-sheet';
 
 export default function SideMenu({ log }: { log?: GetLog }) {
 	const pathname = usePathname();
@@ -56,7 +57,7 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 									<span className='dark:text-white text-black portrait:text-xl text-2xl font-bold thin-title'>
 										You are what you eat
 									</span>
-									<span className='text-xs font-normal'>
+									<span className='text-xs font-normal text-muted-foreground'>
 										Track the food you eat and stop wondering
 									</span>
 								</div>
@@ -64,7 +65,7 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 						</Link>
 					</div>
 				</SheetTitle>
-				<div className='flex flex-col gap-6 mt-4'>
+				<div className='flex flex-col gap-4 mt-2'>
 					{user && (
 						<div className='flex flex-row items-center justify-between gap-4 portrait:gap-0'>
 							<Avatar>
@@ -93,7 +94,7 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 						</div>
 					)}
 
-					<div className='flex flex-col items-stretch gap-1'>
+					<div className='flex flex-col items-stretch gap-2'>
 						<div>Tools</div>
 
 						<Button asChild>
@@ -105,7 +106,10 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 							</Link>
 						</Button>
 
-						<NoteSheet />
+						<div className='flex flex-row justify-evenly gap-2'>
+							<NoteSheet />
+							<GrocerListSheet />
+						</div>
 					</div>
 
 					{/* {pathname !== '/foods' && (

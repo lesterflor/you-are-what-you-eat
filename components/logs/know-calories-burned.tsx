@@ -103,9 +103,8 @@ export default function KnowCaloriesBurned() {
 
 			<div className='text-muted-foreground text-xs'>
 				* If you are aware of calories you have burned outside your BMR (Base
-				Metabolic Rate), enter it here. For example, if you rode your bike that
-				burned 300 calories, you can enter it here. You can add more at any time
-				to keep adding to the calories you have burned throughout the day.
+				Metabolic Rate), enter it here. You can add more at any time to keep
+				adding to the calories you have burned throughout the day.
 			</div>
 		</div>
 	);
