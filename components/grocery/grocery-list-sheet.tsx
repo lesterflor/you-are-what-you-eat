@@ -73,7 +73,7 @@ export default function GrocerListSheet() {
 									New
 								</Button>
 							</SheetTrigger>
-							<SheetContent className='max-w-[100vw] w-[100vw] h-[95%]'>
+							<SheetContent className='max-w-[100vw] w-[100vw] h-[95%] portrait:h-auto'>
 								<SheetTitle className='text-lg flex flex-row items-center justify-between  text-muted-foreground border-b-2 pb-2 w-full pr-5'>
 									<div className='flex flex-row items-center gap-2'>
 										<Plus className='w-4 h-4' />

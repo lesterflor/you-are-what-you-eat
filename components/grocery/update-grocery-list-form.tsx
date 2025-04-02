@@ -77,7 +77,7 @@ export default function UpdateGroceryListForm({
 	};
 
 	return (
-		<div className='flex flex-col justify-between w-full h-full gap-6 relative'>
+		<div className='flex flex-col justify-between w-full h-auto gap-6 relative'>
 			<div className='absolute -top-12 right-8'>
 				<ShareListButton
 					value={list.sharedUsers}
@@ -95,7 +95,7 @@ export default function UpdateGroceryListForm({
 						<ScrollArea
 							className={cn(
 								'w-full portrait:h-[40vh] border-b-2 py-2 pr-3',
-								addMinified && 'portrait:h-[70vh]'
+								addMinified && 'portrait:h-[60vh]'
 							)}>
 							<div className='flex flex-col gap-4 w-full'>
 								{groceryItems.length > 0 ? (

@@ -18,7 +18,6 @@ import {
 	FormControl,
 	FormField,
 	FormItem,
-	FormLabel,
 	FormMessage
 } from '../ui/form';
 import { useEffect, useState } from 'react';
@@ -91,17 +90,17 @@ export default function AddGroceryItem({
 								e.preventDefault();
 								setMinified(!minified);
 							}}
-							className='absolute -top-4 right-0 rounded-full w-8 h-8 p-2 z-30'>
+							className='absolute -top-4 -right-2 rounded-full w-8 h-8 p-2 z-30'>
 							<FaCartPlus className='w-4 h-4' />
 						</Button>
 					</CardHeader>
 					<CardContent
 						className={cn(
-							'p-3 relative overflow-hidden',
+							'p-3 py-2 relative overflow-hidden',
 							minified && 'h-0 opacity-0'
 						)}>
 						<div className='w-full flex flex-col items-center justify-between'>
-							<div className='flex flex-col gap-1 w-full'>
+							<div className='flex flex-col gap-4 w-full'>
 								<FormField
 									name='name'
 									control={form.control}
@@ -114,11 +113,12 @@ export default function AddGroceryItem({
 										>;
 									}) => (
 										<FormItem>
-											<FormLabel className='text-xs font-normal text-muted-foreground'>
-												Item Name
-											</FormLabel>
 											<FormControl>
-												<Input {...field} />
+												<Input
+													className='w-[80%]'
+													{...field}
+													placeholder='Item Name'
+												/>
 											</FormControl>
 											<FormMessage />
 										</FormItem>
@@ -137,11 +137,12 @@ export default function AddGroceryItem({
 										>;
 									}) => (
 										<FormItem>
-											<FormLabel className='text-xs font-normal text-muted-foreground'>
-												Description (optional)
-											</FormLabel>
 											<FormControl>
-												<Textarea {...field} />
+												<Textarea
+													placeholder='Description (optional)'
+													{...field}
+													className='h-6 resize-none'
+												/>
 											</FormControl>
 											<FormMessage />
 										</FormItem>
@@ -149,7 +150,7 @@ export default function AddGroceryItem({
 								/>
 							</div>
 
-							<div className='flex flex-row justify-between items-end w-full'>
+							<div className='flex flex-row justify-between items-end w-full pt-2'>
 								<FormField
 									name='qty'
 									control={form.control}
@@ -162,9 +163,6 @@ export default function AddGroceryItem({
 										>;
 									}) => (
 										<FormItem>
-											<FormLabel className='text-xs font-normal text-muted-foreground'>
-												Quantity
-											</FormLabel>
 											<FormControl>
 												<div className='flex flex-row items-center gap-1 w-auto justify-center'>
 													<Button
