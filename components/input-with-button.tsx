@@ -4,11 +4,9 @@ import { CircleX } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { cn } from '@/lib/utils';
-import { useContext, useEffect, useState } from 'react';
-import {
-	FoodContextSearchType,
-	FoodSearchContext
-} from '@/contexts/food-search-context';
+import { useEffect, useState } from 'react';
+import { useAppSelector } from '@/lib/hooks';
+import { selectFoodSearchStatus } from '@/lib/features/food/foodSearchSlice';
 
 export default function InputWithButton({
 	children,
@@ -20,17 +18,21 @@ export default function InputWithButton({
 	className?: string;
 }) {
 	const [search, setSearch] = useState('');
-	const foodContext = useContext(FoodSearchContext);
+	const [isReduxMsg, setIsReduxMsg] = useState(false);
+	const foodSearchStatus = useAppSelector(selectFoodSearchStatus);
 
 	useEffect(() => {
-		onChange(search);
+		if (!isReduxMsg) {
+			onChange(search);
+		}
 	}, [search]);
 
 	useEffect(() => {
-		if (foodContext && foodContext.searchType === 'category') {
+		if (foodSearchStatus !== 'input' && foodSearchStatus !== 'idle') {
+			setIsReduxMsg(true);
 			setSearch('');
 		}
-	}, [foodContext]);
+	}, [foodSearchStatus]);
 
 	return (
 		<div className={cn('relative', className)}>
@@ -40,14 +42,7 @@ export default function InputWithButton({
 					className='pr-10'
 					value={search}
 					onChange={(e) => {
-						if (foodContext && foodContext.updateSearchType) {
-							const update = {
-								...foodContext,
-								searchType: 'input' as FoodContextSearchType
-							};
-
-							foodContext.updateSearchType(update);
-						}
+						setIsReduxMsg(false);
 						setSearch(e.target.value);
 					}}
 				/>

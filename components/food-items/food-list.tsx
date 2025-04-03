@@ -9,18 +9,42 @@ import { ScrollArea } from '../ui/scroll-area';
 import FoodItemCard from './food-item-card';
 import { GetFoodItem } from '@/types';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { FoodSearchContext } from '@/contexts/food-search-context';
 import { UpdateFoodContext } from '@/contexts/food-update-context';
 import { getFoodItems } from '@/actions/food-actions';
 import { useDebounce } from 'use-debounce';
-import { SearchContext } from '@/contexts/search-context';
 import { FaSpinner } from 'react-icons/fa';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import {
+	inputSearch,
+	selectFoodSearchData,
+	selectFoodSearchStatus
+} from '@/lib/features/food/foodSearchSlice';
 
 export default function FoodList() {
+	const dispatch = useAppDispatch();
+	const foodSearchData = useAppSelector(selectFoodSearchData);
+	const foodSearchStatus = useAppSelector(selectFoodSearchStatus);
+
+	// redux handler
+	useEffect(() => {
+		switch (foodSearchStatus) {
+			case 'category':
+				getFoods('', foodSearchData.category);
+				break;
+			case 'user':
+				getFoods('', '', foodSearchData.user);
+				break;
+			case 'all':
+				getFoods();
+				break;
+			case 'input':
+				getFoods(foodSearchData.term ?? '');
+				break;
+		}
+	}, [foodSearchStatus, foodSearchData]);
+
 	const { data: session } = useSession();
 	const [foods, setFoods] = useState<GetFoodItem[]>([]);
-	const [category, setCategory] = useState('');
-	const foodContext = useContext(FoodSearchContext);
 	const foodUpdateContext = useContext(UpdateFoodContext);
 
 	const [isFetching, setIsFetching] = useState(true);
@@ -44,30 +68,12 @@ export default function FoodList() {
 	const [debounced] = useDebounce(search, 1000);
 
 	useEffect(() => {
-		if (foodContext) {
-			if (foodContext.searchType === 'input') {
-				getFoods(debounced);
-			}
-		}
+		dispatch(inputSearch(debounced));
 	}, [debounced]);
-
-	useEffect(() => {
-		getFoods('', category);
-	}, [category]);
 
 	useEffect(() => {
 		scrollToTop();
 	}, [foods]);
-
-	const searchContext = useContext(SearchContext);
-
-	useEffect(() => {
-		if (searchContext && searchContext.searchType.name) {
-			getFoods(searchContext.searchType.name);
-		} else if (searchContext && searchContext.searchType.userId) {
-			getFoods('', '', searchContext.searchType.userId);
-		}
-	}, [searchContext]);
 
 	useEffect(() => {
 		if (foodUpdateContext?.updated) {
@@ -123,9 +129,7 @@ export default function FoodList() {
 				<FoodCategoryPicker
 					showFilterIcon={true}
 					iconsOnly={true}
-					onSelect={(value) => {
-						setCategory(value);
-					}}
+					onSelect={() => {}}
 					compactMode={true}
 				/>
 			</div>

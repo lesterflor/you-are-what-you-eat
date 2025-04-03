@@ -1,6 +1,5 @@
 import { createAppSlice } from '@/lib/createAppSlice';
 import type { PayloadAction } from '@reduxjs/toolkit';
-//import { fetchCount } from "./counterAPI";
 
 export interface LogFoodSliceState {
 	value: {

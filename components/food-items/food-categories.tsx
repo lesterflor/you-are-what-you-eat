@@ -1,19 +1,21 @@
 'use client';
 
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 import FoodCategoryIconMapper from './food-category-icon-mapper';
 import { cn } from '@/lib/utils';
 import { FilterX } from 'lucide-react';
 import { Button } from '../ui/button';
-import {
-	FoodContextSearchType,
-	FoodSearchContext
-} from '@/contexts/food-search-context';
 import { useSession } from 'next-auth/react';
 import { GetUser } from '@/types';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { SearchContext } from '@/contexts/search-context';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import {
+	allSearch,
+	categorySearch,
+	selectFoodSearchStatus,
+	userSearch
+} from '@/lib/features/food/foodSearchSlice';
 
 export default function FoodCategoryPicker({
 	value = '',
@@ -31,39 +33,33 @@ export default function FoodCategoryPicker({
 	suppressUser?: boolean;
 }) {
 	const [selected, setSelected] = useState(value);
-	const foodContext = useContext(FoodSearchContext);
-	const searchContext = useContext(SearchContext);
 	const { data: session } = useSession();
 	const user = session?.user as GetUser;
+	const dispatch = useAppDispatch();
+	const foodSearchStatus = useAppSelector(selectFoodSearchStatus);
 
 	useEffect(() => {
 		onSelect(selected);
 
-		if (selected !== 'user' && foodContext && foodContext.updateSearchType) {
-			const update = {
-				...foodContext,
-				searchType:
-					selected !== '' ? ('category' as FoodContextSearchType) : null
-			};
-
-			foodContext.updateSearchType(update);
-		} else {
-			if (searchContext && searchContext.updateSearchType) {
-				const update = {
-					...searchContext,
-					searchType: { userId: user.id }
-				};
-
-				searchContext.updateSearchType(update);
+		if (selected) {
+			switch (selected) {
+				case 'user':
+					if (!suppressUser) {
+						dispatch(userSearch(user.id));
+					}
+					break;
+				default:
+					dispatch(categorySearch(selected));
+					break;
 			}
 		}
 	}, [selected]);
 
 	useEffect(() => {
-		if (foodContext && foodContext.searchType === 'input') {
+		if (foodSearchStatus !== 'category') {
 			setSelected('');
 		}
-	}, [foodContext]);
+	}, [foodSearchStatus]);
 
 	return (
 		<div
@@ -75,8 +71,11 @@ export default function FoodCategoryPicker({
 				<Button
 					size='icon'
 					variant='outline'
-					onClick={() => {
-						setSelected('');
+					onClick={(e) => {
+						e.preventDefault();
+						//setSelected('');
+
+						dispatch(allSearch());
 					}}>
 					<FilterX className='w-4 h-4' />
 				</Button>

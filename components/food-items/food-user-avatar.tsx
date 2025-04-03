@@ -12,7 +12,6 @@ import {
 	UtensilsCrossed,
 	X
 } from 'lucide-react';
-import { SearchContext } from '@/contexts/search-context';
 import { useSession } from 'next-auth/react';
 import {
 	Sheet,
@@ -36,6 +35,8 @@ import {
 import { toast } from 'sonner';
 import FoodCategoryIconMapper from './food-category-icon-mapper';
 import { FaSpinner } from 'react-icons/fa';
+import { useAppDispatch } from '@/lib/hooks';
+import { userSearch } from '@/lib/features/food/foodSearchSlice';
 
 export default function FoodUserAvatar({
 	user,
@@ -46,6 +47,8 @@ export default function FoodUserAvatar({
 	foodItemId: string;
 	selfSearch?: boolean;
 }) {
+	const dispatch = useAppDispatch();
+
 	const DISPLAY_LIMIT = 2;
 	const { name, image = '', id, FoodItems: items = [] } = user;
 
@@ -76,7 +79,6 @@ export default function FoodUserAvatar({
 		setFoods(limit);
 	}, []);
 
-	const searchContext = useContext(SearchContext);
 	const foodUpdateContext = useContext(UpdateFoodContext);
 
 	const { data: session } = useSession();
@@ -256,14 +258,7 @@ export default function FoodUserAvatar({
 									setPopOpen(false);
 
 									if (selfSearch) {
-										if (searchContext && searchContext.updateSearchType) {
-											const update = {
-												...searchContext,
-												searchType: { name: item.name }
-											};
-
-											searchContext.updateSearchType(update);
-										}
+										dispatch(userSearch(user.id));
 									}
 								}}
 								size='sm'
@@ -291,16 +286,7 @@ export default function FoodUserAvatar({
 								setPopOpen(false);
 
 								if (selfSearch) {
-									//onLinkClick?.({ userId: id });
-
-									if (searchContext && searchContext.updateSearchType) {
-										const update = {
-											...searchContext,
-											searchType: { userId: id }
-										};
-
-										searchContext.updateSearchType(update);
-									}
+									dispatch(userSearch(user.id));
 								}
 							}}>
 							{!selfSearch ? (
