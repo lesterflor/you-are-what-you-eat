@@ -2,6 +2,7 @@ import AddFoodSheet from '@/components/food-items/add-food-sheet';
 import FoodListSheet from '@/components/food-items/food-list-sheet';
 import LandingContent from '@/components/landing-content';
 import FoodLogList from '@/components/logs/log-list';
+import ReduxStoreLogger from '@/components/redux-store-logger';
 import { Separator } from '@/components/ui/separator';
 import { auth } from '@/db/auth';
 
@@ -25,6 +26,7 @@ export default async function Home() {
 						</div>
 					</div>
 					<Separator />
+					<ReduxStoreLogger enable={false} />
 					<div className='relative'>
 						<FoodLogList
 							useFloaterNav={true}

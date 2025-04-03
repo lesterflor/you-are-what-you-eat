@@ -7,15 +7,16 @@ import {
 	totalMacrosReducer
 } from '@/lib/utils';
 import { GetFoodEntry, GetLog, LogComparisonType, PieItemType } from '@/types';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Badge } from '../ui/badge';
 import { createDailyLog } from '@/actions/log-actions';
-import { LogUpdateContext } from '@/contexts/log-context';
 import LogMacrosSkeleton from '../skeletons/log-macros-skeleton';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '../ui/chart';
 import { Label, Pie, PieChart } from 'recharts';
 import { pieChartConfig } from '@/config';
 import ComparisonPopover from './comparison-popover';
+import { useAppSelector } from '@/lib/hooks';
+import { selectStatus } from '@/lib/features/log/logFoodSlice';
 
 export default function LogMacrosSummary({
 	log,
@@ -44,7 +45,7 @@ export default function LogMacrosSummary({
 	const [pieData, setPieData] = useState<PieItemType[]>([]);
 	const [comparisonData, setComparisonData] = useState<LogComparisonType>(null);
 
-	const logContext = useContext(LogUpdateContext);
+	const logStatus = useAppSelector(selectStatus);
 
 	useEffect(() => {
 		if (log) {
@@ -88,10 +89,8 @@ export default function LogMacrosSummary({
 	};
 
 	useEffect(() => {
-		if (logContext?.updated && getTodayMode) {
-			getLog();
-		}
-	}, [logContext]);
+		getLog();
+	}, [logStatus]);
 
 	return (
 		<div className='flex portrait:flex-col flex-row gap-2'>

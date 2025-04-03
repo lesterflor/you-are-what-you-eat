@@ -13,15 +13,16 @@ import { Badge } from '../ui/badge';
 import { useSession } from 'next-auth/react';
 import { Button } from '../ui/button';
 import NumberIncrementor from '../number-incrementor';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createDailyLog, updateLog } from '@/actions/log-actions';
 import { toast } from 'sonner';
 import { FilePlus } from 'lucide-react';
-import { LogUpdateContext } from '@/contexts/log-context';
 import { cn, formatUnit, getMacroPercOfCals } from '@/lib/utils';
 import { FaSpinner } from 'react-icons/fa';
 import FoodUserAvatar from './food-user-avatar';
 import { GiSpoon } from 'react-icons/gi';
+import { useAppDispatch } from '@/lib/hooks';
+import { added } from '@/lib/features/log/logFoodSlice';
 
 export default function FoodItemCard({
 	item,
@@ -32,8 +33,9 @@ export default function FoodItemCard({
 	selfSearch?: boolean;
 	indx?: number;
 }) {
+	const dispatch = useAppDispatch();
+
 	const { data: session } = useSession();
-	const logContext = useContext(LogUpdateContext);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [showDetails, setShowDetails] = useState(false);
 	const [textSize, setTextSize] = useState('text-xl');
@@ -73,13 +75,13 @@ export default function FoodItemCard({
 		if (res.success) {
 			toast.success('Added to your daily log!');
 
-			if (logContext && logContext.isUpdated) {
-				const update = {
-					...logContext,
-					updated: true
-				};
-				logContext.isUpdated(update);
-			}
+			// redux
+			dispatch(
+				added({
+					name: logFoodItem.name,
+					servings: logFoodItem.numServings
+				})
+			);
 
 			setShowDetails(false);
 		} else {

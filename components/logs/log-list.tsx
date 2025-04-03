@@ -1,13 +1,12 @@
 'use client';
 
 import { BaseMetabolicRateType, GetFoodEntry, GetLog } from '@/types';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import LogFoodCard from './log-food-card';
 import { ScrollArea } from '../ui/scroll-area';
 import { cn, formatUnit } from '@/lib/utils';
 import { IoFastFoodOutline } from 'react-icons/io5';
 import { createDailyLog } from '@/actions/log-actions';
-import { LogUpdateContext } from '@/contexts/log-context';
 import {
 	ArrowDown,
 	ArrowUp,
@@ -28,6 +27,8 @@ import { Card, CardContent } from '../ui/card';
 import { FaSpinner } from 'react-icons/fa';
 import FoodListSheet from '../food-items/food-list-sheet';
 import { TbDatabaseSearch } from 'react-icons/tb';
+import { useAppSelector } from '@/lib/hooks';
+import { selectStatus } from '@/lib/features/log/logFoodSlice';
 
 export default function FoodLogList({
 	forceColumn = true,
@@ -50,11 +51,7 @@ export default function FoodLogList({
 	const [remainingCals, setRemainingCals] = useState(0);
 	const { scrollingUp, delta } = useScrolling();
 
-	const logContext = useContext(LogUpdateContext);
-
-	useEffect(() => {
-		getLog();
-	}, []);
+	const logStatus = useAppSelector(selectStatus);
 
 	const getLog = async () => {
 		const res = await createDailyLog();
@@ -103,10 +100,8 @@ export default function FoodLogList({
 	}, [totalCals, bmr]);
 
 	useEffect(() => {
-		if (logContext?.updated) {
-			getLog();
-		}
-	}, [logContext]);
+		getLog();
+	}, [logStatus]);
 
 	return (
 		<>

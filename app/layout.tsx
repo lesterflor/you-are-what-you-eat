@@ -6,12 +6,12 @@ import { auth } from '@/db/auth';
 import { Suspense } from 'react';
 import SiteHeader from '@/components/header/header';
 import { ThemeProvider } from '@/components/theme-provider';
-import LogContextProvider from '@/providers/log-context-provider';
 import FoodSearchProvider from '@/providers/food-search-provider';
 import SearchFoodProvider from '@/providers/search-food-provider';
 import FoodUpdateProvider from '@/providers/food-update-provider';
 import NoteContextProvider from '@/providers/note-update-provider';
 import GroceryListUpdateContextProvider from '@/providers/grocery-list-update-provider';
+import { StoreProvider } from '@/components/StoreProvider';
 
 export const metadata: Metadata = {
 	title: {
@@ -48,7 +48,7 @@ export default async function RootLayout({
 					enableSystem
 					disableTransitionOnChange>
 					<SessionProvider session={session}>
-						<LogContextProvider>
+						<StoreProvider>
 							<FoodSearchProvider>
 								<SearchFoodProvider>
 									<FoodUpdateProvider>
@@ -66,7 +66,7 @@ export default async function RootLayout({
 									</FoodUpdateProvider>
 								</SearchFoodProvider>
 							</FoodSearchProvider>
-						</LogContextProvider>
+						</StoreProvider>
 					</SessionProvider>
 
 					<Toaster

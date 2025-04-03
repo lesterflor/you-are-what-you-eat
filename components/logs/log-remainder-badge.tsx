@@ -4,15 +4,17 @@ import { ArrowDown, ArrowUp, Info } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { formatUnit } from '@/lib/utils';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LogRemainderDataType } from '@/types';
-import { LogUpdateContext } from '@/contexts/log-context';
 import { getLogRemainder } from '@/actions/log-actions';
 import { FaSpinner } from 'react-icons/fa';
+import { useAppSelector } from '@/lib/hooks';
+import { selectStatus } from '@/lib/features/log/logFoodSlice';
 
 export default function LogRemainderBadge() {
 	const [logRemainder, setLogRemainder] = useState<LogRemainderDataType>();
-	const logContext = useContext(LogUpdateContext);
+	const logStatus = useAppSelector(selectStatus);
+
 	const [isFetching, setIsFetching] = useState(true);
 
 	const getLogCalsRemaining = async () => {
@@ -26,10 +28,8 @@ export default function LogRemainderBadge() {
 	};
 
 	useEffect(() => {
-		if (logContext?.updated) {
-			getLogCalsRemaining();
-		}
-	}, [logContext]);
+		getLogCalsRemaining();
+	}, [logStatus]);
 
 	useEffect(() => {
 		getLogCalsRemaining();

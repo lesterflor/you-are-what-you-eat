@@ -20,14 +20,15 @@ import {
 	DialogTitle,
 	DialogTrigger
 } from '../ui/dialog';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import NumberIncrementor from '../number-incrementor';
 import { deleteFoodLogEntry, updateFoodLogEntry } from '@/actions/log-actions';
 import { FaSpinner } from 'react-icons/fa';
 import { toast } from 'sonner';
-import { LogUpdateContext } from '@/contexts/log-context';
 import { RxUpdate } from 'react-icons/rx';
 import FoodCategoryIconMapper from '../food-items/food-category-icon-mapper';
+import { useAppDispatch } from '@/lib/hooks';
+import { deleted, updated } from '@/lib/features/log/logFoodSlice';
 
 export default function LogFoodCard({
 	item,
@@ -38,25 +39,13 @@ export default function LogFoodCard({
 	indx: number;
 	allowEdit?: boolean;
 }) {
+	const dispatch = useAppDispatch();
+
 	const [isEditing, setIsEditing] = useState(false);
 	const [servingSize, setServingSize] = useState(item.numServings);
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [isUpdating, setIsUpdating] = useState(false);
-	const logContext = useContext(LogUpdateContext);
 	const [dialogOpen, setDialogOpen] = useState(false);
-
-	useEffect(() => {}, [servingSize]);
-
-	const updateLogContext = () => {
-		if (logContext && logContext.isUpdated) {
-			const update = {
-				...logContext,
-				updated: true
-			};
-
-			logContext.isUpdated(update);
-		}
-	};
 
 	const [fadeClass, setFadeClass] = useState(false);
 	useEffect(() => {
@@ -174,9 +163,15 @@ export default function LogFoodCard({
 											const { numServings } = res.data;
 
 											setServingSize(numServings);
-										}
 
-										updateLogContext();
+											// redux
+											dispatch(
+												updated({
+													name: item.name,
+													servings: numServings
+												})
+											);
+										}
 									} else {
 										toast.error(res.message);
 									}
@@ -228,7 +223,13 @@ export default function LogFoodCard({
 										if (res.success) {
 											toast.success(res.message);
 
-											updateLogContext();
+											// redux
+											dispatch(
+												deleted({
+													name: item.name,
+													servings: item.numServings
+												})
+											);
 										} else {
 											toast.error(res.message);
 										}

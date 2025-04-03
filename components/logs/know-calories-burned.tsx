@@ -1,17 +1,20 @@
 'use client';
 import { addKnownCaloriesBurned, createDailyLog } from '@/actions/log-actions';
 import { Input } from '../ui/input';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { GetLog } from '@/types';
 import { Button } from '../ui/button';
 import { Plus } from 'lucide-react';
 import { FaSpinner } from 'react-icons/fa';
 import { toast } from 'sonner';
-import { LogUpdateContext } from '@/contexts/log-context';
 import { Skeleton } from '../ui/skeleton';
 import { useCurrentSession } from '@/hooks/use-current-session';
+import { useAppDispatch } from '@/lib/hooks';
+import { expendedCaloriesUpdated } from '@/lib/features/log/logFoodSlice';
 
 export default function KnowCaloriesBurned() {
+	const dispatch = useAppDispatch();
+
 	const [log, setLog] = useState<GetLog>();
 	const [caloriesBurned, setCaloriesBurned] = useState(0);
 	const [submitting, setSubmitting] = useState(false);
@@ -20,7 +23,6 @@ export default function KnowCaloriesBurned() {
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	const { status } = useCurrentSession();
-	const logContext = useContext(LogUpdateContext);
 
 	const getLog = async () => {
 		const res = await createDailyLog();
@@ -74,14 +76,8 @@ export default function KnowCaloriesBurned() {
 							toast.success(res.message);
 							getLog();
 
-							// upate context so other components know something changed in the log
-							if (logContext && logContext.isUpdated) {
-								const update = {
-									...logContext,
-									updated: true
-								};
-								logContext.isUpdated(update);
-							}
+							// redux
+							dispatch(expendedCaloriesUpdated(inputVal));
 
 							if (inputRef.current) {
 								inputRef.current.value = '';
