@@ -22,21 +22,22 @@ import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { LoaderIcon, Plus } from 'lucide-react';
 import { Card, CardContent } from '../ui/card';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { GetUser } from '@/types';
-import { UpdateFoodContext } from '@/contexts/food-update-context';
+import { useAppDispatch } from '@/lib/hooks';
+import { updateFood } from '@/lib/features/food/foodUpdateSlice';
 
 export default function AddFoodItemForm({
 	onSuccess
 }: {
 	onSuccess?: () => void;
 }) {
+	const dispatch = useAppDispatch();
+
 	const { data: session } = useSession();
 	const user = session?.user as GetUser;
-
-	const foodUpdateContext = useContext(UpdateFoodContext);
 
 	const form = useForm<z.infer<typeof foodItemSchema>>({
 		resolver: zodResolver(foodItemSchema),
@@ -74,19 +75,19 @@ export default function AddFoodItemForm({
 		const res = await addFoodItem(values);
 
 		if (res.success) {
+			//redux
+			dispatch(
+				updateFood({
+					name: form.getValues('name'),
+					servings: Number(form.getValues('servingSize'))
+				})
+			);
+
 			toast.success(res.message);
 			form.reset();
 			setHasSubmitted(true);
 			onSuccess?.();
 			router.push('/foods');
-
-			if (foodUpdateContext && foodUpdateContext.isUpdated) {
-				const update = {
-					...foodUpdateContext,
-					updated: true
-				};
-				foodUpdateContext.isUpdated(update);
-			}
 		} else {
 			toast.error(res.message);
 		}
@@ -156,6 +157,7 @@ export default function AddFoodItemForm({
 										</FormLabel>
 										<FormControl>
 											<FoodCategoryPicker
+												disableReduxDispatch={true}
 												suppressUser={true}
 												value={hasSubmitted ? '' : form.getValues('category')}
 												onSelect={(val) => {

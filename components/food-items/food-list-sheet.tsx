@@ -9,7 +9,7 @@ import {
 	SheetTitle,
 	SheetTrigger
 } from '../ui/sheet';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { GetFoodItem } from '@/types';
 import { getFoodItems } from '@/actions/food-actions';
 import FoodItemCard from './food-item-card';
@@ -18,7 +18,6 @@ import { useDebounce } from 'use-debounce';
 import InputWithButton from '../input-with-button';
 import FoodCategoryPicker from './food-categories';
 import { cn } from '@/lib/utils';
-import { UpdateFoodContext } from '@/contexts/food-update-context';
 import { FaSpinner } from 'react-icons/fa';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import {
@@ -26,6 +25,10 @@ import {
 	selectFoodSearchData,
 	selectFoodSearchStatus
 } from '@/lib/features/food/foodSearchSlice';
+import {
+	selectFoodUpdateData,
+	selectFoodUpdateStatus
+} from '@/lib/features/food/foodUpdateSlice';
 
 export default function FoodListSheet({
 	forceColumn = true,
@@ -34,9 +37,11 @@ export default function FoodListSheet({
 	forceColumn?: boolean;
 	children?: React.ReactNode;
 }) {
-	const dispatch = useAppDispatch();
 	const [foods, setFoods] = useState<GetFoodItem[]>([]);
-	const foodUpdateContext = useContext(UpdateFoodContext);
+
+	const dispatch = useAppDispatch();
+	const foodUpdateData = useAppSelector(selectFoodUpdateData);
+	const foodUpdateStatus = useAppSelector(selectFoodUpdateStatus);
 
 	const foodSearchData = useAppSelector(selectFoodSearchData);
 	const foodSearchStatus = useAppSelector(selectFoodSearchStatus);
@@ -88,10 +93,10 @@ export default function FoodListSheet({
 	}, [foods]);
 
 	useEffect(() => {
-		if (foodUpdateContext?.updated) {
+		if (foodUpdateStatus !== 'idle') {
 			getFoods();
 		}
-	}, [foodUpdateContext]);
+	}, [foodUpdateData, foodUpdateStatus]);
 
 	const scrollAreaRef = useRef<HTMLDivElement>(null);
 	const scrollAreaRefD = useRef<HTMLDivElement>(null);

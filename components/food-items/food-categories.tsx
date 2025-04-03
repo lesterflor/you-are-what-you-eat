@@ -23,7 +23,8 @@ export default function FoodCategoryPicker({
 	compactMode = false,
 	showFilterIcon = false,
 	iconsOnly = false,
-	suppressUser = false
+	suppressUser = false,
+	disableReduxDispatch = false
 }: {
 	onSelect: (data: string) => void;
 	value?: string;
@@ -31,6 +32,7 @@ export default function FoodCategoryPicker({
 	showFilterIcon?: boolean;
 	iconsOnly?: boolean;
 	suppressUser?: boolean;
+	disableReduxDispatch?: boolean;
 }) {
 	const [selected, setSelected] = useState(value);
 	const { data: session } = useSession();
@@ -41,23 +43,27 @@ export default function FoodCategoryPicker({
 	useEffect(() => {
 		onSelect(selected);
 
-		if (selected) {
-			switch (selected) {
-				case 'user':
-					if (!suppressUser) {
-						dispatch(userSearch(user.id));
-					}
-					break;
-				default:
-					dispatch(categorySearch(selected));
-					break;
+		if (!disableReduxDispatch) {
+			if (selected) {
+				switch (selected) {
+					case 'user':
+						if (!suppressUser) {
+							dispatch(userSearch(user.id));
+						}
+						break;
+					default:
+						dispatch(categorySearch(selected));
+						break;
+				}
 			}
 		}
 	}, [selected]);
 
 	useEffect(() => {
-		if (foodSearchStatus !== 'category') {
-			setSelected('');
+		if (!disableReduxDispatch) {
+			if (foodSearchStatus !== 'category') {
+				setSelected('');
+			}
 		}
 	}, [foodSearchStatus]);
 

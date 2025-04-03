@@ -2,10 +2,15 @@ import type { Action, ThunkAction } from '@reduxjs/toolkit';
 import { combineSlices, configureStore } from '@reduxjs/toolkit';
 import { logFoodSlice } from './features/log/logFoodSlice';
 import { foodSearchSlice } from './features/food/foodSearchSlice';
+import { foodUpdateSlice } from './features/food/foodUpdateSlice';
 
 // `combineSlices` automatically combines the reducers using
 // their `reducerPath`s, therefore we no longer need to call `combineReducers`.
-const rootReducer = combineSlices(logFoodSlice, foodSearchSlice);
+const rootReducer = combineSlices(
+	logFoodSlice,
+	foodSearchSlice,
+	foodUpdateSlice
+);
 // Infer the `RootState` type from the root reducer
 export type RootState = ReturnType<typeof rootReducer>;
 

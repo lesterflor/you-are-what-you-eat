@@ -126,7 +126,8 @@ export default function UpdateFoodItemForm({
 										</FormLabel>
 										<FormControl>
 											<FoodCategoryPicker
-												value={form.getValues('category')}
+												disableReduxDispatch={true}
+												value={item.category}
 												onSelect={(val) => {
 													form.setValue('category', val);
 												}}

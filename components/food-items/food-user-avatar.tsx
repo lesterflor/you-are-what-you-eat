@@ -3,7 +3,7 @@
 import { GetFoodItem, GetUser } from '@/types';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import Link from 'next/link';
 import {
@@ -24,7 +24,6 @@ import UpdateFoodItemForm from './update-food-item-form';
 import { ScrollArea } from '../ui/scroll-area';
 import { Badge } from '../ui/badge';
 import { deleteFoodItem, getFoodItemById } from '@/actions/food-actions';
-import { UpdateFoodContext } from '@/contexts/food-update-context';
 import { useInView } from 'react-intersection-observer';
 import {
 	Dialog,
@@ -35,8 +34,13 @@ import {
 import { toast } from 'sonner';
 import FoodCategoryIconMapper from './food-category-icon-mapper';
 import { FaSpinner } from 'react-icons/fa';
-import { useAppDispatch } from '@/lib/hooks';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { userSearch } from '@/lib/features/food/foodSearchSlice';
+import {
+	selectFoodUpdateData,
+	selectFoodUpdateStatus,
+	updateFood
+} from '@/lib/features/food/foodUpdateSlice';
 
 export default function FoodUserAvatar({
 	user,
@@ -48,6 +52,9 @@ export default function FoodUserAvatar({
 	selfSearch?: boolean;
 }) {
 	const dispatch = useAppDispatch();
+
+	const foodUpdateData = useAppSelector(selectFoodUpdateData);
+	const foodUpdateStatus = useAppSelector(selectFoodUpdateStatus);
 
 	const DISPLAY_LIMIT = 2;
 	const { name, image = '', id, FoodItems: items = [] } = user;
@@ -79,16 +86,14 @@ export default function FoodUserAvatar({
 		setFoods(limit);
 	}, []);
 
-	const foodUpdateContext = useContext(UpdateFoodContext);
-
 	const { data: session } = useSession();
 	const sessionUser = session?.user as GetUser;
 
 	useEffect(() => {
-		if (foodUpdateContext?.updated) {
+		if (foodUpdateStatus !== 'idle') {
 			getCurrentFood();
 		}
-	}, [foodUpdateContext]);
+	}, [foodUpdateStatus, foodUpdateData]);
 
 	useEffect(() => {
 		if (!editFormOpen) {
@@ -110,12 +115,14 @@ export default function FoodUserAvatar({
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
 	const dispatchFoodContext = () => {
-		if (foodUpdateContext && foodUpdateContext.isUpdated) {
-			const update = {
-				...foodUpdateContext,
-				updated: true
-			};
-			foodUpdateContext.isUpdated(update);
+		if (editFoodItem) {
+			//redux
+			dispatch(
+				updateFood({
+					name: editFoodItem.name,
+					servings: editFoodItem.servingSize
+				})
+			);
 		}
 	};
 

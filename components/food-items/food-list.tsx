@@ -8,8 +8,7 @@ import FoodCategoryPicker from './food-categories';
 import { ScrollArea } from '../ui/scroll-area';
 import FoodItemCard from './food-item-card';
 import { GetFoodItem } from '@/types';
-import { useContext, useEffect, useRef, useState } from 'react';
-import { UpdateFoodContext } from '@/contexts/food-update-context';
+import { useEffect, useRef, useState } from 'react';
 import { getFoodItems } from '@/actions/food-actions';
 import { useDebounce } from 'use-debounce';
 import { FaSpinner } from 'react-icons/fa';
@@ -19,11 +18,18 @@ import {
 	selectFoodSearchData,
 	selectFoodSearchStatus
 } from '@/lib/features/food/foodSearchSlice';
+import {
+	selectFoodUpdateData,
+	selectFoodUpdateStatus
+} from '@/lib/features/food/foodUpdateSlice';
 
 export default function FoodList() {
 	const dispatch = useAppDispatch();
 	const foodSearchData = useAppSelector(selectFoodSearchData);
 	const foodSearchStatus = useAppSelector(selectFoodSearchStatus);
+
+	const foodUpdateData = useAppSelector(selectFoodUpdateData);
+	const foodUpdateStatus = useAppSelector(selectFoodUpdateStatus);
 
 	// redux handler
 	useEffect(() => {
@@ -45,7 +51,6 @@ export default function FoodList() {
 
 	const { data: session } = useSession();
 	const [foods, setFoods] = useState<GetFoodItem[]>([]);
-	const foodUpdateContext = useContext(UpdateFoodContext);
 
 	const [isFetching, setIsFetching] = useState(true);
 
@@ -76,10 +81,10 @@ export default function FoodList() {
 	}, [foods]);
 
 	useEffect(() => {
-		if (foodUpdateContext?.updated) {
+		if (foodUpdateStatus !== 'idle') {
 			getFoods();
 		}
-	}, [foodUpdateContext]);
+	}, [foodUpdateData, foodUpdateStatus]);
 
 	const scrollAreaRef = useRef<HTMLDivElement>(null);
 	const scrollAreaRefD = useRef<HTMLDivElement>(null);
