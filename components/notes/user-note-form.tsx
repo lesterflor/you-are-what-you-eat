@@ -21,17 +21,17 @@ import { Plus } from 'lucide-react';
 import { FaSpinner } from 'react-icons/fa';
 import { createNote } from '@/actions/user-note-actions';
 import { toast } from 'sonner';
-import { useContext } from 'react';
-import { NoteContext } from '@/contexts/note-context';
+import { useAppDispatch } from '@/lib/hooks';
+import { updateNote } from '@/lib/features/notes/noteUpdateSlice';
 
 export default function UserNoteForm({
 	onSuccess
 }: {
 	onSuccess?: () => void;
 }) {
+	const dispatch = useAppDispatch();
 	const { data: session } = useSession();
 	const user = session?.user as GetUser;
-	const noteContext = useContext(NoteContext);
 
 	const form = useForm<z.infer<typeof userNoteSchema>>({
 		resolver: zodResolver(userNoteSchema),
@@ -51,13 +51,7 @@ export default function UserNoteForm({
 			form.reset();
 			toast.success(res.message);
 
-			if (noteContext && noteContext.isUpdated) {
-				const update = {
-					...noteContext,
-					updated: true
-				};
-				noteContext.isUpdated(update);
-			}
+			dispatch(updateNote(`${new Date().getTime()}`));
 
 			onSuccess?.();
 		} else {

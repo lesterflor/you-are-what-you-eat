@@ -19,9 +19,9 @@ import { Button } from '../ui/button';
 import { FilePenLine } from 'lucide-react';
 import { FaSpinner } from 'react-icons/fa';
 import { updateNote } from '@/actions/user-note-actions';
+import { updateNote as updateReduxNote } from '@/lib/features/notes/noteUpdateSlice';
 import { toast } from 'sonner';
-import { useContext } from 'react';
-import { NoteContext } from '@/contexts/note-context';
+import { useAppDispatch } from '@/lib/hooks';
 
 export default function UpdateUserNoteForm({
 	note,
@@ -32,7 +32,7 @@ export default function UpdateUserNoteForm({
 	children?: React.ReactNode;
 	onSuccess?: () => void;
 }) {
-	const noteContext = useContext(NoteContext);
+	const dispatch = useAppDispatch();
 
 	const form = useForm<z.infer<typeof getUserNoteSchema>>({
 		resolver: zodResolver(getUserNoteSchema),
@@ -48,13 +48,7 @@ export default function UpdateUserNoteForm({
 			toast.success(res.message);
 			onSuccess?.();
 
-			if (noteContext?.isUpdated) {
-				const update = {
-					...noteContext,
-					updated: true
-				};
-				noteContext.isUpdated(update);
-			}
+			dispatch(updateReduxNote(`${new Date().getTime()}`));
 		} else {
 			toast.error(res.message);
 		}

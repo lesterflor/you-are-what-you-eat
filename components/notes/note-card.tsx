@@ -2,7 +2,7 @@
 
 import { GetUserNote } from '@/types';
 import { format } from 'date-fns';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import { Calendar, NotebookPenIcon, RefreshCwOff, X } from 'lucide-react';
 import {
@@ -14,9 +14,10 @@ import {
 } from '../ui/dialog';
 import { deleteNote } from '@/actions/user-note-actions';
 import { toast } from 'sonner';
-import { NoteContext } from '@/contexts/note-context';
 import { FaSpinner } from 'react-icons/fa';
 import UpdateUserNoteForm from './update-user-note-form';
+import { useAppDispatch } from '@/lib/hooks';
+import { updateNote } from '@/lib/features/notes/noteUpdateSlice';
 
 export default function NoteCard({
 	note,
@@ -25,7 +26,8 @@ export default function NoteCard({
 	note: GetUserNote;
 	indx: number;
 }) {
-	const noteContext = useContext(NoteContext);
+	const dispatch = useAppDispatch();
+
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
@@ -47,14 +49,16 @@ export default function NoteCard({
 		if (res.success) {
 			toast.success(res.message);
 
-			if (noteContext?.isUpdated) {
-				const update = {
-					...noteContext,
-					updated: true
-				};
+			dispatch(updateNote(note.id));
 
-				noteContext.isUpdated(update);
-			}
+			// if (noteContext?.isUpdated) {
+			// 	const update = {
+			// 		...noteContext,
+			// 		updated: true
+			// 	};
+
+			// 	noteContext.isUpdated(update);
+			// }
 
 			setDialogOpen(false);
 		} else {

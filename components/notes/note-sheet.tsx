@@ -14,18 +14,24 @@ import UserNoteForm from './user-note-form';
 import { ScrollArea } from '../ui/scroll-area';
 import { useSession } from 'next-auth/react';
 import { GetUser, GetUserNote } from '@/types';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getUserNotes } from '@/actions/user-note-actions';
-import { NoteContext } from '@/contexts/note-context';
 
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import NoteCard from './note-card';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { useAppSelector } from '@/lib/hooks';
+import {
+	selectNoteUpdateData,
+	selectNoteUpdateStatus
+} from '@/lib/features/notes/noteUpdateSlice';
 
 export default function NoteSheet() {
 	const { data: session } = useSession();
 	const user = session?.user as GetUser;
-	const noteContext = useContext(NoteContext);
+
+	const updateNodeData = useAppSelector(selectNoteUpdateData);
+	const updateNodeStatus = useAppSelector(selectNoteUpdateStatus);
 
 	const [notes, setNotes] = useState<GetUserNote[]>(user.userNotes);
 	const [popOpen, setPopOpen] = useState(false);
@@ -39,10 +45,10 @@ export default function NoteSheet() {
 	};
 
 	useEffect(() => {
-		if (noteContext?.updated) {
+		if (updateNodeStatus !== 'idle') {
 			getNotes();
 		}
-	}, [noteContext]);
+	}, [updateNodeData, updateNodeStatus]);
 
 	useEffect(() => {
 		getNotes();
