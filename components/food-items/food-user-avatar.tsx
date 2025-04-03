@@ -9,11 +9,11 @@ import Link from 'next/link';
 import {
 	FilePenLine,
 	SquareArrowOutUpRight,
-	UtensilsCrossed
+	UtensilsCrossed,
+	X
 } from 'lucide-react';
 import { SearchContext } from '@/contexts/search-context';
 import { useSession } from 'next-auth/react';
-import { truncate } from '@/lib/utils';
 import {
 	Sheet,
 	SheetContent,
@@ -24,9 +24,18 @@ import {
 import UpdateFoodItemForm from './update-food-item-form';
 import { ScrollArea } from '../ui/scroll-area';
 import { Badge } from '../ui/badge';
-import { getFoodItemById } from '@/actions/food-actions';
+import { deleteFoodItem, getFoodItemById } from '@/actions/food-actions';
 import { UpdateFoodContext } from '@/contexts/food-update-context';
 import { useInView } from 'react-intersection-observer';
+import {
+	Dialog,
+	DialogContent,
+	DialogTitle,
+	DialogTrigger
+} from '../ui/dialog';
+import { toast } from 'sonner';
+import FoodCategoryIconMapper from './food-category-icon-mapper';
+import { FaSpinner } from 'react-icons/fa';
 
 export default function FoodUserAvatar({
 	user,
@@ -95,6 +104,37 @@ export default function FoodUserAvatar({
 		}
 	}, [isIntersecting]);
 
+	const [isDeleting, setIsDeleting] = useState(false);
+	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+	const dispatchFoodContext = () => {
+		if (foodUpdateContext && foodUpdateContext.isUpdated) {
+			const update = {
+				...foodUpdateContext,
+				updated: true
+			};
+			foodUpdateContext.isUpdated(update);
+		}
+	};
+
+	const deleteUserFood = async () => {
+		if (!editFoodItem) {
+			return;
+		}
+		setIsDeleting(true);
+		const res = await deleteFoodItem(editFoodItem.id);
+
+		if (res.success) {
+			toast.success(res.message);
+			dispatchFoodContext();
+			setDeleteDialogOpen(false);
+		} else {
+			toast.error(res.message);
+		}
+
+		setIsDeleting(false);
+	};
+
 	return (
 		<Popover
 			open={popOpen}
@@ -111,69 +151,104 @@ export default function FoodUserAvatar({
 				ref={ref}
 				className='flex flex-col gap-4 max-h-[50vh] h-auto items-center'>
 				{sessionUser.id === id && currentFood && currentFood.length === 1 && (
-					<div>
-						<Sheet
-							open={editFormOpen}
-							onOpenChange={setEditFormOpen}>
-							<SheetTrigger
-								asChild
-								className='mb-5'>
-								<Button
-									size='sm'
-									onClick={() => {
-										getCurrentFood();
-									}}>
-									<FilePenLine className='w-4 h-4' />
-									Edit{' '}
-									<span className='font-semibold'>
-										{truncate(currentFood[0].name, 20)}
-									</span>
-								</Button>
-							</SheetTrigger>
+					<div className='flex flex-col gap-1 items-center w-full'>
+						{editFoodItem && (
+							<div className='flex flex-row items-center gap-2 pb-2'>
+								<FoodCategoryIconMapper type={editFoodItem.category} />
+								<div className='capitalize'>{editFoodItem?.name}</div>
+							</div>
+						)}
 
-							<SheetContent className='max-w-[95vw] portrait:w-[95vw]'>
-								<SheetTitle className='flex flex-row items-center justify-start flex-wrap gap-2 pb-4'>
-									<div className='flex flex-row items-center gap-2 justify-start'>
-										<FilePenLine className='w-4 h-4' /> Edit
-									</div>
-									<Badge
-										variant='secondary'
-										className='text-sm p-2 select-none'>
-										{currentFood[0].name}
-									</Badge>
-								</SheetTitle>
-								<SheetDescription></SheetDescription>
-								<ScrollArea className='h-[80vh] portrait:h-[70vh] w-full pr-3'>
-									{editFoodItem && (
-										<UpdateFoodItemForm
-											item={editFoodItem as GetFoodItem}
-											onSuccess={() => {
-												setEditFormOpen(false);
+						<div className='flex flex-row justify-between w-full'>
+							<Sheet
+								open={editFormOpen}
+								onOpenChange={setEditFormOpen}>
+								<SheetTrigger asChild>
+									<Button
+										size='sm'
+										onClick={() => {
+											getCurrentFood();
+										}}>
+										<FilePenLine className='w-4 h-4' />
+										Edit
+									</Button>
+								</SheetTrigger>
 
-												if (foodUpdateContext && foodUpdateContext.isUpdated) {
-													const update = {
-														...foodUpdateContext,
-														updated: true
-													};
-													foodUpdateContext.isUpdated(update);
-												}
-											}}
-										/>
-									)}
+								<SheetContent className='max-w-[95vw] portrait:w-[95vw]'>
+									<SheetTitle className='flex flex-row items-center justify-start flex-wrap gap-2 pb-4'>
+										<div className='flex flex-row items-center gap-2 justify-start'>
+											<FilePenLine className='w-4 h-4' /> Edit
+										</div>
+										<Badge
+											variant='secondary'
+											className='text-sm p-2 select-none font-normal'>
+											{editFoodItem?.name}
+										</Badge>
+									</SheetTitle>
+									<SheetDescription></SheetDescription>
+									<ScrollArea className='h-[80vh] portrait:h-[70vh] w-full pr-3'>
+										{editFoodItem && (
+											<UpdateFoodItemForm
+												item={editFoodItem as GetFoodItem}
+												onSuccess={() => {
+													setEditFormOpen(false);
+													dispatchFoodContext();
+												}}
+											/>
+										)}
 
-									<br />
-								</ScrollArea>
-							</SheetContent>
-						</Sheet>
+										<br />
+									</ScrollArea>
+								</SheetContent>
+							</Sheet>
+
+							<div>
+								<Dialog
+									open={deleteDialogOpen}
+									onOpenChange={setDeleteDialogOpen}>
+									<DialogTrigger asChild>
+										<Button size='sm'>
+											<X />
+											Delete
+										</Button>
+									</DialogTrigger>
+									<DialogContent className='flex flex-col gap-4 items-center text-sm font-normal portrait:w-[95vw] rounded-md'>
+										<DialogTitle>Confirm Delete</DialogTitle>
+										<div className='text-muted-foreground'>
+											Are you sure you want to delete{' '}
+											<span className='text-foreground'>
+												{editFoodItem?.name}
+											</span>
+											? This action cannot be undone.
+										</div>
+										<div>
+											<Button
+												disabled={isDeleting}
+												onClick={(e) => {
+													e.preventDefault();
+													deleteUserFood();
+												}}>
+												{isDeleting ? (
+													<FaSpinner className='w-4 h-4 animate-spin' />
+												) : (
+													<X />
+												)}
+												Delete
+											</Button>
+										</div>
+									</DialogContent>
+								</Dialog>
+							</div>
+						</div>
 					</div>
 				)}
 
-				<div className='text-xs flex flex-row gap-2'>
+				<div className='text-xs flex flex-row gap-2 w-full'>
 					<UtensilsCrossed className='w-4 h-4' />
 					Other Foods added by{' '}
 					<span className='font-semibold'>{user.name}</span>
 				</div>
-				<div className='flex flex-col items-start justify-center gap-2 leading-4'>
+				<div className='flex flex-col items-start justify-center gap-2 leading-4 w-full'>
 					{foods.length &&
 						foods.map((item) => (
 							<Button
@@ -197,7 +272,7 @@ export default function FoodUserAvatar({
 								{!selfSearch ? (
 									<Link
 										className='flex flex-row items-center gap-2 flex-wrap'
-										href={`/foods?q=${item.name}`}>
+										href={`/foods?term=${item.name}`}>
 										{item.name} <SquareArrowOutUpRight className='w-4 h-4' />
 									</Link>
 								) : (

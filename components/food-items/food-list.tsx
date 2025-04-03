@@ -136,6 +136,7 @@ export default function FoodList() {
 					{foods && foods.length > 0 ? (
 						foods.map((item, indx) => (
 							<FoodItemCard
+								selfSearch={true}
 								indx={indx}
 								item={item as GetFoodItem}
 								key={item.id}

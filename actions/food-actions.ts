@@ -125,6 +125,7 @@ export async function updateFoodItem(item: GetFoodItem) {
 				id: existing.id
 			},
 			data: {
+				name: item.name,
 				category: item.category,
 				image: item.image,
 				carbGrams: item.carbGrams,
