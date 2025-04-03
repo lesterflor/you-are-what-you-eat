@@ -56,7 +56,6 @@ export default function AddGroceryItem({
 			name: '',
 			description: '',
 			qty: 1,
-			groceryListId: listId ?? '',
 			status: 'pending'
 		}
 	});
@@ -64,6 +63,10 @@ export default function AddGroceryItem({
 	const onSubmit: SubmitHandler<z.infer<typeof groceryItemSchema>> = async (
 		values
 	) => {
+		if (listId) {
+			values.groceryListId = listId;
+		}
+
 		const res = await createGroceryItem(values);
 
 		if (res.success && res.data) {
