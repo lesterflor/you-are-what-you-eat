@@ -24,6 +24,11 @@ import { Card, CardContent } from '../ui/card';
 import { useSession } from 'next-auth/react';
 import { GetFoodItem, GetUser } from '@/types';
 import { Input } from '../ui/input';
+import { useAppDispatch } from '@/lib/hooks';
+import {
+	generateRxFoodItemSchema,
+	updateFood
+} from '@/lib/features/food/foodUpdateSlice';
 
 export default function UpdateFoodItemForm({
 	item,
@@ -32,6 +37,8 @@ export default function UpdateFoodItemForm({
 	item: GetFoodItem;
 	onSuccess?: () => void;
 }) {
+	const dispatch = useAppDispatch();
+
 	const { data: session } = useSession();
 	const user = session?.user as GetUser;
 
@@ -55,10 +62,12 @@ export default function UpdateFoodItemForm({
 
 		const res = await updateFoodItem(values);
 
-		if (res.success) {
+		if (res.success && res.data) {
 			toast.success(res.message);
 			form.reset();
 			onSuccess?.();
+
+			dispatch(updateFood(generateRxFoodItemSchema(res.data as GetFoodItem)));
 		} else {
 			toast.error(res.message);
 		}

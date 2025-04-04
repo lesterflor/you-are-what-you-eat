@@ -25,9 +25,12 @@ import { Card, CardContent } from '../ui/card';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { GetUser } from '@/types';
+import { GetFoodItem, GetUser } from '@/types';
 import { useAppDispatch } from '@/lib/hooks';
-import { updateFood } from '@/lib/features/food/foodUpdateSlice';
+import {
+	addFood,
+	generateRxFoodItemSchema
+} from '@/lib/features/food/foodUpdateSlice';
 
 export default function AddFoodItemForm({
 	onSuccess
@@ -74,14 +77,9 @@ export default function AddFoodItemForm({
 
 		const res = await addFoodItem(values);
 
-		if (res.success) {
+		if (res.success && res.data) {
 			//redux
-			dispatch(
-				updateFood({
-					name: form.getValues('name'),
-					servings: Number(form.getValues('servingSize'))
-				})
-			);
+			dispatch(addFood(generateRxFoodItemSchema(res.data as GetFoodItem)));
 
 			toast.success(res.message);
 			form.reset();

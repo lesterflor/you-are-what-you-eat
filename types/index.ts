@@ -7,6 +7,7 @@ import {
 	getGroceryListSchema,
 	getLogRemainderSchema,
 	getLogSchema,
+	getReduxFoodItemSchema,
 	getTrackingSchema,
 	getUserNoteSchema,
 	getUserSchema,
@@ -54,6 +55,7 @@ export type GroceryListStatus = 'pending' | 'completed';
 
 export type FoodItem = z.infer<typeof foodItemSchema>;
 export type GetFoodItem = z.infer<typeof getFoodItemSchema>;
+export type RxFoodItem = z.infer<typeof getReduxFoodItemSchema>;
 
 export type Log = z.infer<typeof logSchema>;
 export type GetLog = z.infer<typeof getLogSchema>;

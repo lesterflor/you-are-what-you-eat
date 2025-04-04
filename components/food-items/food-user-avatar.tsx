@@ -37,9 +37,10 @@ import { FaSpinner } from 'react-icons/fa';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { userSearch } from '@/lib/features/food/foodSearchSlice';
 import {
+	deleteFood,
+	generateRxFoodItemSchema,
 	selectFoodUpdateData,
-	selectFoodUpdateStatus,
-	updateFood
+	selectFoodUpdateStatus
 } from '@/lib/features/food/foodUpdateSlice';
 
 export default function FoodUserAvatar({
@@ -114,18 +115,6 @@ export default function FoodUserAvatar({
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-	const dispatchFoodContext = () => {
-		if (editFoodItem) {
-			//redux
-			dispatch(
-				updateFood({
-					name: editFoodItem.name,
-					servings: editFoodItem.servingSize
-				})
-			);
-		}
-	};
-
 	const deleteUserFood = async () => {
 		if (!editFoodItem) {
 			return;
@@ -133,10 +122,12 @@ export default function FoodUserAvatar({
 		setIsDeleting(true);
 		const res = await deleteFoodItem(editFoodItem.id);
 
-		if (res.success) {
+		if (res.success && res.data) {
 			toast.success(res.message);
-			dispatchFoodContext();
 			setDeleteDialogOpen(false);
+
+			// redux
+			dispatch(deleteFood(generateRxFoodItemSchema(res.data as GetFoodItem)));
 		} else {
 			toast.error(res.message);
 		}
@@ -201,7 +192,6 @@ export default function FoodUserAvatar({
 												item={editFoodItem as GetFoodItem}
 												onSuccess={() => {
 													setEditFormOpen(false);
-													dispatchFoodContext();
 												}}
 											/>
 										)}

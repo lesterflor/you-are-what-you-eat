@@ -155,6 +155,20 @@ export const getFoodItemSchema = z.object({
 	user: z.any()
 });
 
+export const getReduxFoodItemSchema = z.object({
+	id: z.string(),
+	createdAt: z.string(),
+	name: z.string(),
+	category: z.string(),
+	carbGrams: z.number(),
+	fatGrams: z.number(),
+	proteinGrams: z.number(),
+	calories: z.number(),
+	description: z.string(),
+	servingSize: z.number(),
+	userId: z.string().optional()
+});
+
 export const foodEntrySchema = z.object({
 	id: z.string(),
 	name: z.string(),

@@ -92,7 +92,8 @@ export async function addFoodItem(item: FoodItem) {
 
 		return {
 			success: true,
-			message: 'Food item added successfully'
+			message: 'Food item added successfully',
+			data: newItem
 		};
 	} catch (error: unknown) {
 		return {
@@ -146,7 +147,8 @@ export async function updateFoodItem(item: GetFoodItem) {
 
 		return {
 			success: true,
-			message: 'Food item updated successfully'
+			message: 'Food item updated successfully',
+			data: update
 		};
 	} catch (error: unknown) {
 		return {
@@ -180,7 +182,8 @@ export async function deleteFoodItem(id: string) {
 
 		return {
 			success: true,
-			message: 'Food item deleted successfully'
+			message: 'Food item deleted successfully',
+			data: del
 		};
 	} catch (error: unknown) {
 		return {
