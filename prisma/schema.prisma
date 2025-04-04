@@ -53,6 +53,8 @@ model User {
   LogRemainder        LogRemainder[]
   userNotes           UserNote[]
   groceryLists        GroceryList[]
+  activityLogs        ActivityLog[]
+  activityItems       ActivityItem[]
 }
 
 model FoodItem {
@@ -168,4 +170,27 @@ model GroceryItem {
   status        String
   grocerList    GroceryList? @relation(fields: [groceryListId], references: [id])
   groceryListId String?      @db.ObjectId
+}
+
+model ActivityLog {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  user          User           @relation(fields: [userId], references: [id])
+  userId        String         @db.ObjectId
+  activityItems ActivityItem[]
+}
+
+model ActivityItem {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  user          User        @relation(fields: [userId], references: [id])
+  userId        String      @db.ObjectId
+  activityLog   ActivityLog @relation(fields: [activityLogId], references: [id])
+  activityLogId String      @db.ObjectId
+
+  type   String
+  action String
+  data   String
 }

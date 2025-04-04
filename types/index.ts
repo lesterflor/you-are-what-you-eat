@@ -1,6 +1,10 @@
 import {
+	activityItemSchema,
+	activityLogSchema,
 	foodEntrySchema,
 	foodItemSchema,
+	getActivityItemSchema,
+	getActivityLogSchema,
 	getFoodEntrySchema,
 	getFoodItemSchema,
 	getGroceryItemSchema,
@@ -74,6 +78,12 @@ export type GetGroceryList = z.infer<typeof getGroceryListSchema>;
 
 export type GroceryItem = z.infer<typeof groceryItemSchema>;
 export type GetGroceryItem = z.infer<typeof getGroceryItemSchema>;
+
+export type ActivityItem = z.infer<typeof activityItemSchema>;
+export type GetActivityItem = z.infer<typeof getActivityItemSchema>;
+
+export type ActivityLog = z.infer<typeof activityLogSchema>;
+export type GetActivityLog = z.infer<typeof getActivityLogSchema>;
 
 export type BMRData = {
 	weight: number;

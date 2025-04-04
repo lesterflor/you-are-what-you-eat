@@ -1,6 +1,10 @@
 'use client';
 
 import {
+	selectFoodSearchData,
+	selectFoodSearchStatus
+} from '@/lib/features/food/foodSearchSlice';
+import {
 	selectFoodUpdateData,
 	selectFoodUpdateStatus
 } from '@/lib/features/food/foodUpdateSlice';
@@ -14,11 +18,14 @@ export default function ReduxStoreLogger({
 }: {
 	enable?: boolean;
 }) {
-	const foodItem = useAppSelector(selectData);
-	const status = useAppSelector(selectStatus);
+	const logFoodItem = useAppSelector(selectData);
+	const logFoodStatus = useAppSelector(selectStatus);
 
 	const foodSliceData = useAppSelector(selectFoodUpdateData);
 	const foodSliceStatus = useAppSelector(selectFoodUpdateStatus);
+
+	const foodSearchData = useAppSelector(selectFoodSearchData);
+	const foodSearchStatus = useAppSelector(selectFoodSearchStatus);
 
 	const [foodSliceLog, setFoodSliceLog] = useState<
 		{ item: RxFoodItem; type: string; status: string }[]

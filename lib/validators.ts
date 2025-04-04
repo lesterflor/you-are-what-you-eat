@@ -303,3 +303,33 @@ export const getGroceryListSchema = z.object({
 	userId: z.string(),
 	status: z.string()
 });
+
+export const activityItemSchema = z.object({
+	//userId: z.string().min(1, 'userId is required'),
+	//activityLogId: z.string().min(1, 'activityLogId is required'),
+	type: z.string().min(1, 'type is required'),
+	action: z.string().min(1, 'action is required'),
+	data: z.string().min(1, 'data is required')
+});
+
+export const getActivityItemSchema = z.object({
+	id: z.string(),
+	createdAt: z.date(),
+	userId: z.string(),
+	activityLogId: z.string(),
+	type: z.string(),
+	action: z.string(),
+	data: z.string()
+});
+
+export const activityLogSchema = z.object({
+	userId: z.string().min(1, 'userId is required')
+});
+
+export const getActivityLogSchema = z.object({
+	id: z.string(),
+	createdAt: z.date(),
+	updatedAt: z.date(),
+	userId: z.string(),
+	activityItems: z.array(getActivityItemSchema)
+});
