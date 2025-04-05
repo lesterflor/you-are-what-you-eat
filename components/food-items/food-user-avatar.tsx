@@ -35,7 +35,7 @@ import { toast } from 'sonner';
 import FoodCategoryIconMapper from './food-category-icon-mapper';
 import { FaSpinner } from 'react-icons/fa';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { userSearch } from '@/lib/features/food/foodSearchSlice';
+import { inputSearch, userSearch } from '@/lib/features/food/foodSearchSlice';
 import {
 	deleteFood,
 	generateRxFoodItemSchema,
@@ -255,7 +255,8 @@ export default function FoodUserAvatar({
 									setPopOpen(false);
 
 									if (selfSearch) {
-										dispatch(userSearch(user.id));
+										// should dispatch 'userInput with food'
+										dispatch(inputSearch(item.name));
 									}
 								}}
 								size='sm'
