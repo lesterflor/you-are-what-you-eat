@@ -187,7 +187,7 @@ export default function AddGroceryItem({
 													<Input
 														readOnly
 														{...field}
-														className='w-10 text-2xl text-center ring-0 focus:ring-0'
+														className='w-16 text-2xl text-center ring-0 focus:ring-0'
 													/>
 													<Button
 														size='icon'

@@ -83,7 +83,10 @@ export const grocerySlice = createAppSlice({
 				const serialized: GetUser[] = JSON.parse(action.payload);
 				state.status = 'sharedList';
 				state.value = { id: state.value.id, info: action.payload };
-				state.message = `You shared a grocery list with ${serialized[0].name}`;
+				state.message =
+					serialized.length > 0
+						? `You shared a grocery list with ${serialized[0].name}`
+						: '';
 			}
 		)
 	}),

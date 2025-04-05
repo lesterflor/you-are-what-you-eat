@@ -19,10 +19,7 @@ import { ScrollArea } from '../ui/scroll-area';
 import { cn } from '@/lib/utils';
 import ShareListButton from './share-list-button';
 import { useAppDispatch } from '@/lib/hooks';
-import {
-	addGroceryListState,
-	shareGroceryListState
-} from '@/lib/features/grocery/grocerySlice';
+import { addGroceryListState } from '@/lib/features/grocery/grocerySlice';
 
 export default function AddGroceryListForm({
 	onSuccess
@@ -39,8 +36,8 @@ export default function AddGroceryListForm({
 	useEffect(() => {
 		form.setValue('sharedUsers', sharedUsers);
 
-		// redux
-		dispatch(shareGroceryListState(JSON.stringify(sharedUsers)));
+		// // redux
+		// dispatch(shareGroceryListState(JSON.stringify(sharedUsers)));
 	}, [sharedUsers]);
 
 	const form = useForm<z.infer<typeof groceryListSchema>>({
