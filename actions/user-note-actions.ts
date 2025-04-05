@@ -59,7 +59,8 @@ export async function createNote(note: UserNote) {
 
 		return {
 			success: true,
-			message: 'Note created successfully'
+			message: 'Note created successfully',
+			data: newNote
 		};
 	} catch (error: unknown) {
 		return {
@@ -104,7 +105,8 @@ export async function updateNote(note: GetUserNote) {
 
 		return {
 			success: true,
-			message: 'Note updated successfully'
+			message: 'Note updated successfully',
+			data: updateNote
 		};
 	} catch (error: unknown) {
 		return {
@@ -144,7 +146,8 @@ export async function deleteNote(noteId: string) {
 
 		return {
 			success: true,
-			message: 'Note deleted successfully'
+			message: 'Note deleted successfully',
+			data: deleteNote
 		};
 	} catch (error: unknown) {
 		return {

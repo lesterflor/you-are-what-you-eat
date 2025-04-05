@@ -17,7 +17,7 @@ import { toast } from 'sonner';
 import { FaSpinner } from 'react-icons/fa';
 import UpdateUserNoteForm from './update-user-note-form';
 import { useAppDispatch } from '@/lib/hooks';
-import { updateNote } from '@/lib/features/notes/noteUpdateSlice';
+import { deleteNote as rxDeleteNote } from '@/lib/features/notes/noteUpdateSlice';
 
 export default function NoteCard({
 	note,
@@ -46,19 +46,16 @@ export default function NoteCard({
 		setIsDeleting(true);
 		const res = await deleteNote(note.id);
 
-		if (res.success) {
+		if (res.success && res.data) {
 			toast.success(res.message);
 
-			dispatch(updateNote(note.id));
-
-			// if (noteContext?.isUpdated) {
-			// 	const update = {
-			// 		...noteContext,
-			// 		updated: true
-			// 	};
-
-			// 	noteContext.isUpdated(update);
-			// }
+			dispatch(
+				rxDeleteNote({
+					id: res.data.id,
+					title: res.data.title ?? '',
+					description: res.data.note
+				})
+			);
 
 			setDialogOpen(false);
 		} else {

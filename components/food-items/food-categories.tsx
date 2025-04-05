@@ -79,7 +79,6 @@ export default function FoodCategoryPicker({
 					variant='outline'
 					onClick={(e) => {
 						e.preventDefault();
-						//setSelected('');
 
 						dispatch(allSearch());
 					}}>
@@ -151,3 +150,17 @@ export default function FoodCategoryPicker({
 		</div>
 	);
 }
+
+export const getFoodCategoryConstants = (cat: string): string => {
+	const catMap = new Map<string, string>([
+		['veg', 'Vegetable'],
+		['meat', 'Meat'],
+		['fruit', 'Fruit'],
+		['grain', 'Grain'],
+		['legume', 'Legume'],
+		['nutSeed', 'Seed & Nut'],
+		['other', 'Miscellaneous']
+	]);
+
+	return catMap.get(cat) || '';
+};

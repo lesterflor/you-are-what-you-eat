@@ -73,7 +73,9 @@ export default function FoodList() {
 	const [debounced] = useDebounce(search, 1000);
 
 	useEffect(() => {
-		dispatch(inputSearch(debounced));
+		if (debounced) {
+			dispatch(inputSearch(debounced));
+		}
 	}, [debounced]);
 
 	useEffect(() => {

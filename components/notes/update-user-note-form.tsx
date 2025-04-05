@@ -44,11 +44,17 @@ export default function UpdateUserNoteForm({
 	) => {
 		const res = await updateNote(values);
 
-		if (res.success) {
+		if (res.success && res.data) {
 			toast.success(res.message);
 			onSuccess?.();
 
-			dispatch(updateReduxNote(`${new Date().getTime()}`));
+			dispatch(
+				updateReduxNote({
+					id: res.data.id,
+					title: res.data.title ?? '',
+					description: res.data.note
+				})
+			);
 		} else {
 			toast.error(res.message);
 		}

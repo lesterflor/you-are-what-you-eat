@@ -11,6 +11,7 @@ import { format } from 'date-fns';
 import SideMenu from './side-menu';
 import { getToday } from '@/lib/utils';
 import { auth } from '@/db/auth';
+import ReduxStoreLogger from '../redux-store-logger';
 
 export default async function SiteHeader() {
 	const session = await auth();
@@ -20,11 +21,17 @@ export default async function SiteHeader() {
 
 	return (
 		<header className='w-full border-b fixed top-0 z-50 bg-white dark:bg-green-950 select-none px-0'>
-			<div className='wrapper flex flex-between justify-between items-center w-full p-2'>
-				<div className='flex flex-row items-center justify-start gap-5 portrait:gap-0'>
+			<div className='wrapper flex flex-between justify-between items-center w-full p-2 relative'>
+				<div className='absolute -bottom-4 left-0'>
+					<ReduxStoreLogger />
+				</div>
+				<div className='flex flex-row items-center justify-start gap-5 portrait:gap-0 h-full'>
 					<Link href='/'>
-						<div className='flex flex-row items-center gap-2'>
-							<UtensilsCrossed className='w-8 h-8' />
+						<div className='flex flex-row items-center gap-2 h-full'>
+							<div className='portrait:h-[7vh] portrait:align-top'>
+								<UtensilsCrossed className='w-8 h-8' />
+							</div>
+
 							<div className='flex flex-col gap-0'>
 								{!session ? (
 									<>

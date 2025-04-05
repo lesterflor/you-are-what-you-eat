@@ -1,13 +1,14 @@
+import { getFoodCategoryConstants } from '@/components/food-items/food-categories';
 import { createAppSlice } from '@/lib/createAppSlice';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
 export interface FoodSearchSliceState {
-	value: { term?: string; category?: string; user?: string; time: string };
+	value: { term?: string; category?: string; user?: string; message: string };
 	status: 'idle' | 'input' | 'category' | 'user' | 'all';
 }
 
 const initialState: FoodSearchSliceState = {
-	value: { time: '' },
+	value: { message: '' },
 	status: 'idle'
 };
 
@@ -16,35 +17,33 @@ export const foodSearchSlice = createAppSlice({
 	initialState,
 	reducers: (create) => ({
 		inputSearch: create.reducer((state, action: PayloadAction<string>) => {
-			const dateString = `${new Date().getTime()}`;
 			state.value = {
-				time: dateString,
-				term: action.payload
+				term: action.payload,
+				message: `You searched for ${action.payload}`
 			};
 			state.status = 'input';
 		}),
 
 		categorySearch: create.reducer((state, action: PayloadAction<string>) => {
-			const dateString = `${new Date().getTime()}`;
 			state.value = {
-				time: dateString,
-				category: action.payload
+				category: action.payload,
+				message: `You searched for ${getFoodCategoryConstants(
+					action.payload
+				)} items`
 			};
 			state.status = 'category';
 		}),
 
 		userSearch: create.reducer((state, action: PayloadAction<string>) => {
-			const dateString = `${new Date().getTime()}`;
 			state.value = {
-				time: dateString,
-				user: action.payload
+				user: action.payload,
+				message: `You searched for items you created`
 			};
 			state.status = 'user';
 		}),
 		allSearch: create.reducer((state) => {
-			const dateString = `${new Date().getTime()}`;
 			state.value = {
-				time: dateString
+				message: `You searched for all items`
 			};
 			state.status = 'all';
 		})

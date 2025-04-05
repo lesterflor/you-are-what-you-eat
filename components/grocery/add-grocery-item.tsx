@@ -23,6 +23,8 @@ import {
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader } from '../ui/card';
 import { cn } from '@/lib/utils';
+import { useAppDispatch } from '@/lib/hooks';
+import { addGroceryItemState } from '@/lib/features/grocery/grocerySlice';
 
 export default function AddGroceryItem({
 	onAdd,
@@ -33,6 +35,8 @@ export default function AddGroceryItem({
 	onMinify?: (bool: boolean) => void;
 	listId?: string;
 }) {
+	const dispatch = useAppDispatch();
+
 	const [qty, setQty] = useState(1);
 	const [minified, setMinified] = useState(false);
 
@@ -72,6 +76,9 @@ export default function AddGroceryItem({
 		if (res.success && res.data) {
 			toast.success(res.message);
 			onAdd(res.data);
+
+			//redux
+			dispatch(addGroceryItemState(JSON.stringify(res.data)));
 
 			// reset fields
 			form.reset();

@@ -9,6 +9,11 @@ import { updateGroceryItem } from '@/actions/grocery-actions';
 import { toast } from 'sonner';
 import { FaSpinner } from 'react-icons/fa';
 import { cn } from '@/lib/utils';
+import { useAppDispatch } from '@/lib/hooks';
+import {
+	completeGroceryItemState,
+	deleteGroceryItemState
+} from '@/lib/features/grocery/grocerySlice';
 
 export default function GroceryItemCard({
 	item,
@@ -25,6 +30,8 @@ export default function GroceryItemCard({
 	onChange?: () => void;
 	listId?: string;
 }) {
+	const dispatch = useAppDispatch();
+
 	const [updating, setUpdating] = useState(false);
 	const [groceryItem, setGroceryItem] = useState<GetGroceryItem>(item);
 
@@ -38,6 +45,9 @@ export default function GroceryItemCard({
 			toast.success(res.message);
 			setGroceryItem(res.data);
 			onChange?.();
+
+			//redux
+			dispatch(completeGroceryItemState(JSON.stringify(res.data)));
 		} else {
 			toast.error(res.message);
 		}
@@ -58,6 +68,9 @@ export default function GroceryItemCard({
 			toast.success(res.message);
 			setGroceryItem(res.data);
 			onChange?.();
+
+			//redux
+			dispatch(deleteGroceryItemState(JSON.stringify(res.data)));
 		} else {
 			toast.error(res.message);
 		}

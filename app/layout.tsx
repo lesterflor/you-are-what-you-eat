@@ -6,7 +6,6 @@ import { auth } from '@/db/auth';
 import { Suspense } from 'react';
 import SiteHeader from '@/components/header/header';
 import { ThemeProvider } from '@/components/theme-provider';
-import GroceryListUpdateContextProvider from '@/providers/grocery-list-update-provider';
 import { StoreProvider } from '@/components/StoreProvider';
 
 export const metadata: Metadata = {
@@ -45,15 +44,13 @@ export default async function RootLayout({
 					disableTransitionOnChange>
 					<SessionProvider session={session}>
 						<StoreProvider>
-							<GroceryListUpdateContextProvider>
-								<SiteHeader />
-								<br />
-								<main className='flex-1 wrapper w-5/6 portrait:w-full portrait:px-3 mx-auto mt-20'>
-									<Suspense>
-										<div className='select-none'>{children}</div>
-									</Suspense>
-								</main>
-							</GroceryListUpdateContextProvider>
+							<SiteHeader />
+							<br />
+							<main className='flex-1 wrapper w-5/6 portrait:w-full portrait:px-3 mx-auto mt-20'>
+								<Suspense>
+									<div className='select-none'>{children}</div>
+								</Suspense>
+							</main>
 						</StoreProvider>
 					</SessionProvider>
 

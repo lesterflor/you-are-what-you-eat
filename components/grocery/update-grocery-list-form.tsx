@@ -8,7 +8,7 @@ import { Form } from '../ui/form';
 import { updateGroceryList } from '@/actions/grocery-actions';
 import { GetGroceryItem, GetGroceryList, GroceryList } from '@/types';
 import { toast } from 'sonner';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import { FaSpinner } from 'react-icons/fa';
 import { ShoppingCart } from 'lucide-react';
@@ -18,7 +18,8 @@ import { BsFillCartCheckFill } from 'react-icons/bs';
 import { ScrollArea } from '../ui/scroll-area';
 import { cn } from '@/lib/utils';
 import ShareListButton from './share-list-button';
-import { UpdateGroceryListContext } from '@/contexts/update-grocery-list-context';
+import { useAppDispatch } from '@/lib/hooks';
+import { updateGroceryListState } from '@/lib/features/grocery/grocerySlice';
 
 export default function UpdateGroceryListForm({
 	list,
@@ -27,11 +28,12 @@ export default function UpdateGroceryListForm({
 	list: GetGroceryList;
 	onSuccess?: (list: GroceryList) => void;
 }) {
+	const dispatch = useAppDispatch();
+
 	const [groceryItems, setGroceryItems] = useState<GetGroceryItem[]>([]);
 	const [addMinified, setAddMinified] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [sharedUsers, setSharedUsers] = useState<string[]>(list.sharedUsers);
-	const groceryContext = useContext(UpdateGroceryListContext);
 
 	useEffect(() => {
 		if (list.groceryItems && list.groceryItems.length > 0) {
@@ -54,21 +56,15 @@ export default function UpdateGroceryListForm({
 		setIsSubmitting(true);
 		const res = await updateGroceryList(values);
 
-		if (res.success) {
+		if (res.success && res.data) {
 			toast.success(res.message);
 
 			onSuccess?.(res.data as GroceryList);
 
 			form.reset();
 
-			if (groceryContext?.isUpdated) {
-				const update = {
-					...groceryContext,
-					updated: true
-				};
-
-				groceryContext.isUpdated(update);
-			}
+			//redux
+			dispatch(updateGroceryListState(JSON.stringify(res.data)));
 		} else {
 			toast.error(res.message);
 		}

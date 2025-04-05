@@ -32,6 +32,9 @@ export default function ShareListButton({
 
 		if (res.success && res.data) {
 			setUsers(res.data as GetUser[]);
+
+			//redux
+			//dispatch(shareGroceryListState(JSON.stringify(res.data as GetUser[])));
 		}
 
 		setIsFetching(false);

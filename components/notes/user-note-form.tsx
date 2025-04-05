@@ -22,7 +22,7 @@ import { FaSpinner } from 'react-icons/fa';
 import { createNote } from '@/actions/user-note-actions';
 import { toast } from 'sonner';
 import { useAppDispatch } from '@/lib/hooks';
-import { updateNote } from '@/lib/features/notes/noteUpdateSlice';
+import { addNote } from '@/lib/features/notes/noteUpdateSlice';
 
 export default function UserNoteForm({
 	onSuccess
@@ -47,11 +47,17 @@ export default function UserNoteForm({
 	) => {
 		const res = await createNote(values);
 
-		if (res.success) {
+		if (res.success && res.data) {
 			form.reset();
 			toast.success(res.message);
 
-			dispatch(updateNote(`${new Date().getTime()}`));
+			dispatch(
+				addNote({
+					id: res.data.id,
+					title: res.data.title ?? '',
+					description: res.data.note
+				})
+			);
 
 			onSuccess?.();
 		} else {

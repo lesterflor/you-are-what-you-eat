@@ -7,13 +7,9 @@ export interface LogFoodSliceState {
 		servings: number;
 		time: string;
 		caloriesExpended: number;
+		message: string;
 	};
-	status:
-		| 'idle'
-		| 'added'
-		| 'updated'
-		| 'deleted'
-		| 'expended-calories-updated';
+	status: 'idle' | 'added' | 'updated' | 'deleted' | 'expended calories';
 }
 
 const initialState: LogFoodSliceState = {
@@ -21,7 +17,8 @@ const initialState: LogFoodSliceState = {
 		name: '',
 		servings: 0,
 		time: '',
-		caloriesExpended: 0
+		caloriesExpended: 0,
+		message: ''
 	},
 	status: 'idle'
 };
@@ -45,7 +42,10 @@ export const logFoodSlice = createAppSlice({
 					name: action.payload.name,
 					servings: action.payload.servings,
 					time: dateString,
-					caloriesExpended: state.value.caloriesExpended
+					caloriesExpended: state.value.caloriesExpended,
+					message: `You logged ${action.payload.servings} ${
+						action.payload.servings === 1 ? 'serving' : 'servings'
+					} of ${action.payload.name}`
 				};
 				state.status = 'added';
 			}
@@ -58,7 +58,8 @@ export const logFoodSlice = createAppSlice({
 					name: action.payload.name,
 					servings: action.payload.servings,
 					time: dateString,
-					caloriesExpended: state.value.caloriesExpended
+					caloriesExpended: state.value.caloriesExpended,
+					message: `You updated the serving of ${action.payload.name} to ${action.payload.servings}`
 				};
 				state.status = 'updated';
 			}
@@ -71,7 +72,8 @@ export const logFoodSlice = createAppSlice({
 					name: action.payload.name,
 					servings: action.payload.servings,
 					time: dateString,
-					caloriesExpended: state.value.caloriesExpended
+					caloriesExpended: state.value.caloriesExpended,
+					message: `You deleted your logged food item, ${action.payload.name}`
 				};
 				state.status = 'deleted';
 			}
@@ -83,9 +85,12 @@ export const logFoodSlice = createAppSlice({
 					name: state.value.name,
 					servings: state.value.servings,
 					time: dateString,
-					caloriesExpended: state.value.caloriesExpended + action.payload
+					caloriesExpended: state.value.caloriesExpended + action.payload,
+					message: `You added ${action.payload} ${
+						action.payload === 1 ? 'calorie' : 'calories'
+					} to your expended calories`
 				};
-				state.status = 'expended-calories-updated';
+				state.status = 'expended calories';
 			}
 		)
 		// Use the `PayloadAction` type to declare the contents of `action.payload`

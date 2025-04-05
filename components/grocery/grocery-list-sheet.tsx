@@ -11,20 +11,21 @@ import {
 } from '../ui/sheet';
 import { MdOutlineLocalGroceryStore } from 'react-icons/md';
 import AddGroceryListForm from './add-grocery-list-form';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GetGroceryList } from '@/types';
 import { getGroceryListsByUser } from '@/actions/grocery-actions';
 import GroceryListItemCard from './grocery-list-item-card';
 import { ScrollArea } from '../ui/scroll-area';
-import { UpdateGroceryListContext } from '@/contexts/update-grocery-list-context';
 import { FaSpinner } from 'react-icons/fa';
+import { useAppSelector } from '@/lib/hooks';
+import { selectGroceryStatus } from '@/lib/features/grocery/grocerySlice';
 
 export default function GrocerListSheet() {
 	const [sheetOpen, setSheetOpen] = useState(false);
 	const [lists, setLists] = useState<GetGroceryList[]>([]);
 	const [isFetching, setIsFetching] = useState(true);
 
-	const groceryContext = useContext(UpdateGroceryListContext);
+	const groceryListStateStatus = useAppSelector(selectGroceryStatus);
 
 	const fetchLists = async () => {
 		setIsFetching(true);
@@ -42,10 +43,14 @@ export default function GrocerListSheet() {
 	}, []);
 
 	useEffect(() => {
-		if (groceryContext && groceryContext.updated) {
+		if (
+			groceryListStateStatus === 'addedList' ||
+			groceryListStateStatus === 'updatedList' ||
+			groceryListStateStatus === 'completedList'
+		) {
 			fetchLists();
 		}
-	}, [groceryContext]);
+	}, [groceryListStateStatus]);
 
 	return (
 		<Sheet>

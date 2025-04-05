@@ -18,12 +18,18 @@ import { BsFillCartCheckFill } from 'react-icons/bs';
 import { ScrollArea } from '../ui/scroll-area';
 import { cn } from '@/lib/utils';
 import ShareListButton from './share-list-button';
+import { useAppDispatch } from '@/lib/hooks';
+import {
+	addGroceryListState,
+	shareGroceryListState
+} from '@/lib/features/grocery/grocerySlice';
 
 export default function AddGroceryListForm({
 	onSuccess
 }: {
 	onSuccess?: () => void;
 }) {
+	const dispatch = useAppDispatch();
 	const [groceryItems, setGroceryItems] = useState<GetGroceryItem[]>([]);
 	const [addMinified, setAddMinified] = useState(false);
 	const [sharedUsers, setSharedUsers] = useState<string[]>([]);
@@ -32,6 +38,9 @@ export default function AddGroceryListForm({
 
 	useEffect(() => {
 		form.setValue('sharedUsers', sharedUsers);
+
+		// redux
+		dispatch(shareGroceryListState(JSON.stringify(sharedUsers)));
 	}, [sharedUsers]);
 
 	const form = useForm<z.infer<typeof groceryListSchema>>({
@@ -48,8 +57,11 @@ export default function AddGroceryListForm({
 	> = async () => {
 		const res = await createGroceryList(groceryItems, sharedUsers);
 
-		if (res.success) {
+		if (res.success && res.data) {
 			toast.success(res.message);
+
+			// redux
+			dispatch(addGroceryListState(JSON.stringify(res.data)));
 
 			setTimeout(() => {
 				onSuccess?.();

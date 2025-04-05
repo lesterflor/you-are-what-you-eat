@@ -25,6 +25,8 @@ import {
 	SheetTrigger
 } from '../ui/sheet';
 import UpdateGroceryListForm from './update-grocery-list-form';
+import { useAppDispatch } from '@/lib/hooks';
+import { completeGroceryListState } from '@/lib/features/grocery/grocerySlice';
 
 export default function GroceryListItemCard({
 	list,
@@ -35,6 +37,8 @@ export default function GroceryListItemCard({
 	onComplete?: () => void;
 	onEdit?: (item: GetGroceryList) => void;
 }) {
+	const dispatch = useAppDispatch();
+
 	const [isUpdating, setIsUpdating] = useState(false);
 	const [grList, setGrList] = useState<GetGroceryList>(list);
 	const [listComplete, setListComplete] = useState(false);
@@ -57,6 +61,9 @@ export default function GroceryListItemCard({
 			onComplete?.();
 
 			setDialogOpen(false);
+
+			// redux
+			dispatch(completeGroceryListState(JSON.stringify(res.data)));
 		} else {
 			toast.error(res.message);
 		}
