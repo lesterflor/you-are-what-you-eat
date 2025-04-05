@@ -14,6 +14,7 @@ import { useSession } from 'next-auth/react';
 import { getLogsByUserId } from '@/actions/log-actions';
 import { format } from 'date-fns';
 import { Badge } from '../ui/badge';
+import { FaSpinner } from 'react-icons/fa';
 
 export default function DayLogChart({
 	data,
@@ -22,6 +23,7 @@ export default function DayLogChart({
 	data?: DayLogDataType[];
 	fetchSelf?: boolean;
 }) {
+	const [isFetching, setIsFetching] = useState(true);
 	const [logs, setLogs] = useState<DayLogDataType[]>([]);
 	const [dates, setDates] = useState({
 		earliest: '',
@@ -32,6 +34,7 @@ export default function DayLogChart({
 	const user = session?.user as GetUser;
 
 	const getLogs = async () => {
+		setIsFetching(true);
 		const res = await getLogsByUserId(user.id);
 
 		if (res.success && res.data) {
@@ -58,6 +61,8 @@ export default function DayLogChart({
 
 			setLogs(mapData.reverse());
 		}
+
+		setIsFetching(false);
 	};
 
 	useEffect(() => {
@@ -77,242 +82,249 @@ export default function DayLogChart({
 	}, [logs]);
 
 	return (
-		<div className='flex flex-col gap-4 w-fit h-full'>
-			<div className='flex flex-row items-center justify-start gap-0 text-xs font-normal'>
-				<Badge variant='outline'>{dates.earliest}</Badge>-
-				<Badge variant='outline'>{dates.latest}</Badge>
-			</div>
+		<>
+			{isFetching ? (
+				<div className='w-full h-full flex flex-col items-center justify-center'>
+					<FaSpinner className='w-40 h-40 animate-spin opacity-5' />
+				</div>
+			) : (
+				<>
+					<div className='flex flex-col gap-4 w-fit h-full'>
+						<div className='flex flex-row items-center justify-start gap-0 text-xs font-normal'>
+							<Badge variant='outline'>{dates.earliest}</Badge>-
+							<Badge variant='outline'>{dates.latest}</Badge>
+						</div>
 
-			<div>
-				<div>Calories</div>
-				{/* portrait chart */}
-				<ChartContainer
-					config={caloriesConfig}
-					className='hidden portrait:block h-[65vh] w-[85vw]'>
-					<AreaChart
-						layout='vertical'
-						accessibilityLayer
-						data={logs}
-						margin={{
-							left: 0,
-							right: 0
-						}}>
-						<CartesianGrid vertical={false} />
-						<YAxis
-							className='text-xs'
-							dataKey='day'
-							tickLine={true}
-							tickMargin={0}
-							offset={10}
-							axisLine={true}
-							type='category'
-							width={72}
-						/>
+						<div>
+							<div>Calories</div>
+							{/* portrait chart */}
+							<ChartContainer
+								config={caloriesConfig}
+								className='hidden portrait:block h-[65vh] w-[85vw]'>
+								<AreaChart
+									layout='vertical'
+									accessibilityLayer
+									data={logs}
+									margin={{
+										left: 0,
+										right: 0
+									}}>
+									<CartesianGrid vertical={false} />
+									<YAxis
+										className='text-xs'
+										dataKey='day'
+										tickLine={true}
+										tickMargin={0}
+										offset={10}
+										axisLine={true}
+										type='category'
+										width={72}
+									/>
 
-						<XAxis
-							type='number'
-							offset={0}
-							tickCount={20}
-							tickLine={true}
-							tickMargin={10}
-							label='Calories'
-							height={65}
-						/>
+									<XAxis
+										type='number'
+										offset={0}
+										tickCount={20}
+										tickLine={true}
+										tickMargin={10}
+										label='Calories'
+										height={65}
+									/>
 
-						<ChartTooltip
-							cursor={false}
-							formatter={(value, name, props) => (
-								<div className='flex flex-row items-start justify-center gap-2'>
-									<div>{props.payload.name}</div>
-									<div
-										className='w-3 h-3 rounded-sm'
-										style={{
-											backgroundColor: `${props.color}`
-										}}></div>
-									<div className='text-xs'>
-										{name === 'Calories' ? 'Consumed' : name}{' '}
-										<span className='font-semibold'>
-											{formatUnit(Number(value))}
-										</span>{' '}
-									</div>
-								</div>
-							)}
-							content={<ChartTooltipContent />}
-						/>
+									<ChartTooltip
+										cursor={false}
+										formatter={(value, name, props) => (
+											<div className='flex flex-row items-start justify-center gap-2'>
+												<div>{props.payload.name}</div>
+												<div
+													className='w-3 h-3 rounded-sm'
+													style={{
+														backgroundColor: `${props.color}`
+													}}></div>
+												<div className='text-xs'>
+													{name === 'Calories' ? 'Consumed' : name}{' '}
+													<span className='font-semibold'>
+														{formatUnit(Number(value))}
+													</span>{' '}
+												</div>
+											</div>
+										)}
+										content={<ChartTooltipContent />}
+									/>
 
-						<defs>
-							<linearGradient
-								id='fillCalories'
-								x1='0'
-								y1='0'
-								x2='0'
-								y2='1'>
-								<stop
-									offset='5%'
-									stopColor='var(--color-calories)'
-									stopOpacity={0.8}
-								/>
-								<stop
-									offset='95%'
-									stopColor='var(--color-calories)'
-									stopOpacity={0.1}
-								/>
-							</linearGradient>
+									<defs>
+										<linearGradient
+											id='fillCalories'
+											x1='0'
+											y1='0'
+											x2='0'
+											y2='1'>
+											<stop
+												offset='5%'
+												stopColor='var(--color-calories)'
+												stopOpacity={0.8}
+											/>
+											<stop
+												offset='95%'
+												stopColor='var(--color-calories)'
+												stopOpacity={0.1}
+											/>
+										</linearGradient>
 
-							<linearGradient
-								id='fillCaloriesBurned'
-								x1='0'
-								y1='0'
-								x2='0'
-								y2='1'>
-								<stop
-									offset='5%'
-									stopColor='var(--color-day)'
-									stopOpacity={0.8}
-								/>
-								<stop
-									offset='95%'
-									stopColor='var(--color-day)'
-									stopOpacity={0.1}
-								/>
-							</linearGradient>
-						</defs>
+										<linearGradient
+											id='fillCaloriesBurned'
+											x1='0'
+											y1='0'
+											x2='0'
+											y2='1'>
+											<stop
+												offset='5%'
+												stopColor='var(--color-day)'
+												stopOpacity={0.8}
+											/>
+											<stop
+												offset='95%'
+												stopColor='var(--color-day)'
+												stopOpacity={0.1}
+											/>
+										</linearGradient>
+									</defs>
 
-						<Area
-							dataKey='Expended'
-							type='natural'
-							fill='url(#fillCaloriesBurned)'
-							fillOpacity={0.4}
-							stroke='var(--color-day)'
-						/>
+									<Area
+										dataKey='Expended'
+										type='natural'
+										fill='url(#fillCaloriesBurned)'
+										fillOpacity={0.4}
+										stroke='var(--color-day)'
+									/>
 
-						<Area
-							dataKey='Calories'
-							type='natural'
-							fill='url(#fillCalories)'
-							fillOpacity={0.4}
-							stroke='var(--color-calories)'
-						/>
-					</AreaChart>
-				</ChartContainer>
+									<Area
+										dataKey='Calories'
+										type='natural'
+										fill='url(#fillCalories)'
+										fillOpacity={0.4}
+										stroke='var(--color-calories)'
+									/>
+								</AreaChart>
+							</ChartContainer>
 
-				{/* desktop chart */}
-				<ChartContainer
-					config={caloriesConfig}
-					className='h-[65vh] w-[60vw] portrait:hidden'>
-					<AreaChart
-						accessibilityLayer
-						data={logs}
-						margin={{
-							left: 12,
-							right: 12
-						}}>
-						<CartesianGrid vertical={false} />
-						<XAxis
-							angle={-90}
-							className='text-xs'
-							dataKey='day'
-							tickLine={true}
-							tickMargin={65}
-							offset={10}
-							axisLine={true}
-							type='category'
-							height={150}
-						/>
+							{/* desktop chart */}
+							<ChartContainer
+								config={caloriesConfig}
+								className='h-[65vh] w-[60vw] portrait:hidden'>
+								<AreaChart
+									accessibilityLayer
+									data={logs}
+									margin={{
+										left: 12,
+										right: 12
+									}}>
+									<CartesianGrid vertical={false} />
+									<XAxis
+										angle={-90}
+										className='text-xs'
+										dataKey='day'
+										tickLine={true}
+										tickMargin={65}
+										offset={10}
+										axisLine={true}
+										type='category'
+										height={150}
+									/>
 
-						<YAxis
-							type='number'
-							offset={0}
-							tickCount={20}
-							tickLine={true}
-							tickMargin={5}
-							label={{
-								value: 'Calories',
-								position: 'insideLeft',
-								angle: -90
-							}}
-							width={65}
-						/>
+									<YAxis
+										type='number'
+										offset={0}
+										tickCount={20}
+										tickLine={true}
+										tickMargin={5}
+										label={{
+											value: 'Calories',
+											position: 'insideLeft',
+											angle: -90
+										}}
+										width={65}
+									/>
 
-						<ChartTooltip
-							cursor={false}
-							formatter={(value, name, props) => (
-								<div className='flex flex-row items-start justify-center gap-2'>
-									<div>{props.payload.name}</div>
-									<div
-										className='w-3 h-3 rounded-sm'
-										style={{
-											backgroundColor: `${props.color}`
-										}}></div>
-									<div className='text-xs'>
-										{name === 'Calories' ? 'Consumed' : name}{' '}
-										<span className='font-semibold'>
-											{formatUnit(Number(value))}
-										</span>{' '}
-									</div>
-								</div>
-							)}
-							content={<ChartTooltipContent />}
-						/>
+									<ChartTooltip
+										cursor={false}
+										formatter={(value, name, props) => (
+											<div className='flex flex-row items-start justify-center gap-2'>
+												<div>{props.payload.name}</div>
+												<div
+													className='w-3 h-3 rounded-sm'
+													style={{
+														backgroundColor: `${props.color}`
+													}}></div>
+												<div className='text-xs'>
+													{name === 'Calories' ? 'Consumed' : name}{' '}
+													<span className='font-semibold'>
+														{formatUnit(Number(value))}
+													</span>{' '}
+												</div>
+											</div>
+										)}
+										content={<ChartTooltipContent />}
+									/>
 
-						<defs>
-							<linearGradient
-								id='fillCalories'
-								x1='0'
-								y1='0'
-								x2='0'
-								y2='1'>
-								<stop
-									offset='5%'
-									stopColor='var(--color-calories)'
-									stopOpacity={0.8}
-								/>
-								<stop
-									offset='95%'
-									stopColor='var(--color-calories)'
-									stopOpacity={0.1}
-								/>
-							</linearGradient>
+									<defs>
+										<linearGradient
+											id='fillCalories'
+											x1='0'
+											y1='0'
+											x2='0'
+											y2='1'>
+											<stop
+												offset='5%'
+												stopColor='var(--color-calories)'
+												stopOpacity={0.8}
+											/>
+											<stop
+												offset='95%'
+												stopColor='var(--color-calories)'
+												stopOpacity={0.1}
+											/>
+										</linearGradient>
 
-							<linearGradient
-								id='fillCaloriesBurned'
-								x1='0'
-								y1='0'
-								x2='0'
-								y2='1'>
-								<stop
-									offset='5%'
-									stopColor='var(--color-day)'
-									stopOpacity={0.8}
-								/>
-								<stop
-									offset='95%'
-									stopColor='var(--color-day)'
-									stopOpacity={0.1}
-								/>
-							</linearGradient>
-						</defs>
+										<linearGradient
+											id='fillCaloriesBurned'
+											x1='0'
+											y1='0'
+											x2='0'
+											y2='1'>
+											<stop
+												offset='5%'
+												stopColor='var(--color-day)'
+												stopOpacity={0.8}
+											/>
+											<stop
+												offset='95%'
+												stopColor='var(--color-day)'
+												stopOpacity={0.1}
+											/>
+										</linearGradient>
+									</defs>
 
-						<Area
-							dataKey='Expended'
-							type='natural'
-							fill='url(#fillCaloriesBurned)'
-							fillOpacity={0.4}
-							stroke='var(--color-day)'
-						/>
+									<Area
+										dataKey='Expended'
+										type='natural'
+										fill='url(#fillCaloriesBurned)'
+										fillOpacity={0.4}
+										stroke='var(--color-day)'
+									/>
 
-						<Area
-							dataKey='Calories'
-							type='natural'
-							fill='url(#fillCalories)'
-							fillOpacity={0.4}
-							stroke='var(--color-calories)'
-						/>
-					</AreaChart>
-				</ChartContainer>
-			</div>
+									<Area
+										dataKey='Calories'
+										type='natural'
+										fill='url(#fillCalories)'
+										fillOpacity={0.4}
+										stroke='var(--color-calories)'
+									/>
+								</AreaChart>
+							</ChartContainer>
+						</div>
 
-			{/* {logs.map((item) => (
+						{/* {logs.map((item) => (
 				<div key={item.day.toDateString()}>
 					<div>{format(item.day, 'PP')}</div>
 					<div>{item.calories}</div>
@@ -324,7 +336,10 @@ export default function DayLogChart({
 					<br />
 				</div>
 			))} */}
-		</div>
+					</div>
+				</>
+			)}
+		</>
 	);
 }
 

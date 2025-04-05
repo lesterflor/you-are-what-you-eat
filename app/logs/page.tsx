@@ -53,7 +53,7 @@ export default async function LogsPage(props: {
 								<ChartArea className='w-6 h-6' />
 							</Button>
 						</DialogTrigger>
-						<DialogContent className='max-w-[65vw] min-h-[70vh] portrait:max-w-[95vw] portrait:min-h-[75vh]'>
+						<DialogContent className='max-w-[65vw] min-h-[70vh] portrait:max-w-[95vw] portrait:min-h-[75vh] flex flex-col items-start justify-start'>
 							<DialogDescription />
 							<DialogTitle>Log Data</DialogTitle>
 							<DayLogChart fetchSelf={true} />
