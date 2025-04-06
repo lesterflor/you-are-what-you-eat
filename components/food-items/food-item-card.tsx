@@ -13,7 +13,7 @@ import { Badge } from '../ui/badge';
 import { useSession } from 'next-auth/react';
 import { Button } from '../ui/button';
 import NumberIncrementor from '../number-incrementor';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createDailyLog, updateLog } from '@/actions/log-actions';
 import { toast } from 'sonner';
 import { FilePlus } from 'lucide-react';
@@ -34,6 +34,7 @@ export default function FoodItemCard({
 	indx?: number;
 }) {
 	const dispatch = useAppDispatch();
+	const cardRef = useRef<HTMLDivElement>(null);
 
 	const { data: session } = useSession();
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -101,9 +102,19 @@ export default function FoodItemCard({
 			() => {
 				setFadeClass(true);
 			},
-			indx === 0 ? 1 : indx * 25
+			indx === 0 ? 1 : indx * 20
 		);
 	}, []);
+
+	useEffect(() => {
+		if (showDetails && cardRef.current) {
+			cardRef.current.scrollIntoView({
+				behavior: 'smooth',
+				block: 'center',
+				inline: 'center'
+			});
+		}
+	}, [showDetails]);
 
 	return (
 		<Card
@@ -142,7 +153,9 @@ export default function FoodItemCard({
 					<CardDescription className='px-4 pb-4 leading-tight'>
 						{item.description}
 					</CardDescription>
-					<CardContent className='flex flex-row items-center justify-center flex-wrap gap-2 p-0'>
+					<CardContent
+						className='flex flex-row items-center justify-center flex-wrap gap-2 p-0'
+						ref={cardRef}>
 						<div className='flex flex-row items-center gap-2 portrait:gap-1'>
 							<Badge
 								variant='secondary'
