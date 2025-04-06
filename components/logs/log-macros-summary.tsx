@@ -17,6 +17,7 @@ import { pieChartConfig } from '@/config';
 import ComparisonPopover from './comparison-popover';
 import { useAppSelector } from '@/lib/hooks';
 import { selectStatus } from '@/lib/features/log/logFoodSlice';
+import { FaSpinner } from 'react-icons/fa';
 
 export default function LogMacrosSummary({
 	log,
@@ -35,15 +36,19 @@ export default function LogMacrosSummary({
 	useSkeleton?: boolean;
 	showPie?: boolean;
 }) {
-	const [totalCals, setTotalCals] = useState(0);
-	const [totalCarbs, setTotalCarbs] = useState(0);
-	const [totalFat, setTotalFat] = useState(0);
-	const [totalProtein, setTotalProtein] = useState(0);
-	const [totalGrams, setTotalGrams] = useState(0);
 	const [isFetching, setIsFetching] = useState(false);
 
+	const [revealPie, setRevealPie] = useState(false);
 	const [pieData, setPieData] = useState<PieItemType[]>([]);
 	const [comparisonData, setComparisonData] = useState<LogComparisonType>(null);
+
+	const [currentData, setCurrentData] = useState({
+		calories: 0,
+		carbs: 0,
+		fat: 0,
+		protein: 0,
+		totalGrams: 0
+	});
 
 	const logStatus = useAppSelector(selectStatus);
 
@@ -53,13 +58,13 @@ export default function LogMacrosSummary({
 				log.foodItems
 			);
 
-			setIsFetching(false);
-			setTotalCals(calories);
-			setTotalCarbs(carbs);
-			setTotalFat(fat);
-			setTotalProtein(protein);
-
-			setTotalGrams(carbs + protein + fat);
+			setCurrentData({
+				calories,
+				carbs,
+				protein,
+				fat,
+				totalGrams: carbs + protein + fat
+			});
 
 			setPieData([
 				{ name: 'Carbs', value: carbs, fill: 'var(--color-carb)' },
@@ -71,6 +76,12 @@ export default function LogMacrosSummary({
 		}
 	}, []);
 
+	useEffect(() => {
+		setTimeout(() => {
+			setRevealPie(true);
+		}, 2000);
+	}, [pieData]);
+
 	const getLog = async () => {
 		setIsFetching(true);
 		const res = await createDailyLog(getTodayMode);
@@ -78,10 +89,22 @@ export default function LogMacrosSummary({
 		if (res?.success && res.data) {
 			const { foodItems, comparisons } = res.data;
 			const items = foodItems as GetFoodEntry[];
-			setTotalCals(totalMacrosReducer(items).calories);
-			setTotalCarbs(totalMacrosReducer(items).carbs);
-			setTotalFat(totalMacrosReducer(items).fat);
-			setTotalProtein(totalMacrosReducer(items).protein);
+
+			const { calories, carbs, protein, fat } = totalMacrosReducer(items);
+
+			setCurrentData({
+				calories,
+				carbs,
+				protein,
+				fat,
+				totalGrams: carbs + protein + fat
+			});
+
+			setPieData([
+				{ name: 'Carbs', value: carbs, fill: 'var(--color-carb)' },
+				{ name: 'Protein', value: protein, fill: 'var(--color-protein)' },
+				{ name: 'Fat', value: fat, fill: 'var(--color-fat)' }
+			]);
 
 			setComparisonData(comparisons);
 		}
@@ -105,14 +128,14 @@ export default function LogMacrosSummary({
 								<div className='flex flex-col items-center w-full'>
 									<div className='font-normal'>Calories</div>
 									<div className='flex flex-row items-center gap-0'>
-										{totalCals > 0 && comparisonData && (
+										{currentData.calories > 0 && comparisonData && (
 											<ComparisonPopover
 												data={comparisonData}
 												field='calories'
 											/>
 										)}
 
-										<div>{formatUnit(totalCals)}</div>
+										<div>{formatUnit(currentData.calories)}</div>
 									</div>
 								</div>
 							</Badge>
@@ -121,7 +144,7 @@ export default function LogMacrosSummary({
 								<div className='flex flex-col items-center w-full'>
 									<div className='font-normal whitespace-nowrap'>Protein g</div>
 									<div className='flex flex-row items-center gap-0'>
-										{totalProtein > 0 && comparisonData && (
+										{currentData.protein > 0 && comparisonData && (
 											<ComparisonPopover
 												data={comparisonData}
 												field='protein'
@@ -129,7 +152,7 @@ export default function LogMacrosSummary({
 										)}
 
 										<div className='whitespace-nowrap'>
-											{formatUnit(totalProtein)}
+											{formatUnit(currentData.protein)}
 										</div>
 									</div>
 								</div>
@@ -139,7 +162,7 @@ export default function LogMacrosSummary({
 								<div className='flex flex-col items-center w-full'>
 									<div className='font-normal whitespace-nowrap'>Carb g</div>
 									<div className='flex flex-row items-center gap-0'>
-										{totalCarbs > 0 && comparisonData && (
+										{currentData.carbs > 0 && comparisonData && (
 											<ComparisonPopover
 												data={comparisonData}
 												field='carbs'
@@ -147,7 +170,7 @@ export default function LogMacrosSummary({
 										)}
 
 										<div className='whitespace-nowrap'>
-											{formatUnit(totalCarbs)}
+											{formatUnit(currentData.carbs)}
 										</div>
 									</div>
 								</div>
@@ -157,7 +180,7 @@ export default function LogMacrosSummary({
 								<div className='flex flex-col items-center w-full'>
 									<div className='font-normal whitespace-nowrap'>Fat g</div>
 									<div className='flex flex-row items-center gap-0'>
-										{totalFat > 0 && comparisonData && (
+										{currentData.fat > 0 && comparisonData && (
 											<ComparisonPopover
 												data={comparisonData}
 												field='fat'
@@ -165,7 +188,7 @@ export default function LogMacrosSummary({
 										)}
 
 										<div className='whitespace-nowrap'>
-											{formatUnit(totalFat)}
+											{formatUnit(currentData.fat)}
 										</div>
 									</div>
 								</div>
@@ -183,18 +206,30 @@ export default function LogMacrosSummary({
 									<div className='flex flex-col items-center gap-0 rounded-md border-2 p-1'>
 										<span className='text-muted-foreground'>Carbohydrates</span>
 										<div className='flex flex-row items-center gap-1'>
-											<span>{formatUnit(totalCarbs * 4)}</span>
+											<span>{formatUnit(currentData.carbs * 4)}</span>
 											<span className='text-muted-foreground'>
-												({getMacroPercOfCals(totalCarbs, totalCals, 'carb')})
+												(
+												{getMacroPercOfCals(
+													currentData.carbs,
+													currentData.calories,
+													'carb'
+												)}
+												)
 											</span>
 										</div>
 									</div>
 									<div className='flex flex-col items-center gap-0 rounded-md border-2 p-1'>
 										<span className='text-muted-foreground'>Fat</span>
 										<div className='flex flex-row items-center gap-1'>
-											<span>{formatUnit(totalFat * 4)}</span>
+											<span>{formatUnit(currentData.fat * 9)}</span>
 											<span className='text-muted-foreground'>
-												({getMacroPercOfCals(totalFat, totalCals, 'fat')})
+												(
+												{getMacroPercOfCals(
+													currentData.fat,
+													currentData.calories,
+													'fat'
+												)}
+												)
 											</span>
 										</div>
 									</div>
@@ -202,10 +237,14 @@ export default function LogMacrosSummary({
 									<div className='flex flex-col items-center gap-0 rounded-md border-2 p-1'>
 										<span className='text-muted-foreground'>Protein</span>{' '}
 										<div className='flex flex-row items-center gap-1'>
-											<span>{formatUnit(totalProtein * 4)}</span>
+											<span>{formatUnit(currentData.protein * 4)}</span>
 											<span className='text-muted-foreground'>
 												(
-												{getMacroPercOfCals(totalProtein, totalCals, 'protein')}
+												{getMacroPercOfCals(
+													currentData.protein,
+													currentData.calories,
+													'protein'
+												)}
 												)
 											</span>
 										</div>
@@ -223,25 +262,25 @@ export default function LogMacrosSummary({
 						<Badge className='p-2 text-md'>
 							<div className='flex flex-col items-center w-full'>
 								<div className='font-normal'>Calories</div>
-								<div>{formatUnit(totalCals)}</div>
+								<div>{formatUnit(currentData.calories)}</div>
 							</div>
 						</Badge>
 						<Badge className='p-2 text-md'>
 							<div className='flex flex-col items-center w-full'>
 								<div className='font-normal'>Protein</div>
-								<div>{formatUnit(totalProtein)} g</div>
+								<div>{formatUnit(currentData.protein)} g</div>
 							</div>
 						</Badge>
 						<Badge className='p-2 text-md'>
 							<div className='flex flex-col items-center w-full'>
 								<div className='font-normal'>Carbs</div>
-								<div>{formatUnit(totalCarbs)} g</div>
+								<div>{formatUnit(currentData.carbs)} g</div>
 							</div>
 						</Badge>
 						<Badge className='p-2 text-md'>
 							<div className='flex flex-col items-center w-full'>
 								<div className='font-normal'>Fat</div>
-								<div>{formatUnit(totalFat)} g</div>
+								<div>{formatUnit(currentData.fat)} g</div>
 							</div>
 						</Badge>
 					</div>
@@ -256,18 +295,30 @@ export default function LogMacrosSummary({
 								<div className='flex flex-col items-center gap-0 rounded-md border-2 p-1'>
 									<span className='text-muted-foreground'>Carbohydrates</span>
 									<div className='flex flex-row items-center gap-1'>
-										<span>{formatUnit(totalCarbs * 4)}</span>
+										<span>{formatUnit(currentData.carbs * 4)}</span>
 										<span className='text-muted-foreground'>
-											({getMacroPercOfCals(totalCarbs, totalCals, 'carb')})
+											(
+											{getMacroPercOfCals(
+												currentData.carbs,
+												currentData.calories,
+												'carb'
+											)}
+											)
 										</span>
 									</div>
 								</div>
 								<div className='flex flex-col items-center gap-0 rounded-md border-2 p-1'>
 									<span className='text-muted-foreground'>Fat</span>
 									<div className='flex flex-row items-center gap-1'>
-										<span>{formatUnit(totalFat * 4)}</span>
+										<span>{formatUnit(currentData.fat * 9)}</span>
 										<span className='text-muted-foreground'>
-											({getMacroPercOfCals(totalFat, totalCals, 'fat')})
+											(
+											{getMacroPercOfCals(
+												currentData.fat,
+												currentData.calories,
+												'fat'
+											)}
+											)
 										</span>
 									</div>
 								</div>
@@ -275,9 +326,15 @@ export default function LogMacrosSummary({
 								<div className='flex flex-col items-center gap-0 rounded-md border-2 p-1'>
 									<span className='text-muted-foreground'>Protein</span>{' '}
 									<div className='flex flex-row items-center gap-1'>
-										<span>{formatUnit(totalProtein * 4)}</span>
+										<span>{formatUnit(currentData.protein * 4)}</span>
 										<span className='text-muted-foreground'>
-											({getMacroPercOfCals(totalProtein, totalCals, 'protein')})
+											(
+											{getMacroPercOfCals(
+												currentData.protein,
+												currentData.calories,
+												'protein'
+											)}
+											)
 										</span>
 									</div>
 								</div>
@@ -287,69 +344,75 @@ export default function LogMacrosSummary({
 				</div>
 			)}
 
-			{showPie && totalCals > 0 && (
+			{showPie && currentData.calories > 0 && (
 				<div className='w-auto'>
-					<ChartContainer
-						config={pieChartConfig}
-						className='mx-auto aspect-square w-[35vw] md:w-[28vw] lg:w-[22vw] xl:w-[18vw] h-[25vh] min-h-[25vh] portrait:w-full portrait:h-[25vh]'>
-						<PieChart>
-							<ChartTooltip
-								formatter={(value, name, props) => (
-									<div className='flex flex-row items-center gap-2'>
-										<div
-											className='w-2 h-2 rounded-sm'
-											style={{
-												backgroundColor: `${props.payload.fill}`
-											}}>
-											{props.payload.color}
+					{!revealPie ? (
+						<div className='w-full flex flex-col items-center justify-center portrait:h-[25vh]'>
+							<FaSpinner className='w-20 h-20 animate-spin opacity-5' />
+						</div>
+					) : (
+						<ChartContainer
+							config={pieChartConfig}
+							className='mx-auto aspect-square w-[35vw] md:w-[28vw] lg:w-[22vw] xl:w-[18vw] h-[25vh] min-h-[25vh] portrait:w-full portrait:h-[25vh]'>
+							<PieChart>
+								<ChartTooltip
+									formatter={(value, name, props) => (
+										<div className='flex flex-row items-center gap-2'>
+											<div
+												className='w-2 h-2 rounded-sm'
+												style={{
+													backgroundColor: `${props.payload.fill}`
+												}}>
+												{props.payload.color}
+											</div>
+											<div>{props.payload.name}</div>
+											<div className='text-xs'>
+												{formatUnit(Number(value))} grams
+											</div>
 										</div>
-										<div>{props.payload.name}</div>
-										<div className='text-xs'>
-											{formatUnit(Number(value))} grams
-										</div>
-									</div>
-								)}
-								cursor={false}
-								content={<ChartTooltipContent />}
-							/>
-							<Pie
-								data={pieData}
-								dataKey='value'
-								nameKey='name'
-								labelLine={false}
-								label={(value) => renderCustomizedLabel(value)}
-								innerRadius={45}
-								outerRadius={82}
-								strokeWidth={1}>
-								<Label
-									content={({ viewBox }) => {
-										if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
-											return (
-												<text
-													x={viewBox.cx}
-													y={viewBox.cy}
-													textAnchor='middle'
-													dominantBaseline='middle'>
-													<tspan
+									)}
+									cursor={false}
+									content={<ChartTooltipContent />}
+								/>
+								<Pie
+									data={pieData}
+									dataKey='value'
+									nameKey='name'
+									labelLine={false}
+									label={(value) => renderCustomizedLabel(value)}
+									innerRadius={45}
+									outerRadius={82}
+									strokeWidth={1}>
+									<Label
+										content={({ viewBox }) => {
+											if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+												return (
+													<text
 														x={viewBox.cx}
 														y={viewBox.cy}
-														className='fill-foreground text-2xl font-bold'>
-														{formatUnit(totalGrams)}
-													</tspan>
-													<tspan
-														x={viewBox.cx}
-														y={(viewBox.cy || 0) + 18}
-														className='fill-muted-foreground'>
-														Total grams
-													</tspan>
-												</text>
-											);
-										}
-									}}
-								/>
-							</Pie>
-						</PieChart>
-					</ChartContainer>
+														textAnchor='middle'
+														dominantBaseline='middle'>
+														<tspan
+															x={viewBox.cx}
+															y={viewBox.cy}
+															className='fill-foreground text-2xl font-bold'>
+															{formatUnit(currentData.totalGrams)}
+														</tspan>
+														<tspan
+															x={viewBox.cx}
+															y={(viewBox.cy || 0) + 18}
+															className='fill-muted-foreground'>
+															Total grams
+														</tspan>
+													</text>
+												);
+											}
+										}}
+									/>
+								</Pie>
+							</PieChart>
+						</ChartContainer>
+					)}
 				</div>
 			)}
 		</div>

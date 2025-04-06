@@ -23,18 +23,18 @@ export default function DayLogChart({
 	data?: DayLogDataType[];
 	fetchSelf?: boolean;
 }) {
-	const [isFetching, setIsFetching] = useState(true);
 	const [logs, setLogs] = useState<DayLogDataType[]>([]);
 	const [dates, setDates] = useState({
 		earliest: '',
 		latest: ''
 	});
 
+	const [revealChart, setRevealChart] = useState(false);
+
 	const { data: session } = useSession();
 	const user = session?.user as GetUser;
 
 	const getLogs = async () => {
-		setIsFetching(true);
 		const res = await getLogsByUserId(user.id);
 
 		if (res.success && res.data) {
@@ -61,8 +61,6 @@ export default function DayLogChart({
 
 			setLogs(mapData.reverse());
 		}
-
-		setIsFetching(false);
 	};
 
 	useEffect(() => {
@@ -79,11 +77,15 @@ export default function DayLogChart({
 			const last = logs.at(-1)?.day ?? '';
 			setDates({ earliest: first, latest: last });
 		}
+
+		setTimeout(() => {
+			setRevealChart(true);
+		}, 1500);
 	}, [logs]);
 
 	return (
 		<>
-			{isFetching ? (
+			{!revealChart ? (
 				<div className='w-full h-full flex flex-col items-center justify-center'>
 					<FaSpinner className='w-40 h-40 animate-spin opacity-5' />
 				</div>
