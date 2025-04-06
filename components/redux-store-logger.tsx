@@ -31,7 +31,7 @@ import { FaSpinner } from 'react-icons/fa';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { Button } from './ui/button';
 import { useSession } from 'next-auth/react';
-import { SquareActivity } from 'lucide-react';
+import { Activity, SquareActivity } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { ScrollArea } from './ui/scroll-area';
 import { cn } from '@/lib/utils';
@@ -191,6 +191,9 @@ export default function ReduxStoreLogger({
 						</Button>
 					</PopoverTrigger>
 					<PopoverContent className='flex flex-col gap-2'>
+						<div className='flex flex-row items-center gap-1'>
+							<Activity className='w-4 h-4' /> Activity
+						</div>
 						<ScrollArea
 							className={cn(
 								'w-full h-[20%]',
