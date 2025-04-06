@@ -71,6 +71,7 @@ export default function ReduxStoreLogger({
 	const [isFetching, setIsFetching] = useState(false);
 	const [log, setLog] = useState<GetActivityLog>();
 	const [activities, setActivities] = useState<GetActivityItem[]>([]);
+	const [hasOpened, setHasOpened] = useState(false);
 
 	const getTodaysActivity = async () => {
 		setIsFetching(true);
@@ -116,6 +117,8 @@ export default function ReduxStoreLogger({
 			};
 
 			logActivityAction(data);
+
+			setHasOpened(false);
 		}
 	}, [logFoodItem, logFoodItemStatus]);
 
@@ -128,6 +131,8 @@ export default function ReduxStoreLogger({
 			};
 
 			logActivityAction(data);
+
+			setHasOpened(false);
 		}
 	}, [foodSliceData, foodSliceStatus, foodSliceMsg]);
 
@@ -140,6 +145,8 @@ export default function ReduxStoreLogger({
 			};
 
 			logActivityAction(data);
+
+			setHasOpened(false);
 		}
 	}, [foodSearchData, foodSearchStatus]);
 
@@ -152,6 +159,8 @@ export default function ReduxStoreLogger({
 			};
 
 			logActivityAction(data);
+
+			setHasOpened(false);
 		}
 	}, [noteData, noteStatus, noteMsg]);
 
@@ -163,6 +172,8 @@ export default function ReduxStoreLogger({
 				data: groceryMsg
 			};
 			logActivityAction(data);
+
+			setHasOpened(false);
 		}
 	}, [groceryData, groceryStatus, groceryMsg]);
 
@@ -180,6 +191,9 @@ export default function ReduxStoreLogger({
 				<Popover>
 					<PopoverTrigger asChild>
 						<Button
+							onClick={() => {
+								setHasOpened(true);
+							}}
 							className='px-2'
 							variant='outline'
 							size='sm'>
@@ -187,7 +201,12 @@ export default function ReduxStoreLogger({
 								<AvatarImage src={user.image} />
 								<AvatarFallback>{user.name.slice(0, 1)}</AvatarFallback>
 							</Avatar>
-							<SquareActivity className='w-4 h-4' />
+							<SquareActivity
+								className={cn(
+									'w-4 h-4 animate-pulse',
+									!hasOpened && 'text-red-600'
+								)}
+							/>
 						</Button>
 					</PopoverTrigger>
 					<PopoverContent className='flex flex-col gap-2'>
