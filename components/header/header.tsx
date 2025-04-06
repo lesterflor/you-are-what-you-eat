@@ -66,8 +66,8 @@ export default async function SiteHeader() {
 							compactMode={true}
 							useSkeleton={false}>
 							<div className='flex flex-row items-center gap-2'>
-								<Calculator className='w-4 h-4 animate-pulse' />
-								<div>{format(current, 'PP hh:mm a')}</div>
+								<Calculator className='w-4 h-4' />
+								<div>{format(current, 'eee PP h:mm a')}</div>
 							</div>
 						</LogMacrosSummary>
 					</div>
