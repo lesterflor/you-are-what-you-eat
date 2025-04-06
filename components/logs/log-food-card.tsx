@@ -20,7 +20,7 @@ import {
 	DialogTitle,
 	DialogTrigger
 } from '../ui/dialog';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import NumberIncrementor from '../number-incrementor';
 import { deleteFoodLogEntry, updateFoodLogEntry } from '@/actions/log-actions';
 import { FaSpinner } from 'react-icons/fa';
@@ -41,6 +41,8 @@ export default function LogFoodCard({
 }) {
 	const dispatch = useAppDispatch();
 
+	const footerRef = useRef<HTMLDivElement>(null);
+
 	const [isEditing, setIsEditing] = useState(false);
 	const [servingSize, setServingSize] = useState(item.numServings);
 	const [isDeleting, setIsDeleting] = useState(false);
@@ -57,13 +59,26 @@ export default function LogFoodCard({
 		);
 	}, []);
 
+	useEffect(() => {
+		if (isEditing && footerRef.current) {
+			footerRef.current.scrollIntoView({
+				behavior: 'smooth',
+				block: 'center',
+				inline: 'center'
+			});
+		}
+	}, [isEditing]);
+
 	return (
 		<Card
-			className='transition-opacity opacity-0 duration-1000 select-none'
+			className={cn(
+				'transition-opacity opacity-0 duration-1000 select-none p-0',
+				isEditing && 'bg-green-900'
+			)}
 			style={{
 				opacity: fadeClass ? 1 : 0
 			}}>
-			<CardHeader className='pb-2 flex flex-row items-center justify-between gap-2 pt-2'>
+			<CardHeader className='pb-2 flex flex-row items-center justify-between gap-2 pt-2 px-4'>
 				<div className='capitalize font-semibold '>
 					<div className='text-2xl portrait:text-lg flex flex-row items-center gap-2'>
 						<FoodCategoryIconMapper type={item.category} />
@@ -80,11 +95,11 @@ export default function LogFoodCard({
 					{format(item.eatenAt, 'hh:mm a')}
 				</Badge>
 			</CardHeader>
-			<CardDescription className='px-6 pb-4 text-xs'>
+			<CardDescription className='px-4 pb-4 text-xs'>
 				{item.description}
 			</CardDescription>
 			<CardContent className='px-4'>
-				<div className='flex flex-row flex-wrap gap-2 items-center'>
+				<div className='flex flex-row flex-wrap gap-2 items-center justify-between'>
 					<Badge
 						variant='secondary'
 						className='w-16'>
@@ -124,7 +139,9 @@ export default function LogFoodCard({
 				</div>
 
 				{isEditing && (
-					<div className='flex flex-col items-center gap-2 mt-4'>
+					<div
+						className='flex flex-col items-center gap-2 mt-4'
+						ref={footerRef}>
 						<NumberIncrementor
 							compactMode={true}
 							onChange={(value) => {
@@ -190,7 +207,7 @@ export default function LogFoodCard({
 			</CardContent>
 
 			{!isEditing && allowEdit && (
-				<CardFooter className='flex flex-row flex-wrap gap-2 justify-between'>
+				<CardFooter className='flex flex-row flex-wrap gap-2 justify-between pb-2'>
 					<Button
 						variant='outline'
 						onClick={() => {
