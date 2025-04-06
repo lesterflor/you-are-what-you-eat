@@ -184,9 +184,11 @@ export default function ReduxStoreLogger({
 	return (
 		<>
 			{isFetching ? (
-				<div>
-					<FaSpinner className='w-4 h-4 animate-spin' />
-				</div>
+				<Button
+					variant='outline'
+					className='w-14'>
+					<FaSpinner className='animate-spin opacity-50' />
+				</Button>
 			) : activities.length > 0 ? (
 				<Popover>
 					<PopoverTrigger asChild>
@@ -199,7 +201,9 @@ export default function ReduxStoreLogger({
 							size='sm'>
 							<Avatar className='w-4 h-4'>
 								<AvatarImage src={user.image} />
-								<AvatarFallback>{user.name.slice(0, 1)}</AvatarFallback>
+								<AvatarFallback className='text-xs opacity-40'>
+									{user.name.slice(0, 1)}
+								</AvatarFallback>
 							</Avatar>
 							<SquareActivity
 								className={cn(

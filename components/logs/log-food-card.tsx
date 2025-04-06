@@ -78,7 +78,7 @@ export default function LogFoodCard({
 			style={{
 				opacity: fadeClass ? 1 : 0
 			}}>
-			<CardHeader className='pb-2 flex flex-row items-center justify-between gap-2 pt-2 px-4'>
+			<CardHeader className='pb-2 flex flex-row items-start justify-between gap-2 pt-2 pl-4 pr-2'>
 				<div className='capitalize font-semibold '>
 					<div className='text-2xl portrait:text-lg flex flex-row items-center gap-2'>
 						<FoodCategoryIconMapper type={item.category} />
@@ -90,7 +90,7 @@ export default function LogFoodCard({
 				</div>
 				<Badge
 					variant='outline'
-					className='flex flex-row items-center gap-2 p-2 whitespace-nowrap'>
+					className='flex flex-row items-center gap-2 p-2 whitespace-nowrap !mt-0 text-muted-foreground'>
 					<Clock className='w-4 h-4' />
 					{format(item.eatenAt, 'hh:mm a')}
 				</Badge>
