@@ -20,7 +20,13 @@ import { toast } from 'sonner';
 import BMRCalculatorSkeleton from '../skeletons/bmr-calculator-skeleton';
 import { Avatar, AvatarImage } from '../ui/avatar';
 import { AvatarFallback } from '@radix-ui/react-avatar';
-import { NotebookPenIcon } from 'lucide-react';
+import {
+	Calculator,
+	NotebookPenIcon,
+	Ruler,
+	Users,
+	Weight
+} from 'lucide-react';
 import { FaSpinner } from 'react-icons/fa';
 
 export default function BMRCalculatorForm() {
@@ -154,12 +160,13 @@ export default function BMRCalculatorForm() {
 			{hasUserData ? (
 				<Card className='lg:w-[50vw]'>
 					<CardHeader className='flex flex-row items-center gap-2 font-semibold'>
+						<Calculator className='w-5 h-5' />
 						BMR Calculator
 					</CardHeader>
 					<CardContent className='flex flex-col gap-2'>
 						<div>
 							<div className='flex flex-row items-center justify-center gap-2 rounded-md border-2 p-1'>
-								<div className='font-semibold'>You are a</div>
+								<div className='text-muted-foreground'>You are a</div>
 								<ToggleGroup
 									type='single'
 									defaultValue={sex}>
@@ -169,22 +176,24 @@ export default function BMRCalculatorForm() {
 							</div>
 						</div>
 
-						<div className='font-semibold'>Height</div>
+						<div className='font-semibold flex flex-row items-center gap-1'>
+							<Ruler className='w-4 h-4' />
+							Height
+						</div>
 						<div className='flex flex-row portrait:flex-col portait:justify-center flex-wrap justify-between gap-2 items-center'>
 							<div className='flex flex-col portrait:flex-row-reverse portrait:justify-end gap-2 items-center'>
-								<div className='text-xs'>Feet</div>
 								<NumberIncrementor
 									allowDecimalIncrement={false}
 									minValue={1}
 									value={feet}
 									onChange={(value) => {
 										setFeet(value);
-									}}
-								/>
+									}}>
+									<div className='text-xs text-muted-foreground'>Feet</div>
+								</NumberIncrementor>
 							</div>
 
 							<div className='flex flex-col portrait:flex-row-reverse portrait:justify-end gap-2 items-center'>
-								<div className='text-xs'>inches</div>
 								<NumberIncrementor
 									allowDecimalIncrement={false}
 									minValue={0}
@@ -192,15 +201,17 @@ export default function BMRCalculatorForm() {
 									value={inches}
 									onChange={(value) => {
 										setInches(value);
-									}}
-								/>
+									}}>
+									<div className='text-xs text-muted-foreground'>inches</div>
+								</NumberIncrementor>
 							</div>
 						</div>
 						<br />
 
 						<div className='flex flex-row flex-wrap justify-between gap-2'>
 							<div className='flex flex-col gap-2'>
-								<div className='font-semibold flex flex-row items-center gap-2'>
+								<div className='font-semibold flex flex-row items-center gap-1'>
+									<Weight className='w-4 h-4' />
 									Weight
 								</div>
 
@@ -238,7 +249,10 @@ export default function BMRCalculatorForm() {
 							</div>
 
 							<div className='flex flex-col gap-2'>
-								<div className='font-semibold'>Age</div>
+								<div className='font-semibold flex flex-row items-center gap-1'>
+									<Users className='w-4 h-4' />
+									Age
+								</div>
 								<div className='flex flex-row flex-wrap justify-between gap-2'>
 									<div>
 										<Input

@@ -47,19 +47,19 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 			<SheetContent>
 				<SheetDescription></SheetDescription>
 				<SheetTitle>
-					<div className='flex flex-row items-center justify-start gap-5 portrait:gap-3'>
+					<div className='flex flex-row items-center justify-start gap-5 portrait:gap-2'>
 						<Link
 							href='/'
 							onClick={handleClick}>
 							<div className='flex flex-row items-center gap-2'>
 								<UtensilsCrossed className='w-8 h-8' />
 								<div className='flex flex-col gap-0'>
-									<span className='dark:text-white text-black portrait:text-xl text-2xl font-bold thin-title'>
+									<span className='text-muted-foreground portrait:text-lg text-2xl font-bold thin-title'>
 										You are what you eat
 									</span>
-									<span className='text-xs font-normal text-muted-foreground'>
+									{/* <span className='text-xs font-normal text-muted-foreground leading-tight'>
 										Track the food you eat and stop wondering
-									</span>
+									</span> */}
 								</div>
 							</div>
 						</Link>

@@ -192,7 +192,7 @@ export default function ReduxStoreLogger({
 					</PopoverTrigger>
 					<PopoverContent className='flex flex-col gap-2'>
 						<div className='flex flex-row items-center gap-1'>
-							<Activity className='w-4 h-4' /> Activity
+							<Activity className='w-4 h-4 animate-pulse' /> Activity
 						</div>
 						<ScrollArea
 							className={cn(

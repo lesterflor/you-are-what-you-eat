@@ -54,7 +54,10 @@ export default function KnowCaloriesBurned() {
 			{fetching ? (
 				<Skeleton className='w-44 h-6' />
 			) : (
-				<div className='h-6'>Known calories burned: {caloriesBurned}</div>
+				<div className='h-6'>
+					Calories Expended:{' '}
+					<span className='text-amber-400'>{caloriesBurned}</span>
+				</div>
 			)}
 
 			<div className='flex flex-row items-center justify-between gap-2 w-full'>
@@ -64,7 +67,8 @@ export default function KnowCaloriesBurned() {
 						setInputVal(Number(e.target.value));
 					}}
 					type='number'
-					className='w-16'
+					maxLength={4}
+					className='w-20 text-lg'
 				/>
 				<Button
 					disabled={submitting}

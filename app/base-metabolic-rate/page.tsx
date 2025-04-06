@@ -21,7 +21,7 @@ export default async function BMRPage() {
 					<TruncateSection
 						allowSeeMore={true}
 						pixelHeight={300}>
-						<p className='pb-5'>
+						<p className='pb-5 text-muted-foreground'>
 							The basal metabolic rate (BMR) is the amount of energy needed
 							while resting in a temperate environment when the digestive system
 							is inactive. It is the equivalent of figuring out how much gas an
@@ -33,7 +33,7 @@ export default async function BMRPage() {
 							activity makes up ~20% of expenditure and ~10% is used for the
 							digestion of food, also known as thermogenesis.
 						</p>
-						<p className='pb-5'>
+						<p className='pb-5 text-muted-foreground'>
 							The BMR is measured under very restrictive circumstances while
 							awake. An accurate BMR measurement requires that a person&apos;s
 							sympathetic nervous system is inactive, which means the person
@@ -42,7 +42,7 @@ export default async function BMRPage() {
 							caloric need is the BMR value multiplied by a factor with a value
 							between 1.2 and 1.9, depending on activity level.
 						</p>
-						<p className='pb-5'>
+						<p className='pb-5 text-muted-foreground'>
 							n most situations, the BMR is estimated with equations summarized
 							from statistical data. The Harris-Benedict Equation was one of the
 							earliest equations introduced. It was revised in 1984 to be more
