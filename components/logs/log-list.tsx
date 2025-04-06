@@ -28,7 +28,7 @@ import { FaSpinner } from 'react-icons/fa';
 import FoodListSheet from '../food-items/food-list-sheet';
 import { TbDatabaseSearch } from 'react-icons/tb';
 import { useAppSelector } from '@/lib/hooks';
-import { selectStatus } from '@/lib/features/log/logFoodSlice';
+import { selectData, selectStatus } from '@/lib/features/log/logFoodSlice';
 
 export default function FoodLogList({
 	forceColumn = true,
@@ -52,6 +52,7 @@ export default function FoodLogList({
 	const { scrollingUp, delta } = useScrolling();
 
 	const logStatus = useAppSelector(selectStatus);
+	const logData = useAppSelector(selectData);
 
 	const getLog = async () => {
 		const res = await createDailyLog();
@@ -101,7 +102,7 @@ export default function FoodLogList({
 
 	useEffect(() => {
 		getLog();
-	}, [logStatus]);
+	}, [logStatus, logData]);
 
 	return (
 		<>
