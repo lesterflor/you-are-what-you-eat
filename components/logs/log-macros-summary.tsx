@@ -16,7 +16,7 @@ import { Label, Pie, PieChart } from 'recharts';
 import { pieChartConfig } from '@/config';
 import ComparisonPopover from './comparison-popover';
 import { useAppSelector } from '@/lib/hooks';
-import { selectStatus } from '@/lib/features/log/logFoodSlice';
+import { selectData, selectStatus } from '@/lib/features/log/logFoodSlice';
 import { FaSpinner } from 'react-icons/fa';
 
 export default function LogMacrosSummary({
@@ -51,6 +51,7 @@ export default function LogMacrosSummary({
 	});
 
 	const logStatus = useAppSelector(selectStatus);
+	const logData = useAppSelector(selectData);
 
 	useEffect(() => {
 		if (log) {
@@ -113,7 +114,7 @@ export default function LogMacrosSummary({
 
 	useEffect(() => {
 		getLog();
-	}, [logStatus]);
+	}, [logStatus, logData]);
 
 	return (
 		<div className='flex portrait:flex-col flex-row gap-2'>
