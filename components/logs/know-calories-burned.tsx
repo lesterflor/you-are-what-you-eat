@@ -7,7 +7,6 @@ import { Button } from '../ui/button';
 import { Plus } from 'lucide-react';
 import { FaSpinner } from 'react-icons/fa';
 import { toast } from 'sonner';
-import { Skeleton } from '../ui/skeleton';
 import { useCurrentSession } from '@/hooks/use-current-session';
 import { useAppDispatch } from '@/lib/hooks';
 import { expendedCaloriesUpdated } from '@/lib/features/log/logFoodSlice';
@@ -51,14 +50,18 @@ export default function KnowCaloriesBurned() {
 
 	return (
 		<div className='border-2 rounded-md p-2 flex flex-col items-center gap-2 text-sm'>
-			{fetching ? (
-				<Skeleton className='w-44 h-6' />
-			) : (
-				<div className='h-6'>
-					Calories Expended:{' '}
-					<span className='text-amber-400'>{caloriesBurned}</span>
-				</div>
-			)}
+			<div className='h-6 flex flex-row items-center'>
+				<span className='pr-2'>Calories Expended:</span>
+				{fetching ? (
+					<span className='flex flex-col items-center justify-center text-amber-400 w-10'>
+						<FaSpinner className='w-4 h-4 animate-spin' />
+					</span>
+				) : (
+					<span className='text-amber-400 w-10 text-center'>
+						{caloriesBurned}
+					</span>
+				)}
+			</div>
 
 			<div className='flex flex-row items-center justify-between gap-2 w-full'>
 				<Input

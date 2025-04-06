@@ -80,7 +80,7 @@ export default function LogFoodCard({
 			}}>
 			<CardHeader className='pb-2 flex flex-row items-start justify-between gap-2 pt-2 pl-4 pr-2'>
 				<div className='capitalize font-semibold '>
-					<div className='text-2xl portrait:text-lg flex flex-row items-center gap-2'>
+					<div className='text-2xl portrait:text-lg flex flex-row items-start gap-2'>
 						<FoodCategoryIconMapper type={item.category} />
 						<div className='leading-tight'>{item.name}</div>
 					</div>
