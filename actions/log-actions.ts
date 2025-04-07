@@ -218,6 +218,49 @@ export async function updateLog(foodEntries: FoodEntry[]) {
 	}
 }
 
+export async function getUserLogsInRange(from: Date, to: Date) {
+	try {
+		const session = await auth();
+		const user = session?.user as GetUser;
+
+		if (!session || !user) {
+			throw new Error('User must be authenticated');
+		}
+
+		const logs = await prisma.log.findMany({
+			where: {
+				userId: user.id,
+				createdAt: {
+					gte: from,
+					lte: to
+				}
+			},
+			include: {
+				knownCaloriesBurned: true,
+				user: {
+					select: {
+						BaseMetabolicRate: true
+					}
+				}
+			},
+			orderBy: {
+				createdAt: 'asc'
+			}
+		});
+
+		return {
+			success: true,
+			message: 'success',
+			data: logs
+		};
+	} catch (error: unknown) {
+		return {
+			success: false,
+			message: formatError(error)
+		};
+	}
+}
+
 export async function getLogsByUserId(id: string, logId: string = '') {
 	try {
 		const logs = await prisma.log.findMany({

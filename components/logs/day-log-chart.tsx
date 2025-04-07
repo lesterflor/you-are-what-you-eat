@@ -1,6 +1,6 @@
 'use client';
 
-import { DayLogDataType, GetUser } from '@/types';
+import { DayLogDataType } from '@/types';
 import React, { useEffect, useState } from 'react';
 import {
 	ChartConfig,
@@ -9,33 +9,34 @@ import {
 	ChartTooltipContent
 } from '../ui/chart';
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
-import { formatUnit } from '@/lib/utils';
-import { useSession } from 'next-auth/react';
-import { getLogsByUserId } from '@/actions/log-actions';
-import { format } from 'date-fns';
-import { Badge } from '../ui/badge';
+import { cn, formatUnit } from '@/lib/utils';
+import { getUserLogsInRange } from '@/actions/log-actions';
 import { FaSpinner } from 'react-icons/fa';
+import { DateRange } from 'react-day-picker';
+import { format } from 'date-fns';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { Button } from '../ui/button';
+import { CalendarIcon } from 'lucide-react';
+import { Calendar } from '../ui/calendar';
 
-export default function DayLogChart({
-	data,
-	fetchSelf = false
-}: {
-	data?: DayLogDataType[];
-	fetchSelf?: boolean;
-}) {
+export default function DayLogChart() {
 	const [logs, setLogs] = useState<DayLogDataType[]>([]);
-	const [dates, setDates] = useState({
-		earliest: '',
-		latest: ''
+
+	const [date, setDate] = useState<DateRange | undefined>({
+		from: new Date(2025, 2, 12),
+		to: new Date(Date.now())
 	});
 
-	const [revealChart, setRevealChart] = useState(false);
-
-	const { data: session } = useSession();
-	const user = session?.user as GetUser;
+	const [isFetching, setIsFetching] = useState(false);
+	const [datePickerOpen, setDatePickerOpen] = useState(false);
 
 	const getLogs = async () => {
-		const res = await getLogsByUserId(user.id);
+		if (!date || !date.from || !date.to) {
+			return;
+		}
+
+		setIsFetching(true);
+		const res = await getUserLogsInRange(date.from, date.to);
 
 		if (res.success && res.data) {
 			const mapData: DayLogDataType[] = res.data.map((log) => ({
@@ -59,44 +60,80 @@ export default function DayLogChart({
 				)
 			}));
 
-			setLogs(mapData.reverse());
+			setLogs(mapData);
 		}
+
+		setIsFetching(false);
 	};
 
 	useEffect(() => {
-		if (!fetchSelf && data && data.length > 0) {
-			setLogs(data.reverse());
-		} else {
-			getLogs();
+		getLogs();
+		if (date?.from && date?.to) {
+			setDatePickerOpen(false);
 		}
-	}, []);
-
-	useEffect(() => {
-		if (logs.length > 1) {
-			const first = logs.at(0)?.day ?? '';
-			const last = logs.at(-1)?.day ?? '';
-			setDates({ earliest: first, latest: last });
-		}
-
-		setTimeout(() => {
-			setRevealChart(true);
-		}, 1500);
-	}, [logs]);
+	}, [date]);
 
 	return (
 		<>
-			{!revealChart ? (
+			<div>
+				<Popover
+					open={datePickerOpen}
+					onOpenChange={setDatePickerOpen}>
+					<PopoverTrigger asChild>
+						<div className='flex flex-col items-center gap-1'>
+							<Button
+								variant={'secondary'}
+								id='date'
+								className={cn(
+									'justify-start text-left font-normal',
+									!date && 'text-muted-foreground'
+								)}>
+								<CalendarIcon />
+								{date?.from ? (
+									date.to ? (
+										<>
+											{format(date.from, 'LLL dd, y')} -{' '}
+											{format(date.to, 'LLL dd, y')}
+										</>
+									) : (
+										format(date.from, 'LLL dd, y')
+									)
+								) : (
+									<span>Pick a date</span>
+								)}
+							</Button>
+							<div className='text-xs text-muted-foreground'>
+								Select a date range to refine your data
+							</div>
+						</div>
+					</PopoverTrigger>
+					<PopoverContent
+						className='w-auto p-0'
+						align='start'>
+						<Calendar
+							hideHead={true}
+							classNames={{
+								day: 'w-7 h-7 text-xs rounded-sm',
+								row: 'flex w-full mt-1'
+							}}
+							initialFocus
+							mode='range'
+							defaultMonth={date?.from}
+							selected={date}
+							onSelect={setDate}
+							numberOfMonths={2}
+						/>
+					</PopoverContent>
+				</Popover>
+			</div>
+
+			{isFetching ? (
 				<div className='w-full h-full flex flex-col items-center justify-center'>
 					<FaSpinner className='w-40 h-40 animate-spin opacity-5' />
 				</div>
 			) : (
 				<>
 					<div className='flex flex-col gap-4 w-fit h-full'>
-						<div className='flex flex-row items-center justify-start gap-0 text-xs font-normal'>
-							<Badge variant='outline'>{dates.earliest}</Badge>-
-							<Badge variant='outline'>{dates.latest}</Badge>
-						</div>
-
 						<div>
 							<div>Calories</div>
 							{/* portrait chart */}

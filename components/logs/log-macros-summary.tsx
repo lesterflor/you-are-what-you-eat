@@ -113,7 +113,9 @@ export default function LogMacrosSummary({
 	};
 
 	useEffect(() => {
-		getLog();
+		if (getTodayMode) {
+			getLog();
+		}
 	}, [logStatus, logData]);
 
 	return (
