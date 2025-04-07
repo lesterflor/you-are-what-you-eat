@@ -2,7 +2,6 @@ import AddFoodSheet from '@/components/food-items/add-food-sheet';
 import FoodListSheet from '@/components/food-items/food-list-sheet';
 import LandingContent from '@/components/landing-content';
 import FoodLogList from '@/components/logs/log-list';
-import { Separator } from '@/components/ui/separator';
 import { auth } from '@/db/auth';
 
 export default async function Home() {
@@ -12,7 +11,7 @@ export default async function Home() {
 		<>
 			{session ? (
 				<div className='flex flex-col gap-4 w-full h-full'>
-					<div className='text-lg'>
+					<div className='text-sm text-muted-foreground portrait:w-[70vw]'>
 						You are what you eat,{' '}
 						<span className='font-semibold'>{session.user?.name}</span>
 					</div>
@@ -24,7 +23,6 @@ export default async function Home() {
 							<FoodListSheet />
 						</div>
 					</div>
-					<Separator />
 					<div className='relative'>
 						<FoodLogList
 							useFloaterNav={true}

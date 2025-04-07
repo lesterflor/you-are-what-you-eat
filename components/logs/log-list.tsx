@@ -4,7 +4,7 @@ import { BaseMetabolicRateType, GetFoodEntry, GetLog } from '@/types';
 import { useEffect, useState } from 'react';
 import LogFoodCard from './log-food-card';
 import { ScrollArea } from '../ui/scroll-area';
-import { cn, formatUnit } from '@/lib/utils';
+import { cn, formatUnit, getStorageItem, setStorageItem } from '@/lib/utils';
 import { IoFastFoodOutline } from 'react-icons/io5';
 import { createDailyLog } from '@/actions/log-actions';
 import {
@@ -13,6 +13,8 @@ import {
 	BicepsFlexed,
 	Calendar,
 	Frown,
+	IdCard,
+	List,
 	Smile,
 	ThumbsDown,
 	ThumbsUp
@@ -29,6 +31,9 @@ import FoodListSheet from '../food-items/food-list-sheet';
 import { TbDatabaseSearch } from 'react-icons/tb';
 import { useAppSelector } from '@/lib/hooks';
 import { selectData, selectStatus } from '@/lib/features/log/logFoodSlice';
+import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
+import { Badge } from '../ui/badge';
+import LogFoodListItem from './log-food-list-item';
 
 export default function FoodLogList({
 	forceColumn = true,
@@ -49,6 +54,8 @@ export default function FoodLogList({
 	const [bmr, setBmr] = useState<BaseMetabolicRateType>();
 	const [calsBurned, setCalsBurned] = useState(0);
 	const [remainingCals, setRemainingCals] = useState(0);
+	const [dataFormat, setDataFormat] = useState('');
+
 	const { scrollingUp, delta } = useScrolling();
 
 	const logStatus = useAppSelector(selectStatus);
@@ -104,8 +111,36 @@ export default function FoodLogList({
 		getLog();
 	}, [logStatus, logData]);
 
+	useEffect(() => {
+		if (dataFormat) {
+			setStorageItem('logFormat', dataFormat);
+		}
+	}, [dataFormat]);
+
+	useEffect(() => {
+		const savedFormat = getStorageItem('logFormat') ?? 'card';
+		setDataFormat(savedFormat);
+	}, []);
+
 	return (
 		<>
+			<Badge
+				variant={'secondary'}
+				className='fixed right-0 top-24 z-30'>
+				<ToggleGroup
+					variant={'outline'}
+					value={dataFormat}
+					onValueChange={setDataFormat}
+					type='single'
+					defaultValue='card'>
+					<ToggleGroupItem value='list'>
+						<List className='w-4 h-4' />
+					</ToggleGroupItem>
+					<ToggleGroupItem value='card'>
+						<IdCard className='w-4 h-4' />
+					</ToggleGroupItem>
+				</ToggleGroup>
+			</Badge>
 			<div
 				className={cn(
 					'flex flex-row items-center w-fit pb-4 gap-2',
@@ -220,14 +255,23 @@ export default function FoodLogList({
 							<>
 								{logList.length > 0 ? (
 									<>
-										{logList.map((item, indx) => (
-											<LogFoodCard
-												allowEdit={true}
-												indx={indx}
-												item={item}
-												key={`${item.id}-${item.eatenAt.getTime()}`}
-											/>
-										))}
+										{dataFormat === 'card'
+											? logList.map((item, indx) => (
+													<LogFoodCard
+														allowEdit={true}
+														indx={indx}
+														item={item}
+														key={`${item.id}-${item.eatenAt.getTime()}`}
+													/>
+											  ))
+											: logList.map((item, indx) => (
+													<LogFoodListItem
+														allowEdit={true}
+														indx={indx}
+														item={item}
+														key={`${item.id}-${item.eatenAt.getTime()}`}
+													/>
+											  ))}
 									</>
 								) : (
 									<div className='flex flex-row items-center justify-center gap-2 text-muted-foreground opacity-40 fixed top-[45vh]'>

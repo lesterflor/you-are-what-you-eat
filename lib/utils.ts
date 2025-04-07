@@ -105,14 +105,18 @@ export function shuffle(array: any[]) {
 }
 
 export function setStorageItem(name: string, value: any) {
-	localStorage.setItem(name, JSON.stringify(value));
+	if (typeof window !== 'undefined') {
+		window.localStorage.setItem(name, JSON.stringify(value));
+	}
 }
 
 export function getStorageItem(name: string) {
-	const data = localStorage.getItem(name);
+	if (typeof window !== 'undefined') {
+		const data = window.localStorage.getItem(name);
 
-	if (data) {
-		return JSON.parse(data);
+		if (data) {
+			return JSON.parse(data);
+		}
 	}
 
 	return null;
