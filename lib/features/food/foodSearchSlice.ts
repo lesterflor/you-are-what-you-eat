@@ -1,5 +1,6 @@
 import { getFoodCategoryConstants } from '@/components/food-items/food-categories';
 import { createAppSlice } from '@/lib/createAppSlice';
+import { GetUser } from '@/types';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
 export interface FoodSearchSliceState {
@@ -35,9 +36,11 @@ export const foodSearchSlice = createAppSlice({
 		}),
 
 		userSearch: create.reducer((state, action: PayloadAction<string>) => {
+			const usr: GetUser = JSON.parse(action.payload);
+
 			state.value = {
-				user: action.payload,
-				message: `You searched for items you created`
+				user: usr.id,
+				message: `You searched for items added by ${usr.name}`
 			};
 			state.status = 'user';
 		}),

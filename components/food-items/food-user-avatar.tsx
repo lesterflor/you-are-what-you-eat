@@ -284,7 +284,7 @@ export default function FoodUserAvatar({
 								setPopOpen(false);
 
 								if (selfSearch) {
-									dispatch(userSearch(user.id));
+									dispatch(userSearch(JSON.stringify(user)));
 								}
 							}}>
 							{!selfSearch ? (

@@ -48,7 +48,7 @@ export default function FoodCategoryPicker({
 				switch (selected) {
 					case 'user':
 						if (!suppressUser) {
-							dispatch(userSearch(user.id));
+							dispatch(userSearch(JSON.stringify(user)));
 						}
 						break;
 					default:

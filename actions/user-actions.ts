@@ -96,6 +96,23 @@ export async function signUpUser(prevState: unknown, formData: FormData) {
 	}
 }
 
+export async function getUserNameById(userId: string) {
+	const session = await auth();
+	const user = session?.user as GetUser;
+
+	if (userId === user.id) {
+		return 'you';
+	}
+
+	const notMe = await prisma.user.findFirst({
+		where: {
+			id: userId
+		}
+	});
+
+	return notMe?.name ?? 'you';
+}
+
 export async function getUserById(userId: string) {
 	const user = await prisma.user.findFirst({
 		where: {
