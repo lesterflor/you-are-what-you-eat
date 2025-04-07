@@ -159,7 +159,7 @@ export default function LogFoodListItem({
 			<CardContent className='px-4 pb-0'>
 				{isEditing && (
 					<div
-						className='flex flex-col items-center gap-2'
+						className='flex flex-col items-center gap-2 mt-2'
 						ref={footerRef}>
 						<div className='flex flex-row flex-wrap gap-2 items-center justify-between'>
 							<Badge
