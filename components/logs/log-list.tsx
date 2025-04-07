@@ -124,23 +124,26 @@ export default function FoodLogList({
 
 	return (
 		<>
-			<Badge
-				variant={'secondary'}
-				className='fixed right-0 top-24 z-30'>
-				<ToggleGroup
-					variant={'outline'}
-					value={dataFormat}
-					onValueChange={setDataFormat}
-					type='single'
-					defaultValue='card'>
-					<ToggleGroupItem value='list'>
-						<List className='w-4 h-4' />
-					</ToggleGroupItem>
-					<ToggleGroupItem value='card'>
-						<IdCard className='w-4 h-4' />
-					</ToggleGroupItem>
-				</ToggleGroup>
-			</Badge>
+			{logList.length > 0 && (
+				<Badge
+					variant={'secondary'}
+					className='fixed right-0 top-24 z-30'>
+					<ToggleGroup
+						variant={'outline'}
+						value={dataFormat}
+						onValueChange={setDataFormat}
+						type='single'
+						defaultValue='card'>
+						<ToggleGroupItem value='list'>
+							<List className='w-4 h-4' />
+						</ToggleGroupItem>
+						<ToggleGroupItem value='card'>
+							<IdCard className='w-4 h-4' />
+						</ToggleGroupItem>
+					</ToggleGroup>
+				</Badge>
+			)}
+
 			<div
 				className={cn(
 					'flex flex-row items-center w-fit pb-4 gap-2',
