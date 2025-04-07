@@ -127,7 +127,11 @@ export default function FoodLogList({
 			{logList.length > 0 && (
 				<Badge
 					variant={'secondary'}
-					className='fixed right-0 top-24 z-30'>
+					className={cn(
+						'fixed right-0 top-24 z-30 transition-all duration-1000',
+						scrollingUp ? '-top-24' : 'top-24',
+						delta === 0 && 'top-24'
+					)}>
 					<ToggleGroup
 						variant={'outline'}
 						value={dataFormat}
