@@ -169,14 +169,7 @@ export default function LogFoodListItem({
 						className='flex flex-col items-center gap-2 mt-2'
 						ref={footerRef}>
 						<div className='flex flex-row flex-wrap gap-2 items-center justify-between'>
-							{/* <Badge
-								variant='outline'
-								className='flex flex-row items-center gap-2 p-2 whitespace-nowrap !mt-0 text-muted-foreground'>
-								<Clock className='w-4 h-4' />
-								{format(item.eatenAt, 'hh:mm a')}
-							</Badge> */}
-
-							<CardDescription className='px-4 pb-4 text-xs'>
+							<CardDescription className='px-4 pb-4 text-xs w-full'>
 								{item.description}
 							</CardDescription>
 							<Badge
