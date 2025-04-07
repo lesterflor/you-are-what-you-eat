@@ -86,9 +86,16 @@ export default function LogFoodListItem({
 							<div className='leading-tight'>{item.name}</div>
 						</div>
 
-						<span className='pl-8 text-xs font-normal text-muted-foreground flex flex-row items-center'>
-							{servingSize} {servingSize === 1 ? 'serving' : 'servings'}
-						</span>
+						<div className='pl-8 text-xs font-normal text-muted-foreground flex flex-row items-center gap-2'>
+							<div className='w-20'>
+								{servingSize} {servingSize === 1 ? 'serving' : 'servings'}
+							</div>
+
+							<div className='flex flex-row items-center gap-1 whitespace-nowrap text-muted-foreground'>
+								<Clock className='w-4 h-4' />
+								{format(item.eatenAt, 'h:mm a')}
+							</div>
+						</div>
 					</div>
 
 					{!isEditing && allowEdit && (
@@ -162,12 +169,12 @@ export default function LogFoodListItem({
 						className='flex flex-col items-center gap-2 mt-2'
 						ref={footerRef}>
 						<div className='flex flex-row flex-wrap gap-2 items-center justify-between'>
-							<Badge
+							{/* <Badge
 								variant='outline'
 								className='flex flex-row items-center gap-2 p-2 whitespace-nowrap !mt-0 text-muted-foreground'>
 								<Clock className='w-4 h-4' />
 								{format(item.eatenAt, 'hh:mm a')}
-							</Badge>
+							</Badge> */}
 
 							<CardDescription className='px-4 pb-4 text-xs'>
 								{item.description}
