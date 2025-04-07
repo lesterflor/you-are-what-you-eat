@@ -284,7 +284,12 @@ export default function FoodUserAvatar({
 								setPopOpen(false);
 
 								if (selfSearch) {
-									dispatch(userSearch(JSON.stringify(user)));
+									const userClone = {
+										...user,
+										name: user.name === sessionUser.name ? 'you' : user.name
+									};
+
+									dispatch(userSearch(JSON.stringify(userClone)));
 								}
 							}}>
 							{!selfSearch ? (
