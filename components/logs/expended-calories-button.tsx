@@ -1,6 +1,6 @@
 'use client';
 
-import { Flame, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Flame, Plus } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { useEffect, useState } from 'react';
@@ -97,13 +97,32 @@ export default function ExpendedCaloriesButton({
 				<div className='flex flex-row items-center justify-between gap-4 w-full'>
 					<div className='flex flex-col gap-4 items-center justify-center w-full'>
 						<div className='text-xs text-muted-foreground'>{inputVal}</div>
-						<Slider
-							defaultValue={[inputVal]}
-							onValueChange={(val) => setInputVal(val[0])}
-							step={1}
-							min={10}
-							max={1000}
-						/>
+						<div className='flex flex-row items-center gap-3 justify-center w-full'>
+							<Button
+								onClick={() => {
+									setInputVal((prev) => prev - 1);
+								}}
+								size={'icon'}
+								variant={'secondary'}>
+								<ChevronLeft />
+							</Button>
+							<Slider
+								value={[inputVal]}
+								defaultValue={[inputVal]}
+								onValueChange={(val) => setInputVal(val[0])}
+								step={1}
+								min={10}
+								max={1000}
+							/>
+							<Button
+								onClick={() => {
+									setInputVal((prev) => prev + 1);
+								}}
+								size={'icon'}
+								variant={'secondary'}>
+								<ChevronRight />
+							</Button>
+						</div>
 					</div>
 				</div>
 
