@@ -10,7 +10,6 @@ import { createDailyLog } from '@/actions/log-actions';
 import {
 	ArrowDown,
 	ArrowUp,
-	BicepsFlexed,
 	Calendar,
 	Frown,
 	IdCard,
@@ -35,6 +34,7 @@ import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 import { Badge } from '../ui/badge';
 import LogFoodListItem from './log-food-list-item';
 import ExpendedCaloriesButton from './expended-calories-button';
+import { GiEmptyMetalBucket } from 'react-icons/gi';
 
 export default function FoodLogList({
 	forceColumn = true,
@@ -282,8 +282,8 @@ export default function FoodLogList({
 											  ))}
 									</>
 								) : (
-									<div className='flex flex-row items-center justify-center gap-2 text-muted-foreground opacity-40 fixed top-[45vh]'>
-										<BicepsFlexed className='w-16 h-16' />
+									<div className='flex flex-col items-center justify-center gap-2 text-muted-foreground opacity-30 fixed top-[25vh] w-full'>
+										<GiEmptyMetalBucket className='w-48 h-48 animate-pulse' />
 										Nothing logged yet!
 									</div>
 								)}
