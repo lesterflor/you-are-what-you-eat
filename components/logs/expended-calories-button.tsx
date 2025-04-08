@@ -30,7 +30,7 @@ export default function ExpendedCaloriesButton({
 	const [caloriesBurned, setCaloriesBurned] = useState(0);
 	const [submitting, setSubmitting] = useState(false);
 	const [fetching, setFetching] = useState(true);
-	const [inputVal, setInputVal] = useState(0);
+	const [inputVal, setInputVal] = useState(10);
 	const [popoverOpen, setPopoverOpen] = useState(false);
 
 	const { status } = useCurrentSession();
@@ -101,39 +101,40 @@ export default function ExpendedCaloriesButton({
 							defaultValue={[inputVal]}
 							onValueChange={(val) => setInputVal(val[0])}
 							step={1}
-							max={1500}
+							min={10}
+							max={1000}
 						/>
 					</div>
-
-					<Button
-						disabled={submitting}
-						onClick={async () => {
-							setSubmitting(true);
-							const res = await addKnownCaloriesBurned(inputVal);
-
-							if (res.success) {
-								toast.success(res.message);
-								getLog();
-
-								// redux
-								dispatch(expendedCaloriesUpdated(inputVal));
-
-								setInputVal(0);
-								setPopoverOpen(false);
-							} else {
-								toast.error(res.message);
-							}
-
-							setSubmitting(false);
-						}}>
-						{submitting ? (
-							<FaSpinner className='w-4 h-4 animate-spin' />
-						) : (
-							<Plus className='h-4 w-4' />
-						)}
-						Add
-					</Button>
 				</div>
+
+				<Button
+					disabled={submitting}
+					onClick={async () => {
+						setSubmitting(true);
+						const res = await addKnownCaloriesBurned(inputVal);
+
+						if (res.success) {
+							toast.success(res.message);
+							getLog();
+
+							// redux
+							dispatch(expendedCaloriesUpdated(inputVal));
+
+							setInputVal(0);
+							setPopoverOpen(false);
+						} else {
+							toast.error(res.message);
+						}
+
+						setSubmitting(false);
+					}}>
+					{submitting ? (
+						<FaSpinner className='w-4 h-4 animate-spin' />
+					) : (
+						<Plus className='h-4 w-4' />
+					)}
+					Add
+				</Button>
 
 				<div className='text-muted-foreground text-xs'>
 					* If you are aware of calories you have burned outside your BMR (Base
