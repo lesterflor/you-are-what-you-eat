@@ -96,13 +96,13 @@ export default function ExpendedCaloriesButton({
 				</div>
 				<div className='flex flex-row items-center justify-between gap-4 w-full'>
 					<div className='flex flex-col gap-4 items-center justify-center w-full'>
+						<div className='text-xs text-muted-foreground'>{inputVal}</div>
 						<Slider
 							defaultValue={[inputVal]}
 							onValueChange={(val) => setInputVal(val[0])}
 							step={1}
 							max={1500}
 						/>
-						<div className='text-xs text-muted-foreground'>{inputVal}</div>
 					</div>
 
 					<Button
