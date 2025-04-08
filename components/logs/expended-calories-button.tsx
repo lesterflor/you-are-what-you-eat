@@ -89,7 +89,7 @@ export default function ExpendedCaloriesButton({
 				</div>
 				<div className='text-3xl font-semibold text-amber-600'>
 					{fetching ? (
-						<FaSpinner className='w-6 h-6 animate-spin' />
+						<FaSpinner className='w-7 h-7 animate-spin' />
 					) : (
 						caloriesBurned
 					)}
