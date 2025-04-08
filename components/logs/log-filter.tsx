@@ -54,7 +54,9 @@ export default function LogFilter() {
 			{logs && logs.length > 0 && (
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<Button variant='secondary'>
+						<Button
+							variant='outline'
+							size={'icon'}>
 							<Filter className='w-4 -h-4' />
 						</Button>
 					</DropdownMenuTrigger>

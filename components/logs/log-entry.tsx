@@ -63,7 +63,7 @@ export default function LogEntry({ log }: { log: GetLog }) {
 					<div className='flex flex-row gap-2 items-center justify-center'>
 						<Calendar className='w-4 h-4 portrait:w-6 portrait:h-6  ' />
 						<div className='portrait:text-sm flex flex-row items-center gap-4 justify-between flex-wrap w-full'>
-							<div className='portrait:text-lg font-semibold'>
+							<div className='portrait:text-md font-semibold text-muted-foreground'>
 								{format(log.createdAt, 'eee PP')}
 							</div>
 						</div>
