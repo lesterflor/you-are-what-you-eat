@@ -34,6 +34,7 @@ import { selectData, selectStatus } from '@/lib/features/log/logFoodSlice';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 import { Badge } from '../ui/badge';
 import LogFoodListItem from './log-food-list-item';
+import ExpendedCaloriesButton from './expended-calories-button';
 
 export default function FoodLogList({
 	forceColumn = true,
@@ -314,12 +315,14 @@ export default function FoodLogList({
 						delta === 0 && 'bottom-0'
 					)}>
 					<CardContent className='p-2 pt-5 flex flex-row items-center gap-2 relative'>
-						<div className='absolute -top-6 left-40'>
+						<div className='absolute -top-6 left-40 flex flex-row gap-4'>
 							<FoodListSheet>
 								<div className='rounded-full dark:bg-green-950 bg-green-500 p-3'>
 									<TbDatabaseSearch className='w-6 h-6 animate-pulse' />
 								</div>
 							</FoodListSheet>
+
+							<ExpendedCaloriesButton />
 						</div>
 						<div className={cn('flex flex-col items-start w-full gap-1')}>
 							<Popover modal={true}>

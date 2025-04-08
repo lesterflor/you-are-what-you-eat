@@ -18,12 +18,12 @@ import AddFoodSheet from '../food-items/add-food-sheet';
 import FoodListSheet from '../food-items/food-list-sheet';
 import { Button } from '../ui/button';
 import { useState } from 'react';
-import KnowCaloriesBurned from '../logs/know-calories-burned';
 import { useCurrentSession } from '@/hooks/use-current-session';
 import { useSession } from 'next-auth/react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import NoteSheet from '../notes/note-sheet';
 import GrocerListSheet from '../grocery/grocery-list-sheet';
+import ExpendedCaloriesButton from '../logs/expended-calories-button';
 
 export default function SideMenu({ log }: { log?: GetLog }) {
 	const pathname = usePathname();
@@ -140,8 +140,8 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 							{pathname !== '/foods' && <FoodListSheet />}
 						</div>
 					</div>
-
-					<KnowCaloriesBurned />
+					<ExpendedCaloriesButton iconMode={false} />
+					{/* <KnowCaloriesBurned /> */}
 				</div>
 			</SheetContent>
 		</Sheet>
