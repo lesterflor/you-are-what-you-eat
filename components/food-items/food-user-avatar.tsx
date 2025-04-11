@@ -116,18 +116,20 @@ export default function FoodUserAvatar({
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
 	const deleteUserFood = async () => {
-		if (!editFoodItem) {
+		if (currentFood.length === 0) {
 			return;
 		}
 		setIsDeleting(true);
-		const res = await deleteFoodItem(editFoodItem.id);
+		const res = await deleteFoodItem(currentFood[0].id);
 
 		if (res.success && res.data) {
+			// redux
+			dispatch(deleteFood(generateRxFoodItemSchema(res.data as GetFoodItem)));
+
 			toast.success(res.message);
 			setDeleteDialogOpen(false);
 
-			// redux
-			dispatch(deleteFood(generateRxFoodItemSchema(res.data as GetFoodItem)));
+			setPopOpen(false);
 		} else {
 			toast.error(res.message);
 		}
@@ -152,12 +154,10 @@ export default function FoodUserAvatar({
 				className='flex flex-col gap-4 max-h-[50vh] h-auto items-center'>
 				{sessionUser.id === id && currentFood && currentFood.length === 1 && (
 					<div className='flex flex-col gap-1 items-center w-full'>
-						{editFoodItem && (
-							<div className='flex flex-row items-center gap-2 pb-2'>
-								<FoodCategoryIconMapper type={editFoodItem.category} />
-								<div className='capitalize'>{editFoodItem?.name}</div>
-							</div>
-						)}
+						<div className='flex flex-row items-center gap-2 pb-2'>
+							<FoodCategoryIconMapper type={currentFood[0].category} />
+							<div className='capitalize'>{currentFood[0].name}</div>
+						</div>
 
 						<div className='flex flex-row justify-between w-full'>
 							<Sheet
@@ -216,7 +216,7 @@ export default function FoodUserAvatar({
 										<div className='text-muted-foreground'>
 											Are you sure you want to delete{' '}
 											<span className='text-foreground'>
-												{editFoodItem?.name}
+												{currentFood[0].name}
 											</span>
 											? This action cannot be undone.
 										</div>
