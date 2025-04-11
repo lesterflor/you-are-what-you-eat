@@ -75,7 +75,7 @@ export default function LogFoodListItem({
 			<CardHeader className='flex flex-row items-start justify-between gap-2 pt-2 pl-4 pb-0 pr-2'>
 				<div className='capitalize font-semibold flex flex-row justify-between gap-2 w-full items-center'>
 					<div
-						className='text-sm flex flex-col items-start gap-0'
+						className='text-sm flex flex-col items-start gap-0 w-full'
 						onClick={(e) => {
 							e.preventDefault();
 
@@ -86,9 +86,13 @@ export default function LogFoodListItem({
 							<div className='leading-tight'>{item.name}</div>
 						</div>
 
-						<div className='pl-8 text-xs font-normal text-muted-foreground flex flex-row items-center gap-2'>
-							<div className='w-20'>
+						<div className='text-xs font-normal text-muted-foreground flex flex-row items-center justify-between gap-2 w-full'>
+							<div>
 								{servingSize} {servingSize === 1 ? 'serving' : 'servings'}
+							</div>
+
+							<div className='flex flex-row items-center gap-1 whitespace-nowrap text-muted-foreground'>
+								{formatUnit(item.calories * item.numServings)} cals
 							</div>
 
 							<div className='flex flex-row items-center gap-1 whitespace-nowrap text-muted-foreground'>
@@ -99,7 +103,7 @@ export default function LogFoodListItem({
 					</div>
 
 					{!isEditing && allowEdit && (
-						<div className='flex flex-row flex-wrap gap-2 justify-between pb-2'>
+						<div className='flex flex-row gap-2 justify-between pb-2'>
 							<Button
 								variant='outline'
 								size={'icon'}
