@@ -85,6 +85,7 @@ export default function ReduxStoreLogger({
 
 	const logActivityAction = async (data: ActivityItem) => {
 		setIsFetching(true);
+
 		const res = await logActivity(data);
 
 		if (res.success) {

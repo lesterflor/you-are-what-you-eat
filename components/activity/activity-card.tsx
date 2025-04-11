@@ -27,6 +27,10 @@ const formatItemType = (type: string) => {
 			lbl = 'Groceries';
 			css = 'text-green-600';
 			break;
+		case 'foodData':
+			lbl = 'Food';
+			css = 'text-amber-100';
+			break;
 	}
 
 	return { label: lbl, css };

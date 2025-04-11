@@ -23,7 +23,6 @@ import { Textarea } from '../ui/textarea';
 import { LoaderIcon, Plus } from 'lucide-react';
 import { Card, CardContent } from '../ui/card';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { GetFoodItem, GetUser } from '@/types';
 import { useAppDispatch } from '@/lib/hooks';
@@ -58,8 +57,6 @@ export default function AddFoodItemForm({
 		}
 	});
 
-	const router = useRouter();
-
 	const [hasSubmitted, setHasSubmitted] = useState(false);
 
 	const onSubmit: SubmitHandler<z.infer<typeof foodItemSchema>> = async (
@@ -85,7 +82,7 @@ export default function AddFoodItemForm({
 			form.reset();
 			setHasSubmitted(true);
 			onSuccess?.();
-			router.push('/foods');
+			//router.push('/foods');
 		} else {
 			toast.error(res.message);
 		}
