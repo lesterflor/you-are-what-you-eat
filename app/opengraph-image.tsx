@@ -30,7 +30,7 @@ export default async function Image() {
 					display: 'flex',
 					flexDirection: 'column',
 					alignItems: 'center',
-					gap: 0,
+					gap: '0',
 					justifyContent: 'center',
 					color: '#ffffff'
 				}}>
