@@ -12,6 +12,11 @@
 	src: url('../public/fonts/Inter_18pt-Thin.ttf');
 }
 
+@font-face {
+	font-family: 'Oswald';
+	src: url('../public/fonts/Oswald-Regular.ttf');
+}
+
 body {
 	font-family: 'Inter';
 }

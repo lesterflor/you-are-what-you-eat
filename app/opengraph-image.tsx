@@ -14,8 +14,8 @@ export const contentType = 'image/png';
 // Image generation
 export default async function Image() {
 	// Font loading, process.cwd() is Next.js project directory
-	const interSemiBold = await readFile(
-		join(process.cwd(), 'public/fonts/Inter_18pt-Regular.ttf')
+	const Oswald = await readFile(
+		join(process.cwd(), 'public/fonts/Oswald-Regular.ttf')
 	);
 
 	return new ImageResponse(
@@ -23,7 +23,7 @@ export default async function Image() {
 			// ImageResponse JSX element
 			<div
 				style={{
-					fontSize: 300,
+					fontSize: 150,
 					background: '#250',
 					width: '100%',
 					height: '100%',
@@ -45,8 +45,8 @@ export default async function Image() {
 			...size,
 			fonts: [
 				{
-					name: 'Inter',
-					data: interSemiBold,
+					name: 'Oswald',
+					data: Oswald,
 					style: 'normal',
 					weight: 400
 				}
