@@ -23,15 +23,19 @@ export default async function Image() {
 			// ImageResponse JSX element
 			<div
 				style={{
-					fontSize: 128,
-					background: 'green',
+					fontSize: 300,
+					background: '#250',
 					width: '100%',
 					height: '100%',
 					display: 'flex',
+					flexDirection: 'column',
 					alignItems: 'center',
-					justifyContent: 'center'
+					justifyContent: 'center',
+					color: '#ffffff'
 				}}>
-				Y-R-W-Y-E
+				<span>You Are</span>
+				<span>What You</span>
+				<span>Eat</span>
 			</div>
 		),
 		// ImageResponse options
