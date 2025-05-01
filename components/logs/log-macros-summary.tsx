@@ -1,5 +1,9 @@
 'use client';
 
+import { createDailyLog } from '@/actions/log-actions';
+import { pieChartConfig } from '@/config';
+import { selectData, selectStatus } from '@/lib/features/log/logFoodSlice';
+import { useAppSelector } from '@/lib/hooks';
 import {
 	formatUnit,
 	getMacroPercOfCals,
@@ -8,16 +12,12 @@ import {
 } from '@/lib/utils';
 import { GetFoodEntry, GetLog, LogComparisonType, PieItemType } from '@/types';
 import { useEffect, useState } from 'react';
-import { Badge } from '../ui/badge';
-import { createDailyLog } from '@/actions/log-actions';
-import LogMacrosSkeleton from '../skeletons/log-macros-skeleton';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '../ui/chart';
-import { Label, Pie, PieChart } from 'recharts';
-import { pieChartConfig } from '@/config';
-import ComparisonPopover from './comparison-popover';
-import { useAppSelector } from '@/lib/hooks';
-import { selectData, selectStatus } from '@/lib/features/log/logFoodSlice';
 import { FaSpinner } from 'react-icons/fa';
+import { Label, Pie, PieChart } from 'recharts';
+import LogMacrosSkeleton from '../skeletons/log-macros-skeleton';
+import { Badge } from '../ui/badge';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '../ui/chart';
+import ComparisonPopover from './comparison-popover';
 
 export default function LogMacrosSummary({
 	log,
@@ -135,10 +135,9 @@ export default function LogMacrosSummary({
 											<ComparisonPopover
 												data={comparisonData}
 												field='calories'
+												value={formatUnit(currentData.calories)}
 											/>
 										)}
-
-										<div>{formatUnit(currentData.calories)}</div>
 									</div>
 								</div>
 							</Badge>
@@ -151,12 +150,9 @@ export default function LogMacrosSummary({
 											<ComparisonPopover
 												data={comparisonData}
 												field='protein'
+												value={formatUnit(currentData.protein)}
 											/>
 										)}
-
-										<div className='whitespace-nowrap'>
-											{formatUnit(currentData.protein)}
-										</div>
 									</div>
 								</div>
 							</Badge>
@@ -169,12 +165,9 @@ export default function LogMacrosSummary({
 											<ComparisonPopover
 												data={comparisonData}
 												field='carbs'
+												value={formatUnit(currentData.carbs)}
 											/>
 										)}
-
-										<div className='whitespace-nowrap'>
-											{formatUnit(currentData.carbs)}
-										</div>
 									</div>
 								</div>
 							</Badge>
@@ -187,12 +180,9 @@ export default function LogMacrosSummary({
 											<ComparisonPopover
 												data={comparisonData}
 												field='fat'
+												value={formatUnit(currentData.fat)}
 											/>
 										)}
-
-										<div className='whitespace-nowrap'>
-											{formatUnit(currentData.fat)}
-										</div>
 									</div>
 								</div>
 							</Badge>
