@@ -1,12 +1,11 @@
 'use client';
 
-import { BaseMetabolicRateType, GetFoodEntry, GetLog } from '@/types';
-import { useEffect, useState } from 'react';
-import LogFoodCard from './log-food-card';
-import { ScrollArea } from '../ui/scroll-area';
-import { cn, formatUnit, getStorageItem, setStorageItem } from '@/lib/utils';
-import { IoFastFoodOutline } from 'react-icons/io5';
 import { createDailyLog } from '@/actions/log-actions';
+import { useScrolling } from '@/hooks/use-scroll';
+import { selectData, selectStatus } from '@/lib/features/log/logFoodSlice';
+import { useAppSelector } from '@/lib/hooks';
+import { cn, formatUnit, getStorageItem, setStorageItem } from '@/lib/utils';
+import { BaseMetabolicRateType, GetFoodEntry, GetLog } from '@/types';
 import {
 	ArrowDown,
 	ArrowUp,
@@ -18,23 +17,24 @@ import {
 	ThumbsDown,
 	ThumbsUp
 } from 'lucide-react';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { useEffect, useState } from 'react';
+import { FaSpinner } from 'react-icons/fa';
+import { GiEmptyMetalBucket } from 'react-icons/gi';
+import { IoFastFoodOutline } from 'react-icons/io5';
+import { TbDatabaseSearch } from 'react-icons/tb';
+import FoodListSheet from '../food-items/food-list-sheet';
+import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
+import { Card, CardContent } from '../ui/card';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { ScrollArea } from '../ui/scroll-area';
+import { Skeleton } from '../ui/skeleton';
+import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
+import ExpendedCaloriesButton from './expended-calories-button';
+import LogFoodCard from './log-food-card';
+import LogFoodListItem from './log-food-list-item';
 import LogMacrosSummary from './log-macros-summary';
 import LogRemainderBadge from './log-remainder-badge';
-import { Skeleton } from '../ui/skeleton';
-import { useScrolling } from '@/hooks/use-scroll';
-import { Card, CardContent } from '../ui/card';
-import { FaSpinner } from 'react-icons/fa';
-import FoodListSheet from '../food-items/food-list-sheet';
-import { TbDatabaseSearch } from 'react-icons/tb';
-import { useAppSelector } from '@/lib/hooks';
-import { selectData, selectStatus } from '@/lib/features/log/logFoodSlice';
-import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
-import { Badge } from '../ui/badge';
-import LogFoodListItem from './log-food-list-item';
-import ExpendedCaloriesButton from './expended-calories-button';
-import { GiEmptyMetalBucket } from 'react-icons/gi';
 
 export default function FoodLogList({
 	forceColumn = true,
@@ -250,7 +250,9 @@ export default function FoodLogList({
 						{logList.length > 0 && (
 							<div className='flex flex-row items-center gap-2'>
 								<Calendar className='w-4 h-4' />
-								Today&apos;s Log
+								<div>{`Today's Log (${logList.length} ${
+									logList.length === 1 ? 'item' : 'items'
+								})`}</div>
 							</div>
 						)}
 						<div
