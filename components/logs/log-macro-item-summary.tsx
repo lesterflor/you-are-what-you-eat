@@ -26,17 +26,18 @@ export default function LogMacroItemSummary({
 			switch (macro) {
 				case 'carbs':
 					sortedFoodList = [...res.data.foodItems].sort(
-						(a, b) => b.carbGrams - a.carbGrams
+						(a, b) => b.carbGrams * b.numServings - a.carbGrams * a.numServings
 					);
 					break;
 				case 'protein':
 					sortedFoodList = [...res.data.foodItems].sort(
-						(a, b) => b.proteinGrams - a.proteinGrams
+						(a, b) =>
+							b.proteinGrams * b.numServings - a.proteinGrams * a.numServings
 					);
 					break;
 				case 'fat':
 					sortedFoodList = [...res.data.foodItems].sort(
-						(a, b) => b.fatGrams - a.fatGrams
+						(a, b) => b.fatGrams * b.numServings - a.fatGrams * a.numServings
 					);
 					break;
 			}
@@ -61,25 +62,34 @@ export default function LogMacroItemSummary({
 						{foodEntries.length > 0 &&
 							foodEntries.map((item) => {
 								let macroField;
+								const {
+									proteinGrams,
+									carbGrams,
+									fatGrams,
+									numServings,
+									id,
+									name
+								} = item;
+
 								switch (macro) {
 									case 'protein':
-										macroField = item.proteinGrams;
+										macroField = proteinGrams * numServings;
 										break;
 									case 'carbs':
-										macroField = item.carbGrams;
+										macroField = carbGrams * numServings;
 										break;
 									case 'fat':
-										macroField = item.fatGrams;
+										macroField = fatGrams * numServings;
 										break;
 								}
 
 								return (
 									<Card
-										key={item.id}
+										key={id}
 										className='p-0 w-full'>
 										<CardContent className='flex flex-row items-center gap-2 justify-between w-full p-1.5'>
-											<div className='font-normal leading-tight text-muted-foreground'>
-												{item.name}
+											<div className='font-normal leading-tight text-muted-foreground capitalize'>
+												{name}
 											</div>
 											<div className='whitespace-nowrap'>{`${formatUnit(
 												macroField
