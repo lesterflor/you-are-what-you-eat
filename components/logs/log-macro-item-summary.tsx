@@ -58,7 +58,7 @@ export default function LogMacroItemSummary({
 				<FaSpinner className='w-8 h-8 animate-spin opacity-10' />
 			) : (
 				<ScrollArea className='w-full pt-4'>
-					<div className='flex flex-col gap-2 max-h-[10rem]'>
+					<div className='flex flex-col gap-2 max-h-[19rem]'>
 						{foodEntries.length > 0 &&
 							foodEntries.map((item) => {
 								let macroField;
@@ -68,6 +68,7 @@ export default function LogMacroItemSummary({
 									fatGrams,
 									numServings,
 									id,
+									eatenAt,
 									name
 								} = item;
 
@@ -85,7 +86,7 @@ export default function LogMacroItemSummary({
 
 								return (
 									<Card
-										key={id}
+										key={`${id}-${eatenAt.getTime()}`}
 										className='p-0 w-full'>
 										<CardContent className='flex flex-row items-center gap-2 justify-between w-full p-1.5'>
 											<div className='font-normal leading-tight text-muted-foreground capitalize'>
