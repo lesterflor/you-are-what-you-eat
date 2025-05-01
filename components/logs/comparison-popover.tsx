@@ -9,11 +9,13 @@ import LogMacroItemSummary from './log-macro-item-summary';
 export default function ComparisonPopover({
 	data,
 	field,
-	value
+	value,
+	unitLabel = ''
 }: {
 	data: LogComparisonType;
 	field: 'calories' | 'protein' | 'carbs' | 'fat';
 	value: number;
+	unitLabel?: string;
 }) {
 	if (!data) {
 		return null;
@@ -34,7 +36,10 @@ export default function ComparisonPopover({
 				</div>
 			</PopoverTrigger>
 			<PopoverContent className='flex flex-col gap-1 items-center text-xs w-48 py-2 pr-4 pl-2'>
-				<div className='capitalize'>{field}</div>
+				<div className='flex flex-row gap-1 items-center'>
+					<div className='capitalize'>{field}</div>
+					<div>{unitLabel}</div>
+				</div>
 				<div className='flex flex-row justify-between w-full'>
 					<div className='text-muted-foreground'>Yesterday</div>
 					<div>{formatUnit(fieldData.yesterday)}</div>

@@ -151,6 +151,7 @@ export default function LogMacrosSummary({
 												data={comparisonData}
 												field='protein'
 												value={formatUnit(currentData.protein)}
+												unitLabel='(grams)'
 											/>
 										)}
 									</div>
@@ -166,6 +167,7 @@ export default function LogMacrosSummary({
 												data={comparisonData}
 												field='carbs'
 												value={formatUnit(currentData.carbs)}
+												unitLabel='(grams)'
 											/>
 										)}
 									</div>
@@ -181,6 +183,7 @@ export default function LogMacrosSummary({
 												data={comparisonData}
 												field='fat'
 												value={formatUnit(currentData.fat)}
+												unitLabel='(grams)'
 											/>
 										)}
 									</div>

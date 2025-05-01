@@ -93,7 +93,7 @@ export default function LogMacroItemSummary({
 											</div>
 											<div className='whitespace-nowrap'>{`${formatUnit(
 												macroField
-											)} g`}</div>
+											)}`}</div>
 										</CardContent>
 									</Card>
 								);
