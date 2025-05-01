@@ -9,7 +9,6 @@ import { BaseMetabolicRateType, GetFoodEntry, GetLog } from '@/types';
 import {
 	ArrowDown,
 	ArrowUp,
-	Calendar,
 	Frown,
 	IdCard,
 	List,
@@ -18,6 +17,7 @@ import {
 	ThumbsUp
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { BiSolidFoodMenu } from 'react-icons/bi';
 import { FaSpinner } from 'react-icons/fa';
 import { GiEmptyMetalBucket } from 'react-icons/gi';
 import { IoFastFoodOutline } from 'react-icons/io5';
@@ -249,7 +249,7 @@ export default function FoodLogList({
 					<div className='flex flex-col gap-2 w-full'>
 						{logList.length > 0 && (
 							<div className='flex flex-row items-center gap-2'>
-								<Calendar className='w-4 h-4' />
+								<BiSolidFoodMenu className='w-4 h-4' />
 								<div>{`Today's Log (${logList.length} ${
 									logList.length === 1 ? 'item' : 'items'
 								})`}</div>
