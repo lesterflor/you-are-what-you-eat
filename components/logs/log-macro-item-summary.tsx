@@ -63,7 +63,7 @@ export default function LogMacroItemSummary({
 			{isFetching ? (
 				<FaSpinner className='w-8 h-8 animate-spin opacity-10' />
 			) : (
-				<div className='flex flex-col gap-2 pt-4'>
+				<div className='flex flex-col gap-2 pt-4 w-full'>
 					{foodEntries.length > 0 && (
 						<div className='flex flex-row gap-1'>
 							<BiSolidFoodMenu className='w-4 h-4' />
