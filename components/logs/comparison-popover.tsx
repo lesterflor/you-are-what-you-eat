@@ -65,7 +65,7 @@ export default function ComparisonPopover({
 						</div>
 					</div>
 				</div>
-				{field !== 'calories' && <LogMacroItemSummary macro={field} />}
+				<LogMacroItemSummary macro={field} />
 			</PopoverContent>
 		</Popover>
 	);

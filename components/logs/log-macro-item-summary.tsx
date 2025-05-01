@@ -11,7 +11,7 @@ import { ScrollArea } from '../ui/scroll-area';
 export default function LogMacroItemSummary({
 	macro
 }: {
-	macro: 'protein' | 'carbs' | 'fat';
+	macro: 'protein' | 'carbs' | 'fat' | 'calories';
 }) {
 	const [foodEntries, setFoodEntries] = useState<GetFoodEntry[]>([]);
 	const [isFetching, setIsFetching] = useState(false);
@@ -24,6 +24,11 @@ export default function LogMacroItemSummary({
 			let sortedFoodList;
 
 			switch (macro) {
+				case 'calories':
+					sortedFoodList = [...res.data.foodItems].sort(
+						(a, b) => b.calories * b.numServings - a.calories * a.numServings
+					);
+					break;
 				case 'carbs':
 					sortedFoodList = [...res.data.foodItems].sort(
 						(a, b) => b.carbGrams * b.numServings - a.carbGrams * a.numServings
@@ -69,7 +74,8 @@ export default function LogMacroItemSummary({
 									numServings,
 									id,
 									eatenAt,
-									name
+									name,
+									calories
 								} = item;
 
 								switch (macro) {
@@ -81,6 +87,9 @@ export default function LogMacroItemSummary({
 										break;
 									case 'fat':
 										macroField = fatGrams * numServings;
+										break;
+									default:
+										macroField = calories * numServings;
 										break;
 								}
 
