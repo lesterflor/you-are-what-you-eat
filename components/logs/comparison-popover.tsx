@@ -35,7 +35,7 @@ export default function ComparisonPopover({
 					<div className='whitespace-nowrap'>{value}</div>
 				</div>
 			</PopoverTrigger>
-			<PopoverContent className='flex flex-col gap-1 items-center text-xs w-48 py-2 pr-4 pl-2 bg-neutral-800'>
+			<PopoverContent className='flex flex-col gap-1 items-center text-xs w-48 py-2 pr-4 pl-2 bg-green-900'>
 				<div className='flex flex-row gap-1 items-center'>
 					<div className='capitalize'>{field}</div>
 					<div>{unitLabel}</div>
