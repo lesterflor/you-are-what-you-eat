@@ -701,3 +701,45 @@ export async function getLogRemainder() {
 		};
 	}
 }
+
+export async function getCommonItemsInLog() {
+	try {
+		const session = await auth();
+		const user = session?.user as GetUser;
+
+		if (!session || !user) {
+			throw new Error('User must be authenticated');
+		}
+
+		const logs = await prisma.log.findMany({
+			where: {
+				userId: user.id
+			}
+		});
+
+		if (!logs) {
+			throw new Error('There was a problem getting logs for user');
+		}
+
+		const items: any[] = [];
+
+		logs.forEach((log) => {
+			log.foodItems.forEach((food) => {
+				items.push(food);
+			});
+		});
+
+		items.sort((a, b) => a.name.localeCompare(b.name));
+
+		return {
+			success: true,
+			message: 'success',
+			data: items
+		};
+	} catch (error: unknown) {
+		return {
+			success: false,
+			message: formatError(error)
+		};
+	}
+}

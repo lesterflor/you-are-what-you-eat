@@ -30,6 +30,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { ScrollArea } from '../ui/scroll-area';
 import { Skeleton } from '../ui/skeleton';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
+import CommonLoggedItems from './common-logged-items';
 import ExpendedCaloriesButton from './expended-calories-button';
 import LogFoodCard from './log-food-card';
 import LogFoodListItem from './log-food-list-item';
@@ -284,9 +285,10 @@ export default function FoodLogList({
 											  ))}
 									</>
 								) : (
-									<div className='flex flex-col items-center justify-center gap-2 text-muted-foreground opacity-30 fixed top-[25vh] w-full'>
+									<div className='flex flex-col items-center justify-center gap-2 text-muted-foreground opacity-30 fixed top-[18vh] w-[95%]'>
 										<GiEmptyMetalBucket className='w-48 h-48 animate-pulse' />
 										Nothing logged yet!
+										<CommonLoggedItems />
 									</div>
 								)}
 							</>
