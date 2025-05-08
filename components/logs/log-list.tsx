@@ -22,6 +22,7 @@ import { FaSpinner } from 'react-icons/fa';
 import { GiEmptyMetalBucket } from 'react-icons/gi';
 import { IoFastFoodOutline } from 'react-icons/io5';
 import { TbDatabaseSearch } from 'react-icons/tb';
+import FoodFavouriteListSheet from '../food-items/food-favourite-list-sheet';
 import FoodListSheet from '../food-items/food-list-sheet';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -319,7 +320,9 @@ export default function FoodLogList({
 						delta === 0 && 'bottom-0'
 					)}>
 					<CardContent className='p-2 pt-5 flex flex-row items-center gap-2 relative'>
-						<div className='absolute -top-6 left-40 flex flex-row gap-4'>
+						<div className='absolute -top-6 left-28 flex flex-row gap-4'>
+							<FoodFavouriteListSheet />
+
 							<FoodListSheet>
 								<div className='rounded-full dark:bg-green-950 bg-green-500 p-3'>
 									<TbDatabaseSearch className='w-6 h-6 animate-pulse' />
@@ -328,6 +331,7 @@ export default function FoodLogList({
 
 							<ExpendedCaloriesButton />
 						</div>
+
 						<div className={cn('flex flex-col items-start w-full gap-1')}>
 							<Popover modal={true}>
 								<PopoverTrigger asChild>
