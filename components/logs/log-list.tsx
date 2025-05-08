@@ -285,7 +285,7 @@ export default function FoodLogList({
 											  ))}
 									</>
 								) : (
-									<div className='flex flex-col items-center justify-center gap-2 text-muted-foreground opacity-30 fixed top-[18vh] w-[95%]'>
+									<div className='flex flex-col items-center justify-center gap-2 text-muted-foreground opacity-30 fixed top-[12vh] w-[95%]'>
 										<GiEmptyMetalBucket className='w-48 h-48 animate-pulse' />
 										Nothing logged yet!
 										<CommonLoggedItems />

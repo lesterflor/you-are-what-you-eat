@@ -1,8 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import FoodCategoryPicker from './food-categories';
 import { useEffect, useState } from 'react';
+import FoodCategoryPicker from './food-categories';
 
 export default function FoodCategoryFilter({
 	compactMode = false
@@ -22,6 +22,7 @@ export default function FoodCategoryFilter({
 		<>
 			<div className='portrait:hidden'>
 				<FoodCategoryPicker
+					value='favourites'
 					showFilterIcon={true}
 					compactMode={compactMode}
 					onSelect={(value) => {
@@ -32,6 +33,7 @@ export default function FoodCategoryFilter({
 
 			<div className='hidden portrait:flex items-center flex-col'>
 				<FoodCategoryPicker
+					value='favourites'
 					iconsOnly={true}
 					showFilterIcon={true}
 					compactMode={compactMode}

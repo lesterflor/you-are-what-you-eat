@@ -5,7 +5,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 
 export interface FoodSearchSliceState {
 	value: { term?: string; category?: string; user?: string; message: string };
-	status: 'idle' | 'input' | 'category' | 'user' | 'all';
+	status: 'idle' | 'input' | 'category' | 'user' | 'all' | 'favourites';
 }
 
 const initialState: FoodSearchSliceState = {
@@ -49,6 +49,12 @@ export const foodSearchSlice = createAppSlice({
 				message: `You searched for all items`
 			};
 			state.status = 'all';
+		}),
+		favouriteSearch: create.reducer((state) => {
+			state.value = {
+				message: `You searched for your favourite items`
+			};
+			state.status = 'favourites';
 		})
 	}),
 	selectors: {
@@ -57,8 +63,13 @@ export const foodSearchSlice = createAppSlice({
 	}
 });
 
-export const { inputSearch, categorySearch, userSearch, allSearch } =
-	foodSearchSlice.actions;
+export const {
+	inputSearch,
+	categorySearch,
+	userSearch,
+	allSearch,
+	favouriteSearch
+} = foodSearchSlice.actions;
 
 export const { selectFoodSearchData, selectFoodSearchStatus } =
 	foodSearchSlice.selectors;

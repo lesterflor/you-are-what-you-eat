@@ -1,6 +1,19 @@
 'use client';
 
+import { createDailyLog, updateLog } from '@/actions/log-actions';
+import { added } from '@/lib/features/log/logFoodSlice';
+import { useAppDispatch } from '@/lib/hooks';
+import { cn, formatUnit, getMacroPercOfCals } from '@/lib/utils';
 import { FoodEntry, GetFoodItem } from '@/types';
+import { FilePlus } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { useEffect, useRef, useState } from 'react';
+import { FaSpinner } from 'react-icons/fa';
+import { GiSpoon } from 'react-icons/gi';
+import { toast } from 'sonner';
+import NumberIncrementor from '../number-incrementor';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
 import {
 	Card,
 	CardContent,
@@ -9,20 +22,8 @@ import {
 	CardHeader
 } from '../ui/card';
 import FoodCategoryIconMapper from './food-category-icon-mapper';
-import { Badge } from '../ui/badge';
-import { useSession } from 'next-auth/react';
-import { Button } from '../ui/button';
-import NumberIncrementor from '../number-incrementor';
-import { useEffect, useRef, useState } from 'react';
-import { createDailyLog, updateLog } from '@/actions/log-actions';
-import { toast } from 'sonner';
-import { FilePlus } from 'lucide-react';
-import { cn, formatUnit, getMacroPercOfCals } from '@/lib/utils';
-import { FaSpinner } from 'react-icons/fa';
+import FoodItemFavourite from './food-item-favourite';
 import FoodUserAvatar from './food-user-avatar';
-import { GiSpoon } from 'react-icons/gi';
-import { useAppDispatch } from '@/lib/hooks';
-import { added } from '@/lib/features/log/logFoodSlice';
 
 export default function FoodItemCard({
 	item,
@@ -137,21 +138,25 @@ export default function FoodItemCard({
 					<FoodCategoryIconMapper type={item.category} />
 					{item.name}
 				</div>
-				{session && item.user && (
-					<div className='absolute top-1 right-1'>
-						<FoodUserAvatar
-							selfSearch={selfSearch}
-							user={item.user}
-							foodItemId={item.id}
-						/>
-					</div>
-				)}
+
+				<div className='flex flex-row items-center justify-center gap-2 absolute top-1 right-1'>
+					{session && item.user && (
+						<div>
+							<FoodUserAvatar
+								selfSearch={selfSearch}
+								user={item.user}
+								foodItemId={item.id}
+							/>
+						</div>
+					)}
+				</div>
 			</CardHeader>
 
 			{showDetails && (
 				<>
-					<CardDescription className='px-4 pb-4 leading-tight'>
-						{item.description}
+					<CardDescription className='px-4 pr-1 pb-4 leading-tight flex flex-row items-center justify-between gap-2'>
+						<div>{item.description}</div>
+						<FoodItemFavourite item={item} />
 					</CardDescription>
 					<CardContent
 						className='flex flex-row items-center justify-center flex-wrap gap-2 p-0'

@@ -1,10 +1,24 @@
 'use client';
 
-import { toast } from 'sonner';
-import { ControllerRenderProps, SubmitHandler, useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { addFoodItem } from '@/actions/food-actions';
+import CaloricGram from '@/lib/caloric-gram';
+import {
+	addFood,
+	generateRxFoodItemSchema
+} from '@/lib/features/food/foodUpdateSlice';
+import { useAppDispatch } from '@/lib/hooks';
 import { foodItemSchema } from '@/lib/validators';
+import { GetFoodItem, GetUser } from '@/types';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { LoaderIcon, Plus } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { useState } from 'react';
+import { ControllerRenderProps, SubmitHandler, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
+import NumberIncrementor from '../number-incrementor';
+import { Button } from '../ui/button';
+import { Card, CardContent } from '../ui/card';
 import {
 	Form,
 	FormControl,
@@ -13,23 +27,9 @@ import {
 	FormLabel,
 	FormMessage
 } from '../ui/form';
-import { addFoodItem } from '@/actions/food-actions';
 import { Input } from '../ui/input';
-import FoodCategoryPicker from './food-categories';
-import NumberIncrementor from '../number-incrementor';
-import CaloricGram from '@/lib/caloric-gram';
-import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
-import { LoaderIcon, Plus } from 'lucide-react';
-import { Card, CardContent } from '../ui/card';
-import { useState } from 'react';
-import { useSession } from 'next-auth/react';
-import { GetFoodItem, GetUser } from '@/types';
-import { useAppDispatch } from '@/lib/hooks';
-import {
-	addFood,
-	generateRxFoodItemSchema
-} from '@/lib/features/food/foodUpdateSlice';
+import FoodCategoryPicker from './food-categories';
 
 export default function AddFoodItemForm({
 	onSuccess
@@ -152,6 +152,7 @@ export default function AddFoodItemForm({
 										</FormLabel>
 										<FormControl>
 											<FoodCategoryPicker
+												searchOnly={false}
 												disableReduxDispatch={true}
 												suppressUser={true}
 												value={hasSubmitted ? '' : form.getValues('category')}

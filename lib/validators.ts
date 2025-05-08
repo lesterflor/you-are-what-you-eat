@@ -47,7 +47,8 @@ export const getUserSchema = z.object({
 	image: z.string(),
 	role: z.string(),
 	logs: z.array(z.any()),
-	userNotes: z.array(z.any())
+	userNotes: z.array(z.any()),
+	foodItemFavourites: z.array(z.any())
 });
 
 export const updateContentSchema = z.object({
@@ -152,7 +153,8 @@ export const getFoodItemSchema = z.object({
 	servingSize: z.number(),
 	userId: z.string().optional(),
 	//user: getUserSchema.optional()
-	user: z.any()
+	user: z.any(),
+	foodItemFavourites: z.array(z.any())
 });
 
 export const getReduxFoodItemSchema = z.object({
@@ -349,4 +351,19 @@ export const getActivityLogSchema = z.object({
 	updatedAt: z.date(),
 	userId: z.string(),
 	activityItems: z.array(getActivityItemSchema)
+});
+
+export const foodItemFavouriteSchema = z.object({
+	userId: z.string().min(1, 'userId is required'),
+	foodItemId: z.string().min(1, 'foodItemId is required')
+});
+
+export const getFoodItemFavouriteSchema = z.object({
+	id: z.string(),
+	createdAt: z.date(),
+	updatedAt: z.date(),
+	userId: z.string(),
+	user: getUserSchema.optional(),
+	foodItemId: z.string(),
+	foodItem: getFoodItemSchema.optional()
 });

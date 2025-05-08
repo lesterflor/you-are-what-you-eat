@@ -1,25 +1,6 @@
 'use client';
 
-import { Search } from 'lucide-react';
-import { Button } from '../ui/button';
-import {
-	Sheet,
-	SheetContent,
-	SheetDescription,
-	SheetTitle,
-	SheetTrigger
-} from '../ui/sheet';
-import { useEffect, useRef, useState } from 'react';
-import { GetFoodItem } from '@/types';
-import { getFoodItems } from '@/actions/food-actions';
-import FoodItemCard from './food-item-card';
-import { ScrollArea } from '../ui/scroll-area';
-import { useDebounce } from 'use-debounce';
-import InputWithButton from '../input-with-button';
-import FoodCategoryPicker from './food-categories';
-import { cn } from '@/lib/utils';
-import { FaSpinner } from 'react-icons/fa';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { getFavouriteFoods, getFoodItems } from '@/actions/food-actions';
 import {
 	inputSearch,
 	selectFoodSearchData,
@@ -29,6 +10,25 @@ import {
 	selectFoodUpdateData,
 	selectFoodUpdateStatus
 } from '@/lib/features/food/foodUpdateSlice';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { cn } from '@/lib/utils';
+import { GetFoodItem } from '@/types';
+import { Search } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { FaSpinner } from 'react-icons/fa';
+import { useDebounce } from 'use-debounce';
+import InputWithButton from '../input-with-button';
+import { Button } from '../ui/button';
+import { ScrollArea } from '../ui/scroll-area';
+import {
+	Sheet,
+	SheetContent,
+	SheetDescription,
+	SheetTitle,
+	SheetTrigger
+} from '../ui/sheet';
+import FoodCategoryPicker from './food-categories';
+import FoodItemCard from './food-item-card';
 
 export default function FoodListSheet({
 	forceColumn = true,
@@ -61,6 +61,9 @@ export default function FoodListSheet({
 			case 'input':
 				getFoods(foodSearchData.term ?? '');
 				break;
+			case 'favourites':
+				getFavs();
+				break;
 		}
 	}, [foodSearchStatus, foodSearchData]);
 
@@ -70,16 +73,27 @@ export default function FoodListSheet({
 		setIsFetching(true);
 		const res = await getFoodItems(term, cat, user);
 
-		if (res.success && res.data && res.data?.length > 0) {
+		if (res.success && res.data) {
 			setFoods(res.data as GetFoodItem[]);
 		}
 
 		setIsFetching(false);
 	};
 
-	useEffect(() => {
-		getFoods();
-	}, []);
+	const getFavs = async () => {
+		setIsFetching(true);
+		const res = await getFavouriteFoods();
+
+		if (res.success && res.data) {
+			setFoods(res.data as GetFoodItem[]);
+		}
+
+		setIsFetching(false);
+	};
+
+	// useEffect(() => {
+	// 	getFavs();
+	// }, []);
 
 	const [search, setSearch] = useState('');
 	const [debounced] = useDebounce(search, 1000);
@@ -173,7 +187,9 @@ export default function FoodListSheet({
 										/>
 									))
 								) : (
-									<div>There are currently no entered food items.</div>
+									<div className='w-full text-center text-muted-foreground font-normal'>
+										There are no results for the search you provided.
+									</div>
 								)}
 							</div>
 						</ScrollArea>
@@ -192,7 +208,9 @@ export default function FoodListSheet({
 							</Button>
 						)}
 					</SheetTrigger>
-					<SheetContent side='top'>
+					<SheetContent
+						side='top'
+						className='px-2'>
 						<SheetDescription></SheetDescription>
 						<SheetTitle className='flex flex-col items-center gap-2 pb-4'>
 							<div className='flex flex-row gap-2 justify-between items-center pt-2'>
@@ -216,6 +234,7 @@ export default function FoodListSheet({
 							</div>
 
 							<FoodCategoryPicker
+								value='favourites'
 								showFilterIcon={true}
 								iconsOnly={true}
 								onSelect={() => {}}
@@ -241,7 +260,9 @@ export default function FoodListSheet({
 										/>
 									))
 								) : (
-									<div>There are currently no entered food items.</div>
+									<div className='w-full text-center text-muted-foreground font-normal'>
+										There are no results for the search you provided.
+									</div>
 								)}
 							</div>
 						</ScrollArea>
