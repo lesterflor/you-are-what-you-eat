@@ -6,7 +6,7 @@ import {
 } from '@/actions/food-actions';
 import { GetFoodItem } from '@/types';
 import { useEffect, useState } from 'react';
-import { BsBookmark, BsBookmarkStarFill } from 'react-icons/bs';
+import { BsBookmarkPlus, BsBookmarkStarFill } from 'react-icons/bs';
 import { ImSpinner2 } from 'react-icons/im';
 import { useInView } from 'react-intersection-observer';
 
@@ -53,7 +53,7 @@ export default function FoodItemFavourite({ item }: { item: GetFoodItem }) {
 					{isBookmarked ? (
 						<BsBookmarkStarFill className='w-6 h-6 text-teal-600' />
 					) : (
-						<BsBookmark className='w-6 h-6' />
+						<BsBookmarkPlus className='w-6 h-6' />
 					)}
 				</div>
 			)}
