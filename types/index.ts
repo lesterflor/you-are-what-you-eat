@@ -1,3 +1,5 @@
+import { userSchema } from '@/lib/validators';
+import { z } from 'zod';
 import {
 	activityItemSchema,
 	activityLogSchema,
@@ -11,6 +13,7 @@ import {
 	getGroceryListSchema,
 	getLogRemainderSchema,
 	getLogSchema,
+	getPreparedDishSchema,
 	getReduxFoodItemSchema,
 	getTrackingSchema,
 	getUserNoteSchema,
@@ -19,13 +22,12 @@ import {
 	groceryListSchema,
 	logRemainderSchema,
 	logSchema,
+	preparedDishSchema,
 	trackingSchema,
 	updateContentSchema,
 	uploadedImageSchema,
 	userNoteSchema
 } from './../lib/validators';
-import { userSchema } from '@/lib/validators';
-import { z } from 'zod';
 
 export type User = z.infer<typeof userSchema>;
 export type GetUser = z.infer<typeof getUserSchema>;
@@ -84,6 +86,9 @@ export type GetActivityItem = z.infer<typeof getActivityItemSchema>;
 
 export type ActivityLog = z.infer<typeof activityLogSchema>;
 export type GetActivityLog = z.infer<typeof getActivityLogSchema>;
+
+export type PreparedDish = z.infer<typeof preparedDishSchema>;
+export type GetPreparedDish = z.infer<typeof getPreparedDishSchema>;
 
 export type BMRData = {
 	weight: number;

@@ -1,26 +1,16 @@
 'use client';
 
-import { deleteFoodLogEntry, updateFoodLogEntry } from '@/actions/log-actions';
-import {
-	selectPreparedDishData,
-	selectPreparedDishStatus
-} from '@/lib/features/dish/preparedDishSlice';
-import { deleted, updated } from '@/lib/features/log/logFoodSlice';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { cn, formatUnit } from '@/lib/utils';
-import { FoodEntry, GetFoodEntry } from '@/types';
-import { format } from 'date-fns';
-import { Clock, FilePenLine, RefreshCwOff, Trash2, X } from 'lucide-react';
+import { GetFoodEntry } from '@/types';
+import { FilePenLine, RefreshCwOff, Trash2, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { FaSpinner } from 'react-icons/fa';
 import { RxUpdate } from 'react-icons/rx';
-import { toast } from 'sonner';
 import FoodCategoryIconMapper from '../food-items/food-category-icon-mapper';
 import NumberIncrementor from '../number-incrementor';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader } from '../ui/card';
-import { Checkbox } from '../ui/checkbox';
 import {
 	Dialog,
 	DialogContent,
@@ -29,44 +19,26 @@ import {
 	DialogTrigger
 } from '../ui/dialog';
 
-export default function LogFoodListItem({
+export default function DishFoodItem({
 	item,
 	indx,
-	allowEdit = false,
-	onCheck,
-	isDishMode = false
+	onEdit,
+	onDelete,
+	inEditState
 }: {
 	item: GetFoodEntry;
 	indx: number;
-	allowEdit?: boolean;
-	onCheck?: (data: { add: boolean; item: GetFoodEntry }) => void;
-	isDishMode?: boolean;
+	onEdit?: (item: GetFoodEntry) => void;
+	onDelete?: (item: GetFoodEntry) => void;
+	inEditState?: (val: boolean) => void;
 }) {
-	const dispatch = useAppDispatch();
-
 	const footerRef = useRef<HTMLDivElement>(null);
 
 	const [isEditing, setIsEditing] = useState(false);
-	const [servingSize, setServingSize] = useState(item.numServings);
+	const [foodItem, setFoodItem] = useState<GetFoodEntry>(item);
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [isUpdating, setIsUpdating] = useState(false);
 	const [dialogOpen, setDialogOpen] = useState(false);
-	const [isChecked, setIsChecked] = useState<boolean | undefined>();
-
-	const preparedDishData = useAppSelector(selectPreparedDishData);
-	const preparedDishStatus = useAppSelector(selectPreparedDishStatus);
-
-	useEffect(() => {
-		if (preparedDishStatus === 'added' || preparedDishStatus === 'cleared') {
-			setIsChecked(false);
-		}
-	}, [preparedDishData, preparedDishStatus]);
-
-	useEffect(() => {
-		if (typeof isChecked !== 'undefined') {
-			onCheck?.({ add: isChecked, item });
-		}
-	}, [isChecked]);
 
 	const [fadeClass, setFadeClass] = useState(false);
 	useEffect(() => {
@@ -86,6 +58,8 @@ export default function LogFoodListItem({
 				inline: 'center'
 			});
 		}
+
+		inEditState?.(isEditing);
 	}, [isEditing]);
 
 	return (
@@ -101,16 +75,7 @@ export default function LogFoodListItem({
 				<div className='capitalize font-semibold flex flex-row justify-between gap-2 w-full items-center'>
 					<div className='text-sm flex flex-col items-start gap-0 w-full'>
 						<div className='text-sm flex flex-row items-start gap-2 relative'>
-							{!isDishMode && (
-								<div className='absolute -top-2.5 -left-4'>
-									<Checkbox
-										checked={isChecked}
-										onCheckedChange={(val) => setIsChecked(!!val)}
-									/>
-								</div>
-							)}
-
-							<FoodCategoryIconMapper type={item.category} />
+							<FoodCategoryIconMapper type={foodItem.category} />
 							<div
 								className='leading-tight'
 								onClick={(e) => {
@@ -124,23 +89,17 @@ export default function LogFoodListItem({
 
 						<div className='text-xs font-normal text-muted-foreground flex flex-row items-center justify-between gap-2 w-full'>
 							<div>
-								{servingSize} {servingSize === 1 ? 'serving' : 'servings'}
+								{foodItem.numServings}{' '}
+								{foodItem.numServings === 1 ? 'serving' : 'servings'}
 							</div>
 
 							<div className='flex flex-row items-center gap-1 whitespace-nowrap text-muted-foreground'>
-								{formatUnit(item.calories * item.numServings)} cals
+								{formatUnit(foodItem.calories * foodItem.numServings)} cals
 							</div>
-
-							{!isDishMode && (
-								<div className='flex flex-row items-center gap-1 whitespace-nowrap text-muted-foreground'>
-									<Clock className='w-4 h-4' />
-									{format(item.eatenAt, 'h:mm a')}
-								</div>
-							)}
 						</div>
 					</div>
 
-					{!isEditing && allowEdit && (
+					{!isEditing && (
 						<div className='flex flex-row gap-2 justify-between pb-2'>
 							<Button
 								variant='outline'
@@ -171,22 +130,7 @@ export default function LogFoodListItem({
 											disabled={isDeleting}
 											onClick={async () => {
 												setIsDeleting(true);
-												const res = await deleteFoodLogEntry(item.id);
-
-												if (res.success) {
-													toast.success(res.message);
-
-													// redux
-													dispatch(
-														deleted({
-															name: item.name,
-															servings: item.numServings
-														})
-													);
-												} else {
-													toast.error(res.message);
-												}
-
+												onDelete?.(foodItem);
 												setIsDeleting(false);
 												setDialogOpen(false);
 											}}>
@@ -220,7 +164,7 @@ export default function LogFoodListItem({
 								<div className='flex flex-col items-center w-full'>
 									<div className='font-normal text-muted-foreground'>Carbs</div>
 									<div className='whitespace-nowrap'>
-										{formatUnit(item.carbGrams * servingSize)} g
+										{formatUnit(foodItem.carbGrams * foodItem.numServings)} g
 									</div>
 								</div>
 							</Badge>
@@ -232,7 +176,7 @@ export default function LogFoodListItem({
 										Protein
 									</div>
 									<div className='whitespace-nowrap'>
-										{formatUnit(item.proteinGrams * servingSize)} g
+										{formatUnit(foodItem.proteinGrams * foodItem.numServings)} g
 									</div>
 								</div>
 							</Badge>
@@ -242,14 +186,16 @@ export default function LogFoodListItem({
 								<div className='flex flex-col items-center w-full'>
 									<div className='font-normal text-muted-foreground'>Fat</div>
 									<div className='whitespace-nowrap'>
-										{formatUnit(item.fatGrams * servingSize)} g
+										{formatUnit(foodItem.fatGrams * foodItem.numServings)} g
 									</div>
 								</div>
 							</Badge>
 							<Badge className='w-16'>
 								<div className='flex flex-col items-center w-full'>
 									<div className='font-normal'>Calories</div>
-									<div>{formatUnit(item.calories * servingSize)}</div>
+									<div>
+										{formatUnit(foodItem.calories * foodItem.numServings)}
+									</div>
 								</div>
 							</Badge>
 						</div>
@@ -257,11 +203,14 @@ export default function LogFoodListItem({
 						<NumberIncrementor
 							compactMode={true}
 							onChange={(value) => {
-								setServingSize(value);
+								const upd = { ...foodItem };
+								upd.numServings = value;
+
+								setFoodItem(upd);
 							}}
 							allowDecimalIncrement={true}
 							minValue={0.1}
-							value={servingSize}
+							value={foodItem.numServings}
 						/>
 
 						<div className='flex flex-row items-center justify-between gap-2 w-full mt-4 pb-2'>
@@ -269,41 +218,18 @@ export default function LogFoodListItem({
 								variant='secondary'
 								onClick={() => {
 									setIsEditing(false);
-									setServingSize(item.numServings);
+
+									setFoodItem(item);
 								}}>
 								<RefreshCwOff className='w-4 h-4' />
 								Cancel
 							</Button>
 							<Button
-								onClick={async () => {
+								onClick={() => {
 									setIsUpdating(true);
 
-									const updatedEntry: FoodEntry = {
-										...item,
-										numServings: servingSize
-									};
-
-									const res = await updateFoodLogEntry(updatedEntry);
-
-									if (res.success) {
-										toast.success(res.message);
-
-										if (res.data) {
-											const { numServings } = res.data;
-
-											setServingSize(numServings);
-
-											// redux
-											dispatch(
-												updated({
-													name: item.name,
-													servings: numServings
-												})
-											);
-										}
-									} else {
-										toast.error(res.message);
-									}
+									// edit the cals and macros on edit to update dish list
+									onEdit?.(foodItem);
 
 									setIsUpdating(false);
 									setIsEditing(false);

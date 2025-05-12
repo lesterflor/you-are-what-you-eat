@@ -367,3 +367,21 @@ export const getFoodItemFavouriteSchema = z.object({
 	foodItemId: z.string(),
 	foodItem: getFoodItemSchema.optional()
 });
+
+export const preparedDishSchema = z.object({
+	userId: z.string().min(1, 'userId is required'),
+	foodItems: z.array(foodEntrySchema),
+	name: z.string().min(1, 'name is required'),
+	description: z.string().optional()
+});
+
+export const getPreparedDishSchema = z.object({
+	id: z.string(),
+	createdAt: z.date(),
+	updatedAt: z.date(),
+	userId: z.string(),
+	user: getUserSchema.optional(),
+	foodItems: z.array(getFoodEntrySchema),
+	name: z.string(),
+	description: z.string()
+});

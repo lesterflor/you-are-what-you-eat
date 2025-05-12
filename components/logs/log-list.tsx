@@ -2,6 +2,10 @@
 
 import { createDailyLog } from '@/actions/log-actions';
 import { useScrolling } from '@/hooks/use-scroll';
+import {
+	selectPreparedDishData,
+	selectPreparedDishStatus
+} from '@/lib/features/dish/preparedDishSlice';
 import { selectData, selectStatus } from '@/lib/features/log/logFoodSlice';
 import { useAppSelector } from '@/lib/hooks';
 import { cn, formatUnit, getStorageItem, setStorageItem } from '@/lib/utils';
@@ -9,6 +13,7 @@ import { BaseMetabolicRateType, GetFoodEntry, GetLog } from '@/types';
 import {
 	ArrowDown,
 	ArrowUp,
+	CookingPot,
 	Frown,
 	IdCard,
 	List,
@@ -22,6 +27,8 @@ import { FaSpinner } from 'react-icons/fa';
 import { GiEmptyMetalBucket } from 'react-icons/gi';
 import { IoFastFoodOutline } from 'react-icons/io5';
 import { TbDatabaseSearch } from 'react-icons/tb';
+import CreateDishForm from '../dish/create-dish-form';
+import DishListSheet from '../dish/dish-list-sheet';
 import FoodFavouriteListSheet from '../food-items/food-favourite-list-sheet';
 import FoodListSheet from '../food-items/food-list-sheet';
 import { Badge } from '../ui/badge';
@@ -58,6 +65,28 @@ export default function FoodLogList({
 	const [calsBurned, setCalsBurned] = useState(0);
 	const [remainingCals, setRemainingCals] = useState(0);
 	const [dataFormat, setDataFormat] = useState('');
+	const [dishList, setDishList] = useState<
+		{ add: boolean; item: GetFoodEntry }[]
+	>([]);
+	const [createDishSheetOpen, setCreateDishSheetOpen] = useState(false);
+	const [dishCreationIndicator, setDishCreationIndicator] = useState(false);
+
+	const preparedDishData = useAppSelector(selectPreparedDishData);
+	const preparedDishStatus = useAppSelector(selectPreparedDishStatus);
+
+	useEffect(() => {
+		if (preparedDishStatus === 'added' || preparedDishStatus === 'cleared') {
+			setDishList([]);
+			setCreateDishSheetOpen(false);
+		} else if (preparedDishStatus === 'logged') {
+			getLog();
+		}
+	}, [preparedDishData, preparedDishStatus]);
+
+	useEffect(() => {
+		//setCreateDishSheetOpen();
+		setDishCreationIndicator(dishList.length > 1);
+	}, [dishList]);
 
 	const { scrollingUp, delta } = useScrolling();
 
@@ -255,6 +284,33 @@ export default function FoodLogList({
 								<div>{`Today's Log (${logList.length} ${
 									logList.length === 1 ? 'item' : 'items'
 								})`}</div>
+
+								<Popover
+									open={createDishSheetOpen}
+									onOpenChange={setCreateDishSheetOpen}>
+									<PopoverTrigger
+										className='fixed top-[12vh] left-16 z-50'
+										disabled={!dishCreationIndicator}>
+										<div
+											className={cn(
+												'p-1  rounded-full',
+												dishCreationIndicator
+													? 'animate-ping bg-cyan-500'
+													: 'bg-gray-500'
+											)}>
+											<CookingPot className={cn('w-4 h-4 ')} />
+										</div>
+									</PopoverTrigger>
+									<PopoverContent className='bg-emerald-950 relative'>
+										<br />
+										<CreateDishForm
+											foodItems={dishList.map((item) => item.item)}
+											onSuccess={() => {
+												setCreateDishSheetOpen(false);
+											}}
+										/>
+									</PopoverContent>
+								</Popover>
 							</div>
 						)}
 						<div
@@ -278,6 +334,30 @@ export default function FoodLogList({
 											  ))
 											: logList.map((item, indx) => (
 													<LogFoodListItem
+														onCheck={(data) => {
+															// add or delete foodEntry from the dishList state
+
+															const itemsOnly = dishList.map(
+																(item) => item.item
+															);
+
+															if (
+																!itemsOnly.includes(data.item) &&
+																!!data.add
+															) {
+																const up = [...dishList];
+
+																up.push(data);
+																setDishList(up);
+															} else {
+																const up = [...dishList];
+																const flt = up.filter(
+																	(entry) => entry.item.id !== data.item.id
+																);
+
+																setDishList(flt);
+															}
+														}}
 														allowEdit={true}
 														indx={indx}
 														item={item}
@@ -320,7 +400,9 @@ export default function FoodLogList({
 						delta === 0 && 'bottom-0'
 					)}>
 					<CardContent className='p-2 pt-5 flex flex-row items-center gap-2 relative'>
-						<div className='absolute -top-6 left-28 flex flex-row gap-4'>
+						<div className='absolute -top-6 left-4 flex flex-row gap-4'>
+							<DishListSheet />
+
 							<FoodFavouriteListSheet />
 
 							<FoodListSheet>
