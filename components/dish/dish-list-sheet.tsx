@@ -10,6 +10,7 @@ import { GetPreparedDish } from '@/types';
 import { Soup } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
+import { TbBowl } from 'react-icons/tb';
 import { ScrollArea } from '../ui/scroll-area';
 import {
 	Sheet,
@@ -65,9 +66,9 @@ export default function DishListSheet() {
 					className='max-w-[100vw] w-96 px-2'>
 					<SheetTitle className='flex flex-row items-center gap-2'>
 						{' '}
-						<Soup className='w-6 h-6' /> Your Dishes
+						<Soup className='w-6 h-6 text-teal-500' /> Your Dishes
 					</SheetTitle>
-					<SheetDescription className='text-sm leading-tight pb-3'>
+					<SheetDescription className='text-sm leading-tight pb-6'>
 						These are your prepared dishes. You can create dishes by selecting
 						items from your logged food list. You can then log all items from a
 						dish instead of adding food items individually.
@@ -86,7 +87,10 @@ export default function DishListSheet() {
 											/>
 										))
 									) : (
-										<div>No dishes</div>
+										<div className='pt-10 flex flex-col items-center justify-center w-full opacity-20'>
+											<TbBowl className=' w-24 h-24' />
+											<div>You currently have no dishes</div>
+										</div>
 									)}
 								</div>
 							</ScrollArea>
