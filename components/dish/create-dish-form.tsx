@@ -64,7 +64,8 @@ export default function CreateDishForm({
 				addDish({
 					id: res.data.id,
 					name: res.data.name,
-					description: res.data.description ?? ''
+					description: res.data.description ?? '',
+					dishList: ''
 				})
 			);
 		} else {
