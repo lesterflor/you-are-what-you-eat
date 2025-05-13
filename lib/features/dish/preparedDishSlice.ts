@@ -5,15 +5,23 @@ export interface PreparedDishSliceProps {
 	id: string;
 	name: string;
 	description: string;
+	dishList: string;
 }
 
 export interface PreparedDishSliceState {
 	value: PreparedDishSliceProps;
-	status: 'idle' | 'added' | 'deleted' | 'updated' | 'cleared' | 'logged';
+	status:
+		| 'idle'
+		| 'added'
+		| 'deleted'
+		| 'updated'
+		| 'cleared'
+		| 'logged'
+		| 'dishList';
 }
 
 const initialState: PreparedDishSliceState = {
-	value: { id: '', name: '', description: '' },
+	value: { id: '', name: '', description: '', dishList: '' },
 	status: 'idle'
 };
 
@@ -45,8 +53,15 @@ export const preparedDishSlice = createAppSlice({
 				state.status = 'logged';
 			}
 		),
+
+		setDishListState: create.reducer(
+			(state, action: PayloadAction<PreparedDishSliceProps>) => {
+				state.value = action.payload;
+				state.status = 'dishList';
+			}
+		),
 		clearItems: create.reducer((state) => {
-			state.value = { id: '', name: '', description: '' };
+			state.value = { id: '', name: '', description: '', dishList: '' };
 			state.status = 'cleared';
 		})
 	}),
@@ -61,7 +76,8 @@ export const {
 	updateDishState,
 	deleteDishState,
 	clearItems,
-	logDishState
+	logDishState,
+	setDishListState
 } = preparedDishSlice.actions;
 
 export const { selectPreparedDishData, selectPreparedDishStatus } =

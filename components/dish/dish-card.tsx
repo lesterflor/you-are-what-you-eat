@@ -11,11 +11,13 @@ import {
 	updateDishState
 } from '@/lib/features/dish/preparedDishSlice';
 import { useAppDispatch } from '@/lib/hooks';
+import { formatUnit, totalMacrosReducer } from '@/lib/utils';
 import { GetFoodEntry, GetPreparedDish } from '@/types';
-import { CookingPot, FilePenLine, ScrollText, X } from 'lucide-react';
-import { useCallback, useState } from 'react';
+import { FilePenLine, ScrollText, Soup, X } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'sonner';
+import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import {
 	Card,
@@ -47,13 +49,31 @@ export default function DishCard({ dish }: { dish: GetPreparedDish }) {
 		name: string;
 		description: string;
 	}>({ name: prepDish.name, description: prepDish.description });
+	const [macros, setMacros] = useState<{
+		totalCals: number;
+		totalCarb: number;
+		totalProtein: number;
+		totalFat: number;
+	}>({ totalCals: 0, totalCarb: 0, totalProtein: 0, totalFat: 0 });
+
+	useEffect(() => {
+		const { calories, carbs, fat, protein } = totalMacrosReducer(items);
+
+		setMacros({
+			totalCals: formatUnit(calories),
+			totalCarb: formatUnit(carbs),
+			totalProtein: formatUnit(protein),
+			totalFat: formatUnit(fat)
+		});
+	}, [items]);
 
 	const dispatchDishState = useCallback(() => {
 		dispatch(
 			updateDishState({
 				id: prepDish.id,
 				name: prepDish.name,
-				description: prepDish.description
+				description: prepDish.description,
+				dishList: ''
 			})
 		);
 	}, [prepDish]);
@@ -62,9 +82,9 @@ export default function DishCard({ dish }: { dish: GetPreparedDish }) {
 		<Card>
 			<CardTitle className='p-2 font-normal flex flex-row items-center gap-2 relative'>
 				{isUpdating ? (
-					<ImSpinner2 className='w-6 h-6 animate-spin' />
+					<ImSpinner2 className='text-teal-500 w-6 h-6 animate-spin' />
 				) : (
-					<CookingPot className='w-6 h-6' />
+					<Soup className='w-6 h-6 text-teal-500' />
 				)}
 				<div>
 					{isEditMode ? (
@@ -77,7 +97,9 @@ export default function DishCard({ dish }: { dish: GetPreparedDish }) {
 							}}
 						/>
 					) : (
-						<div>{prepDish.name}</div>
+						<div className='text-xl text-teal-200 leading-tight capitalize'>
+							{prepDish.name}
+						</div>
 					)}
 				</div>
 
@@ -108,7 +130,8 @@ export default function DishCard({ dish }: { dish: GetPreparedDish }) {
 											deleteDishState({
 												id: res.data.id,
 												name: res.data.name,
-												description: res.data.description ?? ''
+												description: res.data.description ?? '',
+												dishList: ''
 											})
 										);
 									} else {
@@ -128,6 +151,7 @@ export default function DishCard({ dish }: { dish: GetPreparedDish }) {
 				<CardDescription className='p-2'>
 					{isEditMode ? (
 						<Textarea
+							className='leading-tight'
 							defaultValue={prepDish.description}
 							placeholder={prepDish.description}
 							onChange={(e) => {
@@ -137,7 +161,7 @@ export default function DishCard({ dish }: { dish: GetPreparedDish }) {
 							}}
 						/>
 					) : (
-						<div>{prepDish.description}</div>
+						<div className='leading-tight'>{prepDish.description}</div>
 					)}
 				</CardDescription>
 			)}
@@ -209,6 +233,32 @@ export default function DishCard({ dish }: { dish: GetPreparedDish }) {
 							item={item}
 						/>
 					))}
+
+				<div className='flex flex-row flex-wrap items-center justify-between gap-2 pt-4'>
+					<Badge
+						className='font-normal text-muted-foreground flex flex-row gap-2'
+						variant={'outline'}>
+						Calories:
+						<span className='text-foreground'>{macros?.totalCals}</span>
+					</Badge>
+					<Badge
+						className='font-normal text-muted-foreground flex flex-row gap-2'
+						variant={'outline'}>
+						Carbs:
+						<span className='text-foreground'>{macros?.totalCarb} g</span>
+					</Badge>
+					<Badge
+						className='font-normal text-muted-foreground flex flex-row gap-2'
+						variant={'outline'}>
+						Protein:
+						<span className='text-foreground'>{macros?.totalProtein} g</span>
+					</Badge>
+					<Badge
+						className='font-normal text-muted-foreground flex flex-row gap-2'
+						variant={'outline'}>
+						Fat: <span className='text-foreground'>{macros?.totalFat} g</span>
+					</Badge>
+				</div>
 			</CardContent>
 			<CardFooter className='px-2 flex flex-row items-center justify-between'>
 				<div className='flex flex-row items-center gap-2'>
@@ -262,7 +312,8 @@ export default function DishCard({ dish }: { dish: GetPreparedDish }) {
 								logDishState({
 									id: prepDish.id,
 									name: prepDish.name,
-									description: prepDish.description
+									description: prepDish.description,
+									dishList: ''
 								})
 							);
 						} else {

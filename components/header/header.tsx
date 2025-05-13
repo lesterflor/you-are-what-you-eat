@@ -1,17 +1,18 @@
-import Link from 'next/link';
-import ModeToggle from './mode-toggle';
-import UserButton from './user-button';
 import { createDailyLog } from '@/actions/log-actions';
-import LogSheet from '../logs/log-sheet';
+import { auth } from '@/db/auth';
+import { getToday } from '@/lib/utils';
 import { GetLog } from '@/types';
+import { format } from 'date-fns';
 import { Calculator, UtensilsCrossed } from 'lucide-react';
+import Link from 'next/link';
+import DishCreationPopover from '../dish/dish-creation-popover';
 import LogButton from '../logs/log-button';
 import LogMacrosSummary from '../logs/log-macros-summary';
-import { format } from 'date-fns';
-import SideMenu from './side-menu';
-import { getToday } from '@/lib/utils';
-import { auth } from '@/db/auth';
+import LogSheet from '../logs/log-sheet';
 import ReduxStoreLogger from '../redux-store-logger';
+import ModeToggle from './mode-toggle';
+import SideMenu from './side-menu';
+import UserButton from './user-button';
 
 export default async function SiteHeader() {
 	const session = await auth();
@@ -22,8 +23,9 @@ export default async function SiteHeader() {
 	return (
 		<header className='w-full border-b fixed top-0 z-50 bg-white dark:bg-green-950 select-none px-0'>
 			<div className='wrapper flex flex-between justify-between items-center w-full p-2 relative'>
-				<div className='absolute -bottom-4 left-0'>
+				<div className='absolute -bottom-4 left-0 flex flex-row items-center gap-2'>
 					<ReduxStoreLogger />
+					<DishCreationPopover />
 				</div>
 				<div className='flex flex-row items-center justify-start gap-5 portrait:gap-0 h-full'>
 					<Link href='/'>
