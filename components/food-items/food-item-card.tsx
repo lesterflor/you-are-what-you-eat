@@ -293,7 +293,7 @@ export default function FoodItemCard({
 													id: '',
 													name: '',
 													description: '',
-													dishList: '',
+													dishList: '[]',
 													checkedItem: JSON.stringify({
 														add: true,
 														item: clone

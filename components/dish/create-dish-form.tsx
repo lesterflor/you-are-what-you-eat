@@ -141,7 +141,7 @@ export default function CreateDishForm({
 					id: res.data.id,
 					name: res.data.name,
 					description: res.data.description ?? '',
-					dishList: ''
+					dishList: '[]'
 				})
 			);
 		} else {

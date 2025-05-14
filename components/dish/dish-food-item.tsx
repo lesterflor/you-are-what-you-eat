@@ -120,7 +120,7 @@ export default function DishFoodItem({
 												id: '',
 												name: '',
 												description: '',
-												dishList: '',
+												dishList: '[]',
 												checkedItem: JSON.stringify({
 													add: false,
 													item: foodItem

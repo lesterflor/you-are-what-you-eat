@@ -138,7 +138,7 @@ export default function DishCard({
 													id: res.data.id,
 													name: res.data.name,
 													description: res.data.description ?? '',
-													dishList: ''
+													dishList: '[]'
 												})
 											);
 										} else {
@@ -325,7 +325,7 @@ export default function DishCard({
 										id: prepDish.id,
 										name: prepDish.name,
 										description: prepDish.description,
-										dishList: ''
+										dishList: '[]'
 									})
 								);
 							} else {
