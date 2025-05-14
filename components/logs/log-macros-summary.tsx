@@ -2,6 +2,10 @@
 
 import { createDailyLog } from '@/actions/log-actions';
 import { pieChartConfig } from '@/config';
+import {
+	selectPreparedDishData,
+	selectPreparedDishStatus
+} from '@/lib/features/dish/preparedDishSlice';
 import { selectData, selectStatus } from '@/lib/features/log/logFoodSlice';
 import { useAppSelector } from '@/lib/hooks';
 import {
@@ -117,6 +121,15 @@ export default function LogMacrosSummary({
 			getLog();
 		}
 	}, [logStatus, logData]);
+
+	const preparedDishData = useAppSelector(selectPreparedDishData);
+	const preparedDishStatus = useAppSelector(selectPreparedDishStatus);
+
+	useEffect(() => {
+		if (getTodayMode && preparedDishStatus === 'logged') {
+			getLog();
+		}
+	}, [preparedDishData, preparedDishStatus]);
 
 	return (
 		<div className='flex portrait:flex-col flex-row gap-2'>

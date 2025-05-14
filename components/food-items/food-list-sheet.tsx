@@ -17,6 +17,7 @@ import { Search } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { FaSpinner } from 'react-icons/fa';
 import { useDebounce } from 'use-debounce';
+import DishCreationPopover from '../dish/dish-creation-popover';
 import InputWithButton from '../input-with-button';
 import { Button } from '../ui/button';
 import { ScrollArea } from '../ui/scroll-area';
@@ -215,7 +216,7 @@ export default function FoodListSheet({
 						<SheetTitle className='flex flex-col items-center gap-2 pb-4'>
 							<div className='flex flex-row gap-2 justify-between items-center pt-2'>
 								<InputWithButton
-									className='w-[70%]'
+									className='w-[60%]'
 									onChange={(val) => {
 										setSearch(val);
 									}}>
@@ -231,6 +232,8 @@ export default function FoodListSheet({
 								<div className='text-xs font-normal'>
 									{foods.length} {foods.length === 1 ? 'result' : 'results'}
 								</div>
+
+								<DishCreationPopover />
 							</div>
 
 							<FoodCategoryPicker

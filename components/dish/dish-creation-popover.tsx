@@ -23,20 +23,33 @@ export default function DishCreationPopover() {
 	const preparedDishStatus = useAppSelector(selectPreparedDishStatus);
 
 	useEffect(() => {
-		if (preparedDishStatus === 'added' || preparedDishStatus === 'cleared') {
+		if (
+			preparedDishStatus === 'added' ||
+			preparedDishStatus === 'cleared' ||
+			preparedDishStatus === 'updated'
+		) {
 			setDishList([]);
 			setCreateDishSheetOpen(false);
-		} else if (preparedDishStatus === 'dishList') {
-			setDishList(JSON.parse(preparedDishData.dishList));
+		} else if (
+			preparedDishStatus === 'dishList' ||
+			preparedDishStatus === 'checkedItem'
+		) {
+			const newData = JSON.parse(preparedDishData.dishList);
+			setDishList(newData);
 		}
 	}, [preparedDishData, preparedDishStatus]);
 
 	useEffect(() => {
 		setDishCreationIndicator(dishList.length > 1);
+
+		if (dishList.length < 2) {
+			setCreateDishSheetOpen(false);
+		}
 	}, [dishList]);
 
 	return (
 		<Popover
+			modal={true}
 			open={createDishSheetOpen}
 			onOpenChange={setCreateDishSheetOpen}>
 			<PopoverTrigger disabled={!dishCreationIndicator}>

@@ -1,5 +1,7 @@
 'use client';
 
+import { setCheckedItemState } from '@/lib/features/dish/preparedDishSlice';
+import { useAppDispatch } from '@/lib/hooks';
 import { cn, formatUnit } from '@/lib/utils';
 import { GetFoodEntry } from '@/types';
 import { FilePenLine, RefreshCwOff, Trash2, X } from 'lucide-react';
@@ -24,14 +26,19 @@ export default function DishFoodItem({
 	indx,
 	onEdit,
 	onDelete,
-	inEditState
+	inEditState,
+	readOnly = false,
+	noDeleteButton = false
 }: {
 	item: GetFoodEntry;
 	indx: number;
 	onEdit?: (item: GetFoodEntry) => void;
 	onDelete?: (item: GetFoodEntry) => void;
 	inEditState?: (val: boolean) => void;
+	readOnly?: boolean;
+	noDeleteButton?: boolean;
 }) {
+	const dispatch = useAppDispatch();
 	const footerRef = useRef<HTMLDivElement>(null);
 
 	const [isEditing, setIsEditing] = useState(false);
@@ -73,13 +80,17 @@ export default function DishFoodItem({
 			}}>
 			<CardHeader className='flex flex-row items-start justify-between gap-2 pt-2 pl-4 pb-0 pr-2'>
 				<div className='capitalize font-semibold flex flex-row justify-between gap-2 w-full items-center'>
-					<div className='text-sm flex flex-col items-start gap-0 w-full'>
+					<div className='text-sm flex flex-col items-start gap-0 w-full relative'>
 						<div className='text-sm flex flex-row items-start gap-2 relative'>
 							<FoodCategoryIconMapper type={foodItem.category} />
 							<div
 								className='leading-tight'
 								onClick={(e) => {
 									e.preventDefault();
+
+									if (readOnly) {
+										return;
+									}
 
 									setIsEditing(!isEditing);
 								}}>
@@ -97,9 +108,35 @@ export default function DishFoodItem({
 								{formatUnit(foodItem.calories * foodItem.numServings)} cals
 							</div>
 						</div>
+
+						{readOnly && !noDeleteButton && (
+							<div className='absolute -top-4 -right-4'>
+								<Button
+									onClick={(e) => {
+										e.preventDefault();
+
+										dispatch(
+											setCheckedItemState({
+												id: '',
+												name: '',
+												description: '',
+												dishList: '',
+												checkedItem: JSON.stringify({
+													add: false,
+													item: foodItem
+												})
+											})
+										);
+									}}
+									size={'icon'}
+									variant={'ghost'}>
+									<X />
+								</Button>
+							</div>
+						)}
 					</div>
 
-					{!isEditing && (
+					{!isEditing && !readOnly && (
 						<div className='flex flex-row gap-2 justify-between pb-2'>
 							<Button
 								variant='outline'
@@ -150,7 +187,7 @@ export default function DishFoodItem({
 			</CardHeader>
 
 			<CardContent className='px-4 pb-0'>
-				{isEditing && (
+				{isEditing && !readOnly && (
 					<div
 						className='flex flex-col items-center gap-2 mt-2'
 						ref={footerRef}>

@@ -1,13 +1,24 @@
 'use client';
 
-import { createDish } from '@/actions/prepared-dish-actions';
-import { addDish, clearItems } from '@/lib/features/dish/preparedDishSlice';
-import { useAppDispatch } from '@/lib/hooks';
+import {
+	createDish,
+	getAllDishes,
+	updateDish
+} from '@/actions/prepared-dish-actions';
+import {
+	addDish,
+	clearItems,
+	selectPreparedDishData,
+	selectPreparedDishStatus,
+	updateDishState
+} from '@/lib/features/dish/preparedDishSlice';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { preparedDishSchema } from '@/lib/validators';
-import { GetFoodEntry, GetUser } from '@/types';
+import { GetFoodEntry, GetPreparedDish, GetUser } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 import {
 	ControllerRenderProps,
 	SubmitErrorHandler,
@@ -20,18 +31,25 @@ import { z } from 'zod';
 import { Button } from '../ui/button';
 import { Form, FormControl, FormField, FormItem } from '../ui/form';
 import { Input } from '../ui/input';
+import { ScrollArea } from '../ui/scroll-area';
 import { Textarea } from '../ui/textarea';
+import DishCard from './dish-card';
+import DishFoodItem from './dish-food-item';
 
 export default function CreateDishForm({
 	foodItems,
-	onSuccess
+	onSuccess,
+	onDishListChange
 }: {
 	foodItems: GetFoodEntry[];
 	onSuccess?: () => void;
+	onDishListChange?: (list: GetFoodEntry[]) => void;
 }) {
 	const { data: session } = useSession();
 	const user = session?.user as GetUser;
 	const dispatch = useAppDispatch();
+
+	const [dishFoodItems, setDishFoodItems] = useState<GetFoodEntry[]>(foodItems);
 
 	const form = useForm<z.infer<typeof preparedDishSchema>>({
 		resolver: zodResolver(preparedDishSchema),
@@ -52,7 +70,7 @@ export default function CreateDishForm({
 	const sendDish: SubmitHandler<z.infer<typeof preparedDishSchema>> = async (
 		values
 	) => {
-		values.foodItems = foodItems;
+		values.foodItems = dishFoodItems;
 
 		const res = await createDish(values);
 
@@ -65,7 +83,7 @@ export default function CreateDishForm({
 					id: res.data.id,
 					name: res.data.name,
 					description: res.data.description ?? '',
-					dishList: ''
+					dishList: '[]'
 				})
 			);
 		} else {
@@ -73,13 +91,91 @@ export default function CreateDishForm({
 		}
 	};
 
+	const preparedDishData = useAppSelector(selectPreparedDishData);
+	const preparedDishStatus = useAppSelector(selectPreparedDishStatus);
+
+	useEffect(() => {
+		if (preparedDishStatus === 'checkedItem') {
+			const theData = JSON.parse(preparedDishData.dishList);
+			type SliceDataType = {
+				add: boolean;
+				item: GetFoodEntry;
+			};
+			const items = theData.map((it: SliceDataType) => it.item);
+			setDishFoodItems(items);
+		}
+	}, [preparedDishData, preparedDishStatus]);
+
+	useEffect(() => {
+		onDishListChange?.(dishFoodItems);
+	}, [dishFoodItems]);
+
+	const [currentDishes, setCurrentDishes] = useState<GetPreparedDish[]>();
+	const fetchDishes = async () => {
+		const res = await getAllDishes();
+
+		if (res.success && res.data) {
+			setCurrentDishes(res.data as GetPreparedDish[]);
+		}
+	};
+
+	useEffect(() => {
+		fetchDishes();
+	}, []);
+
+	const [updatingDish, setUpdatingDish] = useState(false);
+
+	const addItemsToExistingList = async (dish: GetPreparedDish) => {
+		setUpdatingDish(true);
+
+		const clone = [...dish.foodItems];
+		const merged = [...clone, ...dishFoodItems];
+
+		dish.foodItems = merged;
+		const res = await updateDish(dish);
+
+		if (res.success && res.data) {
+			toast.success(res.message);
+			dispatch(
+				updateDishState({
+					id: res.data.id,
+					name: res.data.name,
+					description: res.data.description ?? '',
+					dishList: ''
+				})
+			);
+		} else {
+			toast.error(res.message);
+		}
+
+		setUpdatingDish(false);
+	};
+
 	return (
 		<div className='flex flex-col gap-4 items-center'>
-			<div>Do you want to create a dish from the selected items?</div>
+			<div className='leading-tight text-sm'>
+				Do you want to create a new dish from the {foodItems.length} selected
+				items?
+			</div>
+			<ScrollArea className='w-full'>
+				<div className='flex flex-col gap-2 max-h-[22vh]'>
+					{dishFoodItems &&
+						dishFoodItems.length > 0 &&
+						dishFoodItems.map((item, indx) => (
+							<DishFoodItem
+								indx={indx}
+								item={item}
+								key={`${item.id}-${item.eatenAt}-${indx}`}
+								readOnly={true}
+							/>
+						))}
+				</div>
+			</ScrollArea>
+
 			<div className='flex flex-col gap-2 items-center'>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(sendDish, onError)}>
-						<div className='flex flex-col gap-4'>
+						<div className='flex flex-col gap-2'>
 							<div>
 								<FormField
 									name='name'
@@ -154,6 +250,38 @@ export default function CreateDishForm({
 						</div>
 					</form>
 				</Form>
+			</div>
+
+			<div className='pt-2 flex flex-col gap-4'>
+				<div className='text-sm leading-tight'>
+					Or add them to an existing dish?
+				</div>
+				<ScrollArea className='w-full'>
+					<div className='flex flex-col gap-4 max-h-[22vh]'>
+						{currentDishes &&
+							currentDishes.length > 0 &&
+							currentDishes.map((item) => (
+								<div
+									key={item.id}
+									className='flex flex-col gap-2'>
+									<DishCard
+										dish={item}
+										readOnly={true}
+									/>
+									<Button
+										disabled={updatingDish}
+										onClick={() => addItemsToExistingList(item)}>
+										{updatingDish ? (
+											<ImSpinner2 className='animate-spin' />
+										) : (
+											<Plus />
+										)}
+										Add
+									</Button>
+								</div>
+							))}
+					</div>
+				</ScrollArea>
 			</div>
 		</div>
 	);

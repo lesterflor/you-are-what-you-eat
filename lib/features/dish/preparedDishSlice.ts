@@ -6,6 +6,7 @@ export interface PreparedDishSliceProps {
 	name: string;
 	description: string;
 	dishList: string;
+	checkedItem?: string;
 }
 
 export interface PreparedDishSliceState {
@@ -17,11 +18,12 @@ export interface PreparedDishSliceState {
 		| 'updated'
 		| 'cleared'
 		| 'logged'
+		| 'checkedItem'
 		| 'dishList';
 }
 
 const initialState: PreparedDishSliceState = {
-	value: { id: '', name: '', description: '', dishList: '' },
+	value: { id: '', name: '', description: '', dishList: '[]' },
 	status: 'idle'
 };
 
@@ -60,6 +62,32 @@ export const preparedDishSlice = createAppSlice({
 				state.status = 'dishList';
 			}
 		),
+
+		setCheckedItemState: create.reducer(
+			(state, action: PayloadAction<PreparedDishSliceProps>) => {
+				const recItem = JSON.parse(action.payload.checkedItem!);
+				const dishList = JSON.parse(state.value.dishList);
+				const clone = [...dishList];
+
+				let newData;
+
+				if (recItem.add) {
+					clone.push({ add: true, item: recItem.item });
+					newData = clone;
+				} else {
+					newData = clone.filter(
+						(lItem) =>
+							recItem.item.id !== lItem.item.id &&
+							recItem.item.eatenAt !== lItem.item.eatenAt
+					);
+				}
+
+				//console.log('update: ', newData);
+
+				state.value = { ...action.payload, dishList: JSON.stringify(newData) };
+				state.status = 'checkedItem';
+			}
+		),
 		clearItems: create.reducer((state) => {
 			state.value = { id: '', name: '', description: '', dishList: '' };
 			state.status = 'cleared';
@@ -77,7 +105,8 @@ export const {
 	deleteDishState,
 	clearItems,
 	logDishState,
-	setDishListState
+	setDishListState,
+	setCheckedItemState
 } = preparedDishSlice.actions;
 
 export const { selectPreparedDishData, selectPreparedDishStatus } =
