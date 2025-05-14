@@ -152,7 +152,7 @@ export default function CreateDishForm({
 	};
 
 	return (
-		<div className='flex flex-col gap-4 items-center'>
+		<div className='flex flex-col gap-2 items-center'>
 			<div className='leading-tight text-sm'>
 				Do you want to create a new dish from the {foodItems.length} selected
 				items?
@@ -216,7 +216,7 @@ export default function CreateDishForm({
 										<FormItem>
 											<FormControl>
 												<Textarea
-													className='border-emerald-800'
+													className='border-emerald-800 !h-8'
 													{...field}
 													placeholder='enter a description (optional)'
 												/>
@@ -252,7 +252,7 @@ export default function CreateDishForm({
 				</Form>
 			</div>
 
-			<div className='pt-2 flex flex-col gap-4'>
+			<div className='flex flex-col gap-2'>
 				<div className='text-sm leading-tight'>
 					Or add them to an existing dish?
 				</div>

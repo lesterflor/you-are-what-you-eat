@@ -66,7 +66,7 @@ export default function DishCreationPopover() {
 					/>
 				</div>
 			</PopoverTrigger>
-			<PopoverContent className='bg-emerald-950 relative'>
+			<PopoverContent className='bg-emerald-950 relative max-w-96 w-[86vw]'>
 				<CreateDishForm
 					foodItems={dishList.map((item) => item.item)}
 					onSuccess={() => {
