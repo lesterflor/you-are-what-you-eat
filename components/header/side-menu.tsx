@@ -71,11 +71,13 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 				<div className='flex flex-col gap-4 mt-2'>
 					{user && (
 						<div className='flex flex-row items-center justify-between gap-4 portrait:gap-0'>
-							<Avatar>
-								<AvatarImage src={user.image ? user.image : ''} />
-								<AvatarFallback>{user.name.slice(0, 1)}</AvatarFallback>
-							</Avatar>
-							<div>Hi, {user.name}</div>
+							<div className='flex flex-row gap-2 items-center'>
+								<Avatar>
+									<AvatarImage src={user.image ? user.image : ''} />
+									<AvatarFallback>{user.name.slice(0, 1)}</AvatarFallback>
+								</Avatar>
+								<div>Hi, {user.name}</div>
+							</div>
 
 							<ModeToggle />
 						</div>

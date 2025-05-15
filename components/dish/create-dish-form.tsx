@@ -248,7 +248,7 @@ export default function CreateDishForm({
 
 										dispatch(clearItems());
 									}}>
-									Cancel
+									Clear List
 								</Button>
 							</div>
 						</div>
@@ -256,15 +256,14 @@ export default function CreateDishForm({
 				</Form>
 			</div>
 
-			<div className='flex flex-col gap-2 pt-4'>
-				<div className='text-sm leading-tight'>
-					Or add them to an existing dish?
-				</div>
-				<ScrollArea className='w-full'>
-					<div className='flex flex-col gap-6 max-h-[24vh]'>
-						{currentDishes &&
-							currentDishes.length > 0 &&
-							currentDishes.map((item) => (
+			{currentDishes && currentDishes.length > 0 && (
+				<div className='flex flex-col gap-2 pt-4'>
+					<div className='text-sm leading-tight'>
+						Or add them to an existing dish?
+					</div>
+					<ScrollArea className='w-full'>
+						<div className='flex flex-col gap-6 max-h-[24vh]'>
+							{currentDishes.map((item) => (
 								<div
 									key={item.id}
 									className='flex flex-col items-end gap-2'>
@@ -286,9 +285,10 @@ export default function CreateDishForm({
 									</Button>
 								</div>
 							))}
-					</div>
-				</ScrollArea>
-			</div>
+						</div>
+					</ScrollArea>
+				</div>
+			)}
 		</div>
 	);
 }
