@@ -14,7 +14,11 @@ import {
 } from '../ui/sheet';
 import FoodItemCard from './food-item-card';
 
-export default function FoodFavouriteListSheet() {
+export default function FoodFavouriteListSheet({
+	children
+}: {
+	children: React.ReactNode;
+}) {
 	const [favs, setFavs] = useState<GetFoodItem[]>();
 
 	const getFavs = async () => {
@@ -33,11 +37,7 @@ export default function FoodFavouriteListSheet() {
 		<>
 			{favs && favs.length > 0 ? (
 				<Sheet>
-					<SheetTrigger asChild>
-						<div className='w-11 h-11 rounded-full p-2 bg-teal-600 flex flex-col items-center justify-center mt-1'>
-							<BsBookmarkStarFill className='w-6 h-6 animate-pulse' />
-						</div>
-					</SheetTrigger>
+					<SheetTrigger asChild>{children}</SheetTrigger>
 
 					<SheetContent
 						side={'left'}

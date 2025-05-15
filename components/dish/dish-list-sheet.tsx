@@ -21,7 +21,11 @@ import {
 } from '../ui/sheet';
 import DishCard from './dish-card';
 
-export default function DishListSheet() {
+export default function DishListSheet({
+	children
+}: {
+	children: React.ReactNode;
+}) {
 	const [dishes, setDishes] = useState<GetPreparedDish[]>();
 	const [fetchingDishes, setFetchingDishes] = useState(false);
 
@@ -56,11 +60,7 @@ export default function DishListSheet() {
 	return (
 		<>
 			<Sheet>
-				<SheetTrigger asChild>
-					<div className='rounded-full w-11 h-11 bg-slate-500 p-1.5 flex flex-col items-center justify-center'>
-						<Soup className='w-6 h-6 animate-pulse' />
-					</div>
-				</SheetTrigger>
+				<SheetTrigger asChild>{children}</SheetTrigger>
 				<SheetContent
 					side={'left'}
 					className='max-w-[100vw] w-96 px-2'>

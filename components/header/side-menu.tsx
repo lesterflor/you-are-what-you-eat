@@ -1,5 +1,24 @@
 'use client';
 
+import { useCurrentSession } from '@/hooks/use-current-session';
+import { GetLog, GetUser } from '@/types';
+import { Calculator, Menu, Soup, UtensilsCrossed } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+import { BsBookmarkStarFill } from 'react-icons/bs';
+import DishListSheet from '../dish/dish-list-sheet';
+import AddFoodSheet from '../food-items/add-food-sheet';
+import FoodFavouriteListSheet from '../food-items/food-favourite-list-sheet';
+import FoodListSheet from '../food-items/food-list-sheet';
+import GrocerListSheet from '../grocery/grocery-list-sheet';
+import ExpendedCaloriesButton from '../logs/expended-calories-button';
+import LogButton from '../logs/log-button';
+import LogSheet from '../logs/log-sheet';
+import NoteSheet from '../notes/note-sheet';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { Button } from '../ui/button';
 import {
 	Sheet,
 	SheetContent,
@@ -7,23 +26,7 @@ import {
 	SheetTitle,
 	SheetTrigger
 } from '../ui/sheet';
-import { Calculator, Menu, UtensilsCrossed } from 'lucide-react';
-import Link from 'next/link';
-import { GetLog, GetUser } from '@/types';
-import LogSheet from '../logs/log-sheet';
 import ModeToggle from './mode-toggle';
-import LogButton from '../logs/log-button';
-import { usePathname } from 'next/navigation';
-import AddFoodSheet from '../food-items/add-food-sheet';
-import FoodListSheet from '../food-items/food-list-sheet';
-import { Button } from '../ui/button';
-import { useState } from 'react';
-import { useCurrentSession } from '@/hooks/use-current-session';
-import { useSession } from 'next-auth/react';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import NoteSheet from '../notes/note-sheet';
-import GrocerListSheet from '../grocery/grocery-list-sheet';
-import ExpendedCaloriesButton from '../logs/expended-calories-button';
 
 export default function SideMenu({ log }: { log?: GetLog }) {
 	const pathname = usePathname();
@@ -44,7 +47,7 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 			<SheetTrigger>
 				<Menu className='w-6 h-6' />
 			</SheetTrigger>
-			<SheetContent>
+			<SheetContent className='max-w-96 w-80 px-3'>
 				<SheetDescription></SheetDescription>
 				<SheetTitle>
 					<div className='flex flex-row items-center justify-start gap-5 portrait:gap-2'>
@@ -94,21 +97,22 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 						</div>
 					)}
 
-					<div className='flex flex-col items-stretch gap-2'>
+					<div className='flex flex-col items-stretch gap-2 w-full'>
 						<div>Tools</div>
+						<div className='flex flex-row justify-between flex-wrap gap-3 w-full'>
+							<Button asChild>
+								<Link
+									href='/base-metabolic-rate'
+									onClick={handleClick}>
+									<Calculator className='w-4 h-4' />
+									BMR Calculator
+								</Link>
+							</Button>
 
-						<Button asChild>
-							<Link
-								href='/base-metabolic-rate'
-								onClick={handleClick}>
-								<Calculator className='w-4 h-4' />
-								BMR Calculator
-							</Link>
-						</Button>
-
-						<div className='flex flex-row justify-evenly gap-2'>
 							<NoteSheet />
 							<GrocerListSheet />
+
+							{/* <div className='flex flex-row justify-evenly gap-2'></div> */}
 						</div>
 					</div>
 
@@ -128,7 +132,7 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 
 					<div className='flex flex-col item-center gap-1'>
 						<div>Food</div>
-						<div className='flex flex-row items-center justify-between gap-2'>
+						<div className='flex flex-row items-center justify-between flex-wrap gap-3'>
 							{status === 'authenticated' && (
 								<AddFoodSheet
 									onAdded={() => {
@@ -138,9 +142,23 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 							)}
 
 							{pathname !== '/foods' && <FoodListSheet />}
+							<DishListSheet>
+								<Button>
+									<Soup /> Your Dishes
+								</Button>
+							</DishListSheet>
+
+							<FoodFavouriteListSheet>
+								<Button>
+									<BsBookmarkStarFill />
+									Favourites
+								</Button>
+							</FoodFavouriteListSheet>
+
+							<ExpendedCaloriesButton iconMode={false} />
 						</div>
 					</div>
-					<ExpendedCaloriesButton iconMode={false} />
+
 					{/* <KnowCaloriesBurned /> */}
 				</div>
 			</SheetContent>

@@ -18,11 +18,13 @@ import {
 	IdCard,
 	List,
 	Smile,
+	Soup,
 	ThumbsDown,
 	ThumbsUp
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { BiSolidFoodMenu } from 'react-icons/bi';
+import { BsBookmarkStarFill } from 'react-icons/bs';
 import { FaSpinner } from 'react-icons/fa';
 import { GiEmptyMetalBucket } from 'react-icons/gi';
 import { IoFastFoodOutline } from 'react-icons/io5';
@@ -384,9 +386,17 @@ export default function FoodLogList({
 					)}>
 					<CardContent className='p-2 pt-5 flex flex-row items-center gap-2 relative'>
 						<div className='absolute -top-6 left-4 flex flex-row items-center justify-center gap-4'>
-							<DishListSheet />
+							<DishListSheet>
+								<div className='rounded-full w-11 h-11 bg-slate-500 p-1.5 flex flex-col items-center justify-center'>
+									<Soup className='w-6 h-6 animate-pulse' />
+								</div>
+							</DishListSheet>
 
-							<FoodFavouriteListSheet />
+							<FoodFavouriteListSheet>
+								<div className='w-11 h-11 rounded-full p-2 bg-teal-600 flex flex-col items-center justify-center mt-1'>
+									<BsBookmarkStarFill className='w-6 h-6 animate-pulse' />
+								</div>
+							</FoodFavouriteListSheet>
 
 							<FoodListSheet>
 								<div className='rounded-full dark:bg-green-950 bg-green-500 p-3'>
