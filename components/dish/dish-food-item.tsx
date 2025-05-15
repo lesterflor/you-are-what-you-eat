@@ -159,8 +159,8 @@ export default function DishFoodItem({
 								<DialogContent>
 									<DialogTitle>Confirm Delete</DialogTitle>
 									<DialogDescription>
-										Are you sure you want to delete? This action cannot be
-										undone.
+										Are you sure you want to delete this item? This action
+										cannot be undone.
 									</DialogDescription>
 									<div className='flex flex-row items-center justify-center'>
 										<Button

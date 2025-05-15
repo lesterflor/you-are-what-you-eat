@@ -40,9 +40,9 @@ export default function DishCreationPopover() {
 	}, [preparedDishData, preparedDishStatus]);
 
 	useEffect(() => {
-		setDishCreationIndicator(dishList.length > 1);
+		setDishCreationIndicator(dishList.length > 0);
 
-		if (dishList.length < 2) {
+		if (dishList.length < 1) {
 			setCreateDishSheetOpen(false);
 		}
 	}, [dishList]);
@@ -66,7 +66,7 @@ export default function DishCreationPopover() {
 					/>
 				</div>
 			</PopoverTrigger>
-			<PopoverContent className='bg-emerald-950 relative max-w-96 w-[86vw]'>
+			<PopoverContent className='bg-emerald-950 relative max-w-96 w-[86vw] py-2 px-2'>
 				<CreateDishForm
 					foodItems={dishList.map((item) => item.item)}
 					onSuccess={() => {

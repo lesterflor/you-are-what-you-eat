@@ -165,6 +165,9 @@ export async function getAllDishes() {
 		const dishes = await prisma.preparedDish.findMany({
 			where: {
 				userId: user.id
+			},
+			orderBy: {
+				updatedAt: 'desc'
 			}
 		});
 

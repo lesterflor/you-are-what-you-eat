@@ -187,7 +187,7 @@ export default function DishCard({
 
 								const newList = upd.foodItems.filter(
 									(dItem) =>
-										dItem.id !== item.id && dItem.eatenAt !== item.eatenAt
+										dItem.id !== item.id || dItem.eatenAt !== item.eatenAt
 								);
 
 								upd.foodItems = newList;

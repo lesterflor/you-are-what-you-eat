@@ -154,8 +154,8 @@ export default function CreateDishForm({
 	return (
 		<div className='flex flex-col gap-2 items-center'>
 			<div className='leading-tight text-sm'>
-				Do you want to create a new dish from the {foodItems.length} selected
-				items?
+				Do you want to create a new dish from the {foodItems.length} selected{' '}
+				{foodItems.length === 1 ? 'item' : 'items'}?
 			</div>
 			<ScrollArea className='w-full'>
 				<div className='flex flex-col gap-2 max-h-[22vh]'>
@@ -172,62 +172,65 @@ export default function CreateDishForm({
 				</div>
 			</ScrollArea>
 
-			<div className='flex flex-col gap-2 items-center'>
+			<div className='flex flex-col gap-2 items-center pt-2'>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(sendDish, onError)}>
-						<div className='flex flex-col gap-2'>
-							<div>
-								<FormField
-									name='name'
-									control={form.control}
-									render={({
-										field
-									}: {
-										field: ControllerRenderProps<
-											z.infer<typeof preparedDishSchema>,
-											'name'
-										>;
-									}) => (
-										<FormItem>
-											<FormControl>
-												<Input
-													className='border-emerald-800'
-													{...field}
-													placeholder='enter a dish name'
-												/>
-											</FormControl>
-										</FormItem>
-									)}
-								/>
+						<div className='flex flex-row gap-2'>
+							<div className='flex flex-col gap-2'>
+								<div>
+									<FormField
+										name='name'
+										control={form.control}
+										render={({
+											field
+										}: {
+											field: ControllerRenderProps<
+												z.infer<typeof preparedDishSchema>,
+												'name'
+											>;
+										}) => (
+											<FormItem>
+												<FormControl>
+													<Input
+														className='border-emerald-800'
+														{...field}
+														placeholder='enter a dish name'
+													/>
+												</FormControl>
+											</FormItem>
+										)}
+									/>
+								</div>
+
+								<div>
+									<FormField
+										name='description'
+										control={form.control}
+										render={({
+											field
+										}: {
+											field: ControllerRenderProps<
+												z.infer<typeof preparedDishSchema>,
+												'description'
+											>;
+										}) => (
+											<FormItem>
+												<FormControl>
+													<Textarea
+														className='border-emerald-800'
+														{...field}
+														placeholder='enter a description (optional)'
+													/>
+												</FormControl>
+											</FormItem>
+										)}
+									/>
+								</div>
 							</div>
 
-							<div>
-								<FormField
-									name='description'
-									control={form.control}
-									render={({
-										field
-									}: {
-										field: ControllerRenderProps<
-											z.infer<typeof preparedDishSchema>,
-											'description'
-										>;
-									}) => (
-										<FormItem>
-											<FormControl>
-												<Textarea
-													className='border-emerald-800 !h-8'
-													{...field}
-													placeholder='enter a description (optional)'
-												/>
-											</FormControl>
-										</FormItem>
-									)}
-								/>
-							</div>
-
-							<div className='flex flex-row items-center justify-between w-full'>
+							<div className='flex flex-col items-center gap-4 justify-center'>
 								<Button
+									size={'sm'}
 									type='submit'
 									disabled={form.formState.isSubmitting}>
 									{form.formState.isSubmitting ? (
@@ -235,10 +238,11 @@ export default function CreateDishForm({
 									) : (
 										<Plus />
 									)}
-									Create
+									Add
 								</Button>
 
 								<Button
+									size={'sm'}
 									onClick={(e) => {
 										e.preventDefault();
 
@@ -252,23 +256,25 @@ export default function CreateDishForm({
 				</Form>
 			</div>
 
-			<div className='flex flex-col gap-2'>
+			<div className='flex flex-col gap-2 pt-4'>
 				<div className='text-sm leading-tight'>
 					Or add them to an existing dish?
 				</div>
 				<ScrollArea className='w-full'>
-					<div className='flex flex-col gap-4 max-h-[22vh]'>
+					<div className='flex flex-col gap-6 max-h-[24vh]'>
 						{currentDishes &&
 							currentDishes.length > 0 &&
 							currentDishes.map((item) => (
 								<div
 									key={item.id}
-									className='flex flex-col gap-2'>
+									className='flex flex-col items-end gap-2'>
 									<DishCard
 										dish={item}
 										readOnly={true}
 									/>
 									<Button
+										className='w-24'
+										size={'sm'}
 										disabled={updatingDish}
 										onClick={() => addItemsToExistingList(item)}>
 										{updatingDish ? (

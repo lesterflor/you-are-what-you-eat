@@ -77,7 +77,7 @@ export const preparedDishSlice = createAppSlice({
 				} else {
 					newData = clone.filter(
 						(lItem) =>
-							recItem.item.id !== lItem.item.id &&
+							recItem.item.id !== lItem.item.id ||
 							recItem.item.eatenAt !== lItem.item.eatenAt
 					);
 				}
