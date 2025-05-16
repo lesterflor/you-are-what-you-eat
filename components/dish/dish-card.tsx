@@ -17,6 +17,7 @@ import { FilePenLine, ScrollText, Soup, X } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'sonner';
+import NumberIncrementor from '../number-incrementor';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import {
@@ -250,30 +251,62 @@ export default function DishCard({
 						/>
 					))}
 
-				<div className='flex flex-row flex-wrap items-center justify-between gap-2 pt-4'>
+				<div className='flex flex-row flex-wrap items-center justify-evenly	gap-1 pt-4 w-full'>
 					<Badge
-						className='font-normal text-muted-foreground flex flex-row gap-2'
+						className='font-normal text-muted-foreground flex flex-col gap-0 w-[75px]'
 						variant={'outline'}>
-						Calories:
+						Calories
 						<span className='text-foreground'>{macros?.totalCals}</span>
 					</Badge>
 					<Badge
-						className='font-normal text-muted-foreground flex flex-row gap-2'
+						className='font-normal text-muted-foreground flex flex-col gap-0 w-[75px]'
 						variant={'outline'}>
-						Carbs:
-						<span className='text-foreground'>{macros?.totalCarb} g</span>
+						<div>Carbs g</div>
+						<span className='text-foreground'>{macros?.totalCarb}</span>
 					</Badge>
 					<Badge
-						className='font-normal text-muted-foreground flex flex-row gap-2'
+						className='font-normal text-muted-foreground flex flex-col gap-0 w-[75px]'
 						variant={'outline'}>
-						Protein:
-						<span className='text-foreground'>{macros?.totalProtein} g</span>
+						<div>Protein g</div>
+						<span className='text-foreground'>{macros?.totalProtein}</span>
 					</Badge>
 					<Badge
-						className='font-normal text-muted-foreground flex flex-row gap-2'
+						className='font-normal text-muted-foreground flex flex-col gap-0 w-[75px]'
 						variant={'outline'}>
-						Fat: <span className='text-foreground'>{macros?.totalFat} g</span>
+						<div>Fat g</div>
+						<span className='text-foreground'>{macros?.totalFat}</span>
 					</Badge>
+				</div>
+
+				<div>
+					<NumberIncrementor
+						minValue={0.1}
+						value={1}
+						onChange={(val) => {
+							const cloneItems = [...items];
+
+							const updatedItems = cloneItems.map((item) => ({
+								...item,
+								numServings: item.numServings * val
+							}));
+
+							const dishUpd = { ...prepDish };
+							dishUpd.foodItems = updatedItems;
+
+							setPrepDish(dishUpd);
+
+							const { calories, carbs, fat, protein } =
+								totalMacrosReducer(updatedItems);
+
+							setMacros({
+								totalCals: formatUnit(calories),
+								totalCarb: formatUnit(carbs),
+								totalProtein: formatUnit(protein),
+								totalFat: formatUnit(fat)
+							});
+						}}>
+						<div className='text-xs text-muted-foreground'>Serving Size</div>
+					</NumberIncrementor>
 				</div>
 			</CardContent>
 
