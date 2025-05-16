@@ -76,7 +76,11 @@ export default function FoodLogList({
 	const preparedDishStatus = useAppSelector(selectPreparedDishStatus);
 
 	useEffect(() => {
-		if (preparedDishStatus === 'added' || preparedDishStatus === 'cleared') {
+		if (
+			preparedDishStatus === 'added' ||
+			preparedDishStatus === 'cleared' ||
+			preparedDishStatus === 'updated'
+		) {
 			setDishList([]);
 		} else if (preparedDishStatus === 'logged') {
 			getLog();

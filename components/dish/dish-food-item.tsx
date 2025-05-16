@@ -110,7 +110,7 @@ export default function DishFoodItem({
 						</div>
 
 						{readOnly && !noDeleteButton && (
-							<div className='absolute -top-4 -right-4'>
+							<div className='absolute -top-2 -right-2'>
 								<Button
 									onClick={(e) => {
 										e.preventDefault();

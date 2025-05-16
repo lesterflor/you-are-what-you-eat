@@ -11,7 +11,7 @@ import {
 	updateDishState
 } from '@/lib/features/dish/preparedDishSlice';
 import { useAppDispatch } from '@/lib/hooks';
-import { formatUnit, totalMacrosReducer } from '@/lib/utils';
+import { cn, formatUnit, totalMacrosReducer } from '@/lib/utils';
 import { GetFoodEntry, GetPreparedDish } from '@/types';
 import { FilePenLine, ScrollText, Soup, X } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
@@ -103,7 +103,11 @@ export default function DishCard({
 							}}
 						/>
 					) : (
-						<div className='text-xl text-teal-200 leading-tight capitalize'>
+						<div
+							className={cn(
+								'text-xl text-teal-200 leading-tight capitalize',
+								readOnly && 'text-lg'
+							)}>
 							{prepDish.name}
 						</div>
 					)}
@@ -169,7 +173,9 @@ export default function DishCard({
 							}}
 						/>
 					) : (
-						<div className='leading-tight'>{prepDish.description}</div>
+						<div className={cn('leading-tight', readOnly && 'text-xs')}>
+							{prepDish.description}
+						</div>
 					)}
 				</CardDescription>
 			)}
@@ -238,7 +244,7 @@ export default function DishCard({
 
 								setIsUpdating(false);
 							}}
-							key={`${item.id}-${item.eatenAt}`}
+							key={`${item.id}-${item.eatenAt}-${indx}`}
 							indx={indx}
 							item={item}
 						/>

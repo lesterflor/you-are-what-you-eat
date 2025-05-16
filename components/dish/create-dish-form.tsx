@@ -16,7 +16,6 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { preparedDishSchema } from '@/lib/validators';
 import { GetFoodEntry, GetPreparedDish, GetUser } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import {
@@ -26,6 +25,7 @@ import {
 	useForm
 } from 'react-hook-form';
 import { ImSpinner2 } from 'react-icons/im';
+import { TbHemisphereOff, TbHemispherePlus } from 'react-icons/tb';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { Button } from '../ui/button';
@@ -236,9 +236,9 @@ export default function CreateDishForm({
 									{form.formState.isSubmitting ? (
 										<ImSpinner2 className='animate-spin' />
 									) : (
-										<Plus />
+										<TbHemispherePlus />
 									)}
-									Add
+									Create
 								</Button>
 
 								<Button
@@ -248,7 +248,8 @@ export default function CreateDishForm({
 
 										dispatch(clearItems());
 									}}>
-									Clear List
+									<TbHemisphereOff />
+									Clear
 								</Button>
 							</div>
 						</div>
@@ -262,26 +263,25 @@ export default function CreateDishForm({
 						Or add them to an existing dish?
 					</div>
 					<ScrollArea className='w-full'>
-						<div className='flex flex-col gap-6 max-h-[24vh]'>
+						<div className='flex flex-col gap-6 max-h-[24vh] pt-3'>
 							{currentDishes.map((item) => (
 								<div
 									key={item.id}
-									className='flex flex-col items-end gap-2'>
+									className='flex flex-col items-end gap-2 relative'>
 									<DishCard
 										dish={item}
 										readOnly={true}
 									/>
 									<Button
-										className='w-24'
-										size={'sm'}
+										className='absolute -top-2 right-0 rounded-full'
+										size={'icon'}
 										disabled={updatingDish}
 										onClick={() => addItemsToExistingList(item)}>
 										{updatingDish ? (
 											<ImSpinner2 className='animate-spin' />
 										) : (
-											<Plus />
+											<TbHemispherePlus />
 										)}
-										Add
 									</Button>
 								</div>
 							))}

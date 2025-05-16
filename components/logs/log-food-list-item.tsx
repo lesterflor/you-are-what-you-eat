@@ -57,7 +57,11 @@ export default function LogFoodListItem({
 	const preparedDishStatus = useAppSelector(selectPreparedDishStatus);
 
 	useEffect(() => {
-		if (preparedDishStatus === 'added' || preparedDishStatus === 'cleared') {
+		if (
+			preparedDishStatus === 'added' ||
+			preparedDishStatus === 'cleared' ||
+			preparedDishStatus === 'updated'
+		) {
 			setIsChecked(false);
 		}
 	}, [preparedDishData, preparedDishStatus]);
