@@ -1,25 +1,26 @@
 'use client';
 
-import { groceryListSchema } from '@/lib/validators';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { Form } from '../ui/form';
 import { createGroceryList } from '@/actions/grocery-actions';
+import { addGroceryListState } from '@/lib/features/grocery/grocerySlice';
+import { useAppDispatch } from '@/lib/hooks';
+import { cn } from '@/lib/utils';
+import { groceryListSchema } from '@/lib/validators';
 import { GetGroceryItem } from '@/types';
-import { toast } from 'sonner';
-import { useEffect, useRef, useState } from 'react';
-import { Button } from '../ui/button';
-import { FaSpinner } from 'react-icons/fa';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { ShoppingCart } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { BsFillCartCheckFill } from 'react-icons/bs';
+import { FaSpinner } from 'react-icons/fa';
+import { toast } from 'sonner';
+import { z } from 'zod';
+import { Button } from '../ui/button';
+import { Form } from '../ui/form';
+import { ScrollArea } from '../ui/scroll-area';
 import AddGroceryItem from './add-grocery-item';
 import GroceryItemCard from './grocery-item-card';
-import { BsFillCartCheckFill } from 'react-icons/bs';
-import { ScrollArea } from '../ui/scroll-area';
-import { cn } from '@/lib/utils';
 import ShareListButton from './share-list-button';
-import { useAppDispatch } from '@/lib/hooks';
-import { addGroceryListState } from '@/lib/features/grocery/grocerySlice';
+import SharedListAvatars from './shared-list-avatars';
 
 export default function AddGroceryListForm({
 	onSuccess
@@ -83,13 +84,19 @@ export default function AddGroceryListForm({
 	return (
 		<div className='flex flex-col justify-between w-full h-auto gap-6 relative'>
 			<div className='absolute -top-12 right-8'>
-				<ShareListButton
-					onSelect={(userId) => {
-						const update = [...sharedUsers];
-						update.push(userId);
-						setSharedUsers(update);
-					}}
-				/>
+				{sharedUsers.length === 0 ? (
+					<ShareListButton
+						onSelect={(userId) => {
+							if (userId) {
+								const update = [...sharedUsers];
+								update.push(userId);
+								setSharedUsers(update);
+							}
+						}}
+					/>
+				) : (
+					<SharedListAvatars userIds={sharedUsers} />
+				)}
 			</div>
 
 			<div className='w-full'>
