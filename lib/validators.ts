@@ -372,7 +372,8 @@ export const preparedDishSchema = z.object({
 	userId: z.string().min(1, 'userId is required'),
 	foodItems: z.array(foodEntrySchema),
 	name: z.string().min(1, 'name is required'),
-	description: z.string().optional()
+	description: z.string().optional(),
+	sharedUsers: z.array(z.string()).optional()
 });
 
 export const getPreparedDishSchema = z.object({
@@ -383,5 +384,6 @@ export const getPreparedDishSchema = z.object({
 	user: getUserSchema.optional(),
 	foodItems: z.array(getFoodEntrySchema),
 	name: z.string(),
-	description: z.string()
+	description: z.string(),
+	sharedUsers: z.array(z.string())
 });

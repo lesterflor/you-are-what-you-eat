@@ -17,6 +17,8 @@ import { FilePenLine, ScrollText, Soup, X } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'sonner';
+import ShareListButton from '../grocery/share-list-button';
+import SharedListAvatars from '../grocery/shared-list-avatars';
 import NumberIncrementor from '../number-incrementor';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -85,6 +87,26 @@ export default function DishCard({
 		);
 	}, [prepDish]);
 
+	const [sharedUsers, setSharedUsers] = useState<string[]>(
+		prepDish.sharedUsers
+	);
+
+	const updatePrepDish = async (dish: GetPreparedDish) => {
+		setIsUpdating(true);
+		const res = await updateDish(dish);
+
+		if (res.success) {
+			toast.success(res.message);
+			setPrepDish(res.data as GetPreparedDish);
+
+			dispatchDishState();
+		} else {
+			toast.error(res.message);
+		}
+
+		setIsUpdating(false);
+	};
+
 	return (
 		<Card>
 			<CardTitle className='p-2 font-normal flex flex-row items-center gap-2 relative'>
@@ -106,7 +128,7 @@ export default function DishCard({
 					) : (
 						<div
 							className={cn(
-								'text-xl text-teal-200 leading-tight capitalize',
+								'text-lg w-44 text-teal-200 leading-tight capitalize',
 								readOnly && 'text-lg'
 							)}>
 							{prepDish.name}
@@ -115,7 +137,7 @@ export default function DishCard({
 				</div>
 
 				{!readOnly && (
-					<div className='absolute top-0 right-0'>
+					<div className='absolute top-0 right-0 flex flex-row-reverse gap-2 items-center justify-center'>
 						<Dialog>
 							<DialogTrigger asChild>
 								<Button
@@ -157,6 +179,30 @@ export default function DishCard({
 								</Button>
 							</DialogContent>
 						</Dialog>
+
+						<div className='flex flex-row gap-2 items-center justify-center'>
+							<SharedListAvatars userIds={sharedUsers} />
+
+							{sharedUsers.length === 0 && (
+								<ShareListButton
+									iconMode={true}
+									onSelect={async (userId) => {
+										if (userId) {
+											const update = [...sharedUsers];
+											update.push(userId);
+											setSharedUsers(update);
+
+											const up = { ...prepDish };
+											up.sharedUsers = update;
+
+											setPrepDish(up);
+
+											updatePrepDish(up);
+										}
+									}}
+								/>
+							)}
+						</div>
 					</div>
 				)}
 			</CardTitle>

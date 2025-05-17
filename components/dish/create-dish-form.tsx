@@ -28,6 +28,7 @@ import { ImSpinner2 } from 'react-icons/im';
 import { TbHemisphereOff, TbHemispherePlus } from 'react-icons/tb';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import ShareListButton from '../grocery/share-list-button';
 import { Button } from '../ui/button';
 import { Form, FormControl, FormField, FormItem } from '../ui/form';
 import { Input } from '../ui/input';
@@ -152,7 +153,7 @@ export default function CreateDishForm({
 	};
 
 	return (
-		<div className='flex flex-col gap-2 items-center'>
+		<div className='flex flex-col gap-2 items-center relative'>
 			<div className='leading-tight text-sm'>
 				Do you want to create a new dish from the {foodItems.length} selected{' '}
 				{foodItems.length === 1 ? 'item' : 'items'}?
@@ -228,7 +229,17 @@ export default function CreateDishForm({
 								</div>
 							</div>
 
-							<div className='flex flex-col items-center gap-4 justify-center'>
+							<div className='flex flex-col items-center gap-2 justify-center'>
+								<div className='flex flex-row items-center justify-center gap-2'>
+									<ShareListButton
+										iconMode={true}
+										onSelect={async (userId) => {
+											if (userId) {
+												form.setValue('sharedUsers', [userId]);
+											}
+										}}
+									/>
+								</div>
 								<Button
 									size={'sm'}
 									type='submit'

@@ -1,6 +1,13 @@
 'use client';
 
+import { getShareableUsers } from '@/actions/user-actions';
+import { shareGroceryListState } from '@/lib/features/grocery/grocerySlice';
+import { useAppDispatch } from '@/lib/hooks';
+import { GetUser } from '@/types';
 import { Share2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { FaSpinner } from 'react-icons/fa';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
 import {
 	DropdownMenu,
@@ -9,20 +16,15 @@ import {
 	DropdownMenuRadioItem,
 	DropdownMenuTrigger
 } from '../ui/dropdown-menu';
-import { useEffect, useState } from 'react';
-import { GetUser } from '@/types';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { getShareableUsers } from '@/actions/user-actions';
-import { FaSpinner } from 'react-icons/fa';
-import { useAppDispatch } from '@/lib/hooks';
-import { shareGroceryListState } from '@/lib/features/grocery/grocerySlice';
 
 export default function ShareListButton({
 	value,
-	onSelect
+	onSelect,
+	iconMode = false
 }: {
 	value?: string[];
 	onSelect: (user: string) => void;
+	iconMode?: boolean;
 }) {
 	const dispatch = useAppDispatch();
 	const [users, setUsers] = useState<GetUser[]>([]);
@@ -88,9 +90,17 @@ export default function ShareListButton({
 			) : (
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<Button>
-							<Share2 /> Share with
-						</Button>
+						{iconMode ? (
+							<Button
+								variant={'secondary'}
+								size={'icon'}>
+								<Share2 />
+							</Button>
+						) : (
+							<Button>
+								<Share2 /> Share with
+							</Button>
+						)}
 					</DropdownMenuTrigger>
 
 					<DropdownMenuContent>
