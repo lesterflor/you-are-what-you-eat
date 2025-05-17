@@ -12,10 +12,12 @@ import {
 } from '@/lib/features/dish/preparedDishSlice';
 import { useAppDispatch } from '@/lib/hooks';
 import { cn, formatUnit, totalMacrosReducer } from '@/lib/utils';
-import { GetFoodEntry, GetPreparedDish } from '@/types';
+import { GetFoodEntry, GetPreparedDish, GetUser } from '@/types';
 import { FilePenLine, ScrollText, Soup, X } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
+import { TbShareOff } from 'react-icons/tb';
 import { toast } from 'sonner';
 import ShareListButton from '../grocery/share-list-button';
 import SharedListAvatars from '../grocery/shared-list-avatars';
@@ -107,6 +109,9 @@ export default function DishCard({
 		setIsUpdating(false);
 	};
 
+	const { data: session } = useSession();
+	const user = session?.user as GetUser;
+
 	return (
 		<Card>
 			<CardTitle className='p-2 font-normal flex flex-row items-center gap-2 relative'>
@@ -183,7 +188,7 @@ export default function DishCard({
 						<div className='flex flex-row gap-2 items-center justify-center'>
 							<SharedListAvatars userIds={sharedUsers} />
 
-							{sharedUsers.length === 0 && (
+							{sharedUsers.length === 0 ? (
 								<ShareListButton
 									iconMode={true}
 									onSelect={async (userId) => {
@@ -201,6 +206,29 @@ export default function DishCard({
 										}
 									}}
 								/>
+							) : (
+								!sharedUsers.includes(user.id) && (
+									<Button
+										onClick={async () => {
+											if (!sharedUsers.includes(user.id)) {
+												setSharedUsers([]);
+
+												const upd = { ...prepDish };
+												upd.sharedUsers = [];
+
+												updatePrepDish(upd);
+											}
+										}}
+										disabled={isUpdating}
+										variant={'secondary'}
+										size={'icon'}>
+										{isUpdating ? (
+											<ImSpinner2 className='animate-spin' />
+										) : (
+											<TbShareOff />
+										)}
+									</Button>
+								)
 							)}
 						</div>
 					</div>

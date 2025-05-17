@@ -2,9 +2,9 @@
 
 import { getUserAvatars } from '@/actions/user-actions';
 import { useEffect, useState } from 'react';
+import { ImSpinner2 } from 'react-icons/im';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { FaSpinner } from 'react-icons/fa';
 
 export default function SharedListAvatars({ userIds }: { userIds: string[] }) {
 	const [isFetching, setIsFetching] = useState(true);
@@ -30,8 +30,8 @@ export default function SharedListAvatars({ userIds }: { userIds: string[] }) {
 	return (
 		<>
 			{isFetching ? (
-				<div className='w-8 h-8'>
-					<FaSpinner className='w-6 h-6 animate-spin' />
+				<div className='w-8 h-8 flex flex-col items-center justify-center'>
+					<ImSpinner2 className='w-6 h-6 animate-spin opacity-25' />
 				</div>
 			) : (
 				<div>
