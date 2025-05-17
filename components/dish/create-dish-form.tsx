@@ -29,6 +29,7 @@ import { TbHemisphereOff, TbHemispherePlus } from 'react-icons/tb';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import ShareListButton from '../grocery/share-list-button';
+import SharedListAvatars from '../grocery/shared-list-avatars';
 import { Button } from '../ui/button';
 import { Form, FormControl, FormField, FormItem } from '../ui/form';
 import { Input } from '../ui/input';
@@ -152,6 +153,8 @@ export default function CreateDishForm({
 		setUpdatingDish(false);
 	};
 
+	const [sharedUsers, setSharedUsers] = useState<string[]>([]);
+
 	return (
 		<div className='flex flex-col gap-2 items-center relative'>
 			<div className='leading-tight text-sm'>
@@ -230,16 +233,25 @@ export default function CreateDishForm({
 							</div>
 
 							<div className='flex flex-col items-center gap-2 justify-center'>
-								<div className='flex flex-row items-center justify-center gap-2'>
-									<ShareListButton
-										iconMode={true}
-										onSelect={async (userId) => {
-											if (userId) {
-												form.setValue('sharedUsers', [userId]);
-											}
-										}}
-									/>
-								</div>
+								{sharedUsers.length === 0 ? (
+									<div className='flex flex-row items-center justify-center gap-2'>
+										<ShareListButton
+											iconMode={true}
+											onSelect={async (userId) => {
+												if (userId) {
+													const upd = [...sharedUsers];
+													upd.push(userId);
+													setSharedUsers(upd);
+
+													form.setValue('sharedUsers', [userId]);
+												}
+											}}
+										/>
+									</div>
+								) : (
+									<SharedListAvatars userIds={sharedUsers} />
+								)}
+
 								<Button
 									size={'sm'}
 									type='submit'

@@ -8,6 +8,7 @@ import { Share2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { FaSpinner } from 'react-icons/fa';
 import { ImSpinner2 } from 'react-icons/im';
+import { TbShare } from 'react-icons/tb';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
 import {
@@ -108,7 +109,11 @@ export default function ShareListButton({
 						)}
 					</DropdownMenuTrigger>
 
-					<DropdownMenuContent>
+					<DropdownMenuContent className='flex flex-col gap-2'>
+						<div className='flex flex-row items-center text-muted-foreground gap-2'>
+							<TbShare className='w-6 h-6' />
+							Share this with
+						</div>
 						<DropdownMenuRadioGroup
 							value={selectedUser}
 							onValueChange={setSelectedUser}>
