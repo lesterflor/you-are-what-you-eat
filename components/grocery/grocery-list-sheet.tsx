@@ -1,7 +1,15 @@
 'use client';
 
+import { getGroceryListsByUser } from '@/actions/grocery-actions';
+import { selectGroceryStatus } from '@/lib/features/grocery/grocerySlice';
+import { useAppSelector } from '@/lib/hooks';
+import { GetGroceryList } from '@/types';
 import { Plus, ShoppingCart } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ImSpinner2 } from 'react-icons/im';
+import { MdOutlineLocalGroceryStore } from 'react-icons/md';
 import { Button } from '../ui/button';
+import { ScrollArea } from '../ui/scroll-area';
 import {
 	Sheet,
 	SheetContent,
@@ -9,16 +17,8 @@ import {
 	SheetTitle,
 	SheetTrigger
 } from '../ui/sheet';
-import { MdOutlineLocalGroceryStore } from 'react-icons/md';
 import AddGroceryListForm from './add-grocery-list-form';
-import { useEffect, useState } from 'react';
-import { GetGroceryList } from '@/types';
-import { getGroceryListsByUser } from '@/actions/grocery-actions';
 import GroceryListItemCard from './grocery-list-item-card';
-import { ScrollArea } from '../ui/scroll-area';
-import { FaSpinner } from 'react-icons/fa';
-import { useAppSelector } from '@/lib/hooks';
-import { selectGroceryStatus } from '@/lib/features/grocery/grocerySlice';
 
 export default function GrocerListSheet() {
 	const [sheetOpen, setSheetOpen] = useState(false);
@@ -102,7 +102,7 @@ export default function GrocerListSheet() {
 					<ScrollArea className='w-full portrait:h-[75vh] pr-2'>
 						{isFetching ? (
 							<div className='w-full h-full flex flex-col items-center justify-center'>
-								<FaSpinner className='w-36 h-36 animate-spin opacity-10' />
+								<ImSpinner2 className='w-24 h-24 animate-spin opacity-10' />
 							</div>
 						) : (
 							<>

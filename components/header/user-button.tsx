@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
 	DropdownMenu,
@@ -7,10 +6,11 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { UserIcon } from 'lucide-react';
 import { auth } from '@/db/auth';
 import { User } from '@/types';
-import Image from 'next/image';
+import { UserIcon } from 'lucide-react';
+import Link from 'next/link';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import SignOutButton from './sign-out-button';
 
 export default async function UserButton() {
@@ -38,21 +38,10 @@ export default async function UserButton() {
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>
 					<div className='flex items-center w-[50px] portrait:w-auto'>
-						{!user.image ? (
-							<Button
-								variant='ghost'
-								className='relative w-8 h-8 rounded-full ml-2 flex items-center justify-center bg-gray-200 cursor-pointer dark:text-gray-800'>
-								{firstInitial}
-							</Button>
-						) : (
-							<Image
-								className='relative w-8 h-8 rounded-full ml-2 object-cover cursor-pointer'
-								src={user.image}
-								width={50}
-								height={50}
-								alt={user?.name}
-							/>
-						)}
+						<Avatar>
+							<AvatarImage src={user.image} />
+							<AvatarFallback>{firstInitial}</AvatarFallback>
+						</Avatar>
 					</div>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent
