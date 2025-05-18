@@ -1,10 +1,15 @@
 'use client';
 
+import { deleteNote } from '@/actions/user-note-actions';
+import { deleteNote as rxDeleteNote } from '@/lib/features/notes/noteUpdateSlice';
+import { useAppDispatch } from '@/lib/hooks';
 import { GetUserNote } from '@/types';
 import { format } from 'date-fns';
-import React, { useEffect, useState } from 'react';
-import { Button } from '../ui/button';
 import { Calendar, NotebookPenIcon, RefreshCwOff, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ImSpinner2 } from 'react-icons/im';
+import { toast } from 'sonner';
+import { Button } from '../ui/button';
 import {
 	Dialog,
 	DialogContent,
@@ -12,12 +17,7 @@ import {
 	DialogTitle,
 	DialogTrigger
 } from '../ui/dialog';
-import { deleteNote } from '@/actions/user-note-actions';
-import { toast } from 'sonner';
-import { FaSpinner } from 'react-icons/fa';
 import UpdateUserNoteForm from './update-user-note-form';
-import { useAppDispatch } from '@/lib/hooks';
-import { deleteNote as rxDeleteNote } from '@/lib/features/notes/noteUpdateSlice';
 
 export default function NoteCard({
 	note,
@@ -132,7 +132,7 @@ export default function NoteCard({
 									className='w-24'
 									disabled={isDeleting}>
 									{isDeleting ? (
-										<FaSpinner className='w-4 h-4 animate-spin' />
+										<ImSpinner2 className='w-4 h-4 animate-spin' />
 									) : (
 										<X className='w-4 h-4' />
 									)}

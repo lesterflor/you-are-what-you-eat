@@ -6,7 +6,6 @@ import { useAppDispatch } from '@/lib/hooks';
 import { GetUser } from '@/types';
 import { Share2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { FaSpinner } from 'react-icons/fa';
 import { ImSpinner2 } from 'react-icons/im';
 import { TbShare } from 'react-icons/tb';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
@@ -90,7 +89,7 @@ export default function ShareListButton({
 					<ImSpinner2 className='w-6 h-6 animate-spin opacity-25' />
 				) : (
 					<div className='w-20 h-8 flex flex-col items-center justify-center'>
-						<FaSpinner className='w-6 h-6 animate-spin' />
+						<ImSpinner2 className='w-6 h-6 animate-spin' />
 					</div>
 				)
 			) : (

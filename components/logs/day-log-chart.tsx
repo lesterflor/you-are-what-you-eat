@@ -1,23 +1,23 @@
 'use client';
 
+import { getUserLogsInRange } from '@/actions/log-actions';
+import { cn, formatUnit } from '@/lib/utils';
 import { DayLogDataType } from '@/types';
-import React, { useEffect, useState } from 'react';
+import { format } from 'date-fns';
+import { CalendarIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { DateRange } from 'react-day-picker';
+import { ImSpinner2 } from 'react-icons/im';
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { Button } from '../ui/button';
+import { Calendar } from '../ui/calendar';
 import {
 	ChartConfig,
 	ChartContainer,
 	ChartTooltip,
 	ChartTooltipContent
 } from '../ui/chart';
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
-import { cn, formatUnit } from '@/lib/utils';
-import { getUserLogsInRange } from '@/actions/log-actions';
-import { FaSpinner } from 'react-icons/fa';
-import { DateRange } from 'react-day-picker';
-import { format } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { Button } from '../ui/button';
-import { CalendarIcon } from 'lucide-react';
-import { Calendar } from '../ui/calendar';
 
 export default function DayLogChart() {
 	const [logs, setLogs] = useState<DayLogDataType[]>([]);
@@ -129,7 +129,7 @@ export default function DayLogChart() {
 
 			{isFetching ? (
 				<div className='w-full h-full flex flex-col items-center justify-center'>
-					<FaSpinner className='w-40 h-40 animate-spin opacity-5' />
+					<ImSpinner2 className='w-40 h-40 animate-spin opacity-5' />
 				</div>
 			) : (
 				<>

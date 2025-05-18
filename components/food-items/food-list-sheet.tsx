@@ -15,7 +15,7 @@ import { cn } from '@/lib/utils';
 import { GetFoodItem } from '@/types';
 import { Search } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { FaSpinner } from 'react-icons/fa';
+import { ImSpinner2 } from 'react-icons/im';
 import { useDebounce } from 'use-debounce';
 import DishCreationPopover from '../dish/dish-creation-popover';
 import InputWithButton from '../input-with-button';
@@ -225,7 +225,7 @@ export default function FoodListSheet({
 
 								{isFetching && (
 									<div>
-										<FaSpinner className='w-4 h-4 animate-spin' />
+										<ImSpinner2 className='w-4 h-4 animate-spin opacity-25' />
 									</div>
 								)}
 

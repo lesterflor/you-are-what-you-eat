@@ -1,25 +1,25 @@
 'use client';
 
-import { getGroceryListSchema } from '@/lib/validators';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { Form } from '../ui/form';
 import { updateGroceryList } from '@/actions/grocery-actions';
+import { updateGroceryListState } from '@/lib/features/grocery/grocerySlice';
+import { useAppDispatch } from '@/lib/hooks';
+import { cn } from '@/lib/utils';
+import { getGroceryListSchema } from '@/lib/validators';
 import { GetGroceryItem, GetGroceryList, GroceryList } from '@/types';
-import { toast } from 'sonner';
-import { useEffect, useState } from 'react';
-import { Button } from '../ui/button';
-import { FaSpinner } from 'react-icons/fa';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { ShoppingCart } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { BsFillCartCheckFill } from 'react-icons/bs';
+import { ImSpinner2 } from 'react-icons/im';
+import { toast } from 'sonner';
+import { z } from 'zod';
+import { Button } from '../ui/button';
+import { Form } from '../ui/form';
+import { ScrollArea } from '../ui/scroll-area';
 import AddGroceryItem from './add-grocery-item';
 import GroceryItemCard from './grocery-item-card';
-import { BsFillCartCheckFill } from 'react-icons/bs';
-import { ScrollArea } from '../ui/scroll-area';
-import { cn } from '@/lib/utils';
 import ShareListButton from './share-list-button';
-import { useAppDispatch } from '@/lib/hooks';
-import { updateGroceryListState } from '@/lib/features/grocery/grocerySlice';
 
 export default function UpdateGroceryListForm({
 	list,
@@ -143,7 +143,7 @@ export default function UpdateGroceryListForm({
 							onSubmit(form.getValues());
 						}}>
 						{isSubmitting ? (
-							<FaSpinner className='w-4 h-4 animate-spin' />
+							<ImSpinner2 className='w-4 h-4 animate-spin' />
 						) : (
 							<BsFillCartCheckFill className='w-4 h-4' />
 						)}

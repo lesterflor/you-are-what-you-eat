@@ -9,7 +9,6 @@ import { FoodEntry, GetFoodItem } from '@/types';
 import { FilePlus, Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
-import { FaSpinner } from 'react-icons/fa';
 import { GiSpoon } from 'react-icons/gi';
 import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'sonner';
@@ -273,7 +272,7 @@ export default function FoodItemCard({
 											sendFoodItems();
 										}}>
 										{isSubmitting ? (
-											<FaSpinner className='w-4 h-4 animate-spin' />
+											<ImSpinner2 className='w-4 h-4 animate-spin' />
 										) : (
 											<FilePlus className='w-4 h-4' />
 										)}

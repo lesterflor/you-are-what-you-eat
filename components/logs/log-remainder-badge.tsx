@@ -1,15 +1,15 @@
 'use client';
 
+import { getLogRemainder } from '@/actions/log-actions';
+import { selectStatus } from '@/lib/features/log/logFoodSlice';
+import { useAppSelector } from '@/lib/hooks';
+import { formatUnit } from '@/lib/utils';
+import { LogRemainderDataType } from '@/types';
 import { ArrowDown, ArrowUp, Info } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ImSpinner2 } from 'react-icons/im';
 import { Badge } from '../ui/badge';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { formatUnit } from '@/lib/utils';
-import { useEffect, useState } from 'react';
-import { LogRemainderDataType } from '@/types';
-import { getLogRemainder } from '@/actions/log-actions';
-import { FaSpinner } from 'react-icons/fa';
-import { useAppSelector } from '@/lib/hooks';
-import { selectStatus } from '@/lib/features/log/logFoodSlice';
 
 export default function LogRemainderBadge() {
 	const [logRemainder, setLogRemainder] = useState<LogRemainderDataType>();
@@ -39,7 +39,7 @@ export default function LogRemainderBadge() {
 		<>
 			{isFetching ? (
 				<div className='w-20 h-8 flex flex-col items-center justify-center'>
-					<FaSpinner className='w-4 h-4 animate-spin' />
+					<ImSpinner2 className='w-4 h-4 animate-spin opacity-25' />
 				</div>
 			) : (
 				logRemainder && (

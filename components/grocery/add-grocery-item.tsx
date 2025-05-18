@@ -1,18 +1,21 @@
 'use client';
 
-import { GetGroceryItem } from '@/types';
-import { Input } from '../ui/input';
-import { Textarea } from '../ui/textarea';
-import { FaCartPlus } from 'react-icons/fa6';
-import { Button } from '../ui/button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { createGroceryItem } from '@/actions/grocery-actions';
-import { toast } from 'sonner';
-import { FaSpinner } from 'react-icons/fa';
-import { ControllerRenderProps, SubmitHandler, useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { addGroceryItemState } from '@/lib/features/grocery/grocerySlice';
+import { useAppDispatch } from '@/lib/hooks';
+import { cn } from '@/lib/utils';
 import { groceryItemSchema } from '@/lib/validators';
+import { GetGroceryItem } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ControllerRenderProps, SubmitHandler, useForm } from 'react-hook-form';
+import { FaCartPlus } from 'react-icons/fa6';
+import { ImSpinner2 } from 'react-icons/im';
+import { toast } from 'sonner';
+import { z } from 'zod';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader } from '../ui/card';
 import {
 	Form,
 	FormControl,
@@ -20,11 +23,8 @@ import {
 	FormItem,
 	FormMessage
 } from '../ui/form';
-import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader } from '../ui/card';
-import { cn } from '@/lib/utils';
-import { useAppDispatch } from '@/lib/hooks';
-import { addGroceryItemState } from '@/lib/features/grocery/grocerySlice';
+import { Input } from '../ui/input';
+import { Textarea } from '../ui/textarea';
 
 export default function AddGroceryItem({
 	onAdd,
@@ -209,7 +209,7 @@ export default function AddGroceryItem({
 									className='w-24'
 									disabled={form.formState.isSubmitting}>
 									{form.formState.isSubmitting ? (
-										<FaSpinner className='w-4 h-4 animate-spin' />
+										<ImSpinner2 className='w-4 h-4 animate-spin' />
 									) : (
 										<FaCartPlus className='w-4 h-4' />
 									)}

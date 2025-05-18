@@ -13,6 +13,11 @@ import {
 	selectFoodUpdateMsg,
 	selectFoodUpdateStatus
 } from '@/lib/features/food/foodUpdateSlice';
+import {
+	selectGroceryData,
+	selectGroceryMsg,
+	selectGroceryStatus
+} from '@/lib/features/grocery/grocerySlice';
 import { selectData, selectStatus } from '@/lib/features/log/logFoodSlice';
 import {
 	selectNoteMsg,
@@ -20,27 +25,22 @@ import {
 	selectNoteUpdateStatus
 } from '@/lib/features/notes/noteUpdateSlice';
 import { useAppSelector } from '@/lib/hooks';
+import { cn } from '@/lib/utils';
 import {
 	ActivityItem,
 	GetActivityItem,
 	GetActivityLog,
 	GetUser
 } from '@/types';
-import { useEffect, useState } from 'react';
-import { FaSpinner } from 'react-icons/fa';
-import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
-import { Button } from './ui/button';
-import { useSession } from 'next-auth/react';
 import { Activity, SquareActivity } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { ScrollArea } from './ui/scroll-area';
-import { cn } from '@/lib/utils';
+import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import { ImSpinner2 } from 'react-icons/im';
 import ActivityCard from './activity/activity-card';
-import {
-	selectGroceryData,
-	selectGroceryMsg,
-	selectGroceryStatus
-} from '@/lib/features/grocery/grocerySlice';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { Button } from './ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+import { ScrollArea } from './ui/scroll-area';
 
 export default function ReduxStoreLogger({
 	enable = true
@@ -188,7 +188,7 @@ export default function ReduxStoreLogger({
 				<Button
 					variant='outline'
 					className='w-14'>
-					<FaSpinner className='animate-spin opacity-50' />
+					<ImSpinner2 className='animate-spin opacity-50' />
 				</Button>
 			) : activities.length > 0 ? (
 				<Popover>

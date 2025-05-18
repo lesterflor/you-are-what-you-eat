@@ -12,7 +12,7 @@ import { FoodEntry, GetFoodEntry } from '@/types';
 import { format } from 'date-fns';
 import { Clock, FilePenLine, RefreshCwOff, Trash2, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { FaSpinner } from 'react-icons/fa';
+import { ImSpinner2 } from 'react-icons/im';
 import { RxUpdate } from 'react-icons/rx';
 import { toast } from 'sonner';
 import FoodCategoryIconMapper from '../food-items/food-category-icon-mapper';
@@ -195,7 +195,7 @@ export default function LogFoodListItem({
 												setDialogOpen(false);
 											}}>
 											{isDeleting ? (
-												<FaSpinner className='w-4 h-4 animate-spin' />
+												<ImSpinner2 className='w-4 h-4 animate-spin' />
 											) : (
 												<Trash2 className='w-4 h-4' />
 											)}

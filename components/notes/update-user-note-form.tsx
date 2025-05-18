@@ -1,10 +1,17 @@
 'use client';
 
+import { updateNote } from '@/actions/user-note-actions';
+import { updateNote as updateReduxNote } from '@/lib/features/notes/noteUpdateSlice';
+import { useAppDispatch } from '@/lib/hooks';
 import { getUserNoteSchema } from '@/lib/validators';
 import { GetUserNote } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { FilePenLine } from 'lucide-react';
 import { ControllerRenderProps, SubmitHandler, useForm } from 'react-hook-form';
+import { ImSpinner2 } from 'react-icons/im';
+import { toast } from 'sonner';
 import { z } from 'zod';
+import { Button } from '../ui/button';
 import {
 	Form,
 	FormControl,
@@ -15,13 +22,6 @@ import {
 } from '../ui/form';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
-import { Button } from '../ui/button';
-import { FilePenLine } from 'lucide-react';
-import { FaSpinner } from 'react-icons/fa';
-import { updateNote } from '@/actions/user-note-actions';
-import { updateNote as updateReduxNote } from '@/lib/features/notes/noteUpdateSlice';
-import { toast } from 'sonner';
-import { useAppDispatch } from '@/lib/hooks';
 
 export default function UpdateUserNoteForm({
 	note,
@@ -118,7 +118,7 @@ export default function UpdateUserNoteForm({
 							type='submit'
 							disabled={form.formState.isSubmitting}>
 							{form.formState.isSubmitting ? (
-								<FaSpinner className='w-4 h-4 animate-spin' />
+								<ImSpinner2 className='w-4 h-4 animate-spin' />
 							) : (
 								<FilePenLine className='w-4 h-4' />
 							)}

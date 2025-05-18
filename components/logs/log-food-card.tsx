@@ -1,6 +1,20 @@
 'use client';
 
+import { deleteFoodLogEntry, updateFoodLogEntry } from '@/actions/log-actions';
+import { deleted, updated } from '@/lib/features/log/logFoodSlice';
+import { useAppDispatch } from '@/lib/hooks';
+import { cn, formatUnit } from '@/lib/utils';
 import { FoodEntry, GetFoodEntry } from '@/types';
+import { format } from 'date-fns';
+import { Clock, FilePenLine, RefreshCwOff, Trash2, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { ImSpinner2 } from 'react-icons/im';
+import { RxUpdate } from 'react-icons/rx';
+import { toast } from 'sonner';
+import FoodCategoryIconMapper from '../food-items/food-category-icon-mapper';
+import NumberIncrementor from '../number-incrementor';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
 import {
 	Card,
 	CardContent,
@@ -8,11 +22,6 @@ import {
 	CardFooter,
 	CardHeader
 } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { format } from 'date-fns';
-import { Clock, FilePenLine, RefreshCwOff, Trash2, X } from 'lucide-react';
-import { cn, formatUnit } from '@/lib/utils';
-import { Button } from '../ui/button';
 import {
 	Dialog,
 	DialogContent,
@@ -20,15 +29,6 @@ import {
 	DialogTitle,
 	DialogTrigger
 } from '../ui/dialog';
-import { useEffect, useRef, useState } from 'react';
-import NumberIncrementor from '../number-incrementor';
-import { deleteFoodLogEntry, updateFoodLogEntry } from '@/actions/log-actions';
-import { FaSpinner } from 'react-icons/fa';
-import { toast } from 'sonner';
-import { RxUpdate } from 'react-icons/rx';
-import FoodCategoryIconMapper from '../food-items/food-category-icon-mapper';
-import { useAppDispatch } from '@/lib/hooks';
-import { deleted, updated } from '@/lib/features/log/logFoodSlice';
 
 export default function LogFoodCard({
 	item,
@@ -255,7 +255,7 @@ export default function LogFoodCard({
 										setDialogOpen(false);
 									}}>
 									{isDeleting ? (
-										<FaSpinner className='w-4 h-4 animate-spin' />
+										<ImSpinner2 className='w-4 h-4 animate-spin' />
 									) : (
 										<Trash2 className='w-4 h-4' />
 									)}

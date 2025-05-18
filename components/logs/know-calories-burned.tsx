@@ -1,15 +1,15 @@
 'use client';
 import { addKnownCaloriesBurned, createDailyLog } from '@/actions/log-actions';
-import { Input } from '../ui/input';
-import { useEffect, useRef, useState } from 'react';
-import { GetLog } from '@/types';
-import { Button } from '../ui/button';
-import { Plus } from 'lucide-react';
-import { FaSpinner } from 'react-icons/fa';
-import { toast } from 'sonner';
 import { useCurrentSession } from '@/hooks/use-current-session';
-import { useAppDispatch } from '@/lib/hooks';
 import { expendedCaloriesUpdated } from '@/lib/features/log/logFoodSlice';
+import { useAppDispatch } from '@/lib/hooks';
+import { GetLog } from '@/types';
+import { Plus } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { ImSpinner2 } from 'react-icons/im';
+import { toast } from 'sonner';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
 
 export default function KnowCaloriesBurned() {
 	const dispatch = useAppDispatch();
@@ -54,7 +54,7 @@ export default function KnowCaloriesBurned() {
 				<span className='pr-2'>Calories Expended:</span>
 				{fetching ? (
 					<span className='flex flex-col items-center justify-center text-amber-400 w-10'>
-						<FaSpinner className='w-4 h-4 animate-spin' />
+						<ImSpinner2 className='w-4 h-4 animate-spin' />
 					</span>
 				) : (
 					<span className='text-amber-400 w-10 text-center'>
@@ -96,7 +96,7 @@ export default function KnowCaloriesBurned() {
 						setSubmitting(false);
 					}}>
 					{submitting ? (
-						<FaSpinner className='w-4 h-4 animate-spin' />
+						<ImSpinner2 className='w-4 h-4 animate-spin' />
 					) : (
 						<Plus className='h-4 w-4' />
 					)}

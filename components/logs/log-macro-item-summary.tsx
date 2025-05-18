@@ -5,7 +5,7 @@ import { formatUnit } from '@/lib/utils';
 import { GetFoodEntry } from '@/types';
 import { useCallback, useEffect, useState } from 'react';
 import { BiSolidFoodMenu } from 'react-icons/bi';
-import { FaSpinner } from 'react-icons/fa';
+import { ImSpinner2 } from 'react-icons/im';
 import { Card, CardContent } from '../ui/card';
 import { ScrollArea } from '../ui/scroll-area';
 
@@ -61,7 +61,7 @@ export default function LogMacroItemSummary({
 	return (
 		<>
 			{isFetching ? (
-				<FaSpinner className='w-8 h-8 animate-spin opacity-10' />
+				<ImSpinner2 className='w-8 h-8 animate-spin opacity-10' />
 			) : (
 				<div className='flex flex-col gap-2 pt-4 w-full'>
 					{foodEntries.length > 0 && (

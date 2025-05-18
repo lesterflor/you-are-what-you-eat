@@ -6,7 +6,7 @@ import { cn, formatUnit } from '@/lib/utils';
 import { GetFoodEntry } from '@/types';
 import { FilePenLine, RefreshCwOff, Trash2, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { FaSpinner } from 'react-icons/fa';
+import { ImSpinner2 } from 'react-icons/im';
 import { RxUpdate } from 'react-icons/rx';
 import FoodCategoryIconMapper from '../food-items/food-category-icon-mapper';
 import NumberIncrementor from '../number-incrementor';
@@ -172,7 +172,7 @@ export default function DishFoodItem({
 												setDialogOpen(false);
 											}}>
 											{isDeleting ? (
-												<FaSpinner className='w-4 h-4 animate-spin' />
+												<ImSpinner2 className='w-4 h-4 animate-spin' />
 											) : (
 												<Trash2 className='w-4 h-4' />
 											)}

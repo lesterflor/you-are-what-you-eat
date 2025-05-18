@@ -1,21 +1,21 @@
 'use client';
 
-import { ChevronLeft, ChevronRight, Flame, Plus } from 'lucide-react';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { useEffect, useState } from 'react';
-import { useCurrentSession } from '@/hooks/use-current-session';
 import { addKnownCaloriesBurned, createDailyLog } from '@/actions/log-actions';
-import { GetLog } from '@/types';
-import { FaSpinner } from 'react-icons/fa';
-import { Slider } from '../ui/slider';
-import { Button } from '../ui/button';
-import { toast } from 'sonner';
+import { useCurrentSession } from '@/hooks/use-current-session';
 import {
 	expendedCaloriesUpdated,
 	selectData,
 	selectStatus
 } from '@/lib/features/log/logFoodSlice';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { GetLog } from '@/types';
+import { ChevronLeft, ChevronRight, Flame, Plus } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ImSpinner2 } from 'react-icons/im';
+import { toast } from 'sonner';
+import { Button } from '../ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { Slider } from '../ui/slider';
 
 export default function ExpendedCaloriesButton({
 	iconMode = true
@@ -89,7 +89,7 @@ export default function ExpendedCaloriesButton({
 				</div>
 				<div className='text-3xl font-semibold text-amber-600'>
 					{fetching ? (
-						<FaSpinner className='w-7 h-7 animate-spin' />
+						<ImSpinner2 className='w-7 h-7 animate-spin' />
 					) : (
 						caloriesBurned
 					)}
@@ -148,7 +148,7 @@ export default function ExpendedCaloriesButton({
 						setSubmitting(false);
 					}}>
 					{submitting ? (
-						<FaSpinner className='w-4 h-4 animate-spin' />
+						<ImSpinner2 className='w-4 h-4 animate-spin' />
 					) : (
 						<Plus className='h-4 w-4' />
 					)}

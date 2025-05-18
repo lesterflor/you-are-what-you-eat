@@ -1,16 +1,16 @@
 'use client';
 
+import { updateGroceryList } from '@/actions/grocery-actions';
+import { completeGroceryListState } from '@/lib/features/grocery/grocerySlice';
+import { useAppDispatch } from '@/lib/hooks';
 import { GetGroceryList } from '@/types';
 import { format } from 'date-fns';
-import GroceryItemCard from './grocery-item-card';
-import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
-import { Button } from '../ui/button';
 import { Check, PenLineIcon } from 'lucide-react';
 import { useState } from 'react';
-import { updateGroceryList } from '@/actions/grocery-actions';
-import { FaSpinner } from 'react-icons/fa';
+import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'sonner';
-import SharedListAvatars from './shared-list-avatars';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
 import {
 	Dialog,
 	DialogContent,
@@ -24,9 +24,9 @@ import {
 	SheetTitle,
 	SheetTrigger
 } from '../ui/sheet';
+import GroceryItemCard from './grocery-item-card';
+import SharedListAvatars from './shared-list-avatars';
 import UpdateGroceryListForm from './update-grocery-list-form';
-import { useAppDispatch } from '@/lib/hooks';
-import { completeGroceryListState } from '@/lib/features/grocery/grocerySlice';
 
 export default function GroceryListItemCard({
 	list,
@@ -140,7 +140,7 @@ export default function GroceryListItemCard({
 									}
 								}}>
 								{isUpdating ? (
-									<FaSpinner className='w-4 h-4 animate-spin' />
+									<ImSpinner2 className='w-4 h-4 animate-spin' />
 								) : (
 									<Check className='h-4 w-4' />
 								)}

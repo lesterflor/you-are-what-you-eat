@@ -1,10 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import NumberIncrementor from '../number-incrementor';
-import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
-import { Input } from '../ui/input';
-import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
+import { addUserBMR, getBMRById, updateUserBMR } from '@/actions/bmr-actions';
 import {
 	calculateBMR,
 	colateBMRData,
@@ -13,12 +9,6 @@ import {
 	POUND_TO_KILO
 } from '@/lib/utils';
 import { BMRData, GetUser } from '@/types';
-import { useSession } from 'next-auth/react';
-import { Button } from '../ui/button';
-import { addUserBMR, getBMRById, updateUserBMR } from '@/actions/bmr-actions';
-import { toast } from 'sonner';
-import BMRCalculatorSkeleton from '../skeletons/bmr-calculator-skeleton';
-import { Avatar, AvatarImage } from '../ui/avatar';
 import { AvatarFallback } from '@radix-ui/react-avatar';
 import {
 	Calculator,
@@ -27,7 +17,17 @@ import {
 	Users,
 	Weight
 } from 'lucide-react';
-import { FaSpinner } from 'react-icons/fa';
+import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import { ImSpinner2 } from 'react-icons/im';
+import { toast } from 'sonner';
+import NumberIncrementor from '../number-incrementor';
+import BMRCalculatorSkeleton from '../skeletons/bmr-calculator-skeleton';
+import { Avatar, AvatarImage } from '../ui/avatar';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
+import { Input } from '../ui/input';
+import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 
 export default function BMRCalculatorForm() {
 	const [feet, setFeet] = useState(1);
@@ -300,7 +300,7 @@ export default function BMRCalculatorForm() {
 												handleSaveBMR();
 											}}>
 											{submitting ? (
-												<FaSpinner className='w-4 h-4 animate-spin' />
+												<ImSpinner2 className='w-4 h-4 animate-spin' />
 											) : (
 												<NotebookPenIcon className='w-4 h-4' />
 											)}

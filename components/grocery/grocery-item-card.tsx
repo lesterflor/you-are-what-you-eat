@@ -1,19 +1,19 @@
 'use client';
 
-import { GetGroceryItem } from '@/types';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { Check, XIcon } from 'lucide-react';
-import { useState } from 'react';
 import { updateGroceryItem } from '@/actions/grocery-actions';
-import { toast } from 'sonner';
-import { FaSpinner } from 'react-icons/fa';
-import { cn } from '@/lib/utils';
-import { useAppDispatch } from '@/lib/hooks';
 import {
 	completeGroceryItemState,
 	deleteGroceryItemState
 } from '@/lib/features/grocery/grocerySlice';
+import { useAppDispatch } from '@/lib/hooks';
+import { cn } from '@/lib/utils';
+import { GetGroceryItem } from '@/types';
+import { Check, XIcon } from 'lucide-react';
+import { useState } from 'react';
+import { ImSpinner2 } from 'react-icons/im';
+import { toast } from 'sonner';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
 
 export default function GroceryItemCard({
 	item,
@@ -116,7 +116,7 @@ export default function GroceryItemCard({
 							variant='outline'
 							size='lg'>
 							{updating ? (
-								<FaSpinner className='w-8 h-8 animate-spin' />
+								<ImSpinner2 className='w-8 h-8 animate-spin' />
 							) : (
 								<Check className='w-8 h-8' />
 							)}

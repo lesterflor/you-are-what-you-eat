@@ -16,7 +16,7 @@ import {
 } from '@/lib/utils';
 import { GetFoodEntry, GetLog, LogComparisonType, PieItemType } from '@/types';
 import { useEffect, useState } from 'react';
-import { FaSpinner } from 'react-icons/fa';
+import { ImSpinner2 } from 'react-icons/im';
 import { Label, Pie, PieChart } from 'recharts';
 import LogMacrosSkeleton from '../skeletons/log-macros-skeleton';
 import { Badge } from '../ui/badge';
@@ -357,7 +357,7 @@ export default function LogMacrosSummary({
 				<div className='w-auto'>
 					{!revealPie ? (
 						<div className='w-full flex flex-col items-center justify-center portrait:h-[25vh]'>
-							<FaSpinner className='w-20 h-20 animate-spin opacity-5' />
+							<ImSpinner2 className='w-20 h-20 animate-spin opacity-5' />
 						</div>
 					) : (
 						<ChartContainer

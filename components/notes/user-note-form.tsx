@@ -1,11 +1,18 @@
 'use client';
 
+import { createNote } from '@/actions/user-note-actions';
+import { addNote } from '@/lib/features/notes/noteUpdateSlice';
+import { useAppDispatch } from '@/lib/hooks';
 import { userNoteSchema } from '@/lib/validators';
 import { GetUser } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { ControllerRenderProps, SubmitHandler, useForm } from 'react-hook-form';
+import { ImSpinner2 } from 'react-icons/im';
+import { toast } from 'sonner';
 import { z } from 'zod';
+import { Button } from '../ui/button';
 import {
 	Form,
 	FormControl,
@@ -16,13 +23,6 @@ import {
 } from '../ui/form';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
-import { Button } from '../ui/button';
-import { Plus } from 'lucide-react';
-import { FaSpinner } from 'react-icons/fa';
-import { createNote } from '@/actions/user-note-actions';
-import { toast } from 'sonner';
-import { useAppDispatch } from '@/lib/hooks';
-import { addNote } from '@/lib/features/notes/noteUpdateSlice';
 
 export default function UserNoteForm({
 	onSuccess
@@ -123,7 +123,7 @@ export default function UserNoteForm({
 							type='submit'
 							disabled={form.formState.isSubmitting}>
 							{form.formState.isSubmitting ? (
-								<FaSpinner className='w-4 h-4 animate-spin' />
+								<ImSpinner2 className='w-4 h-4 animate-spin' />
 							) : (
 								<Plus className='w-4 h-4' />
 							)}

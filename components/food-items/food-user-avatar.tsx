@@ -1,40 +1,6 @@
 'use client';
 
-import { GetFoodItem, GetUser } from '@/types';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { useEffect, useState } from 'react';
-import { Button } from '../ui/button';
-import Link from 'next/link';
-import {
-	FilePenLine,
-	SquareArrowOutUpRight,
-	UtensilsCrossed,
-	X
-} from 'lucide-react';
-import { useSession } from 'next-auth/react';
-import {
-	Sheet,
-	SheetContent,
-	SheetDescription,
-	SheetTitle,
-	SheetTrigger
-} from '../ui/sheet';
-import UpdateFoodItemForm from './update-food-item-form';
-import { ScrollArea } from '../ui/scroll-area';
-import { Badge } from '../ui/badge';
 import { deleteFoodItem, getFoodItemById } from '@/actions/food-actions';
-import { useInView } from 'react-intersection-observer';
-import {
-	Dialog,
-	DialogContent,
-	DialogTitle,
-	DialogTrigger
-} from '../ui/dialog';
-import { toast } from 'sonner';
-import FoodCategoryIconMapper from './food-category-icon-mapper';
-import { FaSpinner } from 'react-icons/fa';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { inputSearch, userSearch } from '@/lib/features/food/foodSearchSlice';
 import {
 	deleteFood,
@@ -42,6 +8,40 @@ import {
 	selectFoodUpdateData,
 	selectFoodUpdateStatus
 } from '@/lib/features/food/foodUpdateSlice';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { GetFoodItem, GetUser } from '@/types';
+import {
+	FilePenLine,
+	SquareArrowOutUpRight,
+	UtensilsCrossed,
+	X
+} from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { ImSpinner2 } from 'react-icons/im';
+import { useInView } from 'react-intersection-observer';
+import { toast } from 'sonner';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import {
+	Dialog,
+	DialogContent,
+	DialogTitle,
+	DialogTrigger
+} from '../ui/dialog';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { ScrollArea } from '../ui/scroll-area';
+import {
+	Sheet,
+	SheetContent,
+	SheetDescription,
+	SheetTitle,
+	SheetTrigger
+} from '../ui/sheet';
+import FoodCategoryIconMapper from './food-category-icon-mapper';
+import UpdateFoodItemForm from './update-food-item-form';
 
 export default function FoodUserAvatar({
 	user,
@@ -228,7 +228,7 @@ export default function FoodUserAvatar({
 													deleteUserFood();
 												}}>
 												{isDeleting ? (
-													<FaSpinner className='w-4 h-4 animate-spin' />
+													<ImSpinner2 className='w-4 h-4 animate-spin' />
 												) : (
 													<X />
 												)}

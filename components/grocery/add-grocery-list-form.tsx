@@ -11,7 +11,7 @@ import { ShoppingCart } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { BsFillCartCheckFill } from 'react-icons/bs';
-import { FaSpinner } from 'react-icons/fa';
+import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { Button } from '../ui/button';
@@ -161,7 +161,7 @@ export default function AddGroceryListForm({
 							onSubmit(form.getValues());
 						}}>
 						{form.formState.isSubmitting ? (
-							<FaSpinner className='w-4 h-4 animate-spin' />
+							<ImSpinner2 className='w-4 h-4 animate-spin' />
 						) : (
 							<BsFillCartCheckFill className='w-4 h-4' />
 						)}

@@ -1,18 +1,6 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
-import AddFoodSheet from './add-food-sheet';
-import InputWithButton from '../input-with-button';
-import { Search } from 'lucide-react';
-import FoodCategoryPicker from './food-categories';
-import { ScrollArea } from '../ui/scroll-area';
-import FoodItemCard from './food-item-card';
-import { GetFoodItem } from '@/types';
-import { useEffect, useRef, useState } from 'react';
 import { getFoodItems } from '@/actions/food-actions';
-import { useDebounce } from 'use-debounce';
-import { FaSpinner } from 'react-icons/fa';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import {
 	inputSearch,
 	selectFoodSearchData,
@@ -22,6 +10,18 @@ import {
 	selectFoodUpdateData,
 	selectFoodUpdateStatus
 } from '@/lib/features/food/foodUpdateSlice';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { GetFoodItem } from '@/types';
+import { Search } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { useEffect, useRef, useState } from 'react';
+import { ImSpinner2 } from 'react-icons/im';
+import { useDebounce } from 'use-debounce';
+import InputWithButton from '../input-with-button';
+import { ScrollArea } from '../ui/scroll-area';
+import AddFoodSheet from './add-food-sheet';
+import FoodCategoryPicker from './food-categories';
+import FoodItemCard from './food-item-card';
 
 export default function FoodList() {
 	const dispatch = useAppDispatch();
@@ -125,7 +125,7 @@ export default function FoodList() {
 
 					{isFetching && (
 						<div>
-							<FaSpinner className='w-4 h-4 animate-spin' />
+							<ImSpinner2 className='w-4 h-4 animate-spin' />
 						</div>
 					)}
 

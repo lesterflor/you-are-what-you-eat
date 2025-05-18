@@ -25,8 +25,8 @@ import {
 import { useEffect, useState } from 'react';
 import { BiSolidFoodMenu } from 'react-icons/bi';
 import { BsBookmarkStarFill } from 'react-icons/bs';
-import { FaSpinner } from 'react-icons/fa';
 import { GiEmptyMetalBucket } from 'react-icons/gi';
+import { ImSpinner2 } from 'react-icons/im';
 import { IoFastFoodOutline } from 'react-icons/io5';
 import { TbDatabaseSearch } from 'react-icons/tb';
 import DishListSheet from '../dish/dish-list-sheet';
@@ -494,7 +494,7 @@ export default function FoodLogList({
 								</div>
 							) : (
 								<div className='flex flex-col items-center justify-center w-[25vw]'>
-									<FaSpinner className='w-10 h-10 animate-spin opacity-30' />
+									<ImSpinner2 className='w-10 h-10 animate-spin opacity-25' />
 								</div>
 							)}
 						</div>
