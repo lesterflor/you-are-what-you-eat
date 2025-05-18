@@ -391,7 +391,7 @@ export default function FoodLogList({
 					<CardContent className='p-2 pt-5 flex flex-row items-center gap-2 relative'>
 						<div className='absolute -top-6 left-4 flex flex-row items-center justify-center gap-4'>
 							<DishListSheet>
-								<div className='rounded-full w-11 h-11 bg-slate-500 p-1.5 flex flex-col items-center justify-center'>
+								<div className='rounded-full w-11 h-11 bg-fuchsia-700 p-1.5 flex flex-col items-center justify-center'>
 									<Soup className='w-6 h-6 animate-pulse' />
 								</div>
 							</DishListSheet>

@@ -66,7 +66,7 @@ export default function DishListSheet({
 					className='max-w-[100vw] w-96 px-2'>
 					<SheetTitle className='flex flex-row items-center gap-2'>
 						{' '}
-						<Soup className='w-6 h-6 text-teal-500' /> Your Dishes
+						<Soup className='w-6 h-6 text-fuchsia-500' /> Your Dishes
 					</SheetTitle>
 					<SheetDescription className='text-sm leading-tight pb-6'>
 						These are your prepared dishes. You can create dishes by selecting

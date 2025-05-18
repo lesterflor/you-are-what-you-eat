@@ -56,7 +56,9 @@ export default function DishCreationPopover() {
 				<div
 					className={cn(
 						'p-1 rounded-full',
-						dishCreationIndicator ? 'animate-ping bg-cyan-500' : 'bg-gray-700'
+						dishCreationIndicator
+							? 'animate-ping bg-fuchsia-500'
+							: 'bg-gray-700'
 					)}>
 					<Soup
 						className={cn(

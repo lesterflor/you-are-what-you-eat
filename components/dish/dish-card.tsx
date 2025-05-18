@@ -116,9 +116,9 @@ export default function DishCard({
 		<Card>
 			<CardTitle className='p-2 font-normal flex flex-row items-center gap-2 relative'>
 				{isUpdating ? (
-					<ImSpinner2 className='text-teal-500 w-6 h-6 animate-spin' />
+					<ImSpinner2 className='text-slate-500 w-6 h-6 animate-spin' />
 				) : (
-					<Soup className='w-6 h-6 text-teal-500' />
+					<Soup className='w-6 h-6 text-fuchsia-500' />
 				)}
 				<div>
 					{isEditMode ? (
@@ -133,7 +133,7 @@ export default function DishCard({
 					) : (
 						<div
 							className={cn(
-								'text-lg w-44 text-teal-200 leading-tight capitalize',
+								'text-lg w-44 text-fuchsia-200 leading-tight capitalize',
 								readOnly && 'text-lg'
 							)}>
 							{prepDish.name}
@@ -352,36 +352,38 @@ export default function DishCard({
 					</Badge>
 				</div>
 
-				<div>
-					<NumberIncrementor
-						minValue={0.1}
-						value={1}
-						onChange={(val) => {
-							const cloneItems = [...items];
+				{!readOnly && (
+					<div>
+						<NumberIncrementor
+							minValue={0.1}
+							value={1}
+							onChange={(val) => {
+								const cloneItems = [...items];
 
-							const updatedItems = cloneItems.map((item) => ({
-								...item,
-								numServings: item.numServings * val
-							}));
+								const updatedItems = cloneItems.map((item) => ({
+									...item,
+									numServings: item.numServings * val
+								}));
 
-							const dishUpd = { ...prepDish };
-							dishUpd.foodItems = updatedItems;
+								const dishUpd = { ...prepDish };
+								dishUpd.foodItems = updatedItems;
 
-							setPrepDish(dishUpd);
+								setPrepDish(dishUpd);
 
-							const { calories, carbs, fat, protein } =
-								totalMacrosReducer(updatedItems);
+								const { calories, carbs, fat, protein } =
+									totalMacrosReducer(updatedItems);
 
-							setMacros({
-								totalCals: formatUnit(calories),
-								totalCarb: formatUnit(carbs),
-								totalProtein: formatUnit(protein),
-								totalFat: formatUnit(fat)
-							});
-						}}>
-						<div className='text-xs text-muted-foreground'>Serving Size</div>
-					</NumberIncrementor>
-				</div>
+								setMacros({
+									totalCals: formatUnit(calories),
+									totalCarb: formatUnit(carbs),
+									totalProtein: formatUnit(protein),
+									totalFat: formatUnit(fat)
+								});
+							}}>
+							<div className='text-xs text-muted-foreground'>Serving Size</div>
+						</NumberIncrementor>
+					</div>
+				)}
 			</CardContent>
 
 			{!readOnly && (
