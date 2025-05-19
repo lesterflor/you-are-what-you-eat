@@ -266,6 +266,11 @@ export async function getFavouriteFoods() {
 						user: true
 					}
 				}
+			},
+			orderBy: {
+				foodItem: {
+					name: 'asc'
+				}
 			}
 		});
 
@@ -274,6 +279,8 @@ export async function getFavouriteFoods() {
 		}
 
 		const foodItems = foods.map((item) => item.foodItem);
+
+		foodItems.sort((a, b) => a.name.localeCompare(b.name));
 
 		return {
 			success: true,
