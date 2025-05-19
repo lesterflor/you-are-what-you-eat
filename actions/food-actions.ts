@@ -263,7 +263,14 @@ export async function getFavouriteFoods() {
 			include: {
 				foodItem: {
 					include: {
-						user: true
+						user: {
+							select: {
+								id: true,
+								name: true,
+								image: true,
+								FoodItems: true
+							}
+						}
 					}
 				}
 			},
