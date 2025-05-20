@@ -15,7 +15,7 @@ export default function LogRemainderBadge() {
 	const [logRemainder, setLogRemainder] = useState<LogRemainderDataType>();
 	const logStatus = useAppSelector(selectStatus);
 
-	const [isFetching, setIsFetching] = useState(true);
+	const [isFetching, setIsFetching] = useState(false);
 
 	const getLogCalsRemaining = async () => {
 		setIsFetching(true);

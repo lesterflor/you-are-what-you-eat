@@ -28,6 +28,7 @@ export default function DishListSheet({
 }) {
 	const [dishes, setDishes] = useState<GetPreparedDish[]>();
 	const [fetchingDishes, setFetchingDishes] = useState(false);
+	const [sheetOpen, setSheetOpen] = useState(false);
 
 	const dishStateData = useAppSelector(selectPreparedDishData);
 	const dishStateStatus = useAppSelector(selectPreparedDishStatus);
@@ -59,7 +60,9 @@ export default function DishListSheet({
 
 	return (
 		<>
-			<Sheet>
+			<Sheet
+				open={sheetOpen}
+				onOpenChange={setSheetOpen}>
 				<SheetTrigger asChild>{children}</SheetTrigger>
 				<SheetContent
 					side={'left'}
@@ -70,8 +73,9 @@ export default function DishListSheet({
 					</SheetTitle>
 					<SheetDescription className='text-sm leading-tight pb-6'>
 						These are your prepared dishes. You can create dishes by selecting
-						items from your logged food list. You can then log all items from a
-						dish instead of adding food items individually.
+						items from your logged food list or add them from searched food
+						items. You can then log all items from a dish instead of adding food
+						items individually.
 					</SheetDescription>
 					{fetchingDishes ? (
 						<ImSpinner2 className='animate-spin w-8 h-8' />
@@ -84,6 +88,7 @@ export default function DishListSheet({
 											<DishCard
 												key={item.id}
 												dish={item}
+												onLogged={() => setSheetOpen(false)}
 											/>
 										))
 									) : (

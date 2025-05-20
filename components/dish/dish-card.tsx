@@ -44,10 +44,12 @@ import DishFoodItem from './dish-food-item';
 
 export default function DishCard({
 	dish,
-	readOnly = false
+	readOnly = false,
+	onLogged
 }: {
 	dish: GetPreparedDish;
 	readOnly?: boolean;
+	onLogged?: () => void;
 }) {
 	const dispatch = useAppDispatch();
 	const [prepDish, setPrepDish] = useState<GetPreparedDish>(dish);
@@ -443,6 +445,8 @@ export default function DishCard({
 										dishList: '[]'
 									})
 								);
+
+								onLogged?.();
 							} else {
 								toast.error(res.message);
 							}
