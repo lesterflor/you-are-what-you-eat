@@ -154,7 +154,7 @@ export const getFoodItemSchema = z.object({
 	userId: z.string().optional(),
 	//user: getUserSchema.optional()
 	user: z.any(),
-	foodItemFavourites: z.array(z.any())
+	foodItemFavourites: z.array(z.any()).optional()
 });
 
 export const getReduxFoodItemSchema = z.object({

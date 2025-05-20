@@ -12,7 +12,12 @@ import { GetFoodItem, GetUser } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LoaderIcon, Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { ControllerRenderProps, SubmitHandler, useForm } from 'react-hook-form';
+import {
+	ControllerRenderProps,
+	SubmitErrorHandler,
+	SubmitHandler,
+	useForm
+} from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import NumberIncrementor from '../number-incrementor';
@@ -73,10 +78,16 @@ export default function UpdateFoodItemForm({
 		}
 	};
 
+	const onError: SubmitErrorHandler<z.infer<typeof getFoodItemSchema>> = (
+		errors
+	) => {
+		console.log(JSON.stringify(errors));
+	};
+
 	return (
 		<div>
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)}>
+				<form onSubmit={form.handleSubmit(onSubmit, onError)}>
 					<div className='flex flex-col gap-8 w-full'>
 						<div className='flex flex-row gap-2 justify-between flex-wrap w-full'>
 							<FormField
