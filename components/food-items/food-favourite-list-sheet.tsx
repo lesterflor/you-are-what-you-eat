@@ -49,20 +49,21 @@ export default function FoodFavouriteListSheet({
 
 				<SheetContent
 					ref={ref}
-					side={'left'}
-					className='max-w-[100vw] w-full px-2'>
+					side={'top'}
+					className='max-w-[100vw] w-full  px-2'>
 					<SheetTitle className='flex flex-row items-center gap-2'>
 						<BsBookmarkStarFill className='text-teal-600 w-6 h-6' /> Your
 						Favourite Foods
 					</SheetTitle>
 					<SheetDescription></SheetDescription>
 
-					{isFetching ? (
-						<ImSpinner2 className='animate-spin w-6 h-6 opacity-20' />
-					) : (
-						<ScrollArea className='w-full pt-4 pr-3'>
-							{favs && favs.length > 0 && (
-								<div className='max-h-[75vh] flex flex-col items-center gap-4'>
+					<ScrollArea className='w-full pt-4 pr-3 h-[70vh]'>
+						{isFetching ? (
+							<ImSpinner2 className='animate-spin w-6 h-6 opacity-20' />
+						) : (
+							favs &&
+							favs.length > 0 && (
+								<div className='flex flex-col items-center gap-4'>
 									{favs.map((item) => (
 										<FoodItemCard
 											item={item}
@@ -70,9 +71,9 @@ export default function FoodFavouriteListSheet({
 										/>
 									))}
 								</div>
-							)}
-						</ScrollArea>
-					)}
+							)
+						)}
+					</ScrollArea>
 				</SheetContent>
 			</Sheet>
 		</>

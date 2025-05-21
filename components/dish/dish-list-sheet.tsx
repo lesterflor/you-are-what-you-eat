@@ -70,7 +70,7 @@ export default function DishListSheet({
 				<SheetTrigger asChild>{children}</SheetTrigger>
 				<SheetContent
 					ref={ref}
-					side={'left'}
+					side={'bottom'}
 					className='max-w-[100vw] w-96 px-2'>
 					<SheetTitle className='flex flex-row items-center gap-2'>
 						{' '}
@@ -82,30 +82,29 @@ export default function DishListSheet({
 						items. You can then log all items from a dish instead of adding food
 						items individually.
 					</SheetDescription>
-					{fetchingDishes ? (
-						<ImSpinner2 className='animate-spin w-8 h-8 opacity-25' />
-					) : (
-						<>
-							<ScrollArea className='w-full pr-3'>
-								<div className='flex flex-col gap-6 max-h-[70vh]'>
-									{dishes && dishes.length > 0 ? (
-										dishes.map((item) => (
-											<DishCard
-												key={item.id}
-												dish={item}
-												onLogged={() => setSheetOpen(false)}
-											/>
-										))
-									) : (
-										<div className='pt-10 flex flex-col items-center justify-center w-full opacity-20'>
-											<TbBowl className=' w-24 h-24' />
-											<div>You currently have no dishes</div>
-										</div>
-									)}
-								</div>
-							</ScrollArea>
-						</>
-					)}
+
+					<ScrollArea className='w-full pr-3 h-[70vh]'>
+						{fetchingDishes ? (
+							<ImSpinner2 className='animate-spin w-8 h-8 opacity-25' />
+						) : (
+							<div className='flex flex-col gap-6'>
+								{dishes && dishes.length > 0 ? (
+									dishes.map((item) => (
+										<DishCard
+											key={item.id}
+											dish={item}
+											onLogged={() => setSheetOpen(false)}
+										/>
+									))
+								) : (
+									<div className='pt-10 flex flex-col items-center justify-center w-full opacity-20'>
+										<TbBowl className=' w-24 h-24' />
+										<div>You currently have no dishes</div>
+									</div>
+								)}
+							</div>
+						)}
+					</ScrollArea>
 				</SheetContent>
 			</Sheet>
 		</>

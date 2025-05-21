@@ -211,22 +211,24 @@ export default function FoodListSheet({
 						<SheetDescription></SheetDescription>
 						<SheetTitle className='flex flex-col items-center gap-2 pb-4'>
 							<div className='flex flex-row gap-2 justify-between items-center pt-2'>
-								<InputWithButton
-									className='w-[60%]'
-									onChange={(val) => {
-										setSearch(val);
-									}}>
-									<Search className='w-4 h-4 text-muted-foreground' />
-								</InputWithButton>
+								<div className='flex flex-row items-center gap-4'>
+									<InputWithButton
+										className='w-[60%]'
+										onChange={(val) => {
+											setSearch(val);
+										}}>
+										<Search className='w-4 h-4 text-muted-foreground' />
+									</InputWithButton>
 
-								{isFetching && (
-									<div>
-										<ImSpinner2 className='w-4 h-4 animate-spin opacity-25' />
+									<div className='text-xs font-normal'>
+										{foods.length} {foods.length === 1 ? 'result' : 'results'}
 									</div>
-								)}
 
-								<div className='text-xs font-normal'>
-									{foods.length} {foods.length === 1 ? 'result' : 'results'}
+									{isFetching && (
+										<div>
+											<ImSpinner2 className='w-4 h-4 animate-spin opacity-25' />
+										</div>
+									)}
 								</div>
 
 								<DishCreationPopover />
