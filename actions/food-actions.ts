@@ -7,6 +7,73 @@ import { foodItemSchema } from '@/lib/validators';
 import { FoodItem, GetFoodItem, GetUser } from '@/types';
 import { revalidatePath } from 'next/cache';
 
+export async function getAllFoodItemsPaged(
+	page: number = 0,
+	lastCursor: string = ''
+) {
+	try {
+		const takeAmt = 20;
+
+		const res =
+			page === 0
+				? await prisma.foodItem.findMany({
+						take: takeAmt,
+						orderBy: {
+							name: 'asc'
+						},
+						include: {
+							user: {
+								select: {
+									id: true,
+									name: true,
+									image: true,
+									FoodItems: true
+								}
+							}
+						}
+				  })
+				: await prisma.foodItem.findMany({
+						take: takeAmt,
+						skip: 1,
+						cursor: {
+							id: lastCursor
+						},
+
+						orderBy: {
+							name: 'asc'
+						},
+						include: {
+							user: {
+								select: {
+									id: true,
+									name: true,
+									image: true,
+									FoodItems: true
+								}
+							}
+						}
+				  });
+
+		const lastFoodItem = res[takeAmt - 1];
+		const cursor = lastFoodItem.id;
+
+		// sort here again since some food items have been capitalized when added
+		res.sort((a, b) => a.name.localeCompare(b.name));
+
+		return {
+			success: true,
+			message: 'success',
+			lastCursor: cursor,
+			data: res
+		};
+	} catch (err: unknown) {
+		return {
+			success: false,
+			message: formatError(err)
+		};
+	}
+}
+
 export async function getFoodItems(
 	name: string = '',
 	category = '',

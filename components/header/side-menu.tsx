@@ -2,7 +2,7 @@
 
 import { useCurrentSession } from '@/hooks/use-current-session';
 import { GetLog, GetUser } from '@/types';
-import { Calculator, Menu, Soup, UtensilsCrossed } from 'lucide-react';
+import { Calculator, Flame, Menu, Soup, UtensilsCrossed } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -157,7 +157,12 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 								</Button>
 							</FoodFavouriteListSheet>
 
-							<ExpendedCaloriesButton iconMode={false} />
+							<ExpendedCaloriesButton>
+								<Button>
+									<Flame className='w-4 h-4' />
+									Expended Calories
+								</Button>
+							</ExpendedCaloriesButton>
 						</div>
 					</div>
 

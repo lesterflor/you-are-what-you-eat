@@ -10,17 +10,18 @@ import {
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { GetLog } from '@/types';
 import { ChevronLeft, ChevronRight, Flame, Plus } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
+import { useInView } from 'react-intersection-observer';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Slider } from '../ui/slider';
 
 export default function ExpendedCaloriesButton({
-	iconMode = true
+	children
 }: {
-	iconMode?: boolean;
+	children?: React.ReactNode;
 }) {
 	const dispatch = useAppDispatch();
 	const logStatus = useAppSelector(selectStatus);
@@ -32,10 +33,11 @@ export default function ExpendedCaloriesButton({
 	const [fetching, setFetching] = useState(true);
 	const [inputVal, setInputVal] = useState(10);
 	const [popoverOpen, setPopoverOpen] = useState(false);
+	const [ref, inView] = useInView();
 
 	const { status } = useCurrentSession();
 
-	const getLog = async () => {
+	const getLog = useCallback(async () => {
 		setFetching(true);
 		const res = await createDailyLog();
 
@@ -44,11 +46,13 @@ export default function ExpendedCaloriesButton({
 		}
 
 		setFetching(false);
-	};
+	}, [log]);
 
 	useEffect(() => {
-		getLog();
-	}, []);
+		if (inView) {
+			getLog();
+		}
+	}, [inView]);
 
 	useEffect(() => {
 		if (logStatus !== 'idle') {
@@ -70,19 +74,10 @@ export default function ExpendedCaloriesButton({
 		<Popover
 			open={popoverOpen}
 			onOpenChange={setPopoverOpen}>
-			<PopoverTrigger asChild>
-				{iconMode ? (
-					<div className='mt-2 rounded-full p-2 bg-amber-700 w-10 h-10 flex flex-col items-center justify-center'>
-						<Flame className='w-6 h-6 animate-pulse' />
-					</div>
-				) : (
-					<Button>
-						<Flame className='w-4 h-4' />
-						Expended Calories
-					</Button>
-				)}
-			</PopoverTrigger>
-			<PopoverContent className='flex flex-col gap-6 items-center justify-center'>
+			<PopoverTrigger asChild>{children}</PopoverTrigger>
+			<PopoverContent
+				ref={ref}
+				className='flex flex-col gap-6 items-center justify-center'>
 				<div className='flex flex-row items-center gap-2'>
 					<Flame className='w-6 h-6' />
 					Expended Calories

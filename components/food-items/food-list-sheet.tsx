@@ -92,10 +92,6 @@ export default function FoodListSheet({
 		setIsFetching(false);
 	};
 
-	// useEffect(() => {
-	// 	getFavs();
-	// }, []);
-
 	const [search, setSearch] = useState('');
 	const [debounced] = useDebounce(search, 1000);
 

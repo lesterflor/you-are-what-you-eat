@@ -14,6 +14,7 @@ import { BaseMetabolicRateType, GetFoodEntry, GetLog } from '@/types';
 import {
 	ArrowDown,
 	ArrowUp,
+	Flame,
 	Frown,
 	IdCard,
 	List,
@@ -408,7 +409,17 @@ export default function FoodLogList({
 								</div>
 							</FoodListSheet>
 
-							<ExpendedCaloriesButton />
+							<ExpendedCaloriesButton>
+								<div className='mt-2 rounded-full p-2 bg-amber-700 w-10 h-10 flex flex-col items-center justify-center'>
+									<Flame className='w-6 h-6 animate-pulse' />
+								</div>
+							</ExpendedCaloriesButton>
+
+							{/* <FoodListSheetPaged>
+								<div className='rounded-full dark:bg-green-700 bg-green-500 p-3'>
+									<TbDatabaseSearch className='w-6 h-6 animate-pulse' />
+								</div>
+							</FoodListSheetPaged> */}
 						</div>
 
 						<div className={cn('flex flex-col items-start w-full gap-1')}>
