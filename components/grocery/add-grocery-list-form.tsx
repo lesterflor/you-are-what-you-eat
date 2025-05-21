@@ -29,7 +29,6 @@ export default function AddGroceryListForm({
 }) {
 	const dispatch = useAppDispatch();
 	const [groceryItems, setGroceryItems] = useState<GetGroceryItem[]>([]);
-	const [addMinified, setAddMinified] = useState(false);
 	const [sharedUsers, setSharedUsers] = useState<string[]>([]);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -107,12 +106,8 @@ export default function AddGroceryListForm({
 			<div className='w-full'>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)}>
-						<ScrollArea
-							className={cn(
-								'w-full portrait:h-[40vh] border-b-2 py-2 pr-3',
-								addMinified && 'portrait:h-[60vh]'
-							)}>
-							<div className='flex flex-col gap-4 w-full'>
+						<ScrollArea className={cn('w-full border-b-2 py-2 pr-3')}>
+							<div className='flex flex-col gap-4 w-full max-h-[45vh]'>
 								{groceryItems.length > 0 ? (
 									groceryItems.map((item) => (
 										<GroceryItemCard
@@ -153,9 +148,6 @@ export default function AddGroceryListForm({
 						update.push(item);
 
 						setGroceryItems(update);
-					}}
-					onMinify={(minified) => {
-						setAddMinified(minified);
 					}}
 				/>
 				<div className='w-full mt-4'>

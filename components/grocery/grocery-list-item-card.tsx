@@ -113,8 +113,8 @@ export default function GroceryListItemCard({
 							</Button>
 						</SheetTrigger>
 						<SheetContent
-							side='left'
-							className='portrait:max-w-[100vw] portrait:w-[100vw] h-[95%] portrait:h-auto'>
+							side='top'
+							className='portrait:max-w-[100vw] portrait:w-[100vw]'>
 							<SheetTitle className='text-lg flex flex-row items-center justify-between  text-muted-foreground border-b-2 pb-2 w-full pr-5'>
 								Edit List
 							</SheetTitle>

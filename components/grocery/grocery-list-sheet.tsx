@@ -78,7 +78,9 @@ export default function GrocerListSheet() {
 									New
 								</Button>
 							</SheetTrigger>
-							<SheetContent className='max-w-[100vw] w-[100vw] h-[95%] portrait:h-auto'>
+							<SheetContent
+								className='max-w-[100vw] w-[100vw]'
+								side={'bottom'}>
 								<SheetTitle className='text-lg flex flex-row items-center justify-between  text-muted-foreground border-b-2 pb-2 w-full pr-5'>
 									<div className='flex flex-row items-center gap-2'>
 										<Plus className='w-4 h-4' />
@@ -99,14 +101,14 @@ export default function GrocerListSheet() {
 				</SheetTitle>
 
 				<div className='flex flex-col items-center justify-between gap-4 w-full mt-5'>
-					<ScrollArea className='w-full portrait:h-[75vh] pr-2'>
+					<ScrollArea className='w-full pr-2'>
 						{isFetching ? (
 							<div className='w-full h-full flex flex-col items-center justify-center'>
 								<ImSpinner2 className='w-24 h-24 animate-spin opacity-10' />
 							</div>
 						) : (
 							<>
-								<div className='w-full flex flex-col gap-6 pb-2'>
+								<div className='w-full flex flex-col gap-6 pb-2 max-h-[70vh]'>
 									{lists.length > 0 ? (
 										lists.map((item) => (
 											<GroceryListItemCard
