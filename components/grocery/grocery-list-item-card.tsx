@@ -6,7 +6,7 @@ import { useAppDispatch } from '@/lib/hooks';
 import { GetGroceryList } from '@/types';
 import { format } from 'date-fns';
 import { Check, PenLineIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
@@ -31,11 +31,13 @@ import UpdateGroceryListForm from './update-grocery-list-form';
 export default function GroceryListItemCard({
 	list,
 	onComplete,
-	onEdit
+	onEdit,
+	onClose
 }: {
 	list: GetGroceryList;
 	onComplete?: () => void;
 	onEdit?: (item: GetGroceryList) => void;
+	onClose?: () => void;
 }) {
 	const dispatch = useAppDispatch();
 
@@ -44,6 +46,8 @@ export default function GroceryListItemCard({
 	const [listComplete, setListComplete] = useState(false);
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [editSheetOpen, setEditSheetOpen] = useState(false);
+
+	useEffect(() => {}, [editSheetOpen]);
 
 	const updateListStatus = async () => {
 		setIsUpdating(true);
@@ -73,7 +77,7 @@ export default function GroceryListItemCard({
 
 	return (
 		<Card className='p-2'>
-			<CardHeader className='p-0 relative'>
+			<CardHeader className='p-0 relative pb-4'>
 				<div className='text-xs text-muted-foreground flex flex-row justify-between items-center pr-5'>
 					<div className='w-fit'>{format(grList.createdAt, 'PPP h:mm a')}</div>
 					<SharedListAvatars userIds={grList.sharedUsers} />
@@ -96,7 +100,12 @@ export default function GroceryListItemCard({
 				<CardFooter className='p-0 pt-6 flex flex-row items-center justify-between'>
 					<Sheet
 						open={editSheetOpen}
-						onOpenChange={setEditSheetOpen}>
+						onOpenChange={(val) => {
+							setEditSheetOpen(val);
+							if (!val) {
+								onClose?.();
+							}
+						}}>
 						<SheetTrigger asChild>
 							<Button>
 								<PenLineIcon />

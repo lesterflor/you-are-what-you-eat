@@ -83,7 +83,7 @@ export default function AddGroceryItem({
 			// reset fields
 			form.reset();
 			setQty(1);
-			setMinified(true);
+			//setMinified(true);
 		} else {
 			toast.error(res.message);
 		}

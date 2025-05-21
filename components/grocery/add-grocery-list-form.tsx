@@ -31,6 +31,7 @@ export default function AddGroceryListForm({
 	const [groceryItems, setGroceryItems] = useState<GetGroceryItem[]>([]);
 	const [addMinified, setAddMinified] = useState(false);
 	const [sharedUsers, setSharedUsers] = useState<string[]>([]);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -53,6 +54,8 @@ export default function AddGroceryListForm({
 	const onSubmit: SubmitHandler<
 		z.infer<typeof groceryListSchema>
 	> = async () => {
+		setIsSubmitting(true);
+
 		const res = await createGroceryList(groceryItems, sharedUsers);
 
 		if (res.success && res.data) {
@@ -69,6 +72,8 @@ export default function AddGroceryListForm({
 		} else {
 			toast.error(res.message);
 		}
+
+		setIsSubmitting(false);
 	};
 
 	const scrollRefIntoView = () => {
@@ -155,17 +160,17 @@ export default function AddGroceryListForm({
 				/>
 				<div className='w-full mt-4'>
 					<Button
-						disabled={form.formState.isSubmitting}
+						disabled={isSubmitting}
 						onClick={(e) => {
 							e.preventDefault();
 							onSubmit(form.getValues());
 						}}>
-						{form.formState.isSubmitting ? (
+						{isSubmitting ? (
 							<ImSpinner2 className='w-4 h-4 animate-spin' />
 						) : (
 							<BsFillCartCheckFill className='w-4 h-4' />
 						)}
-						{form.formState.isSubmitting ? 'Finishing...' : 'Finish List'}
+						Finish List
 					</Button>
 				</div>
 			</div>

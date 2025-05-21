@@ -115,6 +115,9 @@ export default function GrocerListSheet() {
 												onComplete={() => {
 													fetchLists();
 												}}
+												onClose={() => {
+													fetchLists();
+												}}
 											/>
 										))
 									) : (
