@@ -16,6 +16,7 @@ import { GetFoodItem } from '@/types';
 import { Search } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
+import { TbDatabaseSearch } from 'react-icons/tb';
 import { useDebounce } from 'use-debounce';
 import DishCreationPopover from '../dish/dish-creation-popover';
 import InputWithButton from '../input-with-button';
@@ -139,7 +140,7 @@ export default function FoodListSheet({
 							children
 						) : (
 							<Button>
-								<Search className='w-4 h-4' /> Search
+								<TbDatabaseSearch className='w-4 h-4' /> Search
 							</Button>
 						)}
 					</SheetTrigger>
@@ -201,7 +202,7 @@ export default function FoodListSheet({
 							children
 						) : (
 							<Button>
-								<Search className='w-4 h-4' /> Search
+								<TbDatabaseSearch className='w-4 h-4' /> Search
 							</Button>
 						)}
 					</SheetTrigger>
