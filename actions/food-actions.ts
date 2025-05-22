@@ -349,7 +349,8 @@ export async function getFavouriteFoods() {
 								image: true,
 								FoodItems: true
 							}
-						}
+						},
+						foodItemImages: true
 					}
 				}
 			},

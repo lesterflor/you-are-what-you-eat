@@ -151,7 +151,7 @@ export default function FoodItemCard({
 			imageData.type === 'foodItem' &&
 			imageData.id === item.id
 		) {
-			fetchFoodItemData(imageData.id);
+			fetchFoodItemData(item.id);
 		}
 	}, [imageData, imageStatus]);
 
