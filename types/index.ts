@@ -1,4 +1,6 @@
 import {
+	foodItemImageSchema,
+	getFoodItemImageSchema,
 	getPreparedDishImageSchema,
 	preparedDishImageSchema,
 	userSchema
@@ -96,6 +98,9 @@ export type GetPreparedDish = z.infer<typeof getPreparedDishSchema>;
 
 export type PreparedDishImage = z.infer<typeof preparedDishImageSchema>;
 export type GetPreparedDishImage = z.infer<typeof getPreparedDishImageSchema>;
+
+export type FoodItemImage = z.infer<typeof foodItemImageSchema>;
+export type GetFoodItemImage = z.infer<typeof getFoodItemImageSchema>;
 
 export type BMRData = {
 	weight: number;

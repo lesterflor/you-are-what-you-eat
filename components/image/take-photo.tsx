@@ -4,9 +4,14 @@ import { Button } from '@/components/ui/button';
 import { useAppDispatch } from '@/lib/hooks';
 import { cn } from '@/lib/utils';
 
-import { uploadDishImage } from '@/actions/image-actions';
+import { uploadDishImage, uploadFoodItemImage } from '@/actions/image-actions';
 import { addImageState } from '@/lib/image/imageSlice';
-import { GetPreparedDish, GetPreparedDishImage } from '@/types';
+import {
+	GetFoodItem,
+	GetFoodItemImage,
+	GetPreparedDish,
+	GetPreparedDishImage
+} from '@/types';
 import { Aperture, CameraOff, Save } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Camera, CameraType } from 'react-camera-pro';
@@ -21,7 +26,7 @@ import { toast } from 'sonner';
 import FullImagePreview from '../image/full-image-preview';
 import PhotoImagePreview from '../image/photo-image-preview';
 
-type SupportedImageTypes = 'dish';
+type SupportedImageTypes = 'dish' | 'foodItem';
 interface TakePhotoProps<T> {
 	data: T;
 	type: SupportedImageTypes;
@@ -94,6 +99,26 @@ export default function TakePhoto<T>({
 								url,
 								alt,
 								type: 'dish'
+							})
+						);
+					} else {
+						toast.error(res.message);
+					}
+					setShowImage(!res.success);
+				} else if (type === 'foodItem') {
+					const res = await uploadFoodItemImage(formData, data as GetFoodItem);
+					if (res.success && res.data) {
+						toast.success(res.message);
+						setCameraActive(false);
+						onSuccess?.();
+						const { foodItemId, url, alt } = res.data as GetFoodItemImage;
+
+						dispatch(
+							addImageState({
+								id: foodItemId,
+								url,
+								alt,
+								type: 'foodItem'
 							})
 						);
 					} else {

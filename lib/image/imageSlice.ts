@@ -1,7 +1,7 @@
 import { createAppSlice } from '@/lib/createAppSlice';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-export type SupportedImageTypes = 'dish';
+export type SupportedImageTypes = 'dish' | 'foodItem';
 
 export interface ImageSliceProps {
 	id: string;

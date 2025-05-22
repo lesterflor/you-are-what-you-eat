@@ -100,7 +100,8 @@ export async function getFoodItems(
 								image: true,
 								FoodItems: true
 							}
-						}
+						},
+						foodItemImages: true
 					},
 					orderBy: {
 						name: 'asc'
@@ -118,7 +119,8 @@ export async function getFoodItems(
 								image: true,
 								FoodItems: true
 							}
-						}
+						},
+						foodItemImages: true
 					}
 			  });
 
@@ -265,6 +267,9 @@ export async function getFoodItemById(id: string) {
 		const existing = await prisma.foodItem.findFirst({
 			where: {
 				id
+			},
+			include: {
+				foodItemImages: true
 			}
 		});
 

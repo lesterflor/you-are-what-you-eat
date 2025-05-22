@@ -154,7 +154,8 @@ export const getFoodItemSchema = z.object({
 	userId: z.string().optional(),
 	//user: getUserSchema.optional()
 	user: z.any(),
-	foodItemFavourites: z.array(z.any()).optional()
+	foodItemFavourites: z.array(z.any()).optional(),
+	foodItemImages: z.array(z.any()).optional()
 });
 
 export const getReduxFoodItemSchema = z.object({
@@ -402,4 +403,19 @@ export const getPreparedDishImageSchema = z.object({
 	url: z.string(),
 	alt: z.string(),
 	preparedDishId: z.string()
+});
+
+export const foodItemImageSchema = z.object({
+	url: z.string().min(1, 'url is required'),
+	alt: z.string().min(1, 'alt is required'),
+	foodItemId: z.string().min(1, 'foodItemId is required')
+});
+
+export const getFoodItemImageSchema = z.object({
+	id: z.string(),
+	createdAt: z.date(),
+	updatedAt: z.date(),
+	url: z.string(),
+	alt: z.string(),
+	foodItemId: z.string()
 });

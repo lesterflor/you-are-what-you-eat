@@ -5,13 +5,14 @@ import { setCheckedItemState } from '@/lib/features/dish/preparedDishSlice';
 import { added } from '@/lib/features/log/logFoodSlice';
 import { useAppDispatch } from '@/lib/hooks';
 import { cn, formatUnit, getMacroPercOfCals } from '@/lib/utils';
-import { FoodEntry, GetFoodItem } from '@/types';
-import { FilePlus, Plus } from 'lucide-react';
+import { FoodEntry, GetFoodItem, GetUser } from '@/types';
+import { Aperture, FilePlus, Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
 import { GiSpoon } from 'react-icons/gi';
 import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'sonner';
+import TakePhoto from '../image/take-photo';
 import NumberIncrementor from '../number-incrementor';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -22,8 +23,15 @@ import {
 	CardFooter,
 	CardHeader
 } from '../ui/card';
+import {
+	Dialog,
+	DialogContent,
+	DialogTitle,
+	DialogTrigger
+} from '../ui/dialog';
 import FoodCategoryIconMapper from './food-category-icon-mapper';
 import FoodItemFavourite from './food-item-favourite';
+import FoodItemImageGallery from './food-item-image-gallery';
 import FoodUserAvatar from './food-user-avatar';
 
 export default function FoodItemCard({
@@ -39,9 +47,11 @@ export default function FoodItemCard({
 	const cardRef = useRef<HTMLDivElement>(null);
 
 	const { data: session } = useSession();
+	const currentUser = session?.user as GetUser;
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [showDetails, setShowDetails] = useState(false);
 	const [textSize, setTextSize] = useState('text-xl');
+	const [photoDlgOpen, setPhotoDlgOpen] = useState(false);
 
 	const [logFoodItem, setLogFoodItem] = useState<FoodEntry>({
 		id: item.id,
@@ -236,7 +246,7 @@ export default function FoodItemCard({
 					<CardFooter className='flex flex-row items-center justify-center px-2'>
 						{session && (
 							<div className='flex flex-col items-center justify-center gap-2 w-full'>
-								<div className='flex flex-col items-center'>
+								<div className='flex flex-col items-center pb-4'>
 									<NumberIncrementor
 										allowLongPress={false}
 										compactMode={false}
@@ -267,6 +277,7 @@ export default function FoodItemCard({
 
 								<div className='flex flex-row items-center justify-between w-full'>
 									<Button
+										className='px-2'
 										disabled={isSubmitting}
 										onClick={(e) => {
 											e.preventDefault();
@@ -281,6 +292,7 @@ export default function FoodItemCard({
 									</Button>
 
 									<Button
+										className='px-2'
 										disabled={sendingDishItem}
 										variant={'secondary'}
 										onClick={() => {
@@ -319,7 +331,40 @@ export default function FoodItemCard({
 										)}
 										Add to Dish List
 									</Button>
+
+									{item.userId === currentUser.id && (
+										<Dialog
+											open={photoDlgOpen}
+											onOpenChange={setPhotoDlgOpen}>
+											<DialogTrigger asChild>
+												<Button
+													size={'icon'}
+													variant={'secondary'}>
+													<Aperture />
+												</Button>
+											</DialogTrigger>
+											<DialogContent className='max-w-[100vw] max-h-[80vh] overflow-y-auto h-[80vh]'>
+												<DialogTitle>
+													<Aperture className='w-6 h-6 text-muted-foreground' />
+												</DialogTitle>
+												<TakePhoto<GetFoodItem>
+													data={item}
+													type='foodItem'
+													onSuccess={() => {
+														setPhotoDlgOpen(false);
+													}}
+												/>
+											</DialogContent>
+										</Dialog>
+									)}
 								</div>
+
+								{/* gallery here */}
+								{item.foodItemImages && item.foodItemImages?.length > 0 && (
+									<div className='pt-4 w-full'>
+										<FoodItemImageGallery item={item} />
+									</div>
+								)}
 							</div>
 						)}
 					</CardFooter>
