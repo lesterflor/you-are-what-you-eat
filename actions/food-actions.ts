@@ -239,6 +239,13 @@ export async function deleteFoodItem(id: string) {
 			throw new Error('The food item was not found');
 		}
 
+		// clear the images associated with this item
+		await prisma.foodItemImage.deleteMany({
+			where: {
+				foodItemId: existing.id
+			}
+		});
+
 		const del = await prisma.foodItem.delete({
 			where: {
 				id: existing.id

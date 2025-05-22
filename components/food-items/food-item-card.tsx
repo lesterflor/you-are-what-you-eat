@@ -1,9 +1,11 @@
 'use client';
 
+import { getFoodItemById } from '@/actions/food-actions';
 import { createDailyLog, updateLog } from '@/actions/log-actions';
 import { setCheckedItemState } from '@/lib/features/dish/preparedDishSlice';
 import { added } from '@/lib/features/log/logFoodSlice';
-import { useAppDispatch } from '@/lib/hooks';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { selectImageData, selectImageStatus } from '@/lib/image/imageSlice';
 import { cn, formatUnit, getMacroPercOfCals } from '@/lib/utils';
 import { FoodEntry, GetFoodItem, GetUser } from '@/types';
 import { Aperture, FilePlus, Plus } from 'lucide-react';
@@ -45,6 +47,16 @@ export default function FoodItemCard({
 }) {
 	const dispatch = useAppDispatch();
 	const cardRef = useRef<HTMLDivElement>(null);
+
+	const [currentItem, setCurrentItem] = useState<GetFoodItem>(item);
+
+	const fetchFoodItemData = async (id: string) => {
+		const res = await getFoodItemById(id);
+
+		if (res.success && res.data) {
+			setCurrentItem(res.data as GetFoodItem);
+		}
+	};
 
 	const { data: session } = useSession();
 	const currentUser = session?.user as GetUser;
@@ -130,6 +142,19 @@ export default function FoodItemCard({
 
 	const [sendingDishItem, setSendingDishItem] = useState(false);
 
+	const imageData = useAppSelector(selectImageData);
+	const imageStatus = useAppSelector(selectImageStatus);
+
+	useEffect(() => {
+		if (
+			imageStatus === 'added' &&
+			imageData.type === 'foodItem' &&
+			imageData.id === item.id
+		) {
+			fetchFoodItemData(imageData.id);
+		}
+	}, [imageData, imageStatus]);
+
 	return (
 		<Card
 			className='p-0 w-full relative select-none transition-opacity opacity-0 duration-1000'
@@ -148,18 +173,18 @@ export default function FoodItemCard({
 						setShowDetails(!showDetails);
 					}}
 					className='flex flex-row items-start justify-start gap-2 pr-8 leading-tight'>
-					<FoodCategoryIconMapper type={item.category} />
-					{item.name}
+					<FoodCategoryIconMapper type={currentItem.category} />
+					{currentItem.name}
 				</div>
 
 				<div className='flex flex-row items-center justify-center gap-2 absolute top-1 right-1'>
-					{session && item.user && (
+					{session && currentItem.user && (
 						<div>
 							<FoodUserAvatar
 								selfSearch={selfSearch}
-								user={item.user}
-								foodItemId={item.id}
-								foodItem={item}
+								user={currentItem.user}
+								foodItemId={currentItem.id}
+								foodItem={currentItem}
 							/>
 						</div>
 					)}
@@ -169,8 +194,8 @@ export default function FoodItemCard({
 			{showDetails && (
 				<>
 					<CardDescription className='px-4 pr-1 pb-4 leading-tight flex flex-row items-center justify-between gap-2'>
-						<div>{item.description}</div>
-						<FoodItemFavourite item={item} />
+						<div>{currentItem.description}</div>
+						<FoodItemFavourite item={currentItem} />
 					</CardDescription>
 					<CardContent
 						className='flex flex-row items-center justify-center flex-wrap gap-2 p-0'
@@ -181,12 +206,12 @@ export default function FoodItemCard({
 								className='w-14 flex flex-col items-center justify-center'>
 								<div className='font-normal text-muted-foreground'>Protein</div>
 								<div className='whitespace-nowrap'>
-									{formatUnit(item.proteinGrams * portionAmount)} g
+									{formatUnit(currentItem.proteinGrams * portionAmount)} g
 								</div>
 								<div className='text-muted-foreground text-xs font-normal'>
 									{getMacroPercOfCals(
-										item.proteinGrams,
-										item.calories,
+										currentItem.proteinGrams,
+										currentItem.calories,
 										'protein'
 									)}
 								</div>
@@ -198,11 +223,15 @@ export default function FoodItemCard({
 								className='w-14 flex flex-col items-center justify-center'>
 								<div className='font-normal text-muted-foreground'>Carb</div>
 								<div className='whitespace-nowrap'>
-									{formatUnit(item.carbGrams * portionAmount)} g
+									{formatUnit(currentItem.carbGrams * portionAmount)} g
 								</div>
 
 								<div className='text-muted-foreground text-xs font-normal'>
-									{getMacroPercOfCals(item.carbGrams, item.calories, 'carb')}
+									{getMacroPercOfCals(
+										currentItem.carbGrams,
+										currentItem.calories,
+										'carb'
+									)}
 								</div>
 							</Badge>
 						</div>
@@ -212,10 +241,14 @@ export default function FoodItemCard({
 								className='w-14 flex flex-col items-center justify-center'>
 								<div className='font-normal text-muted-foreground'>Fat</div>
 								<div className='whitespace-nowrap'>
-									{formatUnit(item.fatGrams * portionAmount)} g
+									{formatUnit(currentItem.fatGrams * portionAmount)} g
 								</div>
 								<div className='text-muted-foreground text-xs font-normal'>
-									{getMacroPercOfCals(item.fatGrams, item.calories, 'fat')}
+									{getMacroPercOfCals(
+										currentItem.fatGrams,
+										currentItem.calories,
+										'fat'
+									)}
 								</div>
 							</Badge>
 						</div>
@@ -224,11 +257,11 @@ export default function FoodItemCard({
 								variant='secondary'
 								className='w-14 flex flex-col items-center justify-center'>
 								<div className='font-normal text-muted-foreground'>
-									{item.servingSize * portionAmount === 1
+									{currentItem.servingSize * portionAmount === 1
 										? 'Serving'
 										: 'Servings'}
 								</div>
-								<div>{item.servingSize * portionAmount}</div>
+								<div>{currentItem.servingSize * portionAmount}</div>
 								<div>
 									<GiSpoon className='w-4 h-4 text-muted-foreground' />
 								</div>
@@ -238,7 +271,7 @@ export default function FoodItemCard({
 						<div className='flex flex-row items-center gap-2'>
 							<Badge className='flex flex-col items-center justify-center'>
 								<div className='font-normal'>Calories</div>
-								<div>{formatUnit(item.calories * portionAmount)}</div>
+								<div>{formatUnit(currentItem.calories * portionAmount)}</div>
 							</Badge>
 						</div>
 					</CardContent>
@@ -254,16 +287,16 @@ export default function FoodItemCard({
 											setPortionAmount(val);
 
 											const entry: FoodEntry = {
-												id: item.id,
-												name: item.name,
-												category: item.category,
-												description: item.description ?? '',
+												id: currentItem.id,
+												name: currentItem.name,
+												category: currentItem.category,
+												description: currentItem.description ?? '',
 												numServings: val,
-												image: (item.image as string) ?? '',
-												carbGrams: item.carbGrams,
-												fatGrams: item.fatGrams,
-												proteinGrams: item.proteinGrams,
-												calories: item.calories,
+												image: (currentItem.image as string) ?? '',
+												carbGrams: currentItem.carbGrams,
+												fatGrams: currentItem.fatGrams,
+												proteinGrams: currentItem.proteinGrams,
+												calories: currentItem.calories,
 												eatenAt: new Date()
 											};
 
@@ -348,7 +381,7 @@ export default function FoodItemCard({
 													<Aperture className='w-6 h-6 text-muted-foreground' />
 												</DialogTitle>
 												<TakePhoto<GetFoodItem>
-													data={item}
+													data={currentItem}
 													type='foodItem'
 													onSuccess={() => {
 														setPhotoDlgOpen(false);
@@ -360,11 +393,12 @@ export default function FoodItemCard({
 								</div>
 
 								{/* gallery here */}
-								{item.foodItemImages && item.foodItemImages?.length > 0 && (
-									<div className='pt-4 w-full'>
-										<FoodItemImageGallery item={item} />
-									</div>
-								)}
+								{currentItem.foodItemImages &&
+									currentItem.foodItemImages?.length > 0 && (
+										<div className='pt-4 w-full'>
+											<FoodItemImageGallery item={currentItem} />
+										</div>
+									)}
 							</div>
 						)}
 					</CardFooter>
