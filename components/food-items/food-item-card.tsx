@@ -149,6 +149,7 @@ export default function FoodItemCard({
 								selfSearch={selfSearch}
 								user={item.user}
 								foodItemId={item.id}
+								foodItem={item}
 							/>
 						</div>
 					)}

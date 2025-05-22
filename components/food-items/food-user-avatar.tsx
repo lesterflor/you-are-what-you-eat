@@ -9,6 +9,7 @@ import {
 	selectFoodUpdateStatus
 } from '@/lib/features/food/foodUpdateSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { shuffle } from '@/lib/utils';
 import { GetFoodItem, GetUser } from '@/types';
 import {
 	FilePenLine,
@@ -46,11 +47,13 @@ import UpdateFoodItemForm from './update-food-item-form';
 export default function FoodUserAvatar({
 	user,
 	foodItemId,
-	selfSearch = false
+	selfSearch = false,
+	foodItem
 }: {
 	user: { name: string; image: string; id: string; FoodItems: GetFoodItem[] };
 	foodItemId: string;
 	selfSearch?: boolean;
+	foodItem?: GetFoodItem;
 }) {
 	const dispatch = useAppDispatch();
 
@@ -76,7 +79,11 @@ export default function FoodUserAvatar({
 	const [editFormOpen, setEditFormOpen] = useState(false);
 
 	useEffect(() => {
-		const filter = items.filter((item) => item.id !== foodItemId);
+		const filter = items.filter(
+			(item) => item.id !== foodItemId && item.category === foodItem?.category
+		);
+
+		shuffle(filter);
 
 		setCurrentFood(items.filter((item) => item.id === foodItemId));
 
@@ -242,40 +249,44 @@ export default function FoodUserAvatar({
 					</div>
 				)}
 
-				<div className='text-xs flex flex-row gap-2 w-full'>
-					<UtensilsCrossed className='w-4 h-4' />
-					Other Foods added by{' '}
-					<span className='font-semibold'>{user.name}</span>
-				</div>
-				<div className='flex flex-col items-start justify-center gap-2 leading-4 w-full'>
-					{foods.length &&
-						foods.map((item) => (
-							<Button
-								onClick={() => {
-									setPopOpen(false);
+				{foods.length > 0 && (
+					<>
+						<div className='text-xs flex flex-row gap-2 w-full'>
+							<UtensilsCrossed className='w-4 h-4' />
+							Other Foods added by{' '}
+							<span className='font-semibold'>{user.name}</span>
+						</div>
+						<div className='flex flex-col items-start justify-center gap-2 leading-4 w-full'>
+							{foods.map((item) => (
+								<Button
+									onClick={() => {
+										setPopOpen(false);
 
-									if (selfSearch) {
-										// should dispatch 'userInput with food'
-										dispatch(inputSearch(item.name));
-									}
-								}}
-								size='sm'
-								variant='secondary'
-								key={item.id}>
-								{!selfSearch ? (
-									<Link
-										className='flex flex-row items-center gap-2 flex-wrap'
-										href={`/foods?term=${item.name}`}>
-										{item.name} <SquareArrowOutUpRight className='w-4 h-4' />
-									</Link>
-								) : (
-									<>
-										<SquareArrowOutUpRight className='w-4 h-4' /> {item.name}
-									</>
-								)}
-							</Button>
-						))}
-				</div>
+										if (selfSearch) {
+											// should dispatch 'userInput with food'
+											dispatch(inputSearch(item.name));
+										}
+									}}
+									size='sm'
+									variant='secondary'
+									key={item.id}>
+									{!selfSearch ? (
+										<Link
+											className='flex flex-row items-center gap-2 flex-wrap'
+											href={`/foods?term=${item.name}`}>
+											{item.name} <SquareArrowOutUpRight className='w-4 h-4' />
+										</Link>
+									) : (
+										<>
+											<SquareArrowOutUpRight className='w-4 h-4' /> {item.name}
+										</>
+									)}
+								</Button>
+							))}
+						</div>
+					</>
+				)}
+
 				{showSeeMore && (
 					<div className='w-full flex flex-row justify-end'>
 						<Button
