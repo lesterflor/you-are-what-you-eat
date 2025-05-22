@@ -251,10 +251,13 @@ export default function FoodUserAvatar({
 
 				{foods.length > 0 && (
 					<>
-						<div className='text-xs flex flex-row gap-2 w-full'>
+						<div className='text-xs flex flex-row gap-1 w-full'>
 							<UtensilsCrossed className='w-4 h-4' />
 							Other Foods added by{' '}
-							<span className='font-semibold'>{user.name}</span>
+							<span className='font-semibold'>
+								{' '}
+								{user.name === sessionUser.name ? 'You' : user.name}
+							</span>
 						</div>
 						<div className='flex flex-col items-start justify-center gap-2 leading-4 w-full'>
 							{foods.map((item) => (
