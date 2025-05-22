@@ -31,10 +31,6 @@ export default function LogRemainderBadge() {
 		getLogCalsRemaining();
 	}, [logStatus]);
 
-	useEffect(() => {
-		getLogCalsRemaining();
-	}, []);
-
 	return (
 		<>
 			{isFetching ? (
