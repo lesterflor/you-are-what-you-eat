@@ -13,7 +13,7 @@ import {
 import { useAppDispatch } from '@/lib/hooks';
 import { cn, formatUnit, totalMacrosReducer } from '@/lib/utils';
 import { GetFoodEntry, GetPreparedDish, GetUser } from '@/types';
-import { FilePenLine, ScrollText, Soup, X } from 'lucide-react';
+import { Aperture, FilePenLine, ScrollText, Soup, X } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
@@ -21,6 +21,7 @@ import { TbShareOff } from 'react-icons/tb';
 import { toast } from 'sonner';
 import ShareListButton from '../grocery/share-list-button';
 import SharedListAvatars from '../grocery/shared-list-avatars';
+import TakePhoto from '../image/take-photo';
 import NumberIncrementor from '../number-incrementor';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -41,6 +42,7 @@ import {
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import DishFoodItem from './dish-food-item';
+import DishImageGallery from './dish-image-gallery';
 
 export default function DishCard({
 	dish,
@@ -68,6 +70,8 @@ export default function DishCard({
 		totalProtein: number;
 		totalFat: number;
 	}>({ totalCals: 0, totalCarb: 0, totalProtein: 0, totalFat: 0 });
+
+	const [photoDlgOpen, setPhotoDlgOpen] = useState(false);
 
 	useEffect(() => {
 		const { calories, carbs, fat, protein } = totalMacrosReducer(items);
@@ -135,7 +139,7 @@ export default function DishCard({
 					) : (
 						<div
 							className={cn(
-								'text-lg w-44 text-fuchsia-200 leading-tight capitalize',
+								'text-md w-36 text-fuchsia-200 leading-tight capitalize',
 								readOnly && 'text-lg'
 							)}>
 							{prepDish.name}
@@ -144,7 +148,7 @@ export default function DishCard({
 				</div>
 
 				{!readOnly && (
-					<div className='absolute top-0 right-0 flex flex-row-reverse gap-2 items-center justify-center'>
+					<div className='absolute top-0 right-0 flex flex-row-reverse flex-wrap gap-2 items-center justify-center'>
 						<Dialog>
 							<DialogTrigger asChild>
 								<Button
@@ -233,6 +237,30 @@ export default function DishCard({
 								)
 							)}
 						</div>
+
+						<Dialog
+							open={photoDlgOpen}
+							onOpenChange={setPhotoDlgOpen}>
+							<DialogTrigger asChild>
+								<Button
+									size={'icon'}
+									variant={'secondary'}>
+									<Aperture />
+								</Button>
+							</DialogTrigger>
+							<DialogContent className='max-w-[100vw] max-h-[80vh] overflow-y-auto h-[80vh]'>
+								<DialogTitle>
+									<Aperture className='w-6 h-6 text-muted-foreground' />
+								</DialogTitle>
+								<TakePhoto<GetPreparedDish>
+									data={prepDish}
+									type='dish'
+									onSuccess={() => {
+										setPhotoDlgOpen(false);
+									}}
+								/>
+							</DialogContent>
+						</Dialog>
 					</div>
 				)}
 			</CardTitle>
@@ -257,6 +285,7 @@ export default function DishCard({
 				</CardDescription>
 			)}
 			<CardContent className='flex flex-col gap-2 w-full px-2'>
+				<DishImageGallery dish={prepDish} />
 				{items &&
 					items.length > 0 &&
 					items.map((item, indx) => (

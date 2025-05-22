@@ -1,4 +1,8 @@
-import { userSchema } from '@/lib/validators';
+import {
+	getPreparedDishImageSchema,
+	preparedDishImageSchema,
+	userSchema
+} from '@/lib/validators';
 import { z } from 'zod';
 import {
 	activityItemSchema,
@@ -89,6 +93,9 @@ export type GetActivityLog = z.infer<typeof getActivityLogSchema>;
 
 export type PreparedDish = z.infer<typeof preparedDishSchema>;
 export type GetPreparedDish = z.infer<typeof getPreparedDishSchema>;
+
+export type PreparedDishImage = z.infer<typeof preparedDishImageSchema>;
+export type GetPreparedDishImage = z.infer<typeof getPreparedDishImageSchema>;
 
 export type BMRData = {
 	weight: number;

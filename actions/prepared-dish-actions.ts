@@ -134,6 +134,9 @@ export async function getDishById(dishId: string) {
 		const existing = await prisma.preparedDish.findFirst({
 			where: {
 				id: dishId
+			},
+			include: {
+				preparedDishImages: true
 			}
 		});
 
@@ -178,6 +181,9 @@ export async function getAllDishes() {
 			},
 			orderBy: {
 				updatedAt: 'desc'
+			},
+			include: {
+				preparedDishImages: true
 			}
 		});
 

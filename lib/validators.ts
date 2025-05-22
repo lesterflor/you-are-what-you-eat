@@ -385,5 +385,21 @@ export const getPreparedDishSchema = z.object({
 	foodItems: z.array(getFoodEntrySchema),
 	name: z.string(),
 	description: z.string(),
-	sharedUsers: z.array(z.string())
+	sharedUsers: z.array(z.string()),
+	preparedDishImages: z.array(z.any())
+});
+
+export const preparedDishImageSchema = z.object({
+	url: z.string().min(1, 'url is required'),
+	alt: z.string().min(1, 'alt is required'),
+	preparedDishId: z.string().min(1, 'preparedDishId is required')
+});
+
+export const getPreparedDishImageSchema = z.object({
+	id: z.string(),
+	createdAt: z.date(),
+	updatedAt: z.date(),
+	url: z.string(),
+	alt: z.string(),
+	preparedDishId: z.string()
 });
