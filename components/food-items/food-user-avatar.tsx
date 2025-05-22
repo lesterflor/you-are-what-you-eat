@@ -269,6 +269,7 @@ export default function FoodUserAvatar({
 									}}
 									size='sm'
 									variant='secondary'
+									className='!whitespace-pre-line !leading-tight'
 									key={item.id}>
 									{!selfSearch ? (
 										<Link
