@@ -1,7 +1,6 @@
 'use client';
 
 import { addKnownCaloriesBurned, createDailyLog } from '@/actions/log-actions';
-import { useCurrentSession } from '@/hooks/use-current-session';
 import {
 	expendedCaloriesUpdated,
 	selectData,
@@ -36,8 +35,6 @@ export default function ExpendedCaloriesButton({
 
 	const [ref, inView] = useInView();
 
-	const { status } = useCurrentSession();
-
 	const getLog = useCallback(async () => {
 		setFetching(true);
 		const res = await createDailyLog();
@@ -66,10 +63,6 @@ export default function ExpendedCaloriesButton({
 			setCaloriesBurned(log.knownCaloriesBurned[0].calories);
 		}
 	}, [log]);
-
-	if (status !== 'authenticated') {
-		return null;
-	}
 
 	return (
 		<Popover
