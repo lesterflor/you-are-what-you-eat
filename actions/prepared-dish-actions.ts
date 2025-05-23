@@ -103,6 +103,13 @@ export async function deleteDish(dishId: string) {
 			throw new Error('The dish could not be found');
 		}
 
+		// clear all related images
+		await prisma.preparedDishImage.deleteMany({
+			where: {
+				preparedDishId: existing.id
+			}
+		});
+
 		const del = await prisma.preparedDish.delete({
 			where: {
 				id: existing.id
