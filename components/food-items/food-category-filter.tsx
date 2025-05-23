@@ -22,7 +22,7 @@ export default function FoodCategoryFilter({
 		<>
 			<div className='portrait:hidden'>
 				<FoodCategoryPicker
-					value='favourites'
+					value='all'
 					showFilterIcon={true}
 					compactMode={compactMode}
 					onSelect={(value) => {
@@ -33,7 +33,7 @@ export default function FoodCategoryFilter({
 
 			<div className='hidden portrait:flex items-center flex-col'>
 				<FoodCategoryPicker
-					value='favourites'
+					value='all'
 					iconsOnly={true}
 					showFilterIcon={true}
 					compactMode={compactMode}

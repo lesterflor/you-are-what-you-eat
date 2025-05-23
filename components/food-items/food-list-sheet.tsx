@@ -262,7 +262,7 @@ export default function FoodListSheet({
 							</div>
 
 							<FoodCategoryPicker
-								value='favourites'
+								value='all'
 								showFilterIcon={true}
 								iconsOnly={true}
 								onSelect={() => {}}
