@@ -357,6 +357,7 @@ export default function FoodLogList({
 							)}
 						</>
 					</div>
+					<br />
 				</div>
 			) : (
 				<div className='flex flex-col gap-4 w-full'>
