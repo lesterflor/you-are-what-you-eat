@@ -40,6 +40,7 @@ export default function FoodListSheet({
 	children?: React.ReactNode;
 }) {
 	const [foods, setFoods] = useState<GetFoodItem[]>([]);
+	const [allFoods, setAllFoods] = useState<GetFoodItem[]>([]);
 
 	const dispatch = useAppDispatch();
 	const foodUpdateData = useAppSelector(selectFoodUpdateData);
@@ -48,17 +49,38 @@ export default function FoodListSheet({
 	const foodSearchData = useAppSelector(selectFoodSearchData);
 	const foodSearchStatus = useAppSelector(selectFoodSearchStatus);
 
+	useEffect(() => {
+		// on mount get all foods and do local sorting in redux handler
+		getFoods();
+	}, []);
+
 	// redux handler
 	useEffect(() => {
+		const items = [...allFoods];
+
 		switch (foodSearchStatus) {
 			case 'category':
-				getFoods('', foodSearchData.category);
+				//getFoods('', foodSearchData.category);
+
+				const update = items.filter(
+					(item) => item.category === foodSearchData.category
+				);
+
+				setFoods(update);
+
 				break;
 			case 'user':
-				getFoods('', '', foodSearchData.user);
+				//getFoods('', '', foodSearchData.user);
+
+				const userFoods = items.filter(
+					(item) => item.userId === foodSearchData.user
+				);
+
+				setFoods(userFoods);
 				break;
 			case 'all':
-				getFoods();
+				//getFoods();
+				setFoods(items);
 				break;
 			case 'input':
 				getFoods(foodSearchData.term ?? '');
@@ -77,6 +99,7 @@ export default function FoodListSheet({
 
 		if (res.success && res.data) {
 			setFoods(res.data as GetFoodItem[]);
+			setAllFoods(res.data as GetFoodItem[]);
 		}
 
 		setIsFetching(false);
