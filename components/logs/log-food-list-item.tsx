@@ -1,5 +1,6 @@
 'use client';
 
+import { getFoodItemById } from '@/actions/food-actions';
 import { deleteFoodLogEntry, updateFoodLogEntry } from '@/actions/log-actions';
 import {
 	selectPreparedDishData,
@@ -8,7 +9,7 @@ import {
 import { deleted, updated } from '@/lib/features/log/logFoodSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { cn, formatUnit } from '@/lib/utils';
-import { FoodEntry, GetFoodEntry } from '@/types';
+import { FoodEntry, GetFoodEntry, GetFoodItem } from '@/types';
 import { format } from 'date-fns';
 import { Clock, FilePenLine, RefreshCwOff, Trash2, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -16,6 +17,7 @@ import { ImSpinner2 } from 'react-icons/im';
 import { RxUpdate } from 'react-icons/rx';
 import { toast } from 'sonner';
 import FoodCategoryIconMapper from '../food-items/food-category-icon-mapper';
+import FoodItemImageGallery from '../food-items/food-item-image-gallery';
 import NumberIncrementor from '../number-incrementor';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -89,8 +91,20 @@ export default function LogFoodListItem({
 				block: 'center',
 				inline: 'center'
 			});
+
+			fetchFoodItem();
 		}
 	}, [isEditing]);
+
+	const [foodItem, setFoodItem] = useState<GetFoodItem>();
+
+	const fetchFoodItem = async () => {
+		const res = await getFoodItemById(item.id);
+
+		if (res.success && res.data) {
+			setFoodItem(res.data as GetFoodItem);
+		}
+	};
 
 	return (
 		<Card
@@ -317,6 +331,10 @@ export default function LogFoodListItem({
 								/>
 								{isUpdating ? 'Updating...' : 'Update'}
 							</Button>
+						</div>
+
+						<div className='w-full'>
+							{foodItem && <FoodItemImageGallery item={foodItem} />}
 						</div>
 					</div>
 				)}
