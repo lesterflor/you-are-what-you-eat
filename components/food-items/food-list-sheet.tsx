@@ -99,7 +99,10 @@ export default function FoodListSheet({
 
 		if (res.success && res.data) {
 			setFoods(res.data as GetFoodItem[]);
-			setAllFoods(res.data as GetFoodItem[]);
+
+			if (!term && !cat && !user) {
+				setAllFoods(res.data as GetFoodItem[]);
+			}
 		}
 
 		setIsFetching(false);
