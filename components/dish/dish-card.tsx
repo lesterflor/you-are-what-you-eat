@@ -191,6 +191,30 @@ export default function DishCard({
 							</DialogContent>
 						</Dialog>
 
+						<Dialog
+							open={photoDlgOpen}
+							onOpenChange={setPhotoDlgOpen}>
+							<DialogTrigger asChild>
+								<Button
+									size={'icon'}
+									variant={'secondary'}>
+									<Aperture />
+								</Button>
+							</DialogTrigger>
+							<DialogContent className='max-w-[100vw] max-h-[80vh] overflow-y-auto h-[80vh]'>
+								<DialogTitle>
+									<Aperture className='w-6 h-6 text-muted-foreground' />
+								</DialogTitle>
+								<TakePhoto<GetPreparedDish>
+									data={prepDish}
+									type='dish'
+									onSuccess={() => {
+										setPhotoDlgOpen(false);
+									}}
+								/>
+							</DialogContent>
+						</Dialog>
+
 						<div className='flex flex-row gap-2 items-center justify-center'>
 							<SharedListAvatars userIds={sharedUsers} />
 
@@ -237,30 +261,6 @@ export default function DishCard({
 								)
 							)}
 						</div>
-
-						<Dialog
-							open={photoDlgOpen}
-							onOpenChange={setPhotoDlgOpen}>
-							<DialogTrigger asChild>
-								<Button
-									size={'icon'}
-									variant={'secondary'}>
-									<Aperture />
-								</Button>
-							</DialogTrigger>
-							<DialogContent className='max-w-[100vw] max-h-[80vh] overflow-y-auto h-[80vh]'>
-								<DialogTitle>
-									<Aperture className='w-6 h-6 text-muted-foreground' />
-								</DialogTitle>
-								<TakePhoto<GetPreparedDish>
-									data={prepDish}
-									type='dish'
-									onSuccess={() => {
-										setPhotoDlgOpen(false);
-									}}
-								/>
-							</DialogContent>
-						</Dialog>
 					</div>
 				)}
 			</CardTitle>

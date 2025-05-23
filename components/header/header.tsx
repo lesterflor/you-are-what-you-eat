@@ -62,7 +62,7 @@ export default async function SiteHeader() {
 				</div>
 
 				{session && log && log.data && (
-					<div>
+					<div className='flex flex-col items-center gap-0'>
 						<LogMacrosSummary
 							log={log.data as GetLog}
 							compactMode={true}
@@ -72,6 +72,10 @@ export default async function SiteHeader() {
 								<div>{format(current, 'eee PP h:mm a')}</div>
 							</div>
 						</LogMacrosSummary>
+						<div className='text-xs text-muted-foreground pt-1'>
+							You are what you eat,{' '}
+							<span className='font-semibold'>{session.user?.name}</span>
+						</div>
 					</div>
 				)}
 

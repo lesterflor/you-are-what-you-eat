@@ -10,11 +10,7 @@ export default async function Home() {
 	return (
 		<>
 			{session ? (
-				<div className='flex flex-col gap-4 w-full h-full'>
-					<div className='text-sm text-muted-foreground portrait:w-[70vw]'>
-						You are what you eat,{' '}
-						<span className='font-semibold'>{session.user?.name}</span>
-					</div>
+				<div className='flex flex-col gap-0 w-full h-full'>
 					<div className='portrait:hidden flex flex-row items-center justify-between w-full gap-2'>
 						<div>
 							<AddFoodSheet />
@@ -23,13 +19,11 @@ export default async function Home() {
 							<FoodListSheet />
 						</div>
 					</div>
-					<div className='relative'>
+					<div className='relative pt-10'>
 						<FoodLogList
 							useFloaterNav={true}
 							iconPosition='top'
 							forceColumn={false}
-							useScroller={true}
-							className='portrait:h-[100%] h-[45vh] portrait:w-[100%]'
 						/>
 					</div>
 				</div>

@@ -86,7 +86,9 @@ export default function FoodItemImageGallery({ item }: { item: GetFoodItem }) {
 										</DialogTrigger>
 
 										<DialogContent className='max-w-[100vw]'>
-											<DialogTitle>{item.name}</DialogTitle>
+											<DialogTitle className='capitalize'>
+												{item.name}
+											</DialogTitle>
 											<DialogDescription />
 											<Carousel setApi={setApi}>
 												<CarouselContent>

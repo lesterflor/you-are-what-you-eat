@@ -37,7 +37,6 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { ScrollArea } from '../ui/scroll-area';
 import { Skeleton } from '../ui/skeleton';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 import CommonLoggedItems from './common-logged-items';
@@ -51,12 +50,10 @@ export default function FoodLogList({
 	forceColumn = true,
 	useScroller = true,
 	iconPosition = 'right',
-	className,
 	useFloaterNav = false
 }: {
 	useScroller?: boolean;
 	iconPosition?: 'right' | 'top';
-	className?: string;
 	forceColumn?: boolean;
 	useFloaterNav?: boolean;
 }) {
@@ -72,6 +69,7 @@ export default function FoodLogList({
 	const [dishList, setDishList] = useState<
 		{ add: boolean; item: GetFoodEntry }[]
 	>([]);
+	const [fetchingLog, setFetchingLog] = useState(false);
 
 	const preparedDishData = useAppSelector(selectPreparedDishData);
 	const preparedDishStatus = useAppSelector(selectPreparedDishStatus);
@@ -94,6 +92,7 @@ export default function FoodLogList({
 	const logData = useAppSelector(selectData);
 
 	const getLog = async () => {
+		setFetchingLog(true);
 		const res = await createDailyLog();
 
 		if (res?.success && res.data) {
@@ -115,6 +114,7 @@ export default function FoodLogList({
 				setCalsBurned(res.data.knownCaloriesBurned[0].calories);
 			}
 		}
+		setFetchingLog(false);
 	};
 
 	useEffect(() => {
@@ -164,6 +164,15 @@ export default function FoodLogList({
 						scrollingUp ? '-top-24' : 'top-24',
 						delta === 0 && 'top-24'
 					)}>
+					{logList.length > 0 && (
+						<div className='flex flex-row items-center gap-2 font-normal pr-4'>
+							<BiSolidFoodMenu className='w-4 h-4' />
+							<div>{`Today's Log (${logList.length} ${
+								logList.length === 1 ? 'item' : 'items'
+							})`}</div>
+						</div>
+					)}
+
 					<ToggleGroup
 						variant={'outline'}
 						value={dataFormat}
@@ -270,103 +279,85 @@ export default function FoodLogList({
 			</div>
 
 			{useScroller ? (
-				<ScrollArea
-					className={cn(
-						'h-[80vh] pr-0 mt-12 w-full',
-						bmr && 'h-[60vh] mt-24',
-						className,
-						useFloaterNav && 'mt-1'
-					)}>
-					<div className='flex flex-col gap-2 w-full'>
-						{logList.length > 0 && (
-							<div className='flex flex-row items-center gap-2'>
-								<BiSolidFoodMenu className='w-4 h-4' />
-								<div>{`Today's Log (${logList.length} ${
-									logList.length === 1 ? 'item' : 'items'
-								})`}</div>
-							</div>
-						)}
-						<div
-							className={cn(
-								'w-full',
-								forceColumn
-									? 'flex flex-col gap-4'
-									: 'flex flex-row flex-wrap gap-4 portrait:flex-col'
-							)}>
-							<>
-								{logList.length > 0 ? (
-									<>
-										{dataFormat === 'card'
-											? logList.map((item, indx) => (
-													<LogFoodCard
-														allowEdit={true}
-														indx={indx}
-														item={item}
-														key={`${item.id}-${item.eatenAt.getTime()}`}
-													/>
-											  ))
-											: logList.map((item, indx) => (
-													<LogFoodListItem
-														onCheck={(data) => {
-															// add or delete foodEntry from the dishList state
+				<div className='flex flex-col gap-2 w-full'>
+					<div
+						className={cn(
+							'w-full',
+							forceColumn
+								? 'flex flex-col gap-4'
+								: 'flex flex-row flex-wrap gap-4 portrait:flex-col'
+						)}>
+						<>
+							{fetchingLog ? (
+								<div className='w-full flex items-center justify-center h-32'>
+									<ImSpinner2 className='animate-spin w-12 h-12 opacity-25' />
+								</div>
+							) : logList.length > 0 ? (
+								<>
+									{dataFormat === 'card'
+										? logList.map((item, indx) => (
+												<LogFoodCard
+													allowEdit={true}
+													indx={indx}
+													item={item}
+													key={`${item.id}-${item.eatenAt.getTime()}`}
+												/>
+										  ))
+										: logList.map((item, indx) => (
+												<LogFoodListItem
+													onCheck={(data) => {
+														// add or delete foodEntry from the dishList state
 
-															const itemsOnly = dishList.map(
-																(item) => item.item
+														const itemsOnly = dishList.map((item) => item.item);
+
+														if (!itemsOnly.includes(data.item) && !!data.add) {
+															const up = [...dishList];
+
+															up.push(data);
+															setDishList(up);
+
+															dispatch(
+																setDishListState({
+																	id: '',
+																	name: '',
+																	description: '',
+																	dishList: JSON.stringify(up)
+																})
+															);
+														} else {
+															const up = [...dishList];
+															const flt = up.filter(
+																(entry) => entry.item.id !== data.item.id
 															);
 
-															if (
-																!itemsOnly.includes(data.item) &&
-																!!data.add
-															) {
-																const up = [...dishList];
-
-																up.push(data);
-																setDishList(up);
-
-																dispatch(
-																	setDishListState({
-																		id: '',
-																		name: '',
-																		description: '',
-																		dishList: JSON.stringify(up)
-																	})
-																);
-															} else {
-																const up = [...dishList];
-																const flt = up.filter(
-																	(entry) => entry.item.id !== data.item.id
-																);
-
-																setDishList(flt);
-																dispatch(
-																	setDishListState({
-																		id: '',
-																		name: '',
-																		description: '',
-																		dishList: JSON.stringify(flt)
-																	})
-																);
-															}
-														}}
-														allowEdit={true}
-														indx={indx}
-														item={item}
-														key={`${item.id}-${item.eatenAt.getTime()}`}
-													/>
-											  ))}
-									</>
-								) : (
-									<div className='flex flex-col items-center justify-center gap-2 text-muted-foreground opacity-30 fixed top-[12vh] w-[95%]'>
-										<GiEmptyMetalBucket className='w-48 h-48 animate-pulse' />
-										Nothing logged yet!
-										<CommonLoggedItems />
-									</div>
-								)}
-							</>
-						</div>
+															setDishList(flt);
+															dispatch(
+																setDishListState({
+																	id: '',
+																	name: '',
+																	description: '',
+																	dishList: JSON.stringify(flt)
+																})
+															);
+														}
+													}}
+													allowEdit={true}
+													indx={indx}
+													item={item}
+													key={`${item.id}-${item.eatenAt.getTime()}`}
+												/>
+										  ))}
+								</>
+							) : (
+								<div className='flex flex-col items-center justify-center gap-2 text-muted-foreground opacity-30 fixed top-[12vh] w-[95%]'>
+									<GiEmptyMetalBucket className='w-48 h-48 animate-pulse' />
+									Nothing logged yet!
+									<CommonLoggedItems />
+								</div>
+							)}
+						</>
 					</div>
-					<br />
-				</ScrollArea>
+				</div>
 			) : (
 				<div className='flex flex-col gap-4 w-full'>
 					<div className='flex flex-col gap-4'>

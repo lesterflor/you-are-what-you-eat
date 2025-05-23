@@ -86,7 +86,9 @@ export default function DishImageGallery({ dish }: { dish: GetPreparedDish }) {
 										</DialogTrigger>
 
 										<DialogContent className='max-w-[100vw]'>
-											<DialogTitle>{dish.name}</DialogTitle>
+											<DialogTitle className='capitalize'>
+												{dish.name}
+											</DialogTitle>
 											<DialogDescription />
 											<Carousel setApi={setApi}>
 												<CarouselContent>
