@@ -69,7 +69,7 @@ export default function FoodLogList({
 	const [dishList, setDishList] = useState<
 		{ add: boolean; item: GetFoodEntry }[]
 	>([]);
-	const [fetchingLog, setFetchingLog] = useState(false);
+	const [fetchingLog, setFetchingLog] = useState(true);
 
 	const preparedDishData = useAppSelector(selectPreparedDishData);
 	const preparedDishStatus = useAppSelector(selectPreparedDishStatus);
