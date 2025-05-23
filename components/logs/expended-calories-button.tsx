@@ -33,6 +33,7 @@ export default function ExpendedCaloriesButton({
 	const [fetching, setFetching] = useState(true);
 	const [inputVal, setInputVal] = useState(10);
 	const [popoverOpen, setPopoverOpen] = useState(false);
+
 	const [ref, inView] = useInView();
 
 	const { status } = useCurrentSession();
@@ -106,7 +107,7 @@ export default function ExpendedCaloriesButton({
 								defaultValue={[inputVal]}
 								onValueChange={(val) => setInputVal(val[0])}
 								step={1}
-								min={10}
+								min={-caloriesBurned}
 								max={1000}
 							/>
 							<Button
