@@ -76,12 +76,8 @@ export default function ExpendedCaloriesButton({
 					<Flame className='w-6 h-6' />
 					Expended Calories
 				</div>
-				<div className='text-3xl font-semibold text-amber-600'>
-					{fetching ? (
-						<ImSpinner2 className='w-7 h-7 animate-spin' />
-					) : (
-						caloriesBurned
-					)}
+				<div className='text-3xl font-semibold text-amber-600 h-6 flex flex-col items-center justify-center'>
+					{fetching ? <ImSpinner2 className='animate-spin' /> : caloriesBurned}
 				</div>
 				<div className='flex flex-row items-center justify-between gap-4 w-full'>
 					<div className='flex flex-col gap-4 items-center justify-center w-full'>
@@ -116,6 +112,7 @@ export default function ExpendedCaloriesButton({
 				</div>
 
 				<Button
+					className='select-none'
 					disabled={submitting}
 					onClick={async () => {
 						setSubmitting(true);
