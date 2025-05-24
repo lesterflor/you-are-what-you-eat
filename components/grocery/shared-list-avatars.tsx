@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
 export default function SharedListAvatars({ userIds }: { userIds: string[] }) {
-	const [isFetching, setIsFetching] = useState(true);
+	const [isFetching, setIsFetching] = useState(false);
 
 	const [users, setUsers] = useState<
 		{ id: string; name: string; image: string }[]
@@ -15,6 +15,7 @@ export default function SharedListAvatars({ userIds }: { userIds: string[] }) {
 
 	const getAvatars = async () => {
 		setIsFetching(true);
+
 		const res = await getUserAvatars(userIds);
 
 		if (res.success && res.data) {
@@ -24,8 +25,10 @@ export default function SharedListAvatars({ userIds }: { userIds: string[] }) {
 	};
 
 	useEffect(() => {
-		getAvatars();
-	}, []);
+		if (userIds.length > 0) {
+			getAvatars();
+		}
+	}, [userIds]);
 
 	return (
 		<>

@@ -274,6 +274,11 @@ export async function getUserAvatars(userIds: string[]) {
 				id: {
 					in: filtered
 				}
+			},
+			select: {
+				id: true,
+				name: true,
+				image: true
 			}
 		});
 

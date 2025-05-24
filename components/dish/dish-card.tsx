@@ -84,6 +84,19 @@ export default function DishCard({
 		});
 	}, [items]);
 
+	useEffect(() => {
+		if (!prepDish.sharedUsers.includes(prepDish.userId)) {
+			const upd = [...prepDish.sharedUsers];
+			upd.push(prepDish.userId);
+
+			const unq = Array.from(
+				upd.reduce((set, e) => set.add(e), new Set())
+			) as string[];
+
+			setSharedUsers(unq);
+		}
+	}, [prepDish]);
+
 	const dispatchDishState = useCallback(() => {
 		dispatch(
 			updateDishState({
@@ -95,9 +108,7 @@ export default function DishCard({
 		);
 	}, [prepDish]);
 
-	const [sharedUsers, setSharedUsers] = useState<string[]>(
-		prepDish.sharedUsers
-	);
+	const [sharedUsers, setSharedUsers] = useState<string[]>([]);
 
 	const updatePrepDish = async (dish: GetPreparedDish) => {
 		setIsUpdating(true);
@@ -117,6 +128,8 @@ export default function DishCard({
 
 	const { data: session } = useSession();
 	const user = session?.user as GetUser;
+
+	const [sessionUserIsDishOwner] = useState(user.id === prepDish.userId);
 
 	return (
 		<Card>
@@ -149,47 +162,53 @@ export default function DishCard({
 
 				{!readOnly && (
 					<div className='absolute top-0 right-0 flex flex-row-reverse flex-wrap gap-2 items-center justify-center'>
-						<Dialog>
-							<DialogTrigger asChild>
-								<Button
-									size={'icon'}
-									variant={'secondary'}>
-									<X />
-								</Button>
-							</DialogTrigger>
-							<DialogContent className='flex flex-col gap-4 items-center'>
-								<DialogTitle>Confirm Delete</DialogTitle>
-								<DialogDescription>
-									Are you sure you want to delete this dish? This action cannot
-									be undone
-								</DialogDescription>
-								<Button
-									disabled={isDeleting}
-									onClick={async () => {
-										setIsDeleting(true);
-										const res = await deleteDish(prepDish.id);
+						{sessionUserIsDishOwner && (
+							<Dialog>
+								<DialogTrigger asChild>
+									<Button
+										size={'icon'}
+										variant={'secondary'}>
+										<X />
+									</Button>
+								</DialogTrigger>
+								<DialogContent className='flex flex-col gap-4 items-center'>
+									<DialogTitle>Confirm Delete</DialogTitle>
+									<DialogDescription>
+										Are you sure you want to delete this dish? This action
+										cannot be undone
+									</DialogDescription>
+									<Button
+										disabled={isDeleting}
+										onClick={async () => {
+											setIsDeleting(true);
+											const res = await deleteDish(prepDish.id);
 
-										if (res.success && res.data) {
-											toast.success(res.message);
-											dispatch(
-												deleteDishState({
-													id: res.data.id,
-													name: res.data.name,
-													description: res.data.description ?? '',
-													dishList: '[]'
-												})
-											);
-										} else {
-											toast.error(res.message);
-										}
+											if (res.success && res.data) {
+												toast.success(res.message);
+												dispatch(
+													deleteDishState({
+														id: res.data.id,
+														name: res.data.name,
+														description: res.data.description ?? '',
+														dishList: '[]'
+													})
+												);
+											} else {
+												toast.error(res.message);
+											}
 
-										setIsDeleting(false);
-									}}>
-									{isDeleting ? <ImSpinner2 className='animate-spin' /> : <X />}
-									Delete
-								</Button>
-							</DialogContent>
-						</Dialog>
+											setIsDeleting(false);
+										}}>
+										{isDeleting ? (
+											<ImSpinner2 className='animate-spin' />
+										) : (
+											<X />
+										)}
+										Delete
+									</Button>
+								</DialogContent>
+							</Dialog>
+						)}
 
 						<Dialog
 							open={photoDlgOpen}
@@ -218,47 +237,50 @@ export default function DishCard({
 						<div className='flex flex-row gap-2 items-center justify-center'>
 							<SharedListAvatars userIds={sharedUsers} />
 
-							{sharedUsers.length === 0 ? (
-								<ShareListButton
-									iconMode={true}
-									onSelect={async (userId) => {
-										if (userId) {
-											const update = [...sharedUsers];
-											update.push(userId);
-											setSharedUsers(update);
+							{sessionUserIsDishOwner && (
+								<div>
+									{sharedUsers.length === 1 ? (
+										<ShareListButton
+											iconMode={true}
+											onSelect={async (userId) => {
+												if (userId) {
+													const update = [...sharedUsers];
+													update.push(userId);
 
-											const up = { ...prepDish };
-											up.sharedUsers = update;
+													setSharedUsers(update);
 
-											setPrepDish(up);
+													const up = { ...prepDish };
+													up.sharedUsers = update.filter(
+														(usr) => usr !== prepDish.userId
+													);
 
-											updatePrepDish(up);
-										}
-									}}
-								/>
-							) : (
-								!sharedUsers.includes(user.id) && (
-									<Button
-										onClick={async () => {
-											if (!sharedUsers.includes(user.id)) {
+													setPrepDish(up);
+
+													updatePrepDish(up);
+												}
+											}}
+										/>
+									) : (
+										<Button
+											onClick={async () => {
 												setSharedUsers([]);
 
 												const upd = { ...prepDish };
 												upd.sharedUsers = [];
 
 												updatePrepDish(upd);
-											}
-										}}
-										disabled={isUpdating}
-										variant={'secondary'}
-										size={'icon'}>
-										{isUpdating ? (
-											<ImSpinner2 className='animate-spin' />
-										) : (
-											<TbShareOff />
-										)}
-									</Button>
-								)
+											}}
+											disabled={isUpdating}
+											variant={'secondary'}
+											size={'icon'}>
+											{isUpdating ? (
+												<ImSpinner2 className='animate-spin' />
+											) : (
+												<TbShareOff />
+											)}
+										</Button>
+									)}
+								</div>
 							)}
 						</div>
 					</div>
