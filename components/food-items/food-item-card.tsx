@@ -3,6 +3,10 @@
 import { getFoodItemById } from '@/actions/food-actions';
 import { createDailyLog, updateLog } from '@/actions/log-actions';
 import { setCheckedItemState } from '@/lib/features/dish/preparedDishSlice';
+import {
+	selectFoodUpdateData,
+	selectFoodUpdateStatus
+} from '@/lib/features/food/foodUpdateSlice';
 import { added } from '@/lib/features/log/logFoodSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { selectImageData, selectImageStatus } from '@/lib/image/imageSlice';
@@ -154,6 +158,15 @@ export default function FoodItemCard({
 			fetchFoodItemData(item.id);
 		}
 	}, [imageData, imageStatus]);
+
+	const foodUpdateData = useAppSelector(selectFoodUpdateData);
+	const foodUpdateStatus = useAppSelector(selectFoodUpdateStatus);
+
+	useEffect(() => {
+		if (foodUpdateStatus === 'updated' && foodUpdateData.id === item.id) {
+			fetchFoodItemData(item.id);
+		}
+	}, [foodUpdateData, foodUpdateStatus]);
 
 	return (
 		<Card

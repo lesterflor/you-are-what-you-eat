@@ -98,10 +98,10 @@ export default function FoodListSheet({
 		const res = await getFoodItems(term, cat, user);
 
 		if (res.success && res.data) {
-			setFoods(res.data as GetFoodItem[]);
-
 			if (!term && !cat && !user) {
 				setAllFoods(res.data as GetFoodItem[]);
+			} else {
+				setFoods(res.data as GetFoodItem[]);
 			}
 		}
 
