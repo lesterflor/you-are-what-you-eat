@@ -276,6 +276,12 @@ export async function getFoodItemById(id: string) {
 				id
 			},
 			include: {
+				user: {
+					select: {
+						name: true,
+						image: true
+					}
+				},
 				foodItemImages: true
 			}
 		});
