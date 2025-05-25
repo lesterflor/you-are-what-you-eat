@@ -152,8 +152,8 @@ export default function DishCard({
 					) : (
 						<div
 							className={cn(
-								'text-md w-36 text-fuchsia-200 leading-tight capitalize',
-								readOnly && 'text-lg'
+								'text-md w-36 text-fuchsia-200 !leading-5 capitalize',
+								readOnly && 'text-lg w-48'
 							)}>
 							{prepDish.name}
 						</div>

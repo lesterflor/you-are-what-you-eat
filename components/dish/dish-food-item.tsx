@@ -84,7 +84,7 @@ export default function DishFoodItem({
 						<div className='text-sm flex flex-row items-start gap-2 relative'>
 							<FoodCategoryIconMapper type={foodItem.category} />
 							<div
-								className='leading-tight'
+								className={cn('leading-tight', readOnly && 'w-52')}
 								onClick={(e) => {
 									e.preventDefault();
 
