@@ -2,7 +2,7 @@
 
 import {
 	createDish,
-	getAllDishes,
+	getAllDishesByUser,
 	updateDish
 } from '@/actions/prepared-dish-actions';
 import {
@@ -114,7 +114,7 @@ export default function CreateDishForm({
 
 	const [currentDishes, setCurrentDishes] = useState<GetPreparedDish[]>();
 	const fetchDishes = async () => {
-		const res = await getAllDishes();
+		const res = await getAllDishesByUser();
 
 		if (res.success && res.data) {
 			setCurrentDishes(res.data as GetPreparedDish[]);

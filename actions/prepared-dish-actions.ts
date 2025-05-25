@@ -211,6 +211,44 @@ export async function getAllDishes() {
 	}
 }
 
+export async function getAllDishesByUser() {
+	try {
+		const session = await auth();
+		const user = session?.user as GetUser;
+
+		if (!session || !user) {
+			throw new Error('User must be authenticated');
+		}
+
+		const dishes = await prisma.preparedDish.findMany({
+			where: {
+				userId: user.id
+			},
+			orderBy: {
+				updatedAt: 'desc'
+			},
+			include: {
+				preparedDishImages: true
+			}
+		});
+
+		if (!dishes) {
+			throw new Error('There was a problem getting dishes');
+		}
+
+		return {
+			success: true,
+			message: 'success',
+			data: dishes
+		};
+	} catch (err: unknown) {
+		return {
+			success: false,
+			message: formatError(err)
+		};
+	}
+}
+
 export async function logDishItems(dish: GetPreparedDish) {
 	try {
 		const session = await auth();
