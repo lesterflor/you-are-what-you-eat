@@ -253,6 +253,7 @@ export default function CreateDishForm({
 								)}
 
 								<Button
+									className='w-20'
 									size={'sm'}
 									type='submit'
 									disabled={form.formState.isSubmitting}>
@@ -265,6 +266,7 @@ export default function CreateDishForm({
 								</Button>
 
 								<Button
+									className='w-20'
 									size={'sm'}
 									onClick={(e) => {
 										e.preventDefault();
@@ -283,7 +285,9 @@ export default function CreateDishForm({
 			{currentDishes && currentDishes.length > 0 && (
 				<div className='flex flex-col gap-2 pt-4'>
 					<div className='text-sm leading-tight'>
-						Or add them to an existing dish?
+						{`Or add ${
+							foodItems.length === 1 ? 'it' : 'them'
+						} to an existing dish?`}
 					</div>
 					<ScrollArea className='w-full'>
 						<div className='flex flex-col gap-6 max-h-[24vh] pt-3'>
