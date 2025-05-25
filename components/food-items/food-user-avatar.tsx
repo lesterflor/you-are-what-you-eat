@@ -29,18 +29,12 @@ import { Button } from '../ui/button';
 import {
 	Dialog,
 	DialogContent,
+	DialogDescription,
 	DialogTitle,
 	DialogTrigger
 } from '../ui/dialog';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { ScrollArea } from '../ui/scroll-area';
-import {
-	Sheet,
-	SheetContent,
-	SheetDescription,
-	SheetTitle,
-	SheetTrigger
-} from '../ui/sheet';
 import FoodCategoryIconMapper from './food-category-icon-mapper';
 import UpdateFoodItemForm from './update-food-item-form';
 
@@ -158,7 +152,7 @@ export default function FoodUserAvatar({
 			</PopoverTrigger>
 			<PopoverContent
 				ref={ref}
-				className='flex flex-col gap-4 max-h-[50vh] h-auto items-center'>
+				className='flex flex-col gap-4 max-h-[50vh] !max-w-[85vw] w-[85vw] h-auto items-center'>
 				{sessionUser.id === id && currentFood && currentFood.length === 1 && (
 					<div className='flex flex-col gap-1 items-center w-full'>
 						<div className='flex flex-row items-center gap-2 pb-2'>
@@ -167,10 +161,10 @@ export default function FoodUserAvatar({
 						</div>
 
 						<div className='flex flex-row justify-between w-full'>
-							<Sheet
+							<Dialog
 								open={editFormOpen}
 								onOpenChange={setEditFormOpen}>
-								<SheetTrigger asChild>
+								<DialogTrigger asChild>
 									<Button
 										size='sm'
 										onClick={() => {
@@ -179,10 +173,10 @@ export default function FoodUserAvatar({
 										<FilePenLine className='w-4 h-4' />
 										Edit
 									</Button>
-								</SheetTrigger>
+								</DialogTrigger>
 
-								<SheetContent className='max-w-[95vw] portrait:w-[95vw]'>
-									<SheetTitle className='flex flex-row items-center justify-start flex-wrap gap-2 pb-4'>
+								<DialogContent className='max-w-[95vw] portrait:w-[95vw] flex flex-col gap-0 rounded-md'>
+									<DialogTitle className='flex flex-row items-center justify-start flex-wrap gap-2 pb-2'>
 										<div className='flex flex-row items-center gap-2 justify-start'>
 											<FilePenLine className='w-4 h-4' /> Edit
 										</div>
@@ -191,8 +185,8 @@ export default function FoodUserAvatar({
 											className='text-sm p-2 select-none font-normal'>
 											{editFoodItem?.name}
 										</Badge>
-									</SheetTitle>
-									<SheetDescription></SheetDescription>
+									</DialogTitle>
+									<DialogDescription></DialogDescription>
 									<ScrollArea className='h-[80vh] portrait:h-[70vh] w-full pr-3'>
 										{editFoodItem && (
 											<UpdateFoodItemForm
@@ -205,8 +199,8 @@ export default function FoodUserAvatar({
 
 										<br />
 									</ScrollArea>
-								</SheetContent>
-							</Sheet>
+								</DialogContent>
+							</Dialog>
 
 							<div>
 								<Dialog
@@ -259,7 +253,7 @@ export default function FoodUserAvatar({
 								{user.name === sessionUser.name ? 'You' : user.name}
 							</span>
 						</div>
-						<div className='flex flex-col items-start justify-center gap-2 leading-4 w-full'>
+						<div className='flex flex-row flex-wrap items-start gap-2 leading-4 w-full'>
 							{foods.map((item) => (
 								<Button
 									onClick={() => {

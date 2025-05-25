@@ -53,13 +53,18 @@ export default function FoodItemCard({
 	const cardRef = useRef<HTMLDivElement>(null);
 
 	const [currentItem, setCurrentItem] = useState<GetFoodItem>(item);
+	const [isFetching, setIsFetching] = useState(false);
 
 	const fetchFoodItemData = async (id: string) => {
+		setIsFetching(true);
+
 		const res = await getFoodItemById(id);
 
 		if (res.success && res.data) {
 			setCurrentItem(res.data as GetFoodItem);
 		}
+
+		setIsFetching(false);
 	};
 
 	const { data: session } = useSession();
@@ -186,7 +191,12 @@ export default function FoodItemCard({
 						setShowDetails(!showDetails);
 					}}
 					className='flex flex-row items-start justify-start gap-2 pr-8 leading-tight'>
-					<FoodCategoryIconMapper type={currentItem.category} />
+					{isFetching ? (
+						<ImSpinner2 className='animate-spin w-6 h-6 opacity-25' />
+					) : (
+						<FoodCategoryIconMapper type={currentItem.category} />
+					)}
+
 					{currentItem.name}
 				</div>
 
