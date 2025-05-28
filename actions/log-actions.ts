@@ -11,6 +11,7 @@ import {
 	LogRemainderDataType
 } from '@/types';
 import { revalidatePath } from 'next/cache';
+import { DateRange } from 'react-day-picker';
 
 export async function createDailyLog(compareToYesterday: boolean = false) {
 	const session = await auth();
@@ -740,6 +741,66 @@ export async function getCommonItemsInLog() {
 		return {
 			success: false,
 			message: formatError(error)
+		};
+	}
+}
+
+export async function getLogRemainderByUserId() {
+	try {
+		const session = await auth();
+		const user = session?.user as GetUser;
+
+		if (!session || !user) {
+			throw new Error('User must be authenticated');
+		}
+
+		const res = await prisma.logRemainder.findMany({
+			where: {
+				userId: user.id
+			}
+		});
+
+		return {
+			success: true,
+			messaage: 'success',
+			data: res
+		};
+	} catch (err: unknown) {
+		return {
+			success: false,
+			message: formatError(err)
+		};
+	}
+}
+
+export async function getLogRemainderByUserIdInRange(range: DateRange) {
+	try {
+		const session = await auth();
+		const user = session?.user as GetUser;
+
+		if (!session || !user) {
+			throw new Error('User must be authenticated');
+		}
+
+		const res = await prisma.logRemainder.findMany({
+			where: {
+				userId: user.id,
+				createdAt: {
+					gte: range.from,
+					lte: range.to
+				}
+			}
+		});
+
+		return {
+			success: true,
+			messaage: 'success',
+			data: res
+		};
+	} catch (err: unknown) {
+		return {
+			success: false,
+			message: formatError(err)
 		};
 	}
 }

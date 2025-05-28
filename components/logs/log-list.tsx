@@ -423,7 +423,7 @@ export default function FoodLogList({
 										<span className='font-semibold'> {totalCals}</span>
 									</Button>
 								</PopoverTrigger>
-								<PopoverContent className='max-w-[80vw] w-auto'>
+								<PopoverContent className='max-w-[90vw] w-auto'>
 									<LogMacrosSummary
 										showPie={true}
 										log={log}

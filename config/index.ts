@@ -33,3 +33,10 @@ export const chartConfig = {
 		color: 'hsl(var(--chart-3))'
 	}
 } satisfies ChartConfig;
+
+export const remainderConfig = {
+	calories: {
+		label: 'Calories',
+		color: 'hsl(var(--chart-1))'
+	}
+} satisfies ChartConfig;

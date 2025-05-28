@@ -213,7 +213,8 @@ export default function LogMacrosSummary({
 
 								<div className='flex flex-row items-center gap-2 flex-wrap'>
 									<div className='flex flex-col items-center gap-0 rounded-md border-2 p-1'>
-										<span className='text-muted-foreground'>Carbohydrates</span>
+										<span className='text-muted-foreground'>Carbs</span>
+
 										<div className='flex flex-row items-center gap-1'>
 											<span>{formatUnit(currentData.carbs * 4)}</span>
 											<span className='text-muted-foreground'>
