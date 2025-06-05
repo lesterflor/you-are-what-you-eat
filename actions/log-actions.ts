@@ -61,6 +61,10 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 
 			logForToday = newLog;
 		} else {
+			todaysLog.foodItems.sort(
+				(a, b) => b.eatenAt.getTime() - a.eatenAt.getTime()
+			);
+
 			logForToday = todaysLog;
 		}
 

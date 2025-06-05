@@ -98,11 +98,7 @@ export default function FoodLogList({
 		if (res?.success && res.data) {
 			setLog(res.data as GetLog);
 
-			const sortedFoodList = [...res.data.foodItems].sort(
-				(a, b) => b.eatenAt.getTime() - a.eatenAt.getTime()
-			);
-
-			setLogList(sortedFoodList as GetFoodEntry[]);
+			setLogList(res.data.foodItems as GetFoodEntry[]);
 			const bmrArr = res.data.user.BaseMetabolicRate as BaseMetabolicRateType[];
 
 			setBmr(bmrArr[0]);
