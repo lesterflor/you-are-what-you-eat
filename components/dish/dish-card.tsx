@@ -160,7 +160,7 @@ export default function DishCard({
 					)}
 				</div>
 
-				{!readOnly && (
+				{!readOnly && !isEditMode && (
 					<div className='absolute top-0 right-0 flex flex-row-reverse flex-wrap gap-2 items-center justify-center'>
 						{sessionUserIsDishOwner && (
 							<Dialog>
@@ -442,9 +442,11 @@ export default function DishCard({
 			{!readOnly && (
 				<CardFooter className='px-2 flex flex-row items-center justify-between'>
 					<div className='flex flex-row items-center gap-2'>
-						<Button onClick={() => setIsEditMode(!isEditMode)}>
-							{isEditMode ? 'Cancel' : 'Edit'}
-						</Button>
+						{sessionUserIsDishOwner && (
+							<Button onClick={() => setIsEditMode(!isEditMode)}>
+								{isEditMode ? 'Cancel' : 'Edit'}
+							</Button>
+						)}
 
 						{isEditMode && (
 							<Button
