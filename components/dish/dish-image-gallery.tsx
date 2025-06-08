@@ -92,27 +92,32 @@ export default function DishImageGallery({ dish }: { dish: GetPreparedDish }) {
 											<DialogDescription />
 											<Carousel setApi={setApi}>
 												<CarouselContent>
-													{images.map((img) => (
-														<CarouselItem
-															key={img.id}
-															className='flex flex-col gap-2'>
-															<div className='text-muted-foreground text-sm flex flex-row items-center relative'>
-																{format(img.createdAt, 'eee PP h:mm a')}
-															</div>
-															<TransformWrapper>
-																<TransformComponent>
-																	<FadeInImage
-																		src={img.url}
-																		alt={img.alt}
-																		width={500}
-																		height={1000}
-																		className='aspect-auto rounded-md'
-																	/>
-																</TransformComponent>
-															</TransformWrapper>
-															<div className='w-full bottom-0 h-24 absolute bg-amber-400/0 z-30'></div>
-														</CarouselItem>
-													))}
+													{images
+														.sort(
+															(a, b) =>
+																b.createdAt.getTime() - a.createdAt.getTime()
+														)
+														.map((img) => (
+															<CarouselItem
+																key={img.id}
+																className='flex flex-col gap-2'>
+																<div className='text-muted-foreground text-sm flex flex-row items-center relative'>
+																	{format(img.createdAt, 'eee PP h:mm a')}
+																</div>
+																<TransformWrapper>
+																	<TransformComponent>
+																		<FadeInImage
+																			src={img.url}
+																			alt={img.alt}
+																			width={500}
+																			height={1000}
+																			className='aspect-auto rounded-md'
+																		/>
+																	</TransformComponent>
+																</TransformWrapper>
+																<div className='w-full bottom-0 h-24 absolute bg-amber-400/0 z-30'></div>
+															</CarouselItem>
+														))}
 												</CarouselContent>
 											</Carousel>
 										</DialogContent>
