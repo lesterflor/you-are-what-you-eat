@@ -379,13 +379,13 @@ export default function FoodLogList({
 					)}>
 					<CardContent className='p-2 pt-5 flex flex-row items-center gap-2 relative'>
 						<div className='absolute -top-6 left-4 flex flex-row items-center justify-center gap-4'>
-							<DishListSheet>
+							<DishListSheet showBalloon={true}>
 								<div className='rounded-full w-11 h-11 bg-fuchsia-700 p-1.5 flex flex-col items-center justify-center'>
 									<Soup className='w-6 h-6 animate-pulse' />
 								</div>
 							</DishListSheet>
 
-							<FoodFavouriteListSheet>
+							<FoodFavouriteListSheet showBalloon={true}>
 								<div className='w-11 h-11 rounded-full p-2 bg-teal-600 flex flex-col items-center justify-center mt-1'>
 									<BsBookmarkStarFill className='w-6 h-6 animate-pulse' />
 								</div>
@@ -397,7 +397,7 @@ export default function FoodLogList({
 								</div>
 							</FoodListSheet>
 
-							<ExpendedCaloriesButton>
+							<ExpendedCaloriesButton showBalloon={true}>
 								<div className='mt-2 rounded-full p-2 bg-amber-700 w-10 h-10 flex flex-col items-center justify-center'>
 									<Flame className='w-6 h-6 animate-pulse' />
 								</div>

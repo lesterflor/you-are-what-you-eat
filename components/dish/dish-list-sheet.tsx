@@ -23,9 +23,11 @@ import {
 import DishCard from './dish-card';
 
 export default function DishListSheet({
-	children
+	children,
+	showBalloon = false
 }: {
 	children: React.ReactNode;
+	showBalloon?: boolean;
 }) {
 	const [dishes, setDishes] = useState<GetPreparedDish[]>();
 	const [fetchingDishes, setFetchingDishes] = useState(false);
@@ -56,18 +58,31 @@ export default function DishListSheet({
 		setFetchingDishes(false);
 	}, [dishes]);
 
+	// useEffect(() => {
+	// 	if (inView) {
+	// 		getDishes();
+	// 	}
+	// }, [inView]);
+
 	useEffect(() => {
-		if (inView) {
-			getDishes();
-		}
-	}, [inView]);
+		getDishes();
+	}, []);
 
 	return (
 		<>
 			<Sheet
 				open={sheetOpen}
 				onOpenChange={setSheetOpen}>
-				<SheetTrigger asChild>{children}</SheetTrigger>
+				<SheetTrigger asChild>
+					<div className='relative'>
+						{children}
+						{showBalloon && dishes && dishes?.length > 0 && (
+							<div className='absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center'>
+								{dishes?.length}
+							</div>
+						)}
+					</div>
+				</SheetTrigger>
 				<SheetContent
 					ref={ref}
 					side={'bottom'}

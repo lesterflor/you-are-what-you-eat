@@ -18,9 +18,11 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Slider } from '../ui/slider';
 
 export default function ExpendedCaloriesButton({
-	children
+	children,
+	showBalloon = false
 }: {
 	children?: React.ReactNode;
+	showBalloon?: boolean;
 }) {
 	const dispatch = useAppDispatch();
 	const logStatus = useAppSelector(selectStatus);
@@ -46,11 +48,15 @@ export default function ExpendedCaloriesButton({
 		setFetching(false);
 	}, [log]);
 
+	// useEffect(() => {
+	// 	if (inView) {
+	// 		getLog();
+	// 	}
+	// }, [inView]);
+
 	useEffect(() => {
-		if (inView) {
-			getLog();
-		}
-	}, [inView]);
+		getLog();
+	}, []);
 
 	useEffect(() => {
 		if (logStatus !== 'idle') {
@@ -68,7 +74,16 @@ export default function ExpendedCaloriesButton({
 		<Popover
 			open={popoverOpen}
 			onOpenChange={setPopoverOpen}>
-			<PopoverTrigger asChild>{children}</PopoverTrigger>
+			<PopoverTrigger asChild>
+				<div className='relative'>
+					{children}
+					{showBalloon && !popoverOpen && caloriesBurned > 0 && (
+						<div className='absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center'>
+							{caloriesBurned}
+						</div>
+					)}
+				</div>
+			</PopoverTrigger>
 			<PopoverContent
 				ref={ref}
 				className='flex flex-col gap-6 items-center justify-center'>

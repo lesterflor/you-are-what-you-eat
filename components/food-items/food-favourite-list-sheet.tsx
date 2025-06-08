@@ -17,9 +17,11 @@ import {
 import FoodItemCard from './food-item-card';
 
 export default function FoodFavouriteListSheet({
-	children
+	children,
+	showBalloon = false
 }: {
 	children: React.ReactNode;
+	showBalloon?: boolean;
 }) {
 	const [favs, setFavs] = useState<GetFoodItem[]>();
 	const [isFetching, setIsFetching] = useState(false);
@@ -36,16 +38,29 @@ export default function FoodFavouriteListSheet({
 		setIsFetching(false);
 	}, [favs]);
 
+	// useEffect(() => {
+	// 	if (inView) {
+	// 		fetchFavs();
+	// 	}
+	// }, [inView]);
+
 	useEffect(() => {
-		if (inView) {
-			fetchFavs();
-		}
-	}, [inView]);
+		fetchFavs();
+	}, []);
 
 	return (
 		<>
 			<Sheet>
-				<SheetTrigger asChild>{children}</SheetTrigger>
+				<SheetTrigger asChild>
+					<div className='relative'>
+						{children}
+						{showBalloon && favs && favs.length > 0 && (
+							<div className='absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center'>
+								{favs?.length}
+							</div>
+						)}
+					</div>
+				</SheetTrigger>
 
 				<SheetContent
 					ref={ref}
