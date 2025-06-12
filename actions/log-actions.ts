@@ -786,12 +786,20 @@ export async function getLogRemainderByUserIdInRange(range: DateRange) {
 			throw new Error('User must be authenticated');
 		}
 
-		const res = await prisma.logRemainder.findMany({
+		const res = await prisma.log.findMany({
 			where: {
 				userId: user.id,
 				createdAt: {
 					gte: range.from,
 					lte: range.to
+				}
+			},
+			include: {
+				knownCaloriesBurned: true,
+				user: {
+					select: {
+						BaseMetabolicRate: true
+					}
 				}
 			}
 		});

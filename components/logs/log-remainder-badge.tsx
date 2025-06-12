@@ -7,8 +7,8 @@ import {
 import { remainderConfig } from '@/config';
 import { selectStatus } from '@/lib/features/log/logFoodSlice';
 import { useAppSelector } from '@/lib/hooks';
-import { formatUnit } from '@/lib/utils';
-import { GetLogRemainder, LogRemainderDataType } from '@/types';
+import { formatUnit, totalMacrosReducer } from '@/lib/utils';
+import { GetFoodEntry, GetLog, LogRemainderDataType } from '@/types';
 import { format } from 'date-fns';
 import { ArrowDown, ArrowUp, Info } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -35,8 +35,9 @@ export default function LogRemainderBadge() {
 	const logStatus = useAppSelector(selectStatus);
 	const [popOpen, setPopOpen] = useState(false);
 	const [isFetching, setIsFetching] = useState(false);
-	const [remainders, setRemainders] = useState<GetLogRemainder[]>();
+	const [remainders, setRemainders] = useState<GetLog[]>();
 	const [remainder, setRemainder] = useState(0);
+	const [remainderStr, setRemainderStr] = useState('');
 	const [range, setRange] = useState<DateRange | undefined>();
 	const [chartData, setChartData] = useState<
 		{
@@ -72,8 +73,36 @@ export default function LogRemainderBadge() {
 
 	useEffect(() => {
 		if (remainders && remainders.length > 0) {
-			const amt = remainders.reduce((acc, curr) => acc + curr.calories, 0);
+			const amt = remainders.reduce(
+				(acc, curr) =>
+					acc +
+					curr.knownCaloriesBurned[0].calories +
+					curr.user.BaseMetabolicRate[0].bmr -
+					totalMacrosReducer(curr.foodItems as GetFoodEntry[]).calories,
+				0
+			);
 
+			let phrase = '';
+			const frmRemainder = formatUnit(amt / 1200);
+
+			switch (true) {
+				case frmRemainder === 1:
+					phrase = 'pound lost';
+					break;
+				case frmRemainder === -1:
+					phrase = 'pound gained';
+					break;
+				case frmRemainder > 1:
+					phrase = 'pounds lost';
+					break;
+				case frmRemainder < 0:
+					phrase = 'pounds gained';
+					break;
+				default:
+					phrase = 'pounds lost';
+			}
+
+			setRemainderStr(phrase);
 			setRemainder(amt);
 		}
 	}, [remainders]);
@@ -83,12 +112,14 @@ export default function LogRemainderBadge() {
 			const res = await getLogRemainderByUserIdInRange(range);
 
 			if (res.success && res.data) {
-				const data: GetLogRemainder[] = res.data;
+				setRemainders(res.data as GetLog[]);
 
-				setRemainders(data);
 				setChartData(
-					data.map((item) => ({
-						calories: item.calories,
+					res.data.map((item) => ({
+						calories:
+							item.knownCaloriesBurned[0].calories +
+							item.user.BaseMetabolicRate[0].bmr -
+							totalMacrosReducer(item.foodItems as GetFoodEntry[]).calories,
 						createdAt: format(item.createdAt, 'P')
 					}))
 				);
@@ -238,12 +269,7 @@ export default function LogRemainderBadge() {
 													{Math.abs(formatUnit(remainder / 1200))}
 												</div>
 												<div className='flex flex-row items-center justify-center gap-2'>
-													<div className='text-center'>
-														{Math.sign(formatUnit((remainder / 1200) * -1)) ===
-														-1
-															? 'pounds lost'
-															: 'pounds gained'}
-													</div>
+													<div className='text-center'>{remainderStr}</div>
 													<div>
 														{Math.sign(formatUnit((remainder / 1200) * -1)) ===
 														-1 ? (
