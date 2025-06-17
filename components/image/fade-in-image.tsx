@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
 import { useAnimate } from 'motion/react-mini';
 import Image, { StaticImageData } from 'next/image';
-import { cn } from '@/lib/utils';
+import { useEffect, useState } from 'react';
 import { ImSpinner9 } from 'react-icons/im';
 
 export default function FadeInImage({
@@ -43,7 +43,7 @@ export default function FadeInImage({
 				priority={priority}
 				className={cn(
 					'opacity-0 transition-opacity duration-700',
-					className && className
+					loaded && className ? className : 'w-10 h-10'
 				)}
 				ref={scope}
 				src={src}
