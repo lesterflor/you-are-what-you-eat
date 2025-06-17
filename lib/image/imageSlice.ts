@@ -29,6 +29,12 @@ export const imageSlice = createAppSlice({
 				state.value = action.payload;
 				state.status = 'added';
 			}
+		),
+		deleteImageState: create.reducer(
+			(state, action: PayloadAction<ImageSliceProps>) => {
+				state.value = action.payload;
+				state.status = 'deleted';
+			}
 		)
 	}),
 	selectors: {
@@ -37,6 +43,6 @@ export const imageSlice = createAppSlice({
 	}
 });
 
-export const { addImageState } = imageSlice.actions;
+export const { addImageState, deleteImageState } = imageSlice.actions;
 
 export const { selectImageData, selectImageStatus } = imageSlice.selectors;

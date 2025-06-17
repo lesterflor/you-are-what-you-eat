@@ -3,7 +3,13 @@
 import { auth } from '@/db/auth';
 import prisma from '@/db/prisma';
 import { formatError } from '@/lib/utils';
-import { FoodEntry, GetPreparedDish, GetUser, PreparedDish } from '@/types';
+import {
+	FoodEntry,
+	GetPreparedDish,
+	GetPreparedDishImage,
+	GetUser,
+	PreparedDish
+} from '@/types';
 import { createDailyLog, updateLog } from './log-actions';
 
 export async function createDish(dish: PreparedDish) {
@@ -155,6 +161,44 @@ export async function getDishById(dishId: string) {
 			success: true,
 			message: 'success',
 			data: existing
+		};
+	} catch (err: unknown) {
+		return {
+			success: false,
+			message: formatError(err)
+		};
+	}
+}
+
+export async function deleteDishImage(img: GetPreparedDishImage) {
+	try {
+		const session = await auth();
+		const user = session?.user as GetUser;
+
+		if (!session || !user) {
+			throw new Error('User must be authenticated');
+		}
+
+		const existing = await prisma.preparedDish.findFirst({
+			where: {
+				id: img.id
+			}
+		});
+
+		if (!existing) {
+			throw new Error('The dish could not be found');
+		}
+
+		const del = await prisma.preparedDishImage.delete({
+			where: {
+				id: existing.id
+			}
+		});
+
+		return {
+			success: true,
+			message: 'Successfully deleted dish image',
+			data: del
 		};
 	} catch (err: unknown) {
 		return {

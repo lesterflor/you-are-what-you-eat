@@ -6,6 +6,7 @@ import { formatError } from '@/lib/utils';
 import {
 	FoodItemImage,
 	GetFoodItem,
+	GetFoodItemImage,
 	GetPreparedDish,
 	GetUser,
 	PreparedDishImage
@@ -178,6 +179,48 @@ export async function uploadFoodItemPhoto(foodImage: FoodItemImage) {
 			success: false,
 			message: formatError(error),
 			data: ''
+		};
+	}
+}
+
+export async function deleteFoodItemImage(img: GetFoodItemImage) {
+	try {
+		const session = await auth();
+		const user = session?.user as GetUser;
+
+		if (!session || !user) {
+			throw new Error('User must be authenticated');
+		}
+
+		const existing = await prisma.foodItemImage.findFirst({
+			where: {
+				id: img.id
+			}
+		});
+
+		if (!existing) {
+			throw new Error('The food item image was not found');
+		}
+
+		const del = await prisma.foodItemImage.delete({
+			where: {
+				id: existing.id
+			}
+		});
+
+		if (!del) {
+			throw new Error('There was a problem deleting the food item image');
+		}
+
+		return {
+			success: true,
+			message: 'Deleted food item image successfully',
+			data: del
+		};
+	} catch (error: unknown) {
+		return {
+			success: false,
+			message: formatError(error)
 		};
 	}
 }
