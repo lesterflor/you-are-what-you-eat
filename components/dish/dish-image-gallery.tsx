@@ -140,7 +140,7 @@ export default function DishImageGallery({ dish }: { dish: GetPreparedDish }) {
 														.map((img) => (
 															<CarouselItem
 																key={img.id}
-																className='flex flex-col gap-2'>
+																className='flex flex-col gap-2 relative h-full'>
 																<div className='text-muted-foreground text-sm flex flex-row items-center relative'>
 																	{format(img.createdAt, 'eee PP h:mm a')}
 
@@ -188,6 +188,8 @@ export default function DishImageGallery({ dish }: { dish: GetPreparedDish }) {
 																		/>
 																	</TransformComponent>
 																</TransformWrapper>
+
+																<div className='w-full bottom-0 h-24 absolute bg-amber-400/0 z-30'></div>
 															</CarouselItem>
 														))}
 												</CarouselContent>
