@@ -1,6 +1,6 @@
 'use client';
 
-import { createDailyLog } from '@/actions/log-actions';
+import { createDailyLog, getKnownCaloriesBurned } from '@/actions/log-actions';
 import { useScrolling } from '@/hooks/use-scroll';
 import {
 	selectPreparedDishData,
@@ -127,6 +127,14 @@ export default function FoodLogList({
 		setTotalCals(total);
 	};
 
+	const fetchKDC = async () => {
+		const res = await getKnownCaloriesBurned();
+
+		if (res.success && res.data) {
+			setCalsBurned(res.data.calories);
+		}
+	};
+
 	useEffect(() => {
 		//set remaining cals
 		const brmCals = bmr?.bmr ?? 0;
@@ -136,7 +144,12 @@ export default function FoodLogList({
 	}, [totalCals, bmr]);
 
 	useEffect(() => {
-		getLog();
+		if (logStatus !== 'expended calories') {
+			getLog();
+		} else {
+			// get expended calories
+			fetchKDC();
+		}
 	}, [logStatus, logData]);
 
 	useEffect(() => {

@@ -1,15 +1,17 @@
 'use client';
 
-import { addKnownCaloriesBurned, createDailyLog } from '@/actions/log-actions';
+import {
+	addKnownCaloriesBurned,
+	getKnownCaloriesBurned
+} from '@/actions/log-actions';
 import {
 	expendedCaloriesUpdated,
 	selectData,
 	selectStatus
 } from '@/lib/features/log/logFoodSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { GetLog } from '@/types';
 import { ChevronLeft, ChevronRight, Flame, Plus } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
@@ -27,39 +29,39 @@ export default function ExpendedCaloriesButton({
 	const logStatus = useAppSelector(selectStatus);
 	const logData = useAppSelector(selectData);
 
-	const [log, setLog] = useState<GetLog>();
+	//const [log, setLog] = useState<GetLog>();
 	const [caloriesBurned, setCaloriesBurned] = useState(0);
 	const [submitting, setSubmitting] = useState(false);
 	const [fetching, setFetching] = useState(true);
 	const [inputVal, setInputVal] = useState(10);
 	const [popoverOpen, setPopoverOpen] = useState(false);
 
-	const getLog = useCallback(async () => {
+	const getKnownCalories = async () => {
 		setFetching(true);
-		const res = await createDailyLog();
+		const res = await getKnownCaloriesBurned();
 
 		if (res?.success && res.data) {
-			setLog(res.data as GetLog);
+			setCaloriesBurned(res.data.calories);
 		}
 
 		setFetching(false);
-	}, [log]);
+	};
 
 	useEffect(() => {
-		getLog();
+		getKnownCalories();
 	}, []);
 
 	useEffect(() => {
 		if (logStatus !== 'idle') {
-			getLog();
+			getKnownCalories();
 		}
 	}, [logData, logStatus]);
 
-	useEffect(() => {
-		if (log?.knownCaloriesBurned && log.knownCaloriesBurned.length > 0) {
-			setCaloriesBurned(log.knownCaloriesBurned[0].calories);
-		}
-	}, [log]);
+	// useEffect(() => {
+	// 	if (log?.knownCaloriesBurned && log.knownCaloriesBurned.length > 0) {
+	// 		setCaloriesBurned(log.knownCaloriesBurned[0].calories);
+	// 	}
+	// }, [log]);
 
 	return (
 		<Popover
@@ -122,9 +124,10 @@ export default function ExpendedCaloriesButton({
 						setSubmitting(true);
 						const res = await addKnownCaloriesBurned(inputVal);
 
-						if (res.success) {
+						if (res.success && res.data) {
 							toast.success(res.message);
-							getLog();
+
+							setCaloriesBurned(res.data.calories);
 
 							// redux
 							dispatch(expendedCaloriesUpdated(inputVal));
