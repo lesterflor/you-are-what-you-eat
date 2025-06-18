@@ -68,8 +68,8 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 			logForToday = todaysLog;
 		}
 
-		createKnowDailyCalories(logForToday.id);
-		createLogRemainder(logForToday.id);
+		await createKnowDailyCalories(logForToday.id);
+		await createLogRemainder(logForToday.id);
 
 		let comparisons: LogComparisonType = null;
 
@@ -321,6 +321,8 @@ export async function createKnowDailyCalories(logId: string) {
 			throw new Error('User must be authenticated');
 		}
 
+		let retData;
+
 		const existing = await prisma.knownCaloriesBurned.findFirst({
 			where: {
 				logId,
@@ -345,11 +347,16 @@ export async function createKnowDailyCalories(logId: string) {
 					'There was a problem creating the Known Calories Burned'
 				);
 			}
+
+			retData = newKDC;
+		} else {
+			retData = existing;
 		}
 
 		return {
 			success: true,
-			message: 'success'
+			message: 'success',
+			data: retData
 		};
 	} catch (error: unknown) {
 		return {

@@ -11,7 +11,6 @@ import { GetLog } from '@/types';
 import { ChevronLeft, ChevronRight, Flame, Plus } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
-import { useInView } from 'react-intersection-observer';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
@@ -35,8 +34,6 @@ export default function ExpendedCaloriesButton({
 	const [inputVal, setInputVal] = useState(10);
 	const [popoverOpen, setPopoverOpen] = useState(false);
 
-	const [ref, inView] = useInView();
-
 	const getLog = useCallback(async () => {
 		setFetching(true);
 		const res = await createDailyLog();
@@ -47,12 +44,6 @@ export default function ExpendedCaloriesButton({
 
 		setFetching(false);
 	}, [log]);
-
-	// useEffect(() => {
-	// 	if (inView) {
-	// 		getLog();
-	// 	}
-	// }, [inView]);
 
 	useEffect(() => {
 		getLog();
@@ -84,9 +75,7 @@ export default function ExpendedCaloriesButton({
 					)}
 				</div>
 			</PopoverTrigger>
-			<PopoverContent
-				ref={ref}
-				className='flex flex-col gap-6 items-center justify-center'>
+			<PopoverContent className='flex flex-col gap-6 items-center justify-center'>
 				<div className='flex flex-row items-center gap-2'>
 					<Flame className='w-6 h-6' />
 					Expended Calories
