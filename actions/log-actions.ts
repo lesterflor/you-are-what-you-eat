@@ -266,11 +266,19 @@ export async function getUserLogsInRange(from: Date, to: Date) {
 	}
 }
 
-export async function getLogsByUserId(id: string, logId: string = '') {
+export async function getLogsByUserId(logId: string = '') {
 	try {
+		const session = await auth();
+		const user = session?.user as GetUser;
+
+		if (!user) {
+			throw new Error('User must be authenticated');
+		}
+
 		const logs = await prisma.log.findMany({
 			where: {
-				userId: id,
+				userId: user.id,
+				//userId: '67db518ff10abb25395df978',
 				id: logId ? logId : undefined,
 				NOT: [
 					{

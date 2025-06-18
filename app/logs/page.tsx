@@ -6,7 +6,7 @@ import { GetLog, GetUser } from '@/types';
 import { CalendarOff } from 'lucide-react';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
 	title: 'Log History'
@@ -26,7 +26,7 @@ export default async function LogsPage(props: {
 
 	const { logId = '' } = await props.searchParams;
 
-	const res = await getLogsByUserId(user.id, logId);
+	const res = await getLogsByUserId(logId);
 
 	const { data = [] } = res;
 
