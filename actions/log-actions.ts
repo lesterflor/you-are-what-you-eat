@@ -523,11 +523,13 @@ export async function getKnownCaloriesBurned(logId: string = '') {
 		const existingKDC = logId
 			? await prisma.knownCaloriesBurned.findFirst({
 					where: {
+						userId: user.id,
 						logId
 					}
 			  })
 			: await prisma.knownCaloriesBurned.findFirst({
 					where: {
+						userId: user.id,
 						createdAt: {
 							gte: getToday().todayStart,
 							lt: getToday().todayEnd
