@@ -1,6 +1,10 @@
 'use client';
 
-import { createDailyLog, getKnownCaloriesBurned } from '@/actions/log-actions';
+import {
+	createDailyLog,
+	getCurrentLog,
+	getKnownCaloriesBurned
+} from '@/actions/log-actions';
 import { useScrolling } from '@/hooks/use-scroll';
 import {
 	selectPreparedDishData,
@@ -158,9 +162,21 @@ export default function FoodLogList({
 		}
 	}, [dataFormat]);
 
+	const test = async () => {
+		const res = await getCurrentLog();
+
+		if (res?.success && res.data) {
+			console.log(JSON.stringify(res.data));
+		} else {
+			alert(res?.message);
+		}
+	};
+
 	useEffect(() => {
 		const savedFormat = getStorageItem('logFormat') ?? 'card';
 		setDataFormat(savedFormat);
+
+		//test();
 	}, []);
 
 	return (

@@ -13,6 +13,50 @@ import {
 import { revalidatePath } from 'next/cache';
 import { DateRange } from 'react-day-picker';
 
+export async function getCurrentLog() {
+	try {
+		const session = await auth();
+		const user = session?.user;
+
+		if (!session || !user) {
+			return;
+		}
+
+		const todaysLog = await prisma.log.findMany({
+			where: {
+				userId: '67db518ff10abb25395df978',
+				createdAt: {
+					gte: getToday().todayStart,
+					lt: getToday().todayEnd
+				}
+			},
+			include: {
+				user: {
+					include: {
+						BaseMetabolicRate: true
+					}
+				},
+				knownCaloriesBurned: true
+			}
+		});
+
+		if (!todaysLog) {
+			throw new Error('There was a problem getting the log');
+		}
+
+		return {
+			success: true,
+			message: 'success',
+			data: todaysLog
+		};
+	} catch (err: unknown) {
+		return {
+			success: false,
+			message: formatError(err)
+		};
+	}
+}
+
 export async function createDailyLog(compareToYesterday: boolean = false) {
 	const session = await auth();
 	const user = session?.user;
@@ -28,6 +72,7 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 		const todaysLog = await prisma.log.findFirst({
 			where: {
 				userId: user.id,
+				//userId: '67db518ff10abb25395df978',
 				createdAt: {
 					gte: getToday().todayStart,
 					lt: getToday().todayEnd
