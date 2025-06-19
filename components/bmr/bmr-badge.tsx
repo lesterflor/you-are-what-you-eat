@@ -27,7 +27,7 @@ export default function BMRBadge() {
 	}, []);
 
 	return (
-		<>
+		<div className='h-11'>
 			{isFetching ? (
 				<div className='flex items-center justify-center h-10 w-16'>
 					<ImSpinner2 className='animate-spin w-6 h-6 opacity-10' />
@@ -45,6 +45,6 @@ export default function BMRBadge() {
 			)}
 
 			{}
-		</>
+		</div>
 	);
 }

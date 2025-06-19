@@ -53,17 +53,13 @@ export default function FoodItemImageGallery({ item }: { item: GetFoodItem }) {
 	const [images, setImages] = useState<GetFoodItemImage[] | undefined>(
 		item.foodItemImages
 	);
-	const [isFetching, setIsFetching] = useState(false);
 
 	const fetchItem = async () => {
-		setIsFetching(true);
 		const res = await getFoodItemById(item.id);
 
 		if (res.success && res.data) {
 			setImages(res.data.foodItemImages as GetFoodItemImage[]);
 		}
-
-		setIsFetching(false);
 	};
 
 	useEffect(() => {
@@ -102,107 +98,102 @@ export default function FoodItemImageGallery({ item }: { item: GetFoodItem }) {
 
 	return (
 		<>
-			{isFetching ? (
-				<ImSpinner2 className='w-16 h-16 animate-spin opacity-10' />
-			) : (
-				<Carousel className='w-full'>
-					<CarouselContent>
-						{images &&
-							images.length > 0 &&
-							images.map((img, indx) => (
-								<CarouselItem
-									onClick={() => {
-										setCurrent(indx);
-									}}
-									key={img.id}
-									className='basis-1/4'>
-									<Dialog>
-										<DialogTrigger>
-											<FadeInImage
-												src={img.url}
-												alt={img.alt}
-												width={50}
-												height={100}
-												className='aspect-auto rounded-md h-full w-full'
-											/>
-										</DialogTrigger>
+			(
+			<Carousel className='w-full'>
+				<CarouselContent>
+					{images &&
+						images.length > 0 &&
+						images.map((img, indx) => (
+							<CarouselItem
+								onClick={() => {
+									setCurrent(indx);
+								}}
+								key={img.id}
+								className='basis-1/4'>
+								<Dialog>
+									<DialogTrigger>
+										<FadeInImage
+											src={img.url}
+											alt={img.alt}
+											width={50}
+											height={100}
+											className='aspect-auto rounded-md h-full w-full'
+										/>
+									</DialogTrigger>
 
-										<DialogContent className='max-w-[100vw]'>
-											<DialogTitle className='capitalize'>
-												{item.name}
-											</DialogTitle>
-											<DialogDescription />
-											<Carousel setApi={setApi}>
-												<CarouselContent>
-													{images
-														.sort(
-															(a, b) =>
-																b.createdAt.getTime() - a.createdAt.getTime()
-														)
-														.map((img2) => (
-															<CarouselItem
-																key={img2.id}
-																className='flex flex-col gap-2 relative h-full'>
-																<div className='text-muted-foreground text-sm flex flex-row items-center relative'>
-																	{format(img2.createdAt, 'eee PP h:mm a')}
+									<DialogContent className='max-w-[100vw]'>
+										<DialogTitle className='capitalize'>
+											{item.name}
+										</DialogTitle>
+										<DialogDescription />
+										<Carousel setApi={setApi}>
+											<CarouselContent>
+												{images
+													.sort(
+														(a, b) =>
+															b.createdAt.getTime() - a.createdAt.getTime()
+													)
+													.map((img2) => (
+														<CarouselItem
+															key={img2.id}
+															className='flex flex-col gap-2 relative h-full'>
+															<div className='text-muted-foreground text-sm flex flex-row items-center relative'>
+																{format(img2.createdAt, 'eee PP h:mm a')}
 
-																	{itemIsOwnedByUser && (
-																		<Dialog>
-																			<DialogTrigger asChild>
-																				<Button
-																					size={'icon'}
-																					className='absolute w-fit h-fit rounded-full right-0 top-2 z-30 bg-red-600 p-2 flex flex-row items-center justify-center text-center text-foreground gap-1'>
-																					<MdDelete className='!w-6 !h-6' />
-																				</Button>
-																			</DialogTrigger>
-																			<DialogContent className='flex flex-col items-center'>
-																				<DialogTitle>
-																					Confirm Delete
-																				</DialogTitle>
+																{itemIsOwnedByUser && (
+																	<Dialog>
+																		<DialogTrigger asChild>
+																			<Button
+																				size={'icon'}
+																				className='absolute w-fit h-fit rounded-full right-0 top-2 z-30 bg-red-600 p-2 flex flex-row items-center justify-center text-center text-foreground gap-1'>
+																				<MdDelete className='!w-6 !h-6' />
+																			</Button>
+																		</DialogTrigger>
+																		<DialogContent className='flex flex-col items-center'>
+																			<DialogTitle>Confirm Delete</DialogTitle>
 
-																				<div className='leading-tight'>
-																					Are you sure you want to delete this
-																					image? This action cannot be undone.
-																				</div>
+																			<div className='leading-tight'>
+																				Are you sure you want to delete this
+																				image? This action cannot be undone.
+																			</div>
 
-																				<Button
-																					variant={'outline'}
-																					onClick={() => delImage(img2)}>
-																					{isDeleting ? (
-																						<ImSpinner2 className='animate-spin' />
-																					) : (
-																						<MdDelete />
-																					)}
-																					Delete
-																				</Button>
-																			</DialogContent>
-																		</Dialog>
-																	)}
-																</div>
-																<TransformWrapper>
-																	<TransformComponent>
-																		<FadeInImage
-																			src={img2.url}
-																			alt={img2.alt}
-																			width={500}
-																			height={1000}
-																			className='aspect-auto rounded-md'
-																		/>
-																	</TransformComponent>
-																</TransformWrapper>
+																			<Button
+																				variant={'outline'}
+																				onClick={() => delImage(img2)}>
+																				{isDeleting ? (
+																					<ImSpinner2 className='animate-spin' />
+																				) : (
+																					<MdDelete />
+																				)}
+																				Delete
+																			</Button>
+																		</DialogContent>
+																	</Dialog>
+																)}
+															</div>
+															<TransformWrapper>
+																<TransformComponent>
+																	<FadeInImage
+																		src={img2.url}
+																		alt={img2.alt}
+																		width={500}
+																		height={1000}
+																		className='aspect-auto rounded-md'
+																	/>
+																</TransformComponent>
+															</TransformWrapper>
 
-																<div className='w-full bottom-0 h-24 absolute bg-amber-400/0 z-30'></div>
-															</CarouselItem>
-														))}
-												</CarouselContent>
-											</Carousel>
-										</DialogContent>
-									</Dialog>
-								</CarouselItem>
-							))}
-					</CarouselContent>
-				</Carousel>
-			)}
+															<div className='w-full bottom-0 h-24 absolute bg-amber-400/0 z-30'></div>
+														</CarouselItem>
+													))}
+											</CarouselContent>
+										</Carousel>
+									</DialogContent>
+								</Dialog>
+							</CarouselItem>
+						))}
+				</CarouselContent>
+			</Carousel>
 		</>
 	);
 }
