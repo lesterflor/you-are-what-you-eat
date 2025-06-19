@@ -31,11 +31,12 @@ export default function FadeInImage({
 			animate(scope.current, { opacity: 1 }, { duration });
 		}
 	}, [loaded]);
+
 	return (
-		<>
+		<div className='relative'>
 			{!loaded && (
-				<div className='flex flex-col items-center justify-center h-full w-auto'>
-					<ImSpinner9 className='w-8 h-8 animate-spin opacity-5' />
+				<div className='absolute flex flex-col items-center justify-center h-full w-auto -z-10'>
+					<ImSpinner9 className='animate-spin opacity-5' />
 				</div>
 			)}
 
@@ -51,7 +52,8 @@ export default function FadeInImage({
 				width={width}
 				height={height}
 				onLoad={() => setLoaded(true)}
+				onError={() => setLoaded(true)}
 			/>
-		</>
+		</div>
 	);
 }
