@@ -53,6 +53,10 @@ export default function FadeInImage({
 				height={height}
 				onLoad={() => setLoaded(true)}
 			/>
+
+			<div className='absolute top-0 z-30 text-xs break-all'>
+				{src as string}
+			</div>
 		</div>
 	);
 }
