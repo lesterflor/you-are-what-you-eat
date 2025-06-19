@@ -168,7 +168,7 @@ export default function FoodLogList({
 		if (res?.success && res.data) {
 			console.log(JSON.stringify(res.data));
 		} else {
-			alert(res?.message);
+			alert(`${res?.success} - ${res?.data} - ${res?.message}`);
 		}
 	};
 

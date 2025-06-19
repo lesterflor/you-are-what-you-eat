@@ -22,9 +22,10 @@ export async function getCurrentLog() {
 			return;
 		}
 
-		const todaysLog = await prisma.log.findMany({
+		const todaysLog = await prisma.log.findFirst({
 			where: {
-				userId: '67db518ff10abb25395df978',
+				//userId: '67db518ff10abb25395df978',
+				userId: user.id,
 				createdAt: {
 					gte: getToday().todayStart,
 					lt: getToday().todayEnd
@@ -72,7 +73,6 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 		const todaysLog = await prisma.log.findFirst({
 			where: {
 				userId: user.id,
-				//userId: '67db518ff10abb25395df978',
 				createdAt: {
 					gte: getToday().todayStart,
 					lt: getToday().todayEnd
@@ -113,7 +113,16 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 			logForToday = todaysLog;
 		}
 
-		await createKnowDailyCalories(logForToday.id);
+		console.log(logForToday);
+
+		if (
+			logForToday.knownCaloriesBurned.length === 0 ||
+			!logForToday.knownCaloriesBurned
+		) {
+			await createKnowDailyCalories(logForToday.id);
+			console.log('created a KDC');
+		}
+
 		await createLogRemainder(logForToday.id);
 
 		let comparisons: LogComparisonType = null;
@@ -379,11 +388,7 @@ export async function createKnowDailyCalories(logId: string) {
 		const existing = await prisma.knownCaloriesBurned.findFirst({
 			where: {
 				logId,
-				userId: user.id,
-				createdAt: {
-					gte: getToday().todayStart,
-					lt: getToday().todayEnd
-				}
+				userId: user.id
 			}
 		});
 
@@ -581,6 +586,8 @@ export async function getKnownCaloriesBurned(logId: string = '') {
 						}
 					}
 			  });
+
+		console.log(existingKDC);
 
 		if (!existingKDC) {
 			throw new Error('There was a problem finding a log for today');
