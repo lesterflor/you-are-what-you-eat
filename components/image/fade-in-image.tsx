@@ -4,7 +4,6 @@ import { cn } from '@/lib/utils';
 import { useAnimate } from 'motion/react-mini';
 import Image, { StaticImageData } from 'next/image';
 import { useEffect, useState } from 'react';
-import { ImSpinner9 } from 'react-icons/im';
 
 export default function FadeInImage({
 	src,
@@ -34,11 +33,11 @@ export default function FadeInImage({
 
 	return (
 		<div className='relative'>
-			{!loaded && (
+			{/* {!loaded && (
 				<div className='absolute flex flex-col items-center justify-center h-full w-auto -z-10'>
 					<ImSpinner9 className='animate-spin opacity-5' />
 				</div>
-			)}
+			)} */}
 
 			<Image
 				priority={priority}
