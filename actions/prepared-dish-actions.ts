@@ -157,6 +157,10 @@ export async function getDishById(dishId: string) {
 			throw new Error('The dish could not be found');
 		}
 
+		existing.preparedDishImages.sort(
+			(a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+		);
+
 		return {
 			success: true,
 			message: 'success',
@@ -241,6 +245,12 @@ export async function getAllDishes() {
 		if (!dishes) {
 			throw new Error('There was a problem getting dishes');
 		}
+
+		dishes.forEach((dish) =>
+			dish.preparedDishImages.sort(
+				(a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+			)
+		);
 
 		return {
 			success: true,

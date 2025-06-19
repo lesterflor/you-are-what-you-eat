@@ -128,6 +128,12 @@ export async function getFoodItems(
 			throw new Error('There was a problem fetching food items');
 		}
 
+		items.forEach((item) =>
+			item.foodItemImages.sort(
+				(a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+			)
+		);
+
 		// sort here again since some food items have been capitalized when added
 		items.sort((a, b) => a.name.localeCompare(b.name));
 
@@ -289,6 +295,10 @@ export async function getFoodItemById(id: string) {
 		if (!existing) {
 			throw new Error('The food item was not found');
 		}
+
+		existing.foodItemImages.sort(
+			(a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+		);
 
 		return {
 			success: true,
