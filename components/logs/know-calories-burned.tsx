@@ -1,9 +1,11 @@
 'use client';
-import { addKnownCaloriesBurned, createDailyLog } from '@/actions/log-actions';
+import {
+	addKnownCaloriesBurned,
+	getKnownCaloriesBurned
+} from '@/actions/log-actions';
 import { useCurrentSession } from '@/hooks/use-current-session';
 import { expendedCaloriesUpdated } from '@/lib/features/log/logFoodSlice';
 import { useAppDispatch } from '@/lib/hooks';
-import { GetLog } from '@/types';
 import { Plus } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
@@ -14,7 +16,6 @@ import { Input } from '../ui/input';
 export default function KnowCaloriesBurned() {
 	const dispatch = useAppDispatch();
 
-	const [log, setLog] = useState<GetLog>();
 	const [caloriesBurned, setCaloriesBurned] = useState(0);
 	const [submitting, setSubmitting] = useState(false);
 	const [fetching, setFetching] = useState(true);
@@ -23,26 +24,20 @@ export default function KnowCaloriesBurned() {
 
 	const { status } = useCurrentSession();
 
-	const getLog = async () => {
-		const res = await createDailyLog();
+	const fetchKDC = async () => {
+		setFetching(true);
+		const res = await getKnownCaloriesBurned();
 
 		if (res?.success && res.data) {
-			setLog(res.data as GetLog);
+			setCaloriesBurned(res.data.calories);
 		}
 
 		setFetching(false);
 	};
 
 	useEffect(() => {
-		setFetching(true);
-		getLog();
+		fetchKDC();
 	}, []);
-
-	useEffect(() => {
-		if (log?.knownCaloriesBurned && log.knownCaloriesBurned.length > 0) {
-			setCaloriesBurned(log.knownCaloriesBurned[0].calories);
-		}
-	}, [log]);
 
 	if (status !== 'authenticated') {
 		return null;
@@ -79,9 +74,10 @@ export default function KnowCaloriesBurned() {
 						setSubmitting(true);
 						const res = await addKnownCaloriesBurned(inputVal);
 
-						if (res.success) {
+						if (res.success && res.data) {
 							toast.success(res.message);
-							getLog();
+
+							setCaloriesBurned(res.data.calories);
 
 							// redux
 							dispatch(expendedCaloriesUpdated(inputVal));

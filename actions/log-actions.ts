@@ -90,7 +90,7 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 
 		// there hasn't been a log created for today - create a new one
 		if (!todaysLog) {
-			const newLog = await prisma.log.create({
+			logForToday = await prisma.log.create({
 				data: {
 					userId: user.id as string
 				},
@@ -103,9 +103,8 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 					knownCaloriesBurned: true
 				}
 			});
-
-			logForToday = newLog;
 		} else {
+			// sort the food items in the log latest to oldest
 			todaysLog.foodItems.sort(
 				(a, b) => b.eatenAt.getTime() - a.eatenAt.getTime()
 			);
@@ -125,6 +124,7 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 
 		let comparisons: LogComparisonType = null;
 
+		// compare log from yesterday (in header macros summary)
 		if (compareToYesterday) {
 			const yLog = await prisma.log.findFirst({
 				where: {
@@ -192,13 +192,6 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 				};
 			}
 		}
-
-		// console.log(
-		// 	'compareToYesterday: ',
-		// 	compareToYesterday,
-		// 	' comparisons: ',
-		// 	comparisons
-		// );
 
 		const revisedLog = {
 			...logForToday,
@@ -459,7 +452,7 @@ export async function createLogRemainder(logId: string) {
 			retVal = existing;
 		}
 
-		console.log(retVal);
+		//console.log(retVal);
 
 		return {
 			success: true,
@@ -529,6 +522,7 @@ export async function addKnownCaloriesBurned(calories: number) {
 
 		const existingKDC = await prisma.knownCaloriesBurned.findFirst({
 			where: {
+				userId: user.id,
 				createdAt: {
 					gte: getToday().todayStart,
 					lt: getToday().todayEnd

@@ -1,10 +1,6 @@
 'use client';
 
-import {
-	createDailyLog,
-	getCurrentLog,
-	getKnownCaloriesBurned
-} from '@/actions/log-actions';
+import { createDailyLog, getKnownCaloriesBurned } from '@/actions/log-actions';
 import { useScrolling } from '@/hooks/use-scroll';
 import {
 	selectPreparedDishData,
@@ -34,6 +30,7 @@ import { GiEmptyMetalBucket } from 'react-icons/gi';
 import { ImSpinner2 } from 'react-icons/im';
 import { IoFastFoodOutline } from 'react-icons/io5';
 import { TbDatabaseSearch } from 'react-icons/tb';
+import BMRBadge from '../bmr/bmr-badge';
 import DishListSheet from '../dish/dish-list-sheet';
 import FoodFavouriteListSheet from '../food-items/food-favourite-list-sheet';
 import FoodListSheet from '../food-items/food-list-sheet';
@@ -162,15 +159,15 @@ export default function FoodLogList({
 		}
 	}, [dataFormat]);
 
-	const test = async () => {
-		const res = await getCurrentLog();
+	// const test = async () => {
+	// 	const res = await getCurrentLog();
 
-		if (res?.success && res.data) {
-			console.log(JSON.stringify(res.data));
-		} else {
-			alert(`${res?.success} - ${res?.data} - ${res?.message}`);
-		}
-	};
+	// 	if (res?.success && res.data) {
+	// 		console.log(JSON.stringify(res.data));
+	// 	} else {
+	// 		alert(`${res?.success} - ${res?.data} - ${res?.message}`);
+	// 	}
+	// };
 
 	useEffect(() => {
 		const savedFormat = getStorageItem('logFormat') ?? 'card';
@@ -244,17 +241,7 @@ export default function FoodLogList({
 					</Popover>
 
 					<div className='flex flex-row gap-2 w-full'>
-						{bmr ? (
-							<div className='p-1 rounded-md border-2 items-center font-normal text-xs flex flex-col gap-0 w-16'>
-								<span>BMR</span>
-								<span>{formatUnit(bmr.bmr)}</span>
-							</div>
-						) : (
-							<div className='flex flex-row gap-2'>
-								<Skeleton className='w-16 h-10' />
-								<Skeleton className='w-16 h-10' />
-							</div>
-						)}
+						<BMRBadge />
 
 						{calsBurned > 0 && (
 							<div className='p-1 rounded-md border-2 font-normal text-xs flex flex-col gap-0 items-center w-16'>
@@ -460,17 +447,7 @@ export default function FoodLogList({
 							</Popover>
 
 							<div className='flex flex-row gap-2 w-full'>
-								{bmr ? (
-									<div className='p-1 rounded-md border-2 items-center font-normal text-xs flex flex-col gap-0 w-16'>
-										<span>BMR</span>
-										<span>{formatUnit(bmr.bmr)}</span>
-									</div>
-								) : (
-									<div className='flex flex-row gap-2'>
-										<Skeleton className='w-16 h-10' />
-										<Skeleton className='w-16 h-10' />
-									</div>
-								)}
+								<BMRBadge />
 
 								{calsBurned > 0 && (
 									<div className='p-1 rounded-md border-2 font-normal text-xs flex flex-col gap-0 items-center w-16'>
