@@ -113,8 +113,6 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 			logForToday = todaysLog;
 		}
 
-		console.log(logForToday);
-
 		if (
 			logForToday.knownCaloriesBurned.length === 0 ||
 			!logForToday.knownCaloriesBurned
@@ -206,6 +204,8 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 			...logForToday,
 			comparisons
 		};
+
+		//console.log(revisedLog);
 
 		return {
 			success: true,
@@ -433,14 +433,12 @@ export async function createLogRemainder(logId: string) {
 			throw new Error('User must be authenticated');
 		}
 
+		let retVal;
+
 		const existing = await prisma.logRemainder.findFirst({
 			where: {
 				logId,
-				userId: user.id,
-				createdAt: {
-					gte: getToday().todayStart,
-					lt: getToday().todayEnd
-				}
+				userId: user.id
 			}
 		});
 
@@ -455,11 +453,18 @@ export async function createLogRemainder(logId: string) {
 			if (!newRemainder) {
 				throw new Error('There was a problem creating the log remainder');
 			}
+
+			retVal = newRemainder;
+		} else {
+			retVal = existing;
 		}
+
+		console.log(retVal);
 
 		return {
 			success: true,
-			message: 'success'
+			message: 'success',
+			data: retVal
 		};
 	} catch (error: unknown) {
 		return {
