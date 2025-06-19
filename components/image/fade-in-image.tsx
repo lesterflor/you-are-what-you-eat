@@ -32,7 +32,9 @@ export default function FadeInImage({
 		}
 	}, [loaded]);
 
-	const srcHasExt = src.toString().includes('.jpg');
+	const imageReg = /.*\.jpg$/i;
+	const srcSpl = src.toString().split('/');
+	const file = srcSpl[srcSpl.length - 1];
 
 	return (
 		<div className='relative'>
@@ -56,8 +58,11 @@ export default function FadeInImage({
 				onLoad={() => setLoaded(true)}
 			/>
 
-			<div className='absolute top-0 z-30 text-xs break-all'>
-				{srcHasExt.toString()}
+			<div className='absolute top-0 z-30 text-xs break-all bg-red-600'>
+				{file}
+				<br />
+				<br />
+				{imageReg.test(file) ? 'true' : 'false'}
 			</div>
 		</div>
 	);
