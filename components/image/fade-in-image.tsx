@@ -32,6 +32,8 @@ export default function FadeInImage({
 		}
 	}, [loaded]);
 
+	const srcHasExt = src.toString().includes('.jpg');
+
 	return (
 		<div className='relative'>
 			{!loaded && (
@@ -55,7 +57,7 @@ export default function FadeInImage({
 			/>
 
 			<div className='absolute top-0 z-30 text-xs break-all'>
-				{src as string}
+				{srcHasExt.toString()}
 			</div>
 		</div>
 	);
