@@ -294,13 +294,11 @@ export function calculateBMR(data: BMRData) {
 	} = data;
 
 	const actualWeight = weightUnit === 'pound' ? weight * POUND_TO_KILO : weight;
-
 	const actualHeight = heightUnit === 'inch' ? height * INCH_TO_CM : height;
+	const genderlessFormula = 10 * actualWeight + 6.25 * actualHeight - 5 * age;
 
 	const formula =
-		sex === 'male'
-			? 10 * actualWeight + 6.25 * actualHeight - 5 * age + 5
-			: 10 * actualHeight + 6.25 * actualHeight - 5 * age - 161;
+		sex === 'male' ? genderlessFormula + 5 : genderlessFormula - 161;
 
 	return Number(formula.toFixed(2));
 }

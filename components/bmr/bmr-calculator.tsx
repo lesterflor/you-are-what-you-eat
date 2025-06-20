@@ -115,7 +115,7 @@ export default function BMRCalculatorForm() {
 
 	useEffect(() => {
 		setBMRData();
-	}, [actualHeight, actualWeight, age]);
+	}, [actualHeight, actualWeight, age, sex]);
 
 	useEffect(() => {
 		setActualWeight(weightUnit === 'pounds' ? weight * POUND_TO_KILO : weight);
@@ -128,7 +128,7 @@ export default function BMRCalculatorForm() {
 				age,
 				height: actualHeight,
 				heightUnit: 'cm',
-				sex: 'male',
+				sex: sex as 'male' | 'female',
 				weight: actualWeight,
 				weightUnit: 'kilo'
 			};
@@ -138,6 +138,8 @@ export default function BMRCalculatorForm() {
 			setBmrData(data);
 
 			setBmr(result);
+
+			console.log('BMR: ', data);
 		}
 	};
 
@@ -168,6 +170,7 @@ export default function BMRCalculatorForm() {
 							<div className='flex flex-row items-center justify-center gap-2 rounded-md border-2 p-1'>
 								<div className='text-muted-foreground'>You are a</div>
 								<ToggleGroup
+									onValueChange={setSex}
 									type='single'
 									defaultValue={sex}>
 									<ToggleGroupItem value='male'>Man</ToggleGroupItem>
