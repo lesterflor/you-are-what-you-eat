@@ -136,12 +136,16 @@ export default function FoodLogList({
 		}
 	};
 
+	const setRemainingCalories = (cals: number, metRate: number) => {
+		setRemainingCals(cals - (metRate + calsBurned));
+	};
+
 	useEffect(() => {
-		//set remaining cals
-		const brmCals = bmr?.bmr ?? 0;
-		const rCals = brmCals + calsBurned;
-		const remainder = totalCals - rCals;
-		setRemainingCals(remainder);
+		setRemainingCalories(totalCals, bmr?.bmr ?? 0);
+	}, [calsBurned]);
+
+	useEffect(() => {
+		setRemainingCalories(totalCals, bmr?.bmr ?? 0);
 	}, [totalCals, bmr]);
 
 	useEffect(() => {
@@ -159,21 +163,9 @@ export default function FoodLogList({
 		}
 	}, [dataFormat]);
 
-	// const test = async () => {
-	// 	const res = await getCurrentLog();
-
-	// 	if (res?.success && res.data) {
-	// 		console.log(JSON.stringify(res.data));
-	// 	} else {
-	// 		alert(`${res?.success} - ${res?.data} - ${res?.message}`);
-	// 	}
-	// };
-
 	useEffect(() => {
 		const savedFormat = getStorageItem('logFormat') ?? 'card';
 		setDataFormat(savedFormat);
-
-		//test();
 	}, []);
 
 	return (
@@ -244,7 +236,7 @@ export default function FoodLogList({
 						<BMRBadge />
 
 						{calsBurned > 0 && (
-							<div className='p-1 rounded-md border-2 font-normal text-xs flex flex-col gap-0 items-center w-16'>
+							<div className='transition-opacity fade-in animate-in duration-1000 p-1 rounded-md border-2 font-normal text-xs flex flex-col gap-0 items-center w-16'>
 								<span>Expended</span>
 								<span>{formatUnit(calsBurned)}</span>
 							</div>
@@ -257,7 +249,7 @@ export default function FoodLogList({
 				{bmr ? (
 					<div
 						className={cn(
-							'text-3xl portrait:text-2xl text-center flex flex-col items-center gap-0 relative font-bold',
+							'transition-opacity fade-in animate-in duration-1000 text-3xl portrait:text-2xl text-center flex flex-col items-center gap-0 relative font-bold',
 							Math.sign(remainingCals) === -1
 								? 'text-foreground'
 								: 'text-muted-foreground',
@@ -450,7 +442,7 @@ export default function FoodLogList({
 								<BMRBadge />
 
 								{calsBurned > 0 && (
-									<div className='p-1 rounded-md border-2 font-normal text-xs flex flex-col gap-0 items-center w-16'>
+									<div className='transition-opacity fade-in animate-in duration-1000 p-1 rounded-md border-2 font-normal text-xs flex flex-col gap-0 items-center w-16'>
 										<span>Expended</span>
 										<span>{formatUnit(calsBurned)}</span>
 									</div>
@@ -464,7 +456,7 @@ export default function FoodLogList({
 							{bmr ? (
 								<div
 									className={cn(
-										'text-2xl text-center flex flex-col items-center gap-0 relative font-bold',
+										'transition-opacity fade-in animate-in duration-1000 text-2xl text-center flex flex-col items-center gap-0 relative font-bold',
 										Math.sign(remainingCals) === -1
 											? 'text-foreground'
 											: 'text-muted-foreground'

@@ -187,7 +187,7 @@ export default function LogRemainderBadge() {
 						<PopoverTrigger>
 							<Badge
 								variant='secondary'
-								className='select-none p-1 rounded-md border-2 font-normal text-xs flex flex-row gap-1 items-start'>
+								className='transition-opacity fade-in animate-in duration-1000 select-none p-1 rounded-md border-2 font-normal text-xs flex flex-row gap-1 items-start'>
 								<Info className='w-4 h-4' />
 								<div className='flex flex-col gap-0'>
 									<span className='whitespace-nowrap'>Cumulative</span>

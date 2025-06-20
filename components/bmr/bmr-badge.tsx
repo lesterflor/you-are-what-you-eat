@@ -33,7 +33,7 @@ export default function BMRBadge() {
 					<ImSpinner2 className='animate-spin w-6 h-6 opacity-10' />
 				</div>
 			) : bmr ? (
-				<div className='p-1 rounded-md border-2 items-center font-normal text-xs flex flex-col gap-0 w-16'>
+				<div className='transition-opacity fade-in animate-in duration-1000 p-1 rounded-md border-2 items-center font-normal text-xs flex flex-col gap-0 w-16'>
 					<span>BMR</span>
 					<span>{formatUnit(bmr.bmr)}</span>
 				</div>
