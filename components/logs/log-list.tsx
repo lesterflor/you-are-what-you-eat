@@ -104,6 +104,10 @@ export default function FoodLogList({
 
 			setBmr(bmrArr[0]);
 
+			setTotalCals(res.data.totalCalories);
+
+			setRemainingCals(res.data.remainingCalories);
+
 			if (
 				res.data.knownCaloriesBurned &&
 				res.data.knownCaloriesBurned.length > 0
@@ -112,20 +116,6 @@ export default function FoodLogList({
 			}
 		}
 		setFetchingLog(false);
-	};
-
-	useEffect(() => {
-		prepareLogList();
-	}, [logList]);
-
-	const prepareLogList = () => {
-		const total = Math.round(
-			logList.reduce((acc, curr) => {
-				const sub = curr.calories * curr.numServings;
-				return acc + sub;
-			}, 0)
-		);
-		setTotalCals(total);
 	};
 
 	const fetchKDC = async () => {

@@ -193,9 +193,24 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 			}
 		}
 
+		const totalCalories = Math.round(
+			logForToday.foodItems.reduce((acc, curr) => {
+				const sub = curr.calories * curr.numServings;
+				return acc + sub;
+			}, 0)
+		);
+
+		const remainingCalories =
+			totalCalories -
+			(logForToday.user.BaseMetabolicRate[0].bmr ||
+				0 + logForToday.knownCaloriesBurned[0].calories ||
+				0);
+
 		const revisedLog = {
 			...logForToday,
-			comparisons
+			comparisons,
+			totalCalories,
+			remainingCalories
 		};
 
 		//console.log(revisedLog);
