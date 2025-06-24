@@ -82,8 +82,6 @@ export const preparedDishSlice = createAppSlice({
 					);
 				}
 
-				//console.log('update: ', newData);
-
 				state.value = { ...action.payload, dishList: JSON.stringify(newData) };
 				state.status = 'checkedItem';
 			}

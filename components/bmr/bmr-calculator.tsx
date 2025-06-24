@@ -138,8 +138,6 @@ export default function BMRCalculatorForm() {
 			setBmrData(data);
 
 			setBmr(result);
-
-			console.log('BMR: ', data);
 		}
 	};
 

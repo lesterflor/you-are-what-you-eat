@@ -25,7 +25,6 @@ export default function DateRangeChooser({
 			setDatePickerOpen(false);
 			onSelect(undefined);
 		}
-		console.log(date);
 	}, [date]);
 
 	return (

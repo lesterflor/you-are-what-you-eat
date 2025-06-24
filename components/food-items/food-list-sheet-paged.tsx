@@ -33,7 +33,6 @@ export default function FoodListSheetPaged({
 	useEffect(() => {
 		if (inView) {
 			setCurrentPage((prev) => prev + 1);
-			console.log('last item inView? ', inView);
 		}
 	}, [inView]);
 
@@ -50,9 +49,6 @@ export default function FoodListSheetPaged({
 
 	const fetchItems = async () => {
 		setIsFetching(true);
-		console.log(
-			`currentPage: ${currentPage} - currentCursorId: ${currentCursorId}`
-		);
 
 		const res = await getAllFoodItemsPaged(currentPage, currentCursorId);
 
@@ -80,7 +76,6 @@ export default function FoodListSheetPaged({
 
 	useEffect(() => {
 		//scrollToTop();
-		console.log(JSON.stringify(foods));
 	}, [foods]);
 
 	// useEffect(() => {

@@ -117,7 +117,6 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 			!logForToday.knownCaloriesBurned
 		) {
 			await createKnowDailyCalories(logForToday.id);
-			console.log('created a KDC');
 		}
 
 		await createLogRemainder(logForToday.id);
@@ -212,8 +211,6 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 			totalCalories,
 			remainingCalories
 		};
-
-		//console.log(revisedLog);
 
 		return {
 			success: true,
@@ -467,8 +464,6 @@ export async function createLogRemainder(logId: string) {
 			retVal = existing;
 		}
 
-		//console.log(retVal);
-
 		return {
 			success: true,
 			message: 'success',
@@ -600,8 +595,6 @@ export async function getKnownCaloriesBurned(logId: string = '') {
 						}
 					}
 			  });
-
-		console.log(existingKDC);
 
 		if (!existingKDC) {
 			throw new Error('There was a problem finding a log for today');
@@ -807,23 +800,6 @@ export async function getLogRemainder() {
 		const logRemainder = remainder + todaysExpended;
 		const realRemainder = logRemainder - todaysConsumed;
 
-		//console.log('yesterdays log: ', yesterdayLog);
-
-		// console.log(
-		// 	'BMR: ',
-		// 	bmrCalories,
-		// 	' expended: ',
-		// 	expendedCals,
-		// 	' yesterday consumed: ',
-		// 	yesterdayConsumed,
-		// 	' remainder: ',
-		// 	remainder,
-		// 	' consumed today: ',
-		// 	todaysConsumed,
-		// 	' LOG REMAINDER: ',
-		// 	realRemainder
-		// );
-
 		// get today's remainder record
 		if (todaysLog.data?.id) {
 			const todaysRemainder = await prisma.logRemainder.findFirst({
@@ -832,8 +808,6 @@ export async function getLogRemainder() {
 					logId: todaysLog.data.id
 				}
 			});
-
-			//console.log(todaysRemainder);
 
 			if (todaysRemainder) {
 				const update = await prisma.logRemainder.update({

@@ -356,8 +356,6 @@ export default function FoodItemCard({
 											const clone = { ...logFoodItem };
 											clone.eatenAt = new Date();
 
-											//console.log(`dish item: ${JSON.stringify(clone)}`);
-
 											dispatch(
 												setCheckedItemState({
 													id: '',

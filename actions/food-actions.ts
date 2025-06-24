@@ -435,7 +435,6 @@ export async function bookmarkFoodItem(foodItemId: string) {
 				}
 			});
 			added = false;
-			console.log(`deleted bookmark: ${bookmark}`);
 		} else {
 			bookmark = await prisma.foodItemFavourite.create({
 				data: {
@@ -443,7 +442,6 @@ export async function bookmarkFoodItem(foodItemId: string) {
 					foodItemId
 				}
 			});
-			console.log(`added bookmark: ${bookmark}`);
 			added = true;
 		}
 
