@@ -49,10 +49,11 @@ export default function FoodListSheet({
 	const foodSearchData = useAppSelector(selectFoodSearchData);
 	const foodSearchStatus = useAppSelector(selectFoodSearchStatus);
 
-	useEffect(() => {
-		// on mount get all foods and do local sorting in redux handler
-		getFoods();
-	}, []);
+	// useEffect(() => {
+	// 	alert('get foods mount');
+	// 	// on mount get all foods and do local sorting in redux handler
+	// 	getFoods();
+	// }, []);
 
 	// redux handler
 	useEffect(() => {
@@ -87,6 +88,9 @@ export default function FoodListSheet({
 				break;
 			case 'favourites':
 				getFavs();
+				break;
+			case 'idle':
+				getFoods();
 				break;
 		}
 	}, [foodSearchStatus, foodSearchData]);
