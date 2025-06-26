@@ -11,7 +11,7 @@ import {
 	selectFoodUpdateStatus
 } from '@/lib/features/food/foodUpdateSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { cn } from '@/lib/utils';
+import { cn, getStorageItem, setStorageItem } from '@/lib/utils';
 import { GetFoodItem } from '@/types';
 import { Search } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -49,11 +49,20 @@ export default function FoodListSheet({
 	const foodSearchData = useAppSelector(selectFoodSearchData);
 	const foodSearchStatus = useAppSelector(selectFoodSearchStatus);
 
-	// useEffect(() => {
-	// 	alert('get foods mount');
-	// 	// on mount get all foods and do local sorting in redux handler
-	// 	getFoods();
-	// }, []);
+	useEffect(() => {
+		// on mount get all foods and do local sorting in redux handler
+		const savedFoods: GetFoodItem[] = getStorageItem('foodList') || [];
+
+		if (savedFoods.length > 0) {
+			setAllFoods(savedFoods as GetFoodItem[]);
+			if (foods.length === 0) {
+				setFoods(savedFoods as GetFoodItem[]);
+			}
+			setIsFetching(false);
+		} else {
+			getFoods();
+		}
+	}, []);
 
 	// redux handler
 	useEffect(() => {
@@ -89,9 +98,9 @@ export default function FoodListSheet({
 			case 'favourites':
 				getFavs();
 				break;
-			case 'idle':
-				getFoods();
-				break;
+			// case 'idle':
+			// 	getFoods();
+			// 	break;
 		}
 	}, [foodSearchStatus, foodSearchData]);
 
@@ -110,6 +119,8 @@ export default function FoodListSheet({
 			} else {
 				setFoods(res.data as GetFoodItem[]);
 			}
+
+			setStorageItem('foodList', res.data);
 		}
 
 		setIsFetching(false);
