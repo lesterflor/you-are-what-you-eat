@@ -54,9 +54,9 @@ export default function FoodListSheet({
 		const savedFoods: GetFoodItem[] = getStorageItem('foodList') || [];
 
 		if (savedFoods.length > 0) {
-			setAllFoods(savedFoods as GetFoodItem[]);
+			setAllFoods(savedFoods);
 			if (foods.length === 0) {
-				setFoods(savedFoods as GetFoodItem[]);
+				setFoods(savedFoods);
 			}
 			setIsFetching(false);
 		} else {
