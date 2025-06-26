@@ -15,7 +15,7 @@ import { cn } from '@/lib/utils';
 import { GetFoodItem } from '@/types';
 import { Search } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { ImSpinner2 } from 'react-icons/im';
+import { ImSpinner2, ImSpinner9 } from 'react-icons/im';
 import { TbDatabaseSearch } from 'react-icons/tb';
 import { useDebounce } from 'use-debounce';
 import DishCreationPopover from '../dish/dish-creation-popover';
@@ -104,6 +104,9 @@ export default function FoodListSheet({
 		if (res.success && res.data) {
 			if (!term && !cat && !user) {
 				setAllFoods(res.data as GetFoodItem[]);
+				if (foods.length === 0) {
+					setFoods(res.data as GetFoodItem[]);
+				}
 			} else {
 				setFoods(res.data as GetFoodItem[]);
 			}
@@ -165,9 +168,18 @@ export default function FoodListSheet({
 		<>
 			<div className='portrait:hidden'>
 				<Sheet>
-					<SheetTrigger asChild>
+					<SheetTrigger
+						asChild
+						disabled={isFetching}>
 						{children ? (
-							children
+							<div className='relative'>
+								{children}
+								{isFetching && (
+									<div className='absolute w-auto h-4 rounded-full bg-gray-500 text-xs top-0 right-0 p-1 flex items-center justify-center'>
+										<ImSpinner9 className='animate-spin' />
+									</div>
+								)}
+							</div>
 						) : (
 							<Button>
 								<TbDatabaseSearch className='w-4 h-4' /> Search
@@ -227,9 +239,18 @@ export default function FoodListSheet({
 
 			<div className='hidden portrait:block'>
 				<Sheet>
-					<SheetTrigger asChild>
+					<SheetTrigger
+						asChild
+						disabled={isFetching}>
 						{children ? (
-							children
+							<div className='relative'>
+								{children}
+								{isFetching && (
+									<div className='absolute w-auto h-4 rounded-full bg-gray-500 text-xs top-0 right-0 p-1 flex items-center justify-center'>
+										<ImSpinner9 className='animate-spin' />
+									</div>
+								)}
+							</div>
 						) : (
 							<Button>
 								<TbDatabaseSearch className='w-4 h-4' /> Search
