@@ -151,6 +151,66 @@ export async function getFoodItems(
 	}
 }
 
+export async function compareLocalFoods(localList: GetFoodItem[]) {
+	try {
+		const dbFoods = await prisma.foodItem.findMany({
+			include: {
+				user: {
+					select: {
+						id: true,
+						name: true,
+						image: true,
+						FoodItems: true
+					}
+				},
+				foodItemImages: true
+			},
+			orderBy: {
+				name: 'asc'
+			}
+		});
+
+		if (!dbFoods) {
+			throw new Error('There was a problem getting food list');
+		}
+
+		dbFoods.forEach((item) =>
+			item.foodItemImages.sort(
+				(a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+			)
+		);
+
+		// sort here again since some food items have been capitalized when added
+		dbFoods.sort((a, b) => a.name.localeCompare(b.name));
+
+		const dbStr = JSON.stringify(dbFoods);
+		const localStr = JSON.stringify(localList);
+
+		const listsTheSame = dbStr === localStr;
+
+		//console.log('are the lists the same? ', listsTheSame);
+
+		if (listsTheSame) {
+			return {
+				success: true,
+				message: 'lists are the same',
+				data: null
+			};
+		} else {
+			return {
+				success: false,
+				message: 'lists are different',
+				data: dbFoods
+			};
+		}
+	} catch (err: unknown) {
+		return {
+			success: false,
+			message: formatError(err)
+		};
+	}
+}
+
 export async function addFoodItem(item: FoodItem) {
 	try {
 		const validated = foodItemSchema.parse(item);

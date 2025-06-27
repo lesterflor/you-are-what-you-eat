@@ -1,6 +1,10 @@
 'use client';
 
-import { getFavouriteFoods, getFoodItems } from '@/actions/food-actions';
+import {
+	compareLocalFoods,
+	getFavouriteFoods,
+	getFoodItems
+} from '@/actions/food-actions';
 import {
 	inputSearch,
 	selectFoodSearchData,
@@ -15,8 +19,10 @@ import { cn, getStorageItem, setStorageItem } from '@/lib/utils';
 import { GetFoodItem } from '@/types';
 import { Search } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { ImSpinner2, ImSpinner9 } from 'react-icons/im';
+import { BsCloudCheck } from 'react-icons/bs';
+import { ImSpinner2, ImSpinner8, ImSpinner9 } from 'react-icons/im';
 import { TbDatabaseSearch } from 'react-icons/tb';
+import { useInView } from 'react-intersection-observer';
 import { useDebounce } from 'use-debounce';
 import DishCreationPopover from '../dish/dish-creation-popover';
 import InputWithButton from '../input-with-button';
@@ -48,6 +54,30 @@ export default function FoodListSheet({
 
 	const foodSearchData = useAppSelector(selectFoodSearchData);
 	const foodSearchStatus = useAppSelector(selectFoodSearchStatus);
+
+	const [ref, inView] = useInView();
+	const [upToDate, setUpToDate] = useState(true);
+
+	useEffect(() => {
+		if (inView) {
+			setTimeout(checkLocalFoods, 1500);
+		}
+	}, [inView]);
+
+	const [isSyncing, setIsSyncing] = useState(false);
+
+	const checkLocalFoods = async () => {
+		setIsSyncing(true);
+		const res = await compareLocalFoods(allFoods);
+
+		setUpToDate(res.success);
+
+		if (!res.success) {
+			setAllFoods(res.data as GetFoodItem[]);
+		}
+
+		setIsSyncing(false);
+	};
 
 	useEffect(() => {
 		// on mount get all foods and do local sorting in redux handler
@@ -199,8 +229,21 @@ export default function FoodListSheet({
 					</SheetTrigger>
 					<SheetContent side='right'>
 						<SheetDescription></SheetDescription>
-						<SheetTitle className='flex flex-col items-center gap-2 pb-4'>
-							<div className='flex flex-row gap-2 justify-between items-center pt-2'>
+						<SheetTitle className='flex flex-col items-center gap-2 pb-4 relative'>
+							<div
+								className={cn(
+									'absolute rounded-full -top-4 -left-1 p-1',
+									upToDate ? 'bg-green-800' : 'bg-red-800'
+								)}>
+								{isSyncing ? (
+									<ImSpinner8 className='animate-spin' />
+								) : (
+									<BsCloudCheck />
+								)}
+							</div>
+							<div
+								className='flex flex-row gap-2 justify-between items-center pt-2'
+								ref={ref}>
 								<InputWithButton
 									className='w-[90%]'
 									onChange={(val) => {
@@ -272,8 +315,22 @@ export default function FoodListSheet({
 						side='top'
 						className='px-2'>
 						<SheetDescription></SheetDescription>
-						<SheetTitle className='flex flex-col items-center gap-2 pb-4'>
-							<div className='flex flex-row gap-2 justify-between items-center pt-2'>
+						<SheetTitle className='flex flex-col items-center gap-2 pb-4 relative'>
+							<div
+								className={cn(
+									'absolute rounded-full -top-4 -left-1 p-1',
+									upToDate ? 'bg-green-800' : 'bg-red-800'
+								)}>
+								{isSyncing ? (
+									<ImSpinner8 className='animate-spin' />
+								) : (
+									<BsCloudCheck />
+								)}
+							</div>
+
+							<div
+								className='flex flex-row gap-2 justify-between items-center pt-2'
+								ref={ref}>
 								<div className='flex flex-row items-center gap-4'>
 									<InputWithButton
 										className='w-[60%]'
