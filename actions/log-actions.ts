@@ -92,6 +92,7 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 		if (!todaysLog) {
 			logForToday = await prisma.log.create({
 				data: {
+					createdAt: new Date(getToday().current),
 					userId: user.id as string
 				},
 				include: {
@@ -400,6 +401,7 @@ export async function createKnowDailyCalories(logId: string) {
 		if (!existing) {
 			const newKDC = await prisma.knownCaloriesBurned.create({
 				data: {
+					createdAt: new Date(getToday().current),
 					logId,
 					userId: user.id
 				}
@@ -450,6 +452,7 @@ export async function createLogRemainder(logId: string) {
 		if (!existing) {
 			const newRemainder = await prisma.logRemainder.create({
 				data: {
+					createdAt: new Date(getToday().current),
 					logId,
 					userId: user.id
 				}
