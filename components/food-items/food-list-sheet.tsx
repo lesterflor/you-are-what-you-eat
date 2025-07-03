@@ -27,6 +27,7 @@ import { useDebounce } from 'use-debounce';
 import DishCreationPopover from '../dish/dish-creation-popover';
 import InputWithButton from '../input-with-button';
 import { Button } from '../ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { ScrollArea } from '../ui/scroll-area';
 import {
 	Sheet,
@@ -238,7 +239,26 @@ export default function FoodListSheet({
 								{isSyncing ? (
 									<ImSpinner8 className='animate-spin' />
 								) : (
-									<BsCloudCheck />
+									<Popover>
+										<PopoverTrigger asChild>
+											<BsCloudCheck />
+										</PopoverTrigger>
+										<PopoverContent className='flex flex-col items-center justify-center gap-3'>
+											<div>
+												{upToDate
+													? 'Food list is up to date'
+													: 'Food list needs updating'}
+											</div>
+
+											{!upToDate && (
+												<div>
+													<Button onClick={() => checkLocalFoods()}>
+														Update
+													</Button>
+												</div>
+											)}
+										</PopoverContent>
+									</Popover>
 								)}
 							</div>
 							<div
@@ -324,7 +344,26 @@ export default function FoodListSheet({
 								{isSyncing ? (
 									<ImSpinner8 className='animate-spin' />
 								) : (
-									<BsCloudCheck />
+									<Popover>
+										<PopoverTrigger asChild>
+											<BsCloudCheck />
+										</PopoverTrigger>
+										<PopoverContent className='flex flex-col items-center justify-center gap-3'>
+											<div>
+												{upToDate
+													? 'Food list is up to date'
+													: 'Food list needs updating'}
+											</div>
+
+											{!upToDate && (
+												<div>
+													<Button onClick={() => checkLocalFoods()}>
+														Update
+													</Button>
+												</div>
+											)}
+										</PopoverContent>
+									</Popover>
 								)}
 							</div>
 

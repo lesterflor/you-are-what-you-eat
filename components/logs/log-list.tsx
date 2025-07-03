@@ -170,6 +170,9 @@ export default function FoodLogList({
 					)}>
 					{logList.length > 0 && (
 						<div className='flex flex-row items-center gap-2 font-normal pr-4'>
+							{fetchingLog && (
+								<ImSpinner2 className='animate-spin w-4 h-4 opacity-25' />
+							)}
 							<BiSolidFoodMenu className='w-4 h-4' />
 							<div>{`Today's Log (${logList.length} ${
 								logList.length === 1 ? 'item' : 'items'
@@ -282,11 +285,12 @@ export default function FoodLogList({
 								: 'flex flex-row flex-wrap gap-4 portrait:flex-col'
 						)}>
 						<>
-							{fetchingLog ? (
+							{/* fetchingLog ? (
 								<div className='w-full flex items-center justify-center h-32'>
 									<ImSpinner2 className='animate-spin w-12 h-12 opacity-25' />
 								</div>
-							) : logList.length > 0 ? (
+							) : */}
+							{logList.length > 0 ? (
 								<>
 									{dataFormat === 'card'
 										? logList.map((item, indx) => (

@@ -495,7 +495,7 @@ export default function DishCard({
 										id: prepDish.id,
 										name: prepDish.name,
 										description: prepDish.description,
-										dishList: '[]'
+										dishList: JSON.stringify(res.data)
 									})
 								);
 
