@@ -5,6 +5,7 @@ import prisma from '@/db/prisma';
 import { formatError } from '@/lib/utils';
 import { foodItemSchema } from '@/lib/validators';
 import { FoodItem, GetFoodItem, GetUser } from '@/types';
+import { isEqual } from 'lodash';
 import { revalidatePath } from 'next/cache';
 
 export async function getAllFoodItemsPaged(
@@ -188,21 +189,22 @@ export async function compareLocalFoods(localList: GetFoodItem[]) {
 
 		const listsTheSame = dbStr === localStr;
 
-		//console.log('are the lists the same? ', listsTheSame);
+		console.log(
+			'are the lists the same? ',
+			listsTheSame,
+			' lodash: ',
+			isEqual(dbFoods, localList),
+			' local: ',
+			localList.length,
+			' fetched: ',
+			dbFoods.length
+		);
 
-		if (listsTheSame) {
-			return {
-				success: true,
-				message: 'lists are the same',
-				data: null
-			};
-		} else {
-			return {
-				success: false,
-				message: 'lists are different',
-				data: dbFoods
-			};
-		}
+		return {
+			success: true,
+			message: listsTheSame ? 'lists are the same' : 'lists are different',
+			data: listsTheSame ? null : dbFoods
+		};
 	} catch (err: unknown) {
 		return {
 			success: false,

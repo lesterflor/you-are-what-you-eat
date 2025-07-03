@@ -73,8 +73,10 @@ export default function FoodListSheet({
 
 		setUpToDate(res.success);
 
-		if (!res.success) {
+		if (res.success && res.data) {
+			setStorageItem('foodList', res.data);
 			setAllFoods(res.data as GetFoodItem[]);
+			setFoods(res.data as GetFoodItem[]);
 		}
 
 		setIsSyncing(false);
@@ -253,7 +255,7 @@ export default function FoodListSheet({
 											{!upToDate && (
 												<div>
 													<Button onClick={() => checkLocalFoods()}>
-														Update
+														Sync
 													</Button>
 												</div>
 											)}
@@ -358,7 +360,7 @@ export default function FoodListSheet({
 											{!upToDate && (
 												<div>
 													<Button onClick={() => checkLocalFoods()}>
-														Update
+														Sync
 													</Button>
 												</div>
 											)}
