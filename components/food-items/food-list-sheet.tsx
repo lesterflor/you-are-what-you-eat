@@ -247,6 +247,11 @@ export default function FoodListSheet({
 										</PopoverTrigger>
 										<PopoverContent className='flex flex-col items-center justify-center gap-3'>
 											<div>
+												<BsCloudCheck
+													className={cn(
+														upToDate ? 'text-green-600 w-6 h-6' : 'text-red-600'
+													)}
+												/>
 												{upToDate
 													? 'Food list is up to date'
 													: 'Food list needs updating'}
@@ -351,7 +356,12 @@ export default function FoodListSheet({
 											<BsCloudCheck />
 										</PopoverTrigger>
 										<PopoverContent className='flex flex-col items-center justify-center gap-3'>
-											<div>
+											<div className='flex flex-row gap-2'>
+												<BsCloudCheck
+													className={cn(
+														upToDate ? 'text-green-600 w-6 h-6' : 'text-red-600'
+													)}
+												/>
 												{upToDate
 													? 'Food list is up to date'
 													: 'Food list needs updating'}

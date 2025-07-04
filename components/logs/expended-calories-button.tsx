@@ -14,6 +14,7 @@ import { ChevronLeft, ChevronRight, Flame, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'sonner';
+import IncrementButton from '../increment-button';
 import { Button } from '../ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Slider } from '../ui/slider';
@@ -89,14 +90,15 @@ export default function ExpendedCaloriesButton({
 					<div className='flex flex-col gap-4 items-center justify-center w-full'>
 						<div className='text-xs text-muted-foreground'>{inputVal}</div>
 						<div className='flex flex-row items-center gap-3 justify-center w-full'>
-							<Button
-								onClick={() => {
+							<IncrementButton
+								increment={1}
+								allowLongPress={true}
+								onChange={() => {
 									setInputVal((prev) => prev - 1);
-								}}
-								size={'icon'}
-								variant={'secondary'}>
+								}}>
 								<ChevronLeft />
-							</Button>
+							</IncrementButton>
+
 							<Slider
 								value={[inputVal]}
 								defaultValue={[inputVal]}
@@ -105,14 +107,15 @@ export default function ExpendedCaloriesButton({
 								min={-caloriesBurned}
 								max={1000}
 							/>
-							<Button
-								onClick={() => {
+
+							<IncrementButton
+								increment={1}
+								allowLongPress={true}
+								onChange={() => {
 									setInputVal((prev) => prev + 1);
-								}}
-								size={'icon'}
-								variant={'secondary'}>
+								}}>
 								<ChevronRight />
-							</Button>
+							</IncrementButton>
 						</div>
 					</div>
 				</div>
