@@ -261,7 +261,8 @@ export async function updateLog(foodEntries: FoodEntry[]) {
 				id: logUpdate?.id
 			},
 			data: {
-				foodItems: foodEntries
+				foodItems: foodEntries,
+				updatedAt: new Date(getToday().current)
 			}
 		});
 
@@ -552,7 +553,8 @@ export async function addKnownCaloriesBurned(calories: number) {
 				id: existingKDC.id
 			},
 			data: {
-				calories: existingKDC.calories + calories
+				calories: existingKDC.calories + calories,
+				updatedAt: new Date(getToday().current)
 			}
 		});
 
@@ -642,7 +644,8 @@ export async function deleteFoodLogEntry(foodEntryId: string) {
 				id: currentLog.data.id
 			},
 			data: {
-				foodItems: updatedFoodItems
+				foodItems: updatedFoodItems,
+				updatedAt: new Date(getToday().current)
 			}
 		});
 
@@ -705,7 +708,8 @@ export async function updateFoodLogEntry(foodEntry: GetFoodEntry) {
 				id
 			},
 			data: {
-				foodItems: updatedFoodItems
+				foodItems: updatedFoodItems,
+				updatedAt: new Date(getToday().current)
 			}
 		});
 
@@ -818,7 +822,8 @@ export async function getLogRemainder() {
 						id: todaysRemainder.id
 					},
 					data: {
-						calories: realRemainder
+						calories: realRemainder,
+						updatedAt: new Date(getToday().current)
 					}
 				});
 
