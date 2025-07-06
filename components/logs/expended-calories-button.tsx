@@ -105,7 +105,7 @@ export default function ExpendedCaloriesButton({
 								onValueChange={(val) => setInputVal(val[0])}
 								step={1}
 								min={-caloriesBurned}
-								max={1000}
+								max={1100}
 							/>
 
 							<IncrementButton
@@ -118,6 +118,29 @@ export default function ExpendedCaloriesButton({
 							</IncrementButton>
 						</div>
 					</div>
+				</div>
+
+				<div className='flex flex-row gap-2'>
+					<Button
+						variant={'secondary'}
+						onClick={() => setInputVal(350)}>
+						350
+					</Button>
+					<Button
+						variant={'secondary'}
+						onClick={() => setInputVal(500)}>
+						500
+					</Button>
+					<Button
+						variant={'secondary'}
+						onClick={() => setInputVal(750)}>
+						750
+					</Button>
+					<Button
+						variant={'secondary'}
+						onClick={() => setInputVal(1050)}>
+						1050
+					</Button>
 				</div>
 
 				<Button
