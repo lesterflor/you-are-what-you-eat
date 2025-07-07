@@ -18,7 +18,7 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { cn, getStorageItem, setStorageItem } from '@/lib/utils';
 import { GetFoodItem } from '@/types';
 import { Search } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { BsCloudCheck } from 'react-icons/bs';
 import { ImSpinner2, ImSpinner8, ImSpinner9 } from 'react-icons/im';
 import { TbDatabaseSearch } from 'react-icons/tb';
@@ -65,21 +65,20 @@ export default function FoodListSheet({
 		}
 	}, [inView]);
 
-	const [isSyncing, setIsSyncing] = useState(false);
+	const [isSyncing, setIsSyncing] = useTransition();
 
-	const checkLocalFoods = async () => {
-		setIsSyncing(true);
-		const res = await compareLocalFoods(allFoods);
+	const checkLocalFoods = () => {
+		setIsSyncing(async () => {
+			const res = await compareLocalFoods(allFoods);
 
-		setUpToDate(res.success);
+			setUpToDate(res.success);
 
-		if (res.success && res.data) {
-			setStorageItem('foodList', res.data);
-			setAllFoods(res.data as GetFoodItem[]);
-			setFoods(res.data as GetFoodItem[]);
-		}
-
-		setIsSyncing(false);
+			if (res.success && res.data) {
+				setStorageItem('foodList', res.data);
+				setAllFoods(res.data as GetFoodItem[]);
+				setFoods(res.data as GetFoodItem[]);
+			}
+		});
 	};
 
 	useEffect(() => {
@@ -87,11 +86,12 @@ export default function FoodListSheet({
 		const savedFoods: GetFoodItem[] = getStorageItem('foodList') || [];
 
 		if (savedFoods.length > 0) {
-			setAllFoods(savedFoods);
-			if (foods.length === 0) {
-				setFoods(savedFoods);
-			}
-			setIsFetching(false);
+			setIsFetching(() => {
+				setAllFoods(savedFoods);
+				if (foods.length === 0) {
+					setFoods(savedFoods);
+				}
+			});
 		} else {
 			getFoods();
 		}
@@ -137,37 +137,35 @@ export default function FoodListSheet({
 		}
 	}, [foodSearchStatus, foodSearchData]);
 
-	const [isFetching, setIsFetching] = useState(true);
+	const [isFetching, setIsFetching] = useTransition();
 
-	const getFoods = async (term: string = '', cat: string = '', user = '') => {
-		setIsFetching(true);
-		const res = await getFoodItems(term, cat, user);
+	const getFoods = (term: string = '', cat: string = '', user = '') => {
+		setIsFetching(async () => {
+			const res = await getFoodItems(term, cat, user);
 
-		if (res.success && res.data) {
-			if (!term && !cat && !user) {
-				setAllFoods(res.data as GetFoodItem[]);
-				if (foods.length === 0) {
+			if (res.success && res.data) {
+				if (!term && !cat && !user) {
+					setAllFoods(res.data as GetFoodItem[]);
+					if (foods.length === 0) {
+						setFoods(res.data as GetFoodItem[]);
+					}
+				} else {
 					setFoods(res.data as GetFoodItem[]);
 				}
-			} else {
-				setFoods(res.data as GetFoodItem[]);
+
+				setStorageItem('foodList', res.data);
 			}
-
-			setStorageItem('foodList', res.data);
-		}
-
-		setIsFetching(false);
+		});
 	};
 
-	const getFavs = async () => {
-		setIsFetching(true);
-		const res = await getFavouriteFoods();
+	const getFavs = () => {
+		setIsFetching(async () => {
+			const res = await getFavouriteFoods();
 
-		if (res.success && res.data) {
-			setFoods(res.data as GetFoodItem[]);
-		}
-
-		setIsFetching(false);
+			if (res.success && res.data) {
+				setFoods(res.data as GetFoodItem[]);
+			}
+		});
 	};
 
 	const [search, setSearch] = useState('');

@@ -8,7 +8,7 @@ import { getGroceryListSchema } from '@/lib/validators';
 import { GetGroceryItem, GetGroceryList, GroceryList } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ShoppingCart } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
 import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'sonner';
@@ -30,7 +30,7 @@ export default function UpdateGroceryListForm({
 	const dispatch = useAppDispatch();
 
 	const [groceryItems, setGroceryItems] = useState<GetGroceryItem[]>([]);
-	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [isSubmitting, setIsSubmitting] = useTransition();
 	const [sharedUsers] = useState<string[]>(list.sharedUsers);
 
 	useEffect(() => {
@@ -54,26 +54,25 @@ export default function UpdateGroceryListForm({
 		toast.error(JSON.stringify(errors));
 	};
 
-	const onSubmit: SubmitHandler<z.infer<typeof getGroceryListSchema>> = async (
+	const onSubmit: SubmitHandler<z.infer<typeof getGroceryListSchema>> = (
 		values
 	) => {
-		setIsSubmitting(true);
-		const res = await updateGroceryList(values);
+		setIsSubmitting(async () => {
+			const res = await updateGroceryList(values);
 
-		if (res.success && res.data) {
-			toast.success(res.message);
+			if (res.success && res.data) {
+				toast.success(res.message);
 
-			onSuccess?.(res.data as GroceryList);
+				onSuccess?.(res.data as GroceryList);
 
-			form.reset();
+				form.reset();
 
-			//redux
-			dispatch(updateGroceryListState(JSON.stringify(res.data)));
-		} else {
-			toast.error(res.message);
-		}
-
-		setIsSubmitting(false);
+				//redux
+				dispatch(updateGroceryListState(JSON.stringify(res.data)));
+			} else {
+				toast.error(res.message);
+			}
+		});
 	};
 
 	return (

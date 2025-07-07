@@ -9,7 +9,7 @@ import { useAppDispatch } from '@/lib/hooks';
 import { cn } from '@/lib/utils';
 import { GetGroceryItem } from '@/types';
 import { Check, XIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'sonner';
 import { Badge } from '../ui/badge';
@@ -32,50 +32,46 @@ export default function GroceryItemCard({
 }) {
 	const dispatch = useAppDispatch();
 
-	const [updating, setUpdating] = useState(false);
+	const [updating, setUpdating] = useTransition();
 	const [groceryItem, setGroceryItem] = useState<GetGroceryItem>(item);
 
-	const updateItemStatus = async () => {
-		setUpdating(true);
+	const updateItemStatus = () => {
+		setUpdating(async () => {
+			item.status = 'completed';
+			const res = await updateGroceryItem(item);
 
-		item.status = 'completed';
-		const res = await updateGroceryItem(item);
+			if (res.success && res.data) {
+				toast.success(res.message);
+				setGroceryItem(res.data);
+				onChange?.();
 
-		if (res.success && res.data) {
-			toast.success(res.message);
-			setGroceryItem(res.data);
-			onChange?.();
-
-			//redux
-			dispatch(completeGroceryItemState(JSON.stringify(res.data)));
-		} else {
-			toast.error(res.message);
-		}
-
-		setUpdating(false);
+				//redux
+				dispatch(completeGroceryItemState(JSON.stringify(res.data)));
+			} else {
+				toast.error(res.message);
+			}
+		});
 	};
 
-	const unlinkItemFromList = async () => {
-		setUpdating(true);
+	const unlinkItemFromList = () => {
+		setUpdating(async () => {
+			if (listId) {
+				groceryItem.groceryListId = null;
+			}
 
-		if (listId) {
-			groceryItem.groceryListId = null;
-		}
+			const res = await updateGroceryItem(groceryItem);
 
-		const res = await updateGroceryItem(groceryItem);
+			if (res.success && res.data) {
+				toast.success(res.message);
+				setGroceryItem(res.data);
+				onChange?.();
 
-		if (res.success && res.data) {
-			toast.success(res.message);
-			setGroceryItem(res.data);
-			onChange?.();
-
-			//redux
-			dispatch(deleteGroceryItemState(JSON.stringify(res.data)));
-		} else {
-			toast.error(res.message);
-		}
-
-		setUpdating(false);
+				//redux
+				dispatch(deleteGroceryItemState(JSON.stringify(res.data)));
+			} else {
+				toast.error(res.message);
+			}
+		});
 	};
 
 	return (

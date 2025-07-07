@@ -8,10 +8,9 @@ import {
 import { useAppSelector } from '@/lib/hooks';
 import { GetPreparedDish } from '@/types';
 import { Soup } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { TbBowl } from 'react-icons/tb';
-import { useInView } from 'react-intersection-observer';
 import { ScrollArea } from '../ui/scroll-area';
 import {
 	Sheet,
@@ -30,9 +29,8 @@ export default function DishListSheet({
 	showBalloon?: boolean;
 }) {
 	const [dishes, setDishes] = useState<GetPreparedDish[]>();
-	const [fetchingDishes, setFetchingDishes] = useState(false);
+	const [fetchingDishes, setFetchingDishes] = useTransition();
 	const [sheetOpen, setSheetOpen] = useState(false);
-	const [ref, inView] = useInView();
 
 	const dishStateData = useAppSelector(selectPreparedDishData);
 	const dishStateStatus = useAppSelector(selectPreparedDishStatus);
@@ -47,22 +45,15 @@ export default function DishListSheet({
 		}
 	}, [dishStateData, dishStateStatus]);
 
-	const getDishes = useCallback(async () => {
-		setFetchingDishes(true);
-		const res = await getAllDishes();
+	const getDishes = useCallback(() => {
+		setFetchingDishes(async () => {
+			const res = await getAllDishes();
 
-		if (res.success) {
-			setDishes(res.data as GetPreparedDish[]);
-		}
-
-		setFetchingDishes(false);
+			if (res.success) {
+				setDishes(res.data as GetPreparedDish[]);
+			}
+		});
 	}, [dishes]);
-
-	// useEffect(() => {
-	// 	if (inView) {
-	// 		getDishes();
-	// 	}
-	// }, [inView]);
 
 	useEffect(() => {
 		getDishes();
@@ -84,7 +75,6 @@ export default function DishListSheet({
 					</div>
 				</SheetTrigger>
 				<SheetContent
-					ref={ref}
 					side={'bottom'}
 					className='max-w-[100vw] w-96 px-2'>
 					<SheetTitle className='flex flex-row items-center gap-2'>

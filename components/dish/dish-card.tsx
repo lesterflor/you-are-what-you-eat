@@ -15,7 +15,7 @@ import { cn, formatUnit, totalMacrosReducer } from '@/lib/utils';
 import { GetFoodEntry, GetPreparedDish, GetUser } from '@/types';
 import { Aperture, FilePenLine, ScrollText, Soup, X } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { TbShareOff } from 'react-icons/tb';
 import { toast } from 'sonner';
@@ -56,9 +56,9 @@ export default function DishCard({
 	const dispatch = useAppDispatch();
 	const [prepDish, setPrepDish] = useState<GetPreparedDish>(dish);
 	const [items, setItems] = useState<GetFoodEntry[]>(dish.foodItems);
-	const [isUpdating, setIsUpdating] = useState(false);
-	const [isDeleting, setIsDeleting] = useState(false);
-	const [loggingDish, setLoggingDish] = useState(false);
+	const [isUpdating, setIsUpdating] = useTransition();
+	const [isDeleting, setIsDeleting] = useTransition();
+	const [loggingDish, setLoggingDish] = useTransition();
 	const [isEditMode, setIsEditMode] = useState(false);
 	const [dishProps, setDishProps] = useState<{
 		name: string;
@@ -110,20 +110,19 @@ export default function DishCard({
 
 	const [sharedUsers, setSharedUsers] = useState<string[]>([]);
 
-	const updatePrepDish = async (dish: GetPreparedDish) => {
-		setIsUpdating(true);
-		const res = await updateDish(dish);
+	const updatePrepDish = (dish: GetPreparedDish) => {
+		setIsUpdating(async () => {
+			const res = await updateDish(dish);
 
-		if (res.success) {
-			toast.success(res.message);
-			setPrepDish(res.data as GetPreparedDish);
+			if (res.success) {
+				toast.success(res.message);
+				setPrepDish(res.data as GetPreparedDish);
 
-			dispatchDishState();
-		} else {
-			toast.error(res.message);
-		}
-
-		setIsUpdating(false);
+				dispatchDishState();
+			} else {
+				toast.error(res.message);
+			}
+		});
 	};
 
 	const { data: session } = useSession();
@@ -179,25 +178,24 @@ export default function DishCard({
 									</DialogDescription>
 									<Button
 										disabled={isDeleting}
-										onClick={async () => {
-											setIsDeleting(true);
-											const res = await deleteDish(prepDish.id);
+										onClick={() => {
+											setIsDeleting(async () => {
+												const res = await deleteDish(prepDish.id);
 
-											if (res.success && res.data) {
-												toast.success(res.message);
-												dispatch(
-													deleteDishState({
-														id: res.data.id,
-														name: res.data.name,
-														description: res.data.description ?? '',
-														dishList: '[]'
-													})
-												);
-											} else {
-												toast.error(res.message);
-											}
-
-											setIsDeleting(false);
+												if (res.success && res.data) {
+													toast.success(res.message);
+													dispatch(
+														deleteDishState({
+															id: res.data.id,
+															name: res.data.name,
+															description: res.data.description ?? '',
+															dishList: '[]'
+														})
+													);
+												} else {
+													toast.error(res.message);
+												}
+											});
 										}}>
 										{isDeleting ? (
 											<ImSpinner2 className='animate-spin' />
@@ -314,63 +312,59 @@ export default function DishCard({
 						<DishFoodItem
 							noDeleteButton={readOnly}
 							readOnly={readOnly}
-							onDelete={async (item) => {
-								setIsUpdating(true);
+							onDelete={(item) => {
+								setIsUpdating(async () => {
+									const upd = { ...dish };
 
-								const upd = { ...dish };
+									const newList = upd.foodItems.filter(
+										(dItem) =>
+											dItem.id !== item.id || dItem.eatenAt !== item.eatenAt
+									);
 
-								const newList = upd.foodItems.filter(
-									(dItem) =>
-										dItem.id !== item.id || dItem.eatenAt !== item.eatenAt
-								);
+									upd.foodItems = newList;
 
-								upd.foodItems = newList;
+									setPrepDish(upd);
+									setItems(upd.foodItems);
 
-								setPrepDish(upd);
-								setItems(upd.foodItems);
+									const res = await updateDish(upd);
 
-								const res = await updateDish(upd);
+									if (res.success) {
+										toast.success(res.message);
+										setPrepDish(res.data as GetPreparedDish);
 
-								if (res.success) {
-									toast.success(res.message);
-									setPrepDish(res.data as GetPreparedDish);
-
-									dispatchDishState();
-								} else {
-									toast.error(res.message);
-								}
-
-								setIsUpdating(false);
+										dispatchDishState();
+									} else {
+										toast.error(res.message);
+									}
+								});
 							}}
-							onEdit={async (item) => {
-								setIsUpdating(true);
+							onEdit={(item) => {
+								setIsUpdating(async () => {
+									const upd = { ...dish };
 
-								const upd = { ...dish };
+									const editItem = upd.foodItems.find(
+										(dItem) =>
+											dItem.id === item.id && dItem.eatenAt === item.eatenAt
+									);
 
-								const editItem = upd.foodItems.find(
-									(dItem) =>
-										dItem.id === item.id && dItem.eatenAt === item.eatenAt
-								);
+									if (editItem) {
+										Object.assign(editItem, item);
+									}
 
-								if (editItem) {
-									Object.assign(editItem, item);
-								}
+									setPrepDish(upd);
+									setItems(upd.foodItems);
 
-								setPrepDish(upd);
-								setItems(upd.foodItems);
+									const res = await updateDish(upd);
 
-								const res = await updateDish(upd);
+									if (res.success) {
+										toast.success(res.message);
+										setPrepDish(res.data as GetPreparedDish);
 
-								if (res.success) {
-									toast.success(res.message);
-									setPrepDish(res.data as GetPreparedDish);
-
-									dispatchDishState();
-								} else {
-									toast.error(res.message);
-								}
-
-								setIsUpdating(false);
+										dispatchDishState();
+									} else {
+										toast.error(res.message);
+									}
+								});
 							}}
 							key={`${item.id}-${item.eatenAt}-${indx}`}
 							indx={indx}
@@ -451,25 +445,25 @@ export default function DishCard({
 						{isEditMode && (
 							<Button
 								disabled={isUpdating}
-								onClick={async () => {
-									setIsUpdating(true);
-									const upd = { ...prepDish };
-									upd.name = dishProps.name;
-									upd.description = dishProps.description;
+								onClick={() => {
+									setIsUpdating(async () => {
+										const upd = { ...prepDish };
+										upd.name = dishProps.name;
+										upd.description = dishProps.description;
 
-									const res = await updateDish(upd);
+										const res = await updateDish(upd);
 
-									if (res.success) {
-										toast.success(res.message);
+										if (res.success) {
+											toast.success(res.message);
 
-										setPrepDish(res.data as GetPreparedDish);
+											setPrepDish(res.data as GetPreparedDish);
 
-										dispatchDishState();
-									} else {
-										toast.error(res.message);
-									}
-									setIsEditMode(false);
-									setIsUpdating(false);
+											dispatchDishState();
+										} else {
+											toast.error(res.message);
+										}
+										setIsEditMode(false);
+									});
 								}}>
 								{isUpdating ? (
 									<ImSpinner2 className='animate-spin' />
@@ -483,28 +477,27 @@ export default function DishCard({
 
 					<Button
 						disabled={loggingDish}
-						onClick={async () => {
-							setLoggingDish(true);
-							const res = await logDishItems(prepDish);
+						onClick={() => {
+							setLoggingDish(async () => {
+								const res = await logDishItems(prepDish);
 
-							if (res.success) {
-								toast.success(res.message);
+								if (res.success) {
+									toast.success(res.message);
 
-								dispatch(
-									logDishState({
-										id: prepDish.id,
-										name: prepDish.name,
-										description: prepDish.description,
-										dishList: JSON.stringify(res.data)
-									})
-								);
+									dispatch(
+										logDishState({
+											id: prepDish.id,
+											name: prepDish.name,
+											description: prepDish.description,
+											dishList: JSON.stringify(res.data)
+										})
+									);
 
-								onLogged?.();
-							} else {
-								toast.error(res.message);
-							}
-
-							setLoggingDish(false);
+									onLogged?.();
+								} else {
+									toast.error(res.message);
+								}
+							});
 						}}>
 						{loggingDish ? (
 							<ImSpinner2 className='animate-spin' />

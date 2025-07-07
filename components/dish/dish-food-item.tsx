@@ -5,7 +5,7 @@ import { useAppDispatch } from '@/lib/hooks';
 import { cn, formatUnit } from '@/lib/utils';
 import { GetFoodEntry } from '@/types';
 import { FilePenLine, RefreshCwOff, Trash2, X } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { RxUpdate } from 'react-icons/rx';
 import FoodCategoryIconMapper from '../food-items/food-category-icon-mapper';
@@ -43,8 +43,8 @@ export default function DishFoodItem({
 
 	const [isEditing, setIsEditing] = useState(false);
 	const [foodItem, setFoodItem] = useState<GetFoodEntry>(item);
-	const [isDeleting, setIsDeleting] = useState(false);
-	const [isUpdating, setIsUpdating] = useState(false);
+	const [isDeleting, setIsDeleting] = useTransition();
+	const [isUpdating, setIsUpdating] = useTransition();
 	const [dialogOpen, setDialogOpen] = useState(false);
 
 	const [fadeClass, setFadeClass] = useState(false);
@@ -165,10 +165,11 @@ export default function DishFoodItem({
 									<div className='flex flex-row items-center justify-center'>
 										<Button
 											disabled={isDeleting}
-											onClick={async () => {
-												setIsDeleting(true);
-												onDelete?.(foodItem);
-												setIsDeleting(false);
+											onClick={() => {
+												setIsDeleting(async () => {
+													onDelete?.(foodItem);
+												});
+
 												setDialogOpen(false);
 											}}>
 											{isDeleting ? (
@@ -263,12 +264,11 @@ export default function DishFoodItem({
 							</Button>
 							<Button
 								onClick={() => {
-									setIsUpdating(true);
+									setIsUpdating(() => {
+										// edit the cals and macros on edit to update dish list
+										onEdit?.(foodItem);
+									});
 
-									// edit the cals and macros on edit to update dish list
-									onEdit?.(foodItem);
-
-									setIsUpdating(false);
 									setIsEditing(false);
 								}}>
 								<RxUpdate

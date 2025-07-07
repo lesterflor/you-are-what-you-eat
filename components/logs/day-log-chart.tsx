@@ -5,7 +5,7 @@ import { cn, formatUnit } from '@/lib/utils';
 import { DayLogDataType } from '@/types';
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { DateRange } from 'react-day-picker';
 import { ImSpinner2 } from 'react-icons/im';
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
@@ -27,43 +27,42 @@ export default function DayLogChart() {
 		to: new Date(Date.now())
 	});
 
-	const [isFetching, setIsFetching] = useState(false);
+	const [isFetching, setIsFetching] = useTransition();
 	const [datePickerOpen, setDatePickerOpen] = useState(false);
 
-	const getLogs = async () => {
-		if (!date || !date.from || !date.to) {
-			return;
-		}
+	const getLogs = () => {
+		setIsFetching(async () => {
+			if (!date || !date.from || !date.to) {
+				return;
+			}
 
-		setIsFetching(true);
-		const res = await getUserLogsInRange(date.from, date.to);
+			const res = await getUserLogsInRange(date.from, date.to);
 
-		if (res.success && res.data) {
-			const mapData: DayLogDataType[] = res.data.map((log) => ({
-				day: format(log.createdAt, 'eee P'),
-				Expended:
-					log.knownCaloriesBurned && log.knownCaloriesBurned.length > 0
-						? log.knownCaloriesBurned[0].calories +
-						  log.user.BaseMetabolicRate[0].bmr
-						: log.user.BaseMetabolicRate[0].bmr,
-				Calories: log.foodItems.reduce((acc, curr) => acc + curr.calories, 0),
-				carb: log.foodItems.reduce((acc, curr) => acc + curr.carbGrams, 0),
-				protein: log.foodItems.reduce(
-					(acc, curr) => acc + curr.proteinGrams,
-					0
-				),
-				fat: log.foodItems.reduce((acc, curr) => acc + curr.fatGrams, 0),
-				totalGrams: log.foodItems.reduce(
-					(acc, curr) =>
-						acc + curr.fatGrams + curr.carbGrams + curr.proteinGrams,
-					0
-				)
-			}));
+			if (res.success && res.data) {
+				const mapData: DayLogDataType[] = res.data.map((log) => ({
+					day: format(log.createdAt, 'eee P'),
+					Expended:
+						log.knownCaloriesBurned && log.knownCaloriesBurned.length > 0
+							? log.knownCaloriesBurned[0].calories +
+							  log.user.BaseMetabolicRate[0].bmr
+							: log.user.BaseMetabolicRate[0].bmr,
+					Calories: log.foodItems.reduce((acc, curr) => acc + curr.calories, 0),
+					carb: log.foodItems.reduce((acc, curr) => acc + curr.carbGrams, 0),
+					protein: log.foodItems.reduce(
+						(acc, curr) => acc + curr.proteinGrams,
+						0
+					),
+					fat: log.foodItems.reduce((acc, curr) => acc + curr.fatGrams, 0),
+					totalGrams: log.foodItems.reduce(
+						(acc, curr) =>
+							acc + curr.fatGrams + curr.carbGrams + curr.proteinGrams,
+						0
+					)
+				}));
 
-			setLogs(mapData);
-		}
-
-		setIsFetching(false);
+				setLogs(mapData);
+			}
+		});
 	};
 
 	useEffect(() => {

@@ -6,7 +6,7 @@ import { useAppDispatch } from '@/lib/hooks';
 import { GetGroceryList } from '@/types';
 import { format } from 'date-fns';
 import { Check, PenLineIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
@@ -41,7 +41,7 @@ export default function GroceryListItemCard({
 }) {
 	const dispatch = useAppDispatch();
 
-	const [isUpdating, setIsUpdating] = useState(false);
+	const [isUpdating, setIsUpdating] = useTransition();
 	const [grList, setGrList] = useState<GetGroceryList>(list);
 	const [listComplete, setListComplete] = useState(false);
 	const [dialogOpen, setDialogOpen] = useState(false);
@@ -49,30 +49,28 @@ export default function GroceryListItemCard({
 
 	useEffect(() => {}, [editSheetOpen]);
 
-	const updateListStatus = async () => {
-		setIsUpdating(true);
+	const updateListStatus = () => {
+		setIsUpdating(async () => {
+			grList.status = 'completed';
+			const res = await updateGroceryList(grList);
 
-		grList.status = 'completed';
-		const res = await updateGroceryList(grList);
+			if (res.success && res.data) {
+				setGrList(res.data);
 
-		if (res.success && res.data) {
-			setGrList(res.data);
+				toast.success(res.message);
 
-			toast.success(res.message);
+				setListComplete(true);
 
-			setListComplete(true);
+				onComplete?.();
 
-			onComplete?.();
+				setDialogOpen(false);
 
-			setDialogOpen(false);
-
-			// redux
-			dispatch(completeGroceryListState(JSON.stringify(res.data)));
-		} else {
-			toast.error(res.message);
-		}
-
-		setIsUpdating(false);
+				// redux
+				dispatch(completeGroceryListState(JSON.stringify(res.data)));
+			} else {
+				toast.error(res.message);
+			}
+		});
 	};
 
 	return (

@@ -15,7 +15,7 @@ import {
 	totalMacrosReducer
 } from '@/lib/utils';
 import { GetFoodEntry, GetLog, LogComparisonType, PieItemType } from '@/types';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { Label, Pie, PieChart } from 'recharts';
 import LogMacrosSkeleton from '../skeletons/log-macros-skeleton';
@@ -40,7 +40,7 @@ export default function LogMacrosSummary({
 	useSkeleton?: boolean;
 	showPie?: boolean;
 }) {
-	const [isFetching, setIsFetching] = useState(false);
+	const [isFetching, setIsFetching] = useTransition();
 
 	const [revealPie, setRevealPie] = useState(false);
 	const [pieData, setPieData] = useState<PieItemType[]>([]);
@@ -87,33 +87,33 @@ export default function LogMacrosSummary({
 		}, 2000);
 	}, [pieData]);
 
-	const getLog = async () => {
-		setIsFetching(true);
-		const res = await createDailyLog(getTodayMode);
+	const getLog = () => {
+		setIsFetching(async () => {
+			const res = await createDailyLog(getTodayMode);
 
-		if (res?.success && res.data) {
-			const { foodItems, comparisons } = res.data;
-			const items = foodItems as GetFoodEntry[];
+			if (res?.success && res.data) {
+				const { foodItems, comparisons } = res.data;
+				const items = foodItems as GetFoodEntry[];
 
-			const { calories, carbs, protein, fat } = totalMacrosReducer(items);
+				const { calories, carbs, protein, fat } = totalMacrosReducer(items);
 
-			setCurrentData({
-				calories,
-				carbs,
-				protein,
-				fat,
-				totalGrams: carbs + protein + fat
-			});
+				setCurrentData({
+					calories,
+					carbs,
+					protein,
+					fat,
+					totalGrams: carbs + protein + fat
+				});
 
-			setPieData([
-				{ name: 'Carbs', value: carbs, fill: 'var(--color-carb)' },
-				{ name: 'Protein', value: protein, fill: 'var(--color-protein)' },
-				{ name: 'Fat', value: fat, fill: 'var(--color-fat)' }
-			]);
+				setPieData([
+					{ name: 'Carbs', value: carbs, fill: 'var(--color-carb)' },
+					{ name: 'Protein', value: protein, fill: 'var(--color-protein)' },
+					{ name: 'Fat', value: fat, fill: 'var(--color-fat)' }
+				]);
 
-			setComparisonData(comparisons);
-		}
-		setIsFetching(false);
+				setComparisonData(comparisons);
+			}
+		});
 	};
 
 	useEffect(() => {

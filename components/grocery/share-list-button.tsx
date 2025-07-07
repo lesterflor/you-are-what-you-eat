@@ -5,7 +5,7 @@ import { shareGroceryListState } from '@/lib/features/grocery/grocerySlice';
 import { useAppDispatch } from '@/lib/hooks';
 import { GetUser } from '@/types';
 import { Share2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { TbShare } from 'react-icons/tb';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
@@ -30,18 +30,17 @@ export default function ShareListButton({
 	const dispatch = useAppDispatch();
 	const [users, setUsers] = useState<GetUser[]>([]);
 	const [selectedUser, setSelectedUser] = useState('');
-	const [isFetching, setIsFetching] = useState(true);
+	const [isFetching, setIsFetching] = useTransition();
 	const [isUserAction, setIsUserAction] = useState(false);
 
-	const getSharedUsers = async () => {
-		setIsFetching(true);
-		const res = await getShareableUsers();
+	const getSharedUsers = () => {
+		setIsFetching(async () => {
+			const res = await getShareableUsers();
 
-		if (res.success && res.data) {
-			setUsers(res.data as GetUser[]);
-		}
-
-		setIsFetching(false);
+			if (res.success && res.data) {
+				setUsers(res.data as GetUser[]);
+			}
+		});
 	};
 
 	const findSelectedUser = (id: string) => {
@@ -52,19 +51,19 @@ export default function ShareListButton({
 
 	useEffect(() => {
 		setIsUserAction(false);
-		setIsFetching(true);
-		if (value && value.length > 0) {
-			// extract passed sharedUsers first item
-			const clean = value.filter((cln) => cln !== '');
-			const [first] = clean;
+		setIsFetching(() => {
+			if (value && value.length > 0) {
+				// extract passed sharedUsers first item
+				const clean = value.filter((cln) => cln !== '');
+				const [first] = clean;
 
-			const sharedFound = users.filter((usr) => usr.id === first);
+				const sharedFound = users.filter((usr) => usr.id === first);
 
-			if (sharedFound.length > 0) {
-				setSelectedUser(first);
+				if (sharedFound.length > 0) {
+					setSelectedUser(first);
+				}
 			}
-		}
-		setIsFetching(false);
+		});
 	}, [users]);
 
 	useEffect(() => {

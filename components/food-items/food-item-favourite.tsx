@@ -5,14 +5,14 @@ import {
 	checkFoodItemBookmarked
 } from '@/actions/food-actions';
 import { GetFoodItem } from '@/types';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { BsBookmarkPlus, BsBookmarkStarFill } from 'react-icons/bs';
 import { ImSpinner2 } from 'react-icons/im';
 import { useInView } from 'react-intersection-observer';
 
 export default function FoodItemFavourite({ item }: { item: GetFoodItem }) {
 	const [isBookmarked, setIsBookmarked] = useState(false);
-	const [isBookmarking, setIsBookmarking] = useState(false);
+	const [isBookmarking, setIsBookmarking] = useTransition();
 	const [ref, isInView] = useInView();
 
 	const checkBookmark = async () => {
@@ -23,15 +23,14 @@ export default function FoodItemFavourite({ item }: { item: GetFoodItem }) {
 		}
 	};
 
-	const toggleBookmark = async () => {
-		setIsBookmarking(true);
-		const res = await bookmarkFoodItem(item.id);
+	const toggleBookmark = () => {
+		setIsBookmarking(async () => {
+			const res = await bookmarkFoodItem(item.id);
 
-		if (res.success) {
-			setIsBookmarked(!!res.bookmarked);
-		}
-
-		setIsBookmarking(false);
+			if (res.success) {
+				setIsBookmarked(!!res.bookmarked);
+			}
+		});
 	};
 
 	useEffect(() => {

@@ -8,7 +8,7 @@ import {
 import { GetPreparedDish, GetPreparedDishImage, GetUser } from '@/types';
 import { format } from 'date-fns';
 import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { MdDelete } from 'react-icons/md';
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
@@ -52,17 +52,16 @@ export default function DishImageGallery({ dish }: { dish: GetPreparedDish }) {
 	const [images, setImages] = useState<GetPreparedDishImage[] | undefined>(
 		dish.preparedDishImages
 	);
-	const [isFetching, setIsFetching] = useState(false);
+	const [isFetching, setIsFetching] = useTransition();
 
-	const fetchDish = async () => {
-		setIsFetching(true);
-		const res = await getDishById(dish.id);
+	const fetchDish = () => {
+		setIsFetching(async () => {
+			const res = await getDishById(dish.id);
 
-		if (res.success && res.data) {
-			setImages(res.data.preparedDishImages as GetPreparedDishImage[]);
-		}
-
-		setIsFetching(false);
+			if (res.success && res.data) {
+				setImages(res.data.preparedDishImages as GetPreparedDishImage[]);
+			}
+		});
 	};
 
 	useEffect(() => {

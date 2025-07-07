@@ -3,7 +3,7 @@
 import { createDailyLog } from '@/actions/log-actions';
 import { formatUnit } from '@/lib/utils';
 import { GetFoodEntry } from '@/types';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 import { BiSolidFoodMenu } from 'react-icons/bi';
 import { ImSpinner2 } from 'react-icons/im';
 import { Card, CardContent } from '../ui/card';
@@ -15,43 +15,43 @@ export default function LogMacroItemSummary({
 	macro: 'protein' | 'carbs' | 'fat' | 'calories';
 }) {
 	const [foodEntries, setFoodEntries] = useState<GetFoodEntry[]>([]);
-	const [isFetching, setIsFetching] = useState(false);
+	const [isFetching, setIsFetching] = useTransition();
 
-	const fetchMacros = useCallback(async () => {
-		setIsFetching(true);
-		const res = await createDailyLog();
+	const fetchMacros = useCallback(() => {
+		setIsFetching(async () => {
+			const res = await createDailyLog();
 
-		if (res?.success && res.data) {
-			let sortedFoodList;
+			if (res?.success && res.data) {
+				let sortedFoodList;
 
-			switch (macro) {
-				case 'calories':
-					sortedFoodList = [...res.data.foodItems].sort(
-						(a, b) => b.calories * b.numServings - a.calories * a.numServings
-					);
-					break;
-				case 'carbs':
-					sortedFoodList = [...res.data.foodItems].sort(
-						(a, b) => b.carbGrams * b.numServings - a.carbGrams * a.numServings
-					);
-					break;
-				case 'protein':
-					sortedFoodList = [...res.data.foodItems].sort(
-						(a, b) =>
-							b.proteinGrams * b.numServings - a.proteinGrams * a.numServings
-					);
-					break;
-				case 'fat':
-					sortedFoodList = [...res.data.foodItems].sort(
-						(a, b) => b.fatGrams * b.numServings - a.fatGrams * a.numServings
-					);
-					break;
+				switch (macro) {
+					case 'calories':
+						sortedFoodList = [...res.data.foodItems].sort(
+							(a, b) => b.calories * b.numServings - a.calories * a.numServings
+						);
+						break;
+					case 'carbs':
+						sortedFoodList = [...res.data.foodItems].sort(
+							(a, b) =>
+								b.carbGrams * b.numServings - a.carbGrams * a.numServings
+						);
+						break;
+					case 'protein':
+						sortedFoodList = [...res.data.foodItems].sort(
+							(a, b) =>
+								b.proteinGrams * b.numServings - a.proteinGrams * a.numServings
+						);
+						break;
+					case 'fat':
+						sortedFoodList = [...res.data.foodItems].sort(
+							(a, b) => b.fatGrams * b.numServings - a.fatGrams * a.numServings
+						);
+						break;
+				}
+
+				setFoodEntries(sortedFoodList as GetFoodEntry[]);
 			}
-
-			setFoodEntries(sortedFoodList as GetFoodEntry[]);
-		}
-
-		setIsFetching(false);
+		});
 	}, [macro]);
 
 	useEffect(() => {

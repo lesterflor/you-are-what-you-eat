@@ -2,10 +2,9 @@
 
 import { getFavouriteFoods } from '@/actions/food-actions';
 import { GetFoodItem } from '@/types';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 import { BsBookmarkStarFill } from 'react-icons/bs';
 import { ImSpinner2 } from 'react-icons/im';
-import { useInView } from 'react-intersection-observer';
 import { ScrollArea } from '../ui/scroll-area';
 import {
 	Sheet,
@@ -24,25 +23,17 @@ export default function FoodFavouriteListSheet({
 	showBalloon?: boolean;
 }) {
 	const [favs, setFavs] = useState<GetFoodItem[]>();
-	const [isFetching, setIsFetching] = useState(false);
-	const [ref, inView] = useInView();
+	const [isFetching, setIsFetching] = useTransition();
 
-	const fetchFavs = useCallback(async () => {
-		setIsFetching(true);
-		const res = await getFavouriteFoods();
+	const fetchFavs = useCallback(() => {
+		setIsFetching(async () => {
+			const res = await getFavouriteFoods();
 
-		if (res.success) {
-			setFavs(res.data as GetFoodItem[]);
-		}
-
-		setIsFetching(false);
+			if (res.success) {
+				setFavs(res.data as GetFoodItem[]);
+			}
+		});
 	}, [favs]);
-
-	// useEffect(() => {
-	// 	if (inView) {
-	// 		fetchFavs();
-	// 	}
-	// }, [inView]);
 
 	useEffect(() => {
 		fetchFavs();
@@ -63,7 +54,6 @@ export default function FoodFavouriteListSheet({
 				</SheetTrigger>
 
 				<SheetContent
-					ref={ref}
 					side={'top'}
 					className='max-w-[100vw] w-full  px-2'>
 					<SheetTitle className='flex flex-row items-center gap-2'>

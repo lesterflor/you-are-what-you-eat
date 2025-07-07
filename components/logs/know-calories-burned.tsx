@@ -7,7 +7,7 @@ import { useCurrentSession } from '@/hooks/use-current-session';
 import { expendedCaloriesUpdated } from '@/lib/features/log/logFoodSlice';
 import { useAppDispatch } from '@/lib/hooks';
 import { Plus } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
@@ -17,22 +17,21 @@ export default function KnowCaloriesBurned() {
 	const dispatch = useAppDispatch();
 
 	const [caloriesBurned, setCaloriesBurned] = useState(0);
-	const [submitting, setSubmitting] = useState(false);
-	const [fetching, setFetching] = useState(true);
+	const [submitting, setSubmitting] = useTransition();
+	const [fetching, setFetching] = useTransition();
 	const [inputVal, setInputVal] = useState(0);
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	const { status } = useCurrentSession();
 
-	const fetchKDC = async () => {
-		setFetching(true);
-		const res = await getKnownCaloriesBurned();
+	const fetchKDC = () => {
+		setFetching(async () => {
+			const res = await getKnownCaloriesBurned();
 
-		if (res?.success && res.data) {
-			setCaloriesBurned(res.data.calories);
-		}
-
-		setFetching(false);
+			if (res?.success && res.data) {
+				setCaloriesBurned(res.data.calories);
+			}
+		});
 	};
 
 	useEffect(() => {
@@ -70,26 +69,25 @@ export default function KnowCaloriesBurned() {
 				/>
 				<Button
 					disabled={submitting}
-					onClick={async () => {
-						setSubmitting(true);
-						const res = await addKnownCaloriesBurned(inputVal);
+					onClick={() => {
+						setSubmitting(async () => {
+							const res = await addKnownCaloriesBurned(inputVal);
 
-						if (res.success && res.data) {
-							toast.success(res.message);
+							if (res.success && res.data) {
+								toast.success(res.message);
 
-							setCaloriesBurned(res.data.calories);
+								setCaloriesBurned(res.data.calories);
 
-							// redux
-							dispatch(expendedCaloriesUpdated(inputVal));
+								// redux
+								dispatch(expendedCaloriesUpdated(inputVal));
 
-							if (inputRef.current) {
-								inputRef.current.value = '';
+								if (inputRef.current) {
+									inputRef.current.value = '';
+								}
+							} else {
+								toast.error(res.message);
 							}
-						} else {
-							toast.error(res.message);
-						}
-
-						setSubmitting(false);
+						});
 					}}>
 					{submitting ? (
 						<ImSpinner2 className='w-4 h-4 animate-spin' />

@@ -14,7 +14,7 @@ import { cn, formatUnit, getMacroPercOfCals } from '@/lib/utils';
 import { FoodEntry, GetFoodItem, GetUser } from '@/types';
 import { Aperture, FilePlus, Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { GiSpoon } from 'react-icons/gi';
 import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'sonner';
@@ -69,7 +69,7 @@ export default function FoodItemCard({
 
 	const { data: session } = useSession();
 	const currentUser = session?.user as GetUser;
-	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [isSubmitting, setIsSubmitting] = useTransition();
 	const [showDetails, setShowDetails] = useState(false);
 	const [textSize, setTextSize] = useState('text-xl');
 	const [photoDlgOpen, setPhotoDlgOpen] = useState(false);
@@ -90,39 +90,38 @@ export default function FoodItemCard({
 
 	const [portionAmount, setPortionAmount] = useState(1);
 
-	const sendFoodItems = async () => {
-		setIsSubmitting(true);
-		const getLatestLog = await createDailyLog();
+	const sendFoodItems = () => {
+		setIsSubmitting(async () => {
+			const getLatestLog = await createDailyLog();
 
-		const currentFoodItems = getLatestLog?.data?.foodItems || [];
+			const currentFoodItems = getLatestLog?.data?.foodItems || [];
 
-		const cleanArr = currentFoodItems.map((item) => ({
-			...item,
-			description: item.description || '',
-			image: item.image || ''
-		}));
+			const cleanArr = currentFoodItems.map((item) => ({
+				...item,
+				description: item.description || '',
+				image: item.image || ''
+			}));
 
-		const foodItems = [...cleanArr];
-		foodItems.push(logFoodItem);
-		const res = await updateLog(foodItems);
+			const foodItems = [...cleanArr];
+			foodItems.push(logFoodItem);
+			const res = await updateLog(foodItems);
 
-		if (res.success) {
-			toast.success('Added to your daily log!');
+			if (res.success) {
+				toast.success('Added to your daily log!');
 
-			// redux
-			dispatch(
-				added({
-					name: logFoodItem.name,
-					servings: logFoodItem.numServings
-				})
-			);
+				// redux
+				dispatch(
+					added({
+						name: logFoodItem.name,
+						servings: logFoodItem.numServings
+					})
+				);
 
-			setShowDetails(false);
-		} else {
-			toast.error('Oops, Something went wrong with adding the item.');
-		}
-
-		setIsSubmitting(false);
+				setShowDetails(false);
+			} else {
+				toast.error('Oops, Something went wrong with adding the item.');
+			}
+		});
 	};
 
 	const [fadeClass, setFadeClass] = useState(false);

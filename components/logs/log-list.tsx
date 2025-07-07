@@ -23,7 +23,7 @@ import {
 	ThumbsDown,
 	ThumbsUp
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { BiSolidFoodMenu } from 'react-icons/bi';
 import { BsBookmarkStarFill } from 'react-icons/bs';
 import { GiEmptyMetalBucket } from 'react-icons/gi';
@@ -70,7 +70,7 @@ export default function FoodLogList({
 	const [dishList, setDishList] = useState<
 		{ add: boolean; item: GetFoodEntry }[]
 	>([]);
-	const [fetchingLog, setFetchingLog] = useState(true);
+	const [fetchingLog, setFetchingLog] = useTransition();
 
 	const preparedDishData = useAppSelector(selectPreparedDishData);
 	const preparedDishStatus = useAppSelector(selectPreparedDishStatus);
@@ -93,29 +93,30 @@ export default function FoodLogList({
 	const logData = useAppSelector(selectData);
 
 	const getLog = async () => {
-		setFetchingLog(true);
-		const res = await createDailyLog();
+		setFetchingLog(async () => {
+			const res = await createDailyLog();
 
-		if (res?.success && res.data) {
-			setLog(res.data as GetLog);
+			if (res?.success && res.data) {
+				setLog(res.data as GetLog);
 
-			setLogList(res.data.foodItems as GetFoodEntry[]);
-			const bmrArr = res.data.user.BaseMetabolicRate as BaseMetabolicRateType[];
+				setLogList(res.data.foodItems as GetFoodEntry[]);
+				const bmrArr = res.data.user
+					.BaseMetabolicRate as BaseMetabolicRateType[];
 
-			setBmr(bmrArr[0]);
+				setBmr(bmrArr[0]);
 
-			setTotalCals(res.data.totalCalories);
+				setTotalCals(res.data.totalCalories);
 
-			setRemainingCals(res.data.remainingCalories);
+				setRemainingCals(res.data.remainingCalories);
 
-			if (
-				res.data.knownCaloriesBurned &&
-				res.data.knownCaloriesBurned.length > 0
-			) {
-				setCalsBurned(res.data.knownCaloriesBurned[0].calories);
+				if (
+					res.data.knownCaloriesBurned &&
+					res.data.knownCaloriesBurned.length > 0
+				) {
+					setCalsBurned(res.data.knownCaloriesBurned[0].calories);
+				}
 			}
-		}
-		setFetchingLog(false);
+		});
 	};
 
 	const fetchKDC = async () => {

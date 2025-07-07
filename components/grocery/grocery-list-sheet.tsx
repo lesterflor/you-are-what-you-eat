@@ -5,7 +5,7 @@ import { selectGroceryStatus } from '@/lib/features/grocery/grocerySlice';
 import { useAppSelector } from '@/lib/hooks';
 import { GetGroceryList } from '@/types';
 import { Plus, ShoppingCart } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { MdOutlineLocalGroceryStore } from 'react-icons/md';
 import { Button } from '../ui/button';
@@ -23,19 +23,18 @@ import GroceryListItemCard from './grocery-list-item-card';
 export default function GrocerListSheet() {
 	const [sheetOpen, setSheetOpen] = useState(false);
 	const [lists, setLists] = useState<GetGroceryList[]>([]);
-	const [isFetching, setIsFetching] = useState(true);
+	const [isFetching, setIsFetching] = useTransition();
 
 	const groceryListStateStatus = useAppSelector(selectGroceryStatus);
 
-	const fetchLists = async () => {
-		setIsFetching(true);
-		const res = await getGroceryListsByUser(true);
+	const fetchLists = () => {
+		setIsFetching(async () => {
+			const res = await getGroceryListsByUser(true);
 
-		if (res.success && res.data) {
-			setLists(res.data as GetGroceryList[]);
-		}
-
-		setIsFetching(false);
+			if (res.success && res.data) {
+				setLists(res.data as GetGroceryList[]);
+			}
+		});
 	};
 
 	useEffect(() => {

@@ -11,7 +11,7 @@ import { formatUnit, totalMacrosReducer } from '@/lib/utils';
 import { GetFoodEntry, GetLog, LogRemainderDataType } from '@/types';
 import { format } from 'date-fns';
 import { ArrowDown, ArrowUp, Info } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 import { DateRange } from 'react-day-picker';
 import { ImSpinner2 } from 'react-icons/im';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
@@ -34,7 +34,7 @@ export default function LogRemainderBadge() {
 	const [logRemainder, setLogRemainder] = useState<LogRemainderDataType>();
 	const logStatus = useAppSelector(selectStatus);
 	const [popOpen, setPopOpen] = useState(false);
-	const [isFetching, setIsFetching] = useState(false);
+	const [isFetching, setIsFetching] = useTransition();
 	const [remainders, setRemainders] = useState<GetLog[]>();
 	const [remainder, setRemainder] = useState(0);
 	const [remainderStr, setRemainderStr] = useState('');
@@ -61,14 +61,14 @@ export default function LogRemainderBadge() {
 		}
 	}, [range]);
 
-	const getLogCalsRemaining = async () => {
-		setIsFetching(true);
-		const res = await getLogRemainder();
+	const getLogCalsRemaining = () => {
+		setIsFetching(async () => {
+			const res = await getLogRemainder();
 
-		if (res.success && res.data) {
-			setLogRemainder(res.data);
-		}
-		setIsFetching(false);
+			if (res.success && res.data) {
+				setLogRemainder(res.data);
+			}
+		});
 	};
 
 	useEffect(() => {

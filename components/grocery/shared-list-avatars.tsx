@@ -1,27 +1,26 @@
 'use client';
 
 import { getUserAvatars } from '@/actions/user-actions';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
 export default function SharedListAvatars({ userIds }: { userIds: string[] }) {
-	const [isFetching, setIsFetching] = useState(false);
+	const [isFetching, setIsFetching] = useTransition();
 
 	const [users, setUsers] = useState<
 		{ id: string; name: string; image: string }[]
 	>([]);
 
-	const getAvatars = async () => {
-		setIsFetching(true);
+	const getAvatars = () => {
+		setIsFetching(async () => {
+			const res = await getUserAvatars(userIds);
 
-		const res = await getUserAvatars(userIds);
-
-		if (res.success && res.data) {
-			setUsers(res.data as { id: string; name: string; image: string }[]);
-		}
-		setIsFetching(false);
+			if (res.success && res.data) {
+				setUsers(res.data as { id: string; name: string; image: string }[]);
+			}
+		});
 	};
 
 	useEffect(() => {

@@ -11,7 +11,7 @@ import {
 } from '@/lib/features/log/logFoodSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { ChevronLeft, ChevronRight, Flame, Plus } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useOptimistic, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'sonner';
 import IncrementButton from '../increment-button';
@@ -30,22 +30,27 @@ export default function ExpendedCaloriesButton({
 	const logStatus = useAppSelector(selectStatus);
 	const logData = useAppSelector(selectData);
 
-	//const [log, setLog] = useState<GetLog>();
+	const [isPending, startPendingTransition] = useTransition();
+
 	const [caloriesBurned, setCaloriesBurned] = useState(0);
-	const [submitting, setSubmitting] = useState(false);
-	const [fetching, setFetching] = useState(true);
+	const [optimisticCalories, setOptimisticCalories] = useOptimistic(
+		caloriesBurned,
+		(currentCalories, optimisticValue: number) =>
+			currentCalories + optimisticValue
+	);
+
+	const [fetching, startFetchingTransition] = useTransition();
 	const [inputVal, setInputVal] = useState(10);
 	const [popoverOpen, setPopoverOpen] = useState(false);
 
 	const getKnownCalories = async () => {
-		setFetching(true);
-		const res = await getKnownCaloriesBurned();
+		startFetchingTransition(async () => {
+			const res = await getKnownCaloriesBurned();
 
-		if (res?.success && res.data) {
-			setCaloriesBurned(res.data.calories);
-		}
-
-		setFetching(false);
+			if (res?.success && res.data) {
+				setCaloriesBurned(res.data.calories);
+			}
+		});
 	};
 
 	useEffect(() => {
@@ -84,7 +89,11 @@ export default function ExpendedCaloriesButton({
 					Expended Calories
 				</div>
 				<div className='text-3xl font-semibold text-amber-600 h-6 flex flex-col items-center justify-center'>
-					{fetching ? <ImSpinner2 className='animate-spin' /> : caloriesBurned}
+					{fetching ? (
+						<ImSpinner2 className='animate-spin' />
+					) : (
+						optimisticCalories
+					)}
 				</div>
 				<div className='flex flex-row items-center justify-between gap-4 w-full'>
 					<div className='flex flex-col gap-4 items-center justify-center w-full'>
@@ -145,28 +154,32 @@ export default function ExpendedCaloriesButton({
 
 				<Button
 					className='select-none'
-					disabled={submitting}
-					onClick={async () => {
-						setSubmitting(true);
-						const res = await addKnownCaloriesBurned(inputVal);
+					disabled={isPending}
+					onClick={() => {
+						startPendingTransition(async () => {
+							setOptimisticCalories(inputVal);
 
-						if (res.success && res.data) {
-							toast.success(res.message);
+							try {
+								const res = await addKnownCaloriesBurned(inputVal);
+								if (res.success && res.data) {
+									toast.success(res.message);
 
-							setCaloriesBurned(res.data.calories);
+									setCaloriesBurned(res.data.calories);
 
-							// redux
-							dispatch(expendedCaloriesUpdated(inputVal));
+									// redux
+									dispatch(expendedCaloriesUpdated(inputVal));
 
-							setInputVal(0);
-							setPopoverOpen(false);
-						} else {
-							toast.error(res.message);
-						}
-
-						setSubmitting(false);
+									setInputVal(0);
+									setPopoverOpen(false);
+								} else {
+									toast.error(res.message);
+								}
+							} catch (err) {
+								console.error(`failed to add calories: ${err}`);
+							}
+						});
 					}}>
-					{submitting ? (
+					{isPending ? (
 						<ImSpinner2 className='w-4 h-4 animate-spin' />
 					) : (
 						<Plus className='h-4 w-4' />

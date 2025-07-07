@@ -9,7 +9,7 @@ import {
 import { GetFoodItem, GetFoodItemImage, GetUser } from '@/types';
 import { format } from 'date-fns';
 import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { MdDelete } from 'react-icons/md';
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
@@ -53,17 +53,16 @@ export default function FoodItemImageGallery({ item }: { item: GetFoodItem }) {
 	const [images, setImages] = useState<GetFoodItemImage[] | undefined>(
 		item.foodItemImages
 	);
-	const [isFetching, setIsFetching] = useState(false);
+	const [isFetching, setIsFetching] = useTransition();
 
-	const fetchItem = async () => {
-		setIsFetching(true);
-		const res = await getFoodItemById(item.id);
+	const fetchItem = () => {
+		setIsFetching(async () => {
+			const res = await getFoodItemById(item.id);
 
-		if (res.success && res.data) {
-			setImages(res.data.foodItemImages as GetFoodItemImage[]);
-		}
-
-		setIsFetching(false);
+			if (res.success && res.data) {
+				setImages(res.data.foodItemImages as GetFoodItemImage[]);
+			}
+		});
 	};
 
 	useEffect(() => {
@@ -75,29 +74,27 @@ export default function FoodItemImageGallery({ item }: { item: GetFoodItem }) {
 		}
 	}, [imageData, imageStatus]);
 
-	const [isDeleting, setIsDeleting] = useState(false);
+	const [isDeleting, setIsDeleting] = useTransition();
 
-	const delImage = async (img: GetFoodItemImage) => {
-		setIsDeleting(true);
+	const delImage = (img: GetFoodItemImage) => {
+		setIsDeleting(async () => {
+			const res = await deleteFoodItemImage(img);
 
-		const res = await deleteFoodItemImage(img);
+			if (res.success && res.data) {
+				toast.success(res.message);
 
-		if (res.success && res.data) {
-			toast.success(res.message);
-
-			dispatch(
-				deleteImageState({
-					alt: res.data.alt,
-					id: res.data.id,
-					type: 'foodItem',
-					url: res.data.url
-				})
-			);
-		} else {
-			toast.error(res.message);
-		}
-
-		setIsDeleting(false);
+				dispatch(
+					deleteImageState({
+						alt: res.data.alt,
+						id: res.data.id,
+						type: 'foodItem',
+						url: res.data.url
+					})
+				);
+			} else {
+				toast.error(res.message);
+			}
+		});
 	};
 
 	return (
