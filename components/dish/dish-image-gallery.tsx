@@ -59,7 +59,9 @@ export default function DishImageGallery({ dish }: { dish: GetPreparedDish }) {
 			const res = await getDishById(dish.id);
 
 			if (res.success && res.data) {
-				setImages(res.data.preparedDishImages as GetPreparedDishImage[]);
+				setIsFetching(() => {
+					setImages(res.data.preparedDishImages as GetPreparedDishImage[]);
+				});
 			}
 		});
 	};

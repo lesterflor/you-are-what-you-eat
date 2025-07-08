@@ -17,7 +17,7 @@ import { preparedDishSchema } from '@/lib/validators';
 import { GetFoodEntry, GetPreparedDish, GetUser } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import {
 	ControllerRenderProps,
 	SubmitErrorHandler,
@@ -125,32 +125,30 @@ export default function CreateDishForm({
 		fetchDishes();
 	}, []);
 
-	const [updatingDish, setUpdatingDish] = useState(false);
+	const [updatingDish, setUpdatingDish] = useTransition();
 
-	const addItemsToExistingList = async (dish: GetPreparedDish) => {
-		setUpdatingDish(true);
+	const addItemsToExistingList = (dish: GetPreparedDish) => {
+		setUpdatingDish(async () => {
+			const clone = [...dish.foodItems];
+			const merged = [...clone, ...dishFoodItems];
 
-		const clone = [...dish.foodItems];
-		const merged = [...clone, ...dishFoodItems];
+			dish.foodItems = merged;
+			const res = await updateDish(dish);
 
-		dish.foodItems = merged;
-		const res = await updateDish(dish);
-
-		if (res.success && res.data) {
-			toast.success(res.message);
-			dispatch(
-				updateDishState({
-					id: res.data.id,
-					name: res.data.name,
-					description: res.data.description ?? '',
-					dishList: '[]'
-				})
-			);
-		} else {
-			toast.error(res.message);
-		}
-
-		setUpdatingDish(false);
+			if (res.success && res.data) {
+				toast.success(res.message);
+				dispatch(
+					updateDishState({
+						id: res.data.id,
+						name: res.data.name,
+						description: res.data.description ?? '',
+						dishList: '[]'
+					})
+				);
+			} else {
+				toast.error(res.message);
+			}
+		});
 	};
 
 	const [sharedUsers, setSharedUsers] = useState<string[]>([]);
