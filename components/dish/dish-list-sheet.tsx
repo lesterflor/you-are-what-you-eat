@@ -50,7 +50,9 @@ export default function DishListSheet({
 			const res = await getAllDishes();
 
 			if (res.success) {
-				setDishes(res.data as GetPreparedDish[]);
+				setFetchingDishes(() => {
+					setDishes(res.data as GetPreparedDish[]);
+				});
 			}
 		});
 	}, [dishes]);

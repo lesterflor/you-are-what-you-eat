@@ -60,7 +60,9 @@ export default function FoodItemImageGallery({ item }: { item: GetFoodItem }) {
 			const res = await getFoodItemById(item.id);
 
 			if (res.success && res.data) {
-				setImages(res.data.foodItemImages as GetFoodItemImage[]);
+				setIsFetching(() => {
+					setImages(res.data.foodItemImages as GetFoodItemImage[]);
+				});
 			}
 		});
 	};

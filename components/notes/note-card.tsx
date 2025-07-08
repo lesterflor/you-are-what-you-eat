@@ -6,7 +6,7 @@ import { useAppDispatch } from '@/lib/hooks';
 import { GetUserNote } from '@/types';
 import { format } from 'date-fns';
 import { Calendar, NotebookPenIcon, RefreshCwOff, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
@@ -28,7 +28,7 @@ export default function NoteCard({
 }) {
 	const dispatch = useAppDispatch();
 
-	const [isDeleting, setIsDeleting] = useState(false);
+	const [isDeleting, setIsDeleting] = useTransition();
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
 
@@ -42,27 +42,26 @@ export default function NoteCard({
 		);
 	}, []);
 
-	const delNote = async () => {
-		setIsDeleting(true);
-		const res = await deleteNote(note.id);
+	const delNote = () => {
+		setIsDeleting(async () => {
+			const res = await deleteNote(note.id);
 
-		if (res.success && res.data) {
-			toast.success(res.message);
+			if (res.success && res.data) {
+				toast.success(res.message);
 
-			dispatch(
-				rxDeleteNote({
-					id: res.data.id,
-					title: res.data.title ?? '',
-					description: res.data.note
-				})
-			);
+				dispatch(
+					rxDeleteNote({
+						id: res.data.id,
+						title: res.data.title ?? '',
+						description: res.data.note
+					})
+				);
 
-			setDialogOpen(false);
-		} else {
-			toast.error(res.message);
-		}
-
-		setIsDeleting(false);
+				setDialogOpen(false);
+			} else {
+				toast.error(res.message);
+			}
+		});
 	};
 
 	return (

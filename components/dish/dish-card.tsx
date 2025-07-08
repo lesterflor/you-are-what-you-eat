@@ -116,7 +116,10 @@ export default function DishCard({
 
 			if (res.success) {
 				toast.success(res.message);
-				setPrepDish(res.data as GetPreparedDish);
+
+				setIsUpdating(() => {
+					setPrepDish(res.data as GetPreparedDish);
+				});
 
 				dispatchDishState();
 			} else {

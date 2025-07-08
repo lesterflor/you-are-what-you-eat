@@ -32,7 +32,9 @@ export default function GrocerListSheet() {
 			const res = await getGroceryListsByUser(true);
 
 			if (res.success && res.data) {
-				setLists(res.data as GetGroceryList[]);
+				setIsFetching(() => {
+					setLists(res.data as GetGroceryList[]);
+				});
 			}
 		});
 	};

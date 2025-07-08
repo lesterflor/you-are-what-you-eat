@@ -30,7 +30,9 @@ export default function FoodFavouriteListSheet({
 			const res = await getFavouriteFoods();
 
 			if (res.success) {
-				setFavs(res.data as GetFoodItem[]);
+				setIsFetching(() => {
+					setFavs(res.data as GetFoodItem[]);
+				});
 			}
 		});
 	}, [favs]);

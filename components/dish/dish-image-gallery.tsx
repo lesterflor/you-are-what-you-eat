@@ -73,28 +73,26 @@ export default function DishImageGallery({ dish }: { dish: GetPreparedDish }) {
 		}
 	}, [imageData, imageStatus]);
 
-	const [isDeleting, setIsDeleting] = useState(false);
+	const [isDeleting, setIsDeleting] = useTransition();
 
-	const delImage = async (img: GetPreparedDishImage) => {
-		setIsDeleting(true);
+	const delImage = (img: GetPreparedDishImage) => {
+		setIsDeleting(async () => {
+			const res = await deleteDishImage(img);
 
-		const res = await deleteDishImage(img);
-
-		if (res.success && res.data) {
-			toast.success(res.message);
-			dispatch(
-				deleteImageState({
-					alt: res.data.alt,
-					id: res.data.id,
-					type: 'dish',
-					url: res.data.url
-				})
-			);
-		} else {
-			toast.error(res.message);
-		}
-
-		setIsDeleting(false);
+			if (res.success && res.data) {
+				toast.success(res.message);
+				dispatch(
+					deleteImageState({
+						alt: res.data.alt,
+						id: res.data.id,
+						type: 'dish',
+						url: res.data.url
+					})
+				);
+			} else {
+				toast.error(res.message);
+			}
+		});
 	};
 
 	return (

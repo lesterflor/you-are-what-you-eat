@@ -42,7 +42,11 @@ export default function GroceryItemCard({
 
 			if (res.success && res.data) {
 				toast.success(res.message);
-				setGroceryItem(res.data);
+
+				setUpdating(() => {
+					setGroceryItem(res.data);
+				});
+
 				onChange?.();
 
 				//redux
@@ -63,7 +67,11 @@ export default function GroceryItemCard({
 
 			if (res.success && res.data) {
 				toast.success(res.message);
-				setGroceryItem(res.data);
+
+				setUpdating(() => {
+					setGroceryItem(res.data);
+				});
+
 				onChange?.();
 
 				//redux

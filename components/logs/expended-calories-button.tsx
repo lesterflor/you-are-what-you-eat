@@ -48,7 +48,9 @@ export default function ExpendedCaloriesButton({
 			const res = await getKnownCaloriesBurned();
 
 			if (res?.success && res.data) {
-				setCaloriesBurned(res.data.calories);
+				startFetchingTransition(() => {
+					setCaloriesBurned(res.data.calories);
+				});
 			}
 		});
 	};

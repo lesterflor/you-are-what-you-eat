@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { useInView } from 'react-intersection-observer';
 import { toast } from 'sonner';
@@ -113,29 +113,31 @@ export default function FoodUserAvatar({
 		}
 	}, [isIntersecting]);
 
-	const [isDeleting, setIsDeleting] = useState(false);
+	const [isDeleting, setIsDeleting] = useTransition();
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-	const deleteUserFood = async () => {
+	const deleteUserFood = () => {
 		if (currentFood.length === 0) {
 			return;
 		}
-		setIsDeleting(true);
-		const res = await deleteFoodItem(currentFood[0].id);
+		setIsDeleting(async () => {
+			const res = await deleteFoodItem(currentFood[0].id);
 
-		if (res.success && res.data) {
-			// redux
-			dispatch(deleteFood(generateRxFoodItemSchema(res.data as GetFoodItem)));
+			if (res.success && res.data) {
+				// redux
+				dispatch(deleteFood(generateRxFoodItemSchema(res.data as GetFoodItem)));
 
-			toast.success(res.message);
-			setDeleteDialogOpen(false);
+				toast.success(res.message);
 
-			setPopOpen(false);
-		} else {
-			toast.error(res.message);
-		}
+				setIsDeleting(() => {
+					setDeleteDialogOpen(false);
+				});
 
-		setIsDeleting(false);
+				setPopOpen(false);
+			} else {
+				toast.error(res.message);
+			}
+		});
 	};
 
 	return (

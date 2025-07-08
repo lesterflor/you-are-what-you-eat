@@ -3,23 +3,24 @@
 import { getUserBMR } from '@/actions/bmr-actions';
 import { formatUnit } from '@/lib/utils';
 import { BaseMetabolicRateType } from '@/types';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { Skeleton } from '../ui/skeleton';
 
 export default function BMRBadge() {
 	const [bmr, setBmr] = useState<BaseMetabolicRateType>();
-	const [isFetching, setIsFetching] = useState(false);
+	const [isFetching, setIsFetching] = useTransition();
 
-	const fetchBMR = async () => {
-		setIsFetching(true);
-		const res = await getUserBMR();
+	const fetchBMR = () => {
+		setIsFetching(async () => {
+			const res = await getUserBMR();
 
-		if (res.success && res.data) {
-			setBmr(res.data);
-		}
-
-		setIsFetching(false);
+			if (res.success && res.data) {
+				setIsFetching(() => {
+					setBmr(res.data);
+				});
+			}
+		});
 	};
 
 	useEffect(() => {

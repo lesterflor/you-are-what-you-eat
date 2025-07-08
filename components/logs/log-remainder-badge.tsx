@@ -66,7 +66,9 @@ export default function LogRemainderBadge() {
 			const res = await getLogRemainder();
 
 			if (res.success && res.data) {
-				setLogRemainder(res.data);
+				setIsFetching(() => {
+					setLogRemainder(res.data);
+				});
 			}
 		});
 	};

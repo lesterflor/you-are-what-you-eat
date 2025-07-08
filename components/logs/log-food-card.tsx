@@ -7,7 +7,7 @@ import { cn, formatUnit } from '@/lib/utils';
 import { FoodEntry, GetFoodEntry } from '@/types';
 import { format } from 'date-fns';
 import { Clock, FilePenLine, RefreshCwOff, Trash2, X } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { RxUpdate } from 'react-icons/rx';
 import { toast } from 'sonner';
@@ -45,8 +45,8 @@ export default function LogFoodCard({
 
 	const [isEditing, setIsEditing] = useState(false);
 	const [servingSize, setServingSize] = useState(item.numServings);
-	const [isDeleting, setIsDeleting] = useState(false);
-	const [isUpdating, setIsUpdating] = useState(false);
+	const [isDeleting, setIsDeleting] = useTransition();
+	const [isUpdating, setIsUpdating] = useTransition();
 	const [dialogOpen, setDialogOpen] = useState(false);
 
 	const [fadeClass, setFadeClass] = useState(false);
@@ -163,37 +163,36 @@ export default function LogFoodCard({
 								Cancel
 							</Button>
 							<Button
-								onClick={async () => {
-									setIsUpdating(true);
+								onClick={() => {
+									setIsUpdating(async () => {
+										const updatedEntry: FoodEntry = {
+											...item,
+											numServings: servingSize
+										};
 
-									const updatedEntry: FoodEntry = {
-										...item,
-										numServings: servingSize
-									};
+										const res = await updateFoodLogEntry(updatedEntry);
 
-									const res = await updateFoodLogEntry(updatedEntry);
+										if (res.success) {
+											toast.success(res.message);
 
-									if (res.success) {
-										toast.success(res.message);
+											if (res.data) {
+												const { numServings } = res.data;
 
-										if (res.data) {
-											const { numServings } = res.data;
+												setServingSize(numServings);
 
-											setServingSize(numServings);
-
-											// redux
-											dispatch(
-												updated({
-													name: item.name,
-													servings: numServings
-												})
-											);
+												// redux
+												dispatch(
+													updated({
+														name: item.name,
+														servings: numServings
+													})
+												);
+											}
+										} else {
+											toast.error(res.message);
 										}
-									} else {
-										toast.error(res.message);
-									}
+									});
 
-									setIsUpdating(false);
 									setIsEditing(false);
 								}}>
 								<RxUpdate
@@ -233,25 +232,25 @@ export default function LogFoodCard({
 							<div className='flex flex-row items-center justify-center'>
 								<Button
 									disabled={isDeleting}
-									onClick={async () => {
-										setIsDeleting(true);
-										const res = await deleteFoodLogEntry(item.id);
+									onClick={() => {
+										setIsDeleting(async () => {
+											const res = await deleteFoodLogEntry(item.id);
 
-										if (res.success) {
-											toast.success(res.message);
+											if (res.success) {
+												toast.success(res.message);
 
-											// redux
-											dispatch(
-												deleted({
-													name: item.name,
-													servings: item.numServings
-												})
-											);
-										} else {
-											toast.error(res.message);
-										}
+												// redux
+												dispatch(
+													deleted({
+														name: item.name,
+														servings: item.numServings
+													})
+												);
+											} else {
+												toast.error(res.message);
+											}
+										});
 
-										setIsDeleting(false);
 										setDialogOpen(false);
 									}}>
 									{isDeleting ? (

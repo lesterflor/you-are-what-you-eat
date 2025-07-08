@@ -53,18 +53,18 @@ export default function FoodItemCard({
 	const cardRef = useRef<HTMLDivElement>(null);
 
 	const [currentItem, setCurrentItem] = useState<GetFoodItem>(item);
-	const [isFetching, setIsFetching] = useState(false);
+	const [isFetching, setIsFetching] = useTransition();
 
-	const fetchFoodItemData = async (id: string) => {
-		setIsFetching(true);
+	const fetchFoodItemData = (id: string) => {
+		setIsFetching(async () => {
+			const res = await getFoodItemById(id);
 
-		const res = await getFoodItemById(id);
-
-		if (res.success && res.data) {
-			setCurrentItem(res.data as GetFoodItem);
-		}
-
-		setIsFetching(false);
+			if (res.success && res.data) {
+				setIsFetching(() => {
+					setCurrentItem(res.data as GetFoodItem);
+				});
+			}
+		});
 	};
 
 	const { data: session } = useSession();

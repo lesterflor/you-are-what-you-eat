@@ -55,7 +55,9 @@ export default function GroceryListItemCard({
 			const res = await updateGroceryList(grList);
 
 			if (res.success && res.data) {
-				setGrList(res.data);
+				setIsUpdating(() => {
+					setGrList(res.data);
+				});
 
 				toast.success(res.message);
 

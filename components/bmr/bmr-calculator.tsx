@@ -18,7 +18,7 @@ import {
 	Weight
 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'sonner';
 import NumberIncrementor from '../number-incrementor';
@@ -40,7 +40,7 @@ export default function BMRCalculatorForm() {
 	const [bmrData, setBmrData] = useState<BMRData>();
 	const [sex, setSex] = useState('male');
 	const [bmr, setBmr] = useState(0);
-	const [submitting, setSubmitting] = useState(false);
+	const [submitting, setSubmitting] = useTransition();
 	const [hasUserData, setHasUserData] = useState(false);
 	const [userHasSavedBMR, setUserHasSavedBMR] = useState(false);
 
@@ -141,18 +141,18 @@ export default function BMRCalculatorForm() {
 		}
 	};
 
-	const handleSaveBMR = async () => {
-		const res = !userHasSavedBMR
-			? await addUserBMR(user.id, bmrData as BMRData)
-			: await updateUserBMR(user.id, bmrData as BMRData);
+	const handleSaveBMR = () => {
+		setSubmitting(async () => {
+			const res = !userHasSavedBMR
+				? await addUserBMR(user.id, bmrData as BMRData)
+				: await updateUserBMR(user.id, bmrData as BMRData);
 
-		if (res.success) {
-			toast.success(res.message);
-		} else {
-			toast.error(res.message);
-		}
-
-		setSubmitting(false);
+			if (res.success) {
+				toast.success(res.message);
+			} else {
+				toast.error(res.message);
+			}
+		});
 	};
 
 	return (
@@ -297,7 +297,6 @@ export default function BMRCalculatorForm() {
 											className='w-28'
 											disabled={submitting}
 											onClick={() => {
-												setSubmitting(true);
 												handleSaveBMR();
 											}}>
 											{submitting ? (

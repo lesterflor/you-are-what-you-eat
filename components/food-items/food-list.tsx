@@ -14,7 +14,7 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { GetFoodItem } from '@/types';
 import { Search } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { useDebounce } from 'use-debounce';
 import InputWithButton from '../input-with-button';
@@ -52,17 +52,18 @@ export default function FoodList() {
 	const { data: session } = useSession();
 	const [foods, setFoods] = useState<GetFoodItem[]>([]);
 
-	const [isFetching, setIsFetching] = useState(true);
+	const [isFetching, setIsFetching] = useTransition();
 
-	const getFoods = async (term: string = '', cat: string = '', user = '') => {
-		setIsFetching(true);
-		const res = await getFoodItems(term, cat, user);
+	const getFoods = (term: string = '', cat: string = '', user = '') => {
+		setIsFetching(async () => {
+			const res = await getFoodItems(term, cat, user);
 
-		if (res.success && res.data && res.data?.length > 0) {
-			setFoods(res.data as GetFoodItem[]);
-		}
-
-		setIsFetching(false);
+			if (res.success && res.data && res.data?.length > 0) {
+				setIsFetching(() => {
+					setFoods(res.data as GetFoodItem[]);
+				});
+			}
+		});
 	};
 
 	useEffect(() => {

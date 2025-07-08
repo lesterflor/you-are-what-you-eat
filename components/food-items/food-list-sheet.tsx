@@ -74,9 +74,11 @@ export default function FoodListSheet({
 			setUpToDate(res.success);
 
 			if (res.success && res.data) {
-				setStorageItem('foodList', res.data);
-				setAllFoods(res.data as GetFoodItem[]);
-				setFoods(res.data as GetFoodItem[]);
+				setIsSyncing(() => {
+					setStorageItem('foodList', res.data);
+					setAllFoods(res.data as GetFoodItem[]);
+					setFoods(res.data as GetFoodItem[]);
+				});
 			}
 		});
 	};
@@ -145,12 +147,16 @@ export default function FoodListSheet({
 
 			if (res.success && res.data) {
 				if (!term && !cat && !user) {
-					setAllFoods(res.data as GetFoodItem[]);
-					if (foods.length === 0) {
-						setFoods(res.data as GetFoodItem[]);
-					}
+					setIsFetching(() => {
+						setAllFoods(res.data as GetFoodItem[]);
+						if (foods.length === 0) {
+							setFoods(res.data as GetFoodItem[]);
+						}
+					});
 				} else {
-					setFoods(res.data as GetFoodItem[]);
+					setIsFetching(() => {
+						setFoods(res.data as GetFoodItem[]);
+					});
 				}
 
 				setStorageItem('foodList', res.data);
@@ -163,7 +169,9 @@ export default function FoodListSheet({
 			const res = await getFavouriteFoods();
 
 			if (res.success && res.data) {
-				setFoods(res.data as GetFoodItem[]);
+				setIsFetching(() => {
+					setFoods(res.data as GetFoodItem[]);
+				});
 			}
 		});
 	};

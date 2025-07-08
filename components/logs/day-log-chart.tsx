@@ -60,7 +60,9 @@ export default function DayLogChart() {
 					)
 				}));
 
-				setLogs(mapData);
+				setIsFetching(() => {
+					setLogs(mapData);
+				});
 			}
 		});
 	};

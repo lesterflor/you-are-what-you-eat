@@ -38,7 +38,9 @@ export default function ShareListButton({
 			const res = await getShareableUsers();
 
 			if (res.success && res.data) {
-				setUsers(res.data as GetUser[]);
+				setIsFetching(() => {
+					setUsers(res.data as GetUser[]);
+				});
 			}
 		});
 	};

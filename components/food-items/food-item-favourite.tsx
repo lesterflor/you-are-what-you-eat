@@ -28,7 +28,9 @@ export default function FoodItemFavourite({ item }: { item: GetFoodItem }) {
 			const res = await bookmarkFoodItem(item.id);
 
 			if (res.success) {
-				setIsBookmarked(!!res.bookmarked);
+				setIsBookmarking(() => {
+					setIsBookmarked(!!res.bookmarked);
+				});
 			}
 		});
 	};

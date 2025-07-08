@@ -18,7 +18,9 @@ export default function SharedListAvatars({ userIds }: { userIds: string[] }) {
 			const res = await getUserAvatars(userIds);
 
 			if (res.success && res.data) {
-				setUsers(res.data as { id: string; name: string; image: string }[]);
+				setIsFetching(() => {
+					setUsers(res.data as { id: string; name: string; image: string }[]);
+				});
 			}
 		});
 	};

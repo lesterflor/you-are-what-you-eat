@@ -49,7 +49,9 @@ export default function LogMacroItemSummary({
 						break;
 				}
 
-				setFoodEntries(sortedFoodList as GetFoodEntry[]);
+				setIsFetching(() => {
+					setFoodEntries(sortedFoodList as GetFoodEntry[]);
+				});
 			}
 		});
 	}, [macro]);

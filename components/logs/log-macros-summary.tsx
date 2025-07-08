@@ -97,21 +97,23 @@ export default function LogMacrosSummary({
 
 				const { calories, carbs, protein, fat } = totalMacrosReducer(items);
 
-				setCurrentData({
-					calories,
-					carbs,
-					protein,
-					fat,
-					totalGrams: carbs + protein + fat
+				setIsFetching(() => {
+					setCurrentData({
+						calories,
+						carbs,
+						protein,
+						fat,
+						totalGrams: carbs + protein + fat
+					});
+
+					setPieData([
+						{ name: 'Carbs', value: carbs, fill: 'var(--color-carb)' },
+						{ name: 'Protein', value: protein, fill: 'var(--color-protein)' },
+						{ name: 'Fat', value: fat, fill: 'var(--color-fat)' }
+					]);
+
+					setComparisonData(comparisons);
 				});
-
-				setPieData([
-					{ name: 'Carbs', value: carbs, fill: 'var(--color-carb)' },
-					{ name: 'Protein', value: protein, fill: 'var(--color-protein)' },
-					{ name: 'Fat', value: fat, fill: 'var(--color-fat)' }
-				]);
-
-				setComparisonData(comparisons);
 			}
 		});
 	};
