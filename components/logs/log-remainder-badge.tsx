@@ -116,10 +116,11 @@ export default function LogRemainderBadge() {
 
 				setChartData(
 					res.data.map((item) => ({
-						calories:
+						calories: formatUnit(
 							item.knownCaloriesBurned[0].calories +
-							item.user.BaseMetabolicRate[0].bmr -
-							totalMacrosReducer(item.foodItems as GetFoodEntry[]).calories,
+								item.user.BaseMetabolicRate[0].bmr -
+								totalMacrosReducer(item.foodItems as GetFoodEntry[]).calories
+						),
 						createdAt: format(item.createdAt, 'P')
 					}))
 				);
