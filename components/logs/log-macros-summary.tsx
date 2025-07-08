@@ -63,6 +63,8 @@ export default function LogMacrosSummary({
 				log.foodItems
 			);
 
+			console.log(carbs, protein, fat);
+
 			setCurrentData({
 				calories,
 				carbs,
@@ -144,12 +146,14 @@ export default function LogMacrosSummary({
 								<div className='flex flex-col items-center w-full'>
 									<div className='font-normal'>Calories</div>
 									<div className='flex flex-row items-center gap-0'>
-										{currentData.calories > 0 && comparisonData && (
+										{currentData.calories > 0 && comparisonData ? (
 											<ComparisonPopover
 												data={comparisonData}
 												field='calories'
 												value={formatUnit(currentData.calories)}
 											/>
+										) : (
+											formatUnit(currentData.calories)
 										)}
 									</div>
 								</div>
@@ -159,13 +163,15 @@ export default function LogMacrosSummary({
 								<div className='flex flex-col items-center w-full'>
 									<div className='font-normal whitespace-nowrap'>Protein g</div>
 									<div className='flex flex-row items-center gap-0'>
-										{currentData.protein > 0 && comparisonData && (
+										{currentData.protein > 0 && comparisonData ? (
 											<ComparisonPopover
 												data={comparisonData}
 												field='protein'
 												value={formatUnit(currentData.protein)}
 												unitLabel='(grams)'
 											/>
+										) : (
+											formatUnit(currentData.protein)
 										)}
 									</div>
 								</div>
@@ -175,13 +181,15 @@ export default function LogMacrosSummary({
 								<div className='flex flex-col items-center w-full'>
 									<div className='font-normal whitespace-nowrap'>Carb g</div>
 									<div className='flex flex-row items-center gap-0'>
-										{currentData.carbs > 0 && comparisonData && (
+										{currentData.carbs > 0 && comparisonData ? (
 											<ComparisonPopover
 												data={comparisonData}
 												field='carbs'
 												value={formatUnit(currentData.carbs)}
 												unitLabel='(grams)'
 											/>
+										) : (
+											formatUnit(currentData.carbs)
 										)}
 									</div>
 								</div>
@@ -191,13 +199,15 @@ export default function LogMacrosSummary({
 								<div className='flex flex-col items-center w-full'>
 									<div className='font-normal whitespace-nowrap'>Fat g</div>
 									<div className='flex flex-row items-center gap-0'>
-										{currentData.fat > 0 && comparisonData && (
+										{currentData.fat > 0 && comparisonData ? (
 											<ComparisonPopover
 												data={comparisonData}
 												field='fat'
 												value={formatUnit(currentData.fat)}
 												unitLabel='(grams)'
 											/>
+										) : (
+											formatUnit(currentData.fat)
 										)}
 									</div>
 								</div>
