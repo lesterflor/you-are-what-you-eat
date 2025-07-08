@@ -63,8 +63,6 @@ export default function LogMacrosSummary({
 				log.foodItems
 			);
 
-			console.log(carbs, protein, fat);
-
 			setCurrentData({
 				calories,
 				carbs,
