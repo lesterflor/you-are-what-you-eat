@@ -111,7 +111,9 @@ export default function FoodListSheet({
 					(item) => item.category === foodSearchData.category
 				);
 
-				setFoods(update);
+				setIsFetching(() => {
+					setFoods(update);
+				});
 
 				break;
 			case 'user':
@@ -121,11 +123,17 @@ export default function FoodListSheet({
 					(item) => item.userId === foodSearchData.user
 				);
 
-				setFoods(userFoods);
+				setIsFetching(() => {
+					setFoods(userFoods);
+				});
+
 				break;
 			case 'all':
 				//getFoods();
-				setFoods(items);
+				setIsFetching(() => {
+					setFoods(items);
+				});
+
 				break;
 			case 'input':
 				getFoods(foodSearchData.term ?? '');

@@ -62,7 +62,9 @@ export default function ShareListButton({
 				const sharedFound = users.filter((usr) => usr.id === first);
 
 				if (sharedFound.length > 0) {
-					setSelectedUser(first);
+					setIsFetching(() => {
+						setSelectedUser(first);
+					});
 				}
 			}
 		});
