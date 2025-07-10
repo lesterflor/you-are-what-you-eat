@@ -75,7 +75,7 @@ export default function LogMacroItemSummary({
 						</div>
 					)}
 					<ScrollArea className='w-full'>
-						<div className='flex flex-col gap-2 max-h-[17rem]'>
+						<div className='flex flex-col gap-2 max-h-[15rem]'>
 							{foodEntries.length > 0 &&
 								foodEntries.map((item) => {
 									let macroField;
