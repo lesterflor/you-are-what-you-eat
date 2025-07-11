@@ -14,6 +14,7 @@ import { FaCartPlus } from 'react-icons/fa6';
 import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import IncrementButton from '../increment-button';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader } from '../ui/card';
 import {
@@ -175,29 +176,24 @@ export default function AddGroceryItem({
 										<FormItem>
 											<FormControl>
 												<div className='flex flex-row items-center gap-1 w-auto justify-center'>
-													<Button
-														size='icon'
-														variant='secondary'
-														onClick={(e) => {
-															e.preventDefault();
-															setQty(qty - 1);
-														}}>
+													<IncrementButton
+														increment={1}
+														allowLongPress={true}
+														onChange={(val) => setQty(qty - val)}>
 														<ChevronLeft className='w-6 h-6' />
-													</Button>
+													</IncrementButton>
+
 													<Input
 														readOnly
 														{...field}
 														className='w-16 text-2xl text-center ring-0 focus:ring-0'
 													/>
-													<Button
-														size='icon'
-														variant='secondary'
-														onClick={(e) => {
-															e.preventDefault();
-															setQty(qty + 1);
-														}}>
+
+													<IncrementButton
+														increment={1}
+														onChange={(val) => setQty(qty + val)}>
 														<ChevronRight className='w-6 h-6' />
-													</Button>
+													</IncrementButton>
 												</div>
 											</FormControl>
 											<FormMessage />
