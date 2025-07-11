@@ -142,7 +142,8 @@ export default function LogFoodListItem({
 
 						<div className='text-xs font-normal text-muted-foreground flex flex-row items-center justify-between gap-2 w-full'>
 							<div>
-								{servingSize} {servingSize === 1 ? 'serving' : 'servings'}
+								{formatUnit(servingSize)}{' '}
+								{servingSize === 1 ? 'serving' : 'servings'}
 							</div>
 
 							<div className='flex flex-row items-center gap-1 whitespace-nowrap text-muted-foreground'>
@@ -309,14 +310,14 @@ export default function LogFoodListItem({
 												const { numServings } = res.data;
 
 												setIsUpdating(() => {
-													setServingSize(numServings);
+													setServingSize(formatUnit(numServings));
 												});
 
 												// redux
 												dispatch(
 													updated({
 														name: item.name,
-														servings: numServings
+														servings: formatUnit(numServings)
 													})
 												);
 											}

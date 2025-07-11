@@ -85,7 +85,8 @@ export default function LogFoodCard({
 						<div className='leading-tight'>{item.name}</div>
 					</div>
 					<span className='text-muted-foreground flex flex-row items-center'>
-						{servingSize} {servingSize === 1 ? 'serving' : 'servings'}
+						{formatUnit(servingSize)}{' '}
+						{servingSize === 1 ? 'serving' : 'servings'}
 					</span>
 				</div>
 				<Badge
