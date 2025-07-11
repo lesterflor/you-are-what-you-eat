@@ -90,9 +90,7 @@ export default function FoodListSheet({
 		if (savedFoods.length > 0) {
 			setIsFetching(() => {
 				setAllFoods(savedFoods);
-				if (foods.length === 0) {
-					setFoods(savedFoods);
-				}
+				setFoods(savedFoods);
 			});
 		} else {
 			getFoods();
@@ -107,11 +105,10 @@ export default function FoodListSheet({
 			case 'category':
 				//getFoods('', foodSearchData.category);
 
-				const update = items.filter(
-					(item) => item.category === foodSearchData.category
-				);
-
 				setIsFetching(() => {
+					const update = items.filter(
+						(item) => item.category === foodSearchData.category
+					);
 					setFoods(update);
 				});
 
@@ -119,11 +116,10 @@ export default function FoodListSheet({
 			case 'user':
 				//getFoods('', '', foodSearchData.user);
 
-				const userFoods = items.filter(
-					(item) => item.userId === foodSearchData.user
-				);
-
 				setIsFetching(() => {
+					const userFoods = items.filter(
+						(item) => item.userId === foodSearchData.user
+					);
 					setFoods(userFoods);
 				});
 
@@ -154,20 +150,12 @@ export default function FoodListSheet({
 			const res = await getFoodItems(term, cat, user);
 
 			if (res.success && res.data) {
-				if (!term && !cat && !user) {
-					setIsFetching(() => {
-						setAllFoods(res.data as GetFoodItem[]);
-						if (foods.length === 0) {
-							setFoods(res.data as GetFoodItem[]);
-						}
-					});
-				} else {
-					setIsFetching(() => {
-						setFoods(res.data as GetFoodItem[]);
-					});
-				}
+				setIsFetching(() => {
+					setAllFoods(res.data as GetFoodItem[]);
+					setFoods(res.data as GetFoodItem[]);
 
-				setStorageItem('foodList', res.data);
+					setStorageItem('foodList', res.data);
+				});
 			}
 		});
 	};

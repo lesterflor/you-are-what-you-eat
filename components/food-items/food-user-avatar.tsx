@@ -92,7 +92,10 @@ export default function FoodUserAvatar({
 	const sessionUser = session?.user as GetUser;
 
 	useEffect(() => {
-		if (foodUpdateStatus !== 'idle') {
+		if (
+			foodUpdateStatus === 'updated' &&
+			foodUpdateData.name === currentFood[0].name
+		) {
 			getCurrentFood();
 		}
 	}, [foodUpdateStatus, foodUpdateData]);
