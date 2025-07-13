@@ -340,14 +340,14 @@ export default function FoodListSheet({
 							</Button>
 						)}
 					</SheetTrigger>
+					<SheetTitle />
 					<SheetContent
 						side='top'
 						className='px-2'>
-						<SheetDescription></SheetDescription>
-						<SheetTitle className='flex flex-col items-center gap-2 pb-4 relative'>
+						<div className='flex flex-col items-center gap-4 pb-4 relative top-3'>
 							<div
 								className={cn(
-									'absolute rounded-full -top-4 -left-1 p-1',
+									'absolute rounded-full -top-6 -left-1 p-1',
 									upToDate ? 'bg-green-800' : 'bg-red-800'
 								)}>
 								{isSyncing ? (
@@ -382,7 +382,7 @@ export default function FoodListSheet({
 							</div>
 
 							<div
-								className='flex flex-row gap-2 justify-between items-center pt-2'
+								className='flex flex-row gap-2 justify-between items-center mt-4'
 								ref={ref}>
 								<div className='flex flex-row items-center gap-4'>
 									<InputWithButton
@@ -414,8 +414,9 @@ export default function FoodListSheet({
 								onSelect={() => {}}
 								compactMode={true}
 							/>
-						</SheetTitle>
-						<ScrollArea className='h-[70vh] w-[100%]'>
+						</div>
+						<SheetDescription></SheetDescription>
+						<ScrollArea className='h-[70vh] w-[100%] pt-4'>
 							<div
 								ref={scrollAreaRef}
 								className={cn(
