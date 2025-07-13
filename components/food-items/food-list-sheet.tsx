@@ -330,7 +330,12 @@ export default function FoodListSheet({
 							</div>
 						) : (
 							<Button>
-								<TbDatabaseSearch className='w-4 h-4' /> Search
+								{isFetching ? (
+									<ImSpinner9 className='animate-spin' />
+								) : (
+									<TbDatabaseSearch />
+								)}
+								Search
 							</Button>
 						)}
 					</SheetTrigger>
