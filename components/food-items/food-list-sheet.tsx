@@ -105,30 +105,24 @@ export default function FoodListSheet({
 			case 'category':
 				//getFoods('', foodSearchData.category);
 
-				setIsFetching(() => {
-					const update = items.filter(
-						(item) => item.category === foodSearchData.category
-					);
-					setFoods(update);
-				});
+				const update = items.filter(
+					(item) => item.category === foodSearchData.category
+				);
+				setFoods(update);
 
 				break;
 			case 'user':
 				//getFoods('', '', foodSearchData.user);
 
-				setIsFetching(() => {
-					const userFoods = items.filter(
-						(item) => item.userId === foodSearchData.user
-					);
-					setFoods(userFoods);
-				});
+				const userFoods = items.filter(
+					(item) => item.userId === foodSearchData.user
+				);
+				setFoods(userFoods);
 
 				break;
 			case 'all':
 				//getFoods();
-				setIsFetching(() => {
-					setFoods(items);
-				});
+				setFoods(items);
 
 				break;
 			case 'input':
