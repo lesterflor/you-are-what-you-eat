@@ -5,8 +5,9 @@ import { GetLog, GetUser } from '@/types';
 import { Calculator, Flame, Menu, Soup, UtensilsCrossed } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { redirect, usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { BiSolidFoodMenu } from 'react-icons/bi';
 import { BsBookmarkStarFill } from 'react-icons/bs';
 import DishListSheet from '../dish/dish-list-sheet';
 import AddFoodSheet from '../food-items/add-food-sheet';
@@ -15,7 +16,6 @@ import FoodListSheet from '../food-items/food-list-sheet';
 import GrocerListSheet from '../grocery/grocery-list-sheet';
 import ExpendedCaloriesButton from '../logs/expended-calories-button';
 import LogButton from '../logs/log-button';
-import LogSheet from '../logs/log-sheet';
 import NoteSheet from '../notes/note-sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
@@ -87,7 +87,17 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 						<div className='flex flex-col item-center gap-1 w-full'>
 							<div>Log Info</div>
 							<div className='flex flex-col items-stretch gap-4 w-full'>
-								{log && <LogSheet log={log as GetLog} />}
+								{/* {log && <LogSheet log={log as GetLog} />} */}
+								{pathname === '/logs' && (
+									<Button
+										onClick={() => {
+											setIsOpen(false);
+											redirect('/');
+										}}>
+										<BiSolidFoodMenu />
+										{`Today's Log`}
+									</Button>
+								)}
 
 								<LogButton
 									onClick={() => {
