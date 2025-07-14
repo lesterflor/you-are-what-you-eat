@@ -58,7 +58,7 @@ export default function FoodFavouriteListSheet({
 				<SheetContent
 					side={'top'}
 					className='max-w-[100vw] w-full  px-2'>
-					<SheetTitle className='flex flex-row items-center gap-2'>
+					<SheetTitle className='flex flex-row items-center gap-2 w-64'>
 						<BsBookmarkStarFill className='text-teal-600 w-6 h-6' /> Your
 						Favourite Foods
 					</SheetTitle>

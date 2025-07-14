@@ -92,7 +92,6 @@ export default function FoodListSheet({
 				setAllFoods(savedFoods);
 
 				checkFoodStatus(foodSearchStatus);
-				//setFoods(savedFoods);
 			});
 		} else {
 			getFoods();
@@ -132,9 +131,6 @@ export default function FoodListSheet({
 			case 'favourites':
 				getFavs();
 				break;
-			// case 'idle':
-			// 	getFoods();
-			// 	break;
 		}
 	};
 

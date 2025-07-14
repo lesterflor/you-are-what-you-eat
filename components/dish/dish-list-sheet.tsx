@@ -79,7 +79,7 @@ export default function DishListSheet({
 				<SheetContent
 					side={'bottom'}
 					className='max-w-[100vw] w-96 px-2'>
-					<SheetTitle className='flex flex-row items-center gap-2'>
+					<SheetTitle className='flex flex-row items-center gap-2 w-48'>
 						{' '}
 						<Soup className='w-6 h-6 text-fuchsia-500' /> Your Dishes
 					</SheetTitle>

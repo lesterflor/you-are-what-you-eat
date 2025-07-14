@@ -13,9 +13,10 @@ import {
 import { useAppDispatch } from '@/lib/hooks';
 import { cn, formatUnit, totalMacrosReducer } from '@/lib/utils';
 import { GetFoodEntry, GetPreparedDish, GetUser } from '@/types';
-import { Aperture, FilePenLine, ScrollText, Soup, X } from 'lucide-react';
+import { Aperture, FilePenLine, Soup, X } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useState, useTransition } from 'react';
+import { BiSolidBowlHot } from 'react-icons/bi';
 import { ImSpinner2 } from 'react-icons/im';
 import { TbShareOff } from 'react-icons/tb';
 import { toast } from 'sonner';
@@ -114,12 +115,10 @@ export default function DishCard({
 		setIsUpdating(async () => {
 			const res = await updateDish(dish);
 
-			if (res.success) {
+			if (res.success && res.data) {
 				toast.success(res.message);
 
-				setIsUpdating(() => {
-					setPrepDish(res.data as GetPreparedDish);
-				});
+				setPrepDish(res.data as GetPreparedDish);
 
 				dispatchDishState();
 			} else {
@@ -441,6 +440,7 @@ export default function DishCard({
 					<div className='flex flex-row items-center gap-2'>
 						{sessionUserIsDishOwner && (
 							<Button onClick={() => setIsEditMode(!isEditMode)}>
+								<FilePenLine />
 								{isEditMode ? 'Cancel' : 'Edit'}
 							</Button>
 						)}
@@ -505,7 +505,7 @@ export default function DishCard({
 						{loggingDish ? (
 							<ImSpinner2 className='animate-spin' />
 						) : (
-							<ScrollText />
+							<BiSolidBowlHot />
 						)}
 						Log Dish
 					</Button>
