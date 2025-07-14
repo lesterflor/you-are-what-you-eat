@@ -90,18 +90,19 @@ export default function FoodListSheet({
 		if (savedFoods.length > 0) {
 			setIsFetching(() => {
 				setAllFoods(savedFoods);
-				setFoods(savedFoods);
+
+				checkFoodStatus(foodSearchStatus);
+				//setFoods(savedFoods);
 			});
 		} else {
 			getFoods();
 		}
 	}, []);
 
-	// redux handler
-	useEffect(() => {
+	const checkFoodStatus = (status: string) => {
 		const items = [...allFoods];
 
-		switch (foodSearchStatus) {
+		switch (status) {
 			case 'category':
 				//getFoods('', foodSearchData.category);
 
@@ -135,6 +136,11 @@ export default function FoodListSheet({
 			// 	getFoods();
 			// 	break;
 		}
+	};
+
+	// redux handler
+	useEffect(() => {
+		checkFoodStatus(foodSearchStatus);
 	}, [foodSearchStatus, foodSearchData]);
 
 	const [isFetching, setIsFetching] = useTransition();
@@ -144,12 +150,11 @@ export default function FoodListSheet({
 			const res = await getFoodItems(term, cat, user);
 
 			if (res.success && res.data) {
-				setIsFetching(() => {
-					setAllFoods(res.data as GetFoodItem[]);
-					setFoods(res.data as GetFoodItem[]);
+				setAllFoods(res.data as GetFoodItem[]);
+				checkFoodStatus(foodSearchStatus);
+				//setFoods(res.data as GetFoodItem[]);
 
-					setStorageItem('foodList', res.data);
-				});
+				setStorageItem('foodList', res.data);
 			}
 		});
 	};
@@ -159,9 +164,7 @@ export default function FoodListSheet({
 			const res = await getFavouriteFoods();
 
 			if (res.success && res.data) {
-				setIsFetching(() => {
-					setFoods(res.data as GetFoodItem[]);
-				});
+				setFoods(res.data as GetFoodItem[]);
 			}
 		});
 	};
@@ -212,7 +215,8 @@ export default function FoodListSheet({
 						asChild
 						disabled={isFetching}>
 						{children ? (
-							<div className='relative'>
+							<div
+								className={cn('relative', isFetching && 'pointer-events-none')}>
 								{children}
 								{isFetching && (
 									<div className='absolute w-auto h-4 rounded-full bg-gray-500 text-xs top-0 right-0 p-1 flex items-center justify-center'>
@@ -320,7 +324,8 @@ export default function FoodListSheet({
 						asChild
 						disabled={isFetching}>
 						{children ? (
-							<div className='relative'>
+							<div
+								className={cn('relative', isFetching && 'pointer-events-none')}>
 								{children}
 								{isFetching && (
 									<div className='absolute w-auto h-4 rounded-full bg-gray-500 text-xs top-0 right-0 p-1 flex items-center justify-center'>

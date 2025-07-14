@@ -97,26 +97,24 @@ export default function FoodLogList({
 			const res = await createDailyLog();
 
 			if (res?.success && res.data) {
-				setFetchingLog(() => {
-					setLog(res.data as GetLog);
+				setLog(res.data as GetLog);
 
-					setLogList(res.data.foodItems as GetFoodEntry[]);
-					const bmrArr = res.data.user
-						.BaseMetabolicRate as BaseMetabolicRateType[];
+				setLogList(res.data.foodItems as GetFoodEntry[]);
+				const bmrArr = res.data.user
+					.BaseMetabolicRate as BaseMetabolicRateType[];
 
-					setBmr(bmrArr[0]);
+				setBmr(bmrArr[0]);
 
-					setTotalCals(res.data.totalCalories);
+				setTotalCals(res.data.totalCalories);
 
-					setRemainingCals(res.data.remainingCalories);
+				setRemainingCals(res.data.remainingCalories);
 
-					if (
-						res.data.knownCaloriesBurned &&
-						res.data.knownCaloriesBurned.length > 0
-					) {
-						setCalsBurned(res.data.knownCaloriesBurned[0].calories);
-					}
-				});
+				if (
+					res.data.knownCaloriesBurned &&
+					res.data.knownCaloriesBurned.length > 0
+				) {
+					setCalsBurned(res.data.knownCaloriesBurned[0].calories);
+				}
 			}
 		});
 	};
