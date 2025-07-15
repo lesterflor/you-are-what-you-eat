@@ -16,6 +16,7 @@ import FoodListSheet from '../food-items/food-list-sheet';
 import GrocerListSheet from '../grocery/grocery-list-sheet';
 import ExpendedCaloriesButton from '../logs/expended-calories-button';
 import LogButton from '../logs/log-button';
+import WaterIntake from '../logs/water-intake';
 import NoteSheet from '../notes/note-sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
@@ -28,6 +29,7 @@ import {
 } from '../ui/sheet';
 import ModeToggle from './mode-toggle';
 
+import { FaGlassWater } from 'react-icons/fa6';
 export default function SideMenu({ log }: { log?: GetLog }) {
 	const pathname = usePathname();
 	const { status } = useCurrentSession();
@@ -173,6 +175,12 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 									Expended Calories
 								</Button>
 							</ExpendedCaloriesButton>
+
+							<WaterIntake>
+								<Button>
+									<FaGlassWater /> Water Intake
+								</Button>
+							</WaterIntake>
 						</div>
 					</div>
 

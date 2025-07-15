@@ -13,6 +13,7 @@ import IncrementButton from '../increment-button';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { Skeleton } from '../ui/skeleton';
 import { Slider } from '../ui/slider';
 
 export default function WaterIntake({
@@ -104,24 +105,51 @@ export default function WaterIntake({
 					Daily Water Requirements
 				</div>
 				<div className='text-blue-600 flex flex-col items-center justify-center w-full'>
-					{isFetching ? (
-						<div className='h-10'>
-							<ImSpinner2 className='animate-spin' />
+					{waterData && (
+						<div className='flex flex-row flex-wrap gap-2 items-center justify-center w-full'>
+							<Badge
+								variant={'outline'}
+								className='flex flex-col !gap-0 items-center bg-blue-800 text-background'>
+								{isFetching ? (
+									<>
+										<Skeleton className='w-6 h-5' />
+										<Skeleton className='w-11 h-4' />
+									</>
+								) : (
+									<>
+										{waterData.glasses} <span className='text-sm'>glasses</span>
+									</>
+								)}
+							</Badge>
+							<Badge
+								variant={'outline'}
+								className='flex flex-col !gap-0 items-center bg-blue-800 text-background'>
+								{isFetching ? (
+									<>
+										<Skeleton className='w-6 h-5' />
+										<Skeleton className='w-11 h-4' />
+									</>
+								) : (
+									<>
+										{waterData.ounces} <span className='text-sm'>ounces</span>
+									</>
+								)}
+							</Badge>
+							<Badge
+								variant={'outline'}
+								className='flex flex-col !gap-0 items-center bg-blue-800 text-background'>
+								{isFetching ? (
+									<>
+										<Skeleton className='w-6 h-5' />
+										<Skeleton className='w-11 h-4' />
+									</>
+								) : (
+									<>
+										{waterData.litres} <span className='text-sm'>litres</span>
+									</>
+								)}
+							</Badge>
 						</div>
-					) : (
-						waterData && (
-							<div className='flex flex-row flex-wrap gap-2 items-center justify-center w-full'>
-								<Badge className='flex flex-col !gap-0 items-center bg-blue-800'>
-									{waterData.glasses} <span className='text-sm'>glasses</span>
-								</Badge>
-								<Badge className='flex flex-col !gap-0 items-center bg-blue-800'>
-									{waterData.ounces} <span className='text-sm'>ounces</span>
-								</Badge>
-								<Badge className='flex flex-col !gap-0 items-center bg-blue-800'>
-									{waterData.litres} <span className='text-sm'>litres</span>
-								</Badge>
-							</div>
-						)
 					)}
 				</div>
 
