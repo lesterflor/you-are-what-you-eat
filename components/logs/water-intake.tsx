@@ -98,7 +98,7 @@ export default function WaterIntake({
 					)}
 				</div>
 			</PopoverTrigger>
-			<PopoverContent className='flex flex-col gap-4 items-center justify-center max-h-[50vh]'>
+			<PopoverContent className='flex flex-col gap-4 items-center justify-center max-h-[70vh]'>
 				<div className='flex flex-row items-center gap-2'>
 					<IoIosWater className='w-10 h-10 text-blue-600' />
 					Daily Water Requirements
