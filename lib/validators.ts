@@ -419,3 +419,26 @@ export const getFoodItemImageSchema = z.object({
 	alt: z.string(),
 	foodItemId: z.string()
 });
+
+export const waterConsumedSchema = z.object({
+	glasses: z.number().refine((val) => val !== null, {
+		message: 'glasses can be 0 or greater.'
+	}),
+	ounces: z.number().refine((val) => val !== null, {
+		message: 'ounces can be 0 or greater.'
+	}),
+	litres: z.number().refine((val) => val !== null, {
+		message: 'litres can be 0 or greater.'
+	}),
+	userId: z.string().min(1, 'userId is required')
+});
+
+export const getWaterConsumedSchema = z.object({
+	id: z.string(),
+	createdAt: z.date(),
+	updatedAt: z.date(),
+	glasses: z.number(),
+	ounces: z.number(),
+	litres: z.number(),
+	userId: z.string()
+});

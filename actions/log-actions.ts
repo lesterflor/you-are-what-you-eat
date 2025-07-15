@@ -2,7 +2,12 @@
 
 import { auth } from '@/db/auth';
 import prisma from '@/db/prisma';
-import { formatError, getToday, totalMacrosReducer } from '@/lib/utils';
+import {
+	convertGlassesOfWater,
+	formatError,
+	getToday,
+	totalMacrosReducer
+} from '@/lib/utils';
 import {
 	FoodEntry,
 	GetFoodEntry,
@@ -967,6 +972,80 @@ export async function getLogRemainderByUserIdInRange(range: DateRange) {
 		return {
 			success: false,
 			message: formatError(err)
+		};
+	}
+}
+
+export async function todaysWaterConsumed(glasses: number = 0) {
+	try {
+		const session = await auth();
+		const user = session?.user as GetUser;
+
+		if (!session || !user) {
+			throw new Error('User must be authenticated');
+		}
+
+		let retLog;
+
+		const existingWaterLog = await prisma.waterConsumed.findFirst({
+			where: {
+				userId: user.id,
+				createdAt: {
+					gte: getToday().todayStart,
+					lt: getToday().todayEnd
+				}
+			}
+		});
+
+		if (!existingWaterLog) {
+			const newLog = await prisma.waterConsumed.create({
+				data: {
+					createdAt: new Date(getToday().current),
+					userId: user.id,
+					glasses,
+					ounces: convertGlassesOfWater(glasses).ounces,
+					litres: convertGlassesOfWater(glasses).litres
+				}
+			});
+
+			if (!newLog) {
+				throw new Error('There was a problem creating a new water log');
+			}
+
+			retLog = newLog;
+		} else {
+			const { glasses: exGlasses, ounces, litres } = existingWaterLog;
+
+			const update = await prisma.waterConsumed.update({
+				where: {
+					id: existingWaterLog.id
+				},
+				data: {
+					glasses: exGlasses + glasses,
+					ounces: ounces + convertGlassesOfWater(glasses).ounces,
+					litres: litres + convertGlassesOfWater(glasses).litres,
+					updatedAt: new Date(getToday().current)
+				}
+			});
+
+			if (!update) {
+				throw new Error('There was a problem updating the water log for today');
+			}
+
+			retLog = update;
+		}
+
+		//console.log(retLog);
+
+		return {
+			success: true,
+			message: 'Successfully updated water consumption',
+			data: retLog
+		};
+	} catch (error: unknown) {
+		return {
+			success: false,
+			message: formatError(error)
 		};
 	}
 }

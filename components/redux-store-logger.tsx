@@ -34,7 +34,7 @@ import {
 } from '@/types';
 import { Activity, SquareActivity } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import ActivityCard from './activity/activity-card';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -68,31 +68,30 @@ export default function ReduxStoreLogger({
 	const groceryStatus = useAppSelector(selectGroceryStatus);
 	const groceryMsg = useAppSelector(selectGroceryMsg);
 
-	const [isFetching, setIsFetching] = useState(false);
+	const [isFetching, setIsFetching] = useTransition();
 	const [log, setLog] = useState<GetActivityLog>();
 	const [activities, setActivities] = useState<GetActivityItem[]>([]);
 	const [hasOpened, setHasOpened] = useState(false);
 
-	const getTodaysActivity = async () => {
-		setIsFetching(true);
-		const res = await getCurrentActivityLog();
+	const getTodaysActivity = () => {
+		setIsFetching(async () => {
+			const res = await getCurrentActivityLog();
 
-		if (res.success && res.data) {
-			setLog(res.data);
-		}
-		setIsFetching(false);
+			if (res.success && res.data) {
+				setLog(res.data);
+			}
+		});
 	};
 
-	const logActivityAction = async (data: ActivityItem) => {
-		setIsFetching(true);
+	const logActivityAction = (data: ActivityItem) => {
+		setIsFetching(async () => {
+			const res = await logActivity(data);
 
-		const res = await logActivity(data);
-
-		if (res.success) {
-			getTodaysActivity();
-		}
-
-		setIsFetching(false);
+			if (res.success && res.data) {
+				//getTodaysActivity();
+				setLog(res.data);
+			}
+		});
 	};
 
 	useEffect(() => {
@@ -178,7 +177,7 @@ export default function ReduxStoreLogger({
 		}
 	}, [groceryData, groceryStatus, groceryMsg]);
 
-	if (!enable || !user) {
+	if (!enable) {
 		return null;
 	}
 
@@ -190,7 +189,7 @@ export default function ReduxStoreLogger({
 					className='w-14'>
 					<ImSpinner2 className='animate-spin opacity-50' />
 				</Button>
-			) : activities.length > 0 ? (
+			) : user && activities.length > 0 ? (
 				<Popover>
 					<PopoverTrigger asChild>
 						<Button

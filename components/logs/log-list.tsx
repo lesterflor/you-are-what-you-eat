@@ -28,7 +28,7 @@ import { BiSolidFoodMenu } from 'react-icons/bi';
 import { BsBookmarkStarFill } from 'react-icons/bs';
 import { GiEmptyMetalBucket } from 'react-icons/gi';
 import { ImSpinner2 } from 'react-icons/im';
-import { IoFastFoodOutline } from 'react-icons/io5';
+import { IoFastFoodOutline, IoWaterOutline } from 'react-icons/io5';
 import { TbDatabaseSearch } from 'react-icons/tb';
 import BMRBadge from '../bmr/bmr-badge';
 import DishListSheet from '../dish/dish-list-sheet';
@@ -46,6 +46,7 @@ import LogFoodCard from './log-food-card';
 import LogFoodListItem from './log-food-list-item';
 import LogMacrosSummary from './log-macros-summary';
 import LogRemainderBadge from './log-remainder-badge';
+import WaterIntake from './water-intake';
 
 export default function FoodLogList({
 	forceColumn = true,
@@ -381,7 +382,7 @@ export default function FoodLogList({
 						delta === 0 && 'bottom-0'
 					)}>
 					<CardContent className='p-2 pt-5 flex flex-row items-center gap-2 relative'>
-						<div className='absolute -top-6 left-4 flex flex-row items-center justify-center gap-4'>
+						<div className='absolute -top-6 left-4 flex flex-row items-center justify-center gap-3'>
 							<DishListSheet showBalloon={true}>
 								<div className='rounded-full w-11 h-11 bg-fuchsia-700 p-1.5 flex flex-col items-center justify-center'>
 									<Soup className='w-6 h-6 animate-pulse' />
@@ -405,6 +406,12 @@ export default function FoodLogList({
 									<Flame className='w-6 h-6 animate-pulse' />
 								</div>
 							</ExpendedCaloriesButton>
+
+							<WaterIntake showBalloon={true}>
+								<div className='mt-2 rounded-full p-2 bg-blue-700 w-10 h-10 flex flex-col items-center justify-center'>
+									<IoWaterOutline className='w-6 h-6 animate-pulse' />
+								</div>
+							</WaterIntake>
 
 							{/* <FoodListSheetPaged>
 								<div className='rounded-full dark:bg-green-700 bg-green-500 p-3'>

@@ -90,9 +90,16 @@ export async function logActivity(activity: ActivityItem) {
 			throw new Error('Something went wrong creating the new activity');
 		}
 
+		const updateLog = await getCurrentActivityLog();
+
+		if (!updateLog) {
+			throw new Error('There was a problem getting updated activity log');
+		}
+
 		return {
 			success: true,
-			message: 'success'
+			message: 'success',
+			data: updateLog.data
 		};
 	} catch (error: unknown) {
 		return {

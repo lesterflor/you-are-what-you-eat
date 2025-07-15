@@ -2,8 +2,10 @@ import {
 	foodItemImageSchema,
 	getFoodItemImageSchema,
 	getPreparedDishImageSchema,
+	getWaterConsumedSchema,
 	preparedDishImageSchema,
-	userSchema
+	userSchema,
+	waterConsumedSchema
 } from '@/lib/validators';
 import { z } from 'zod';
 import {
@@ -101,6 +103,10 @@ export type GetPreparedDishImage = z.infer<typeof getPreparedDishImageSchema>;
 
 export type FoodItemImage = z.infer<typeof foodItemImageSchema>;
 export type GetFoodItemImage = z.infer<typeof getFoodItemImageSchema>;
+
+export type WaterConsumed = z.infer<typeof waterConsumedSchema>;
+
+export type GetWaterConsumed = z.infer<typeof getWaterConsumedSchema>;
 
 export type BMRData = {
 	weight: number;

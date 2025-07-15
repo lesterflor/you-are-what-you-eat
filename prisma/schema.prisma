@@ -57,6 +57,7 @@ model User {
   activityItems       ActivityItem[]
   foodItemFavourites  FoodItemFavourite[]
   preparedDishes      PreparedDish[]
+  waterConsumed       WaterConsumed[]
 }
 
 model FoodItem {
@@ -139,6 +140,17 @@ model KnownCaloriesBurned {
   log       Log      @relation(fields: [logId], references: [id])
 
   logId String @db.ObjectId
+}
+
+model WaterConsumed {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  glasses   Float    @default(0)
+  ounces    Float    @default(0)
+  litres    Float    @default(0)
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
 }
 
 model LogRemainder {

@@ -313,8 +313,12 @@ export function colateBMRData(data: BMRData): ColatedBMRData {
 	const correctRemainder = Math.round(remainderInches * 12);
 
 	return {
-		weightInPounds: weightUnit === 'pound' ? weight : weight / POUND_TO_KILO,
-		weightInKilos: weightUnit === 'kilo' ? weight : weight * POUND_TO_KILO,
+		weightInPounds: formatUnit(
+			weightUnit === 'pound' ? weight : weight / POUND_TO_KILO
+		),
+		weightInKilos: formatUnit(
+			weightUnit === 'kilo' ? weight : weight * POUND_TO_KILO
+		),
 		weightUnit,
 		heightInInches: heightUnit === 'cm' ? correctRemainder : height,
 		heightInFeet:
@@ -349,4 +353,20 @@ export function getMacroPercOfCals(
 
 export function truncate(str: string, maxlength: typeof Infinity) {
 	return str.length > maxlength ? str.slice(0, maxlength - 3) + '…' : str;
+}
+
+export function calculateWaterIntake(weight: number) {
+	const ounces = formatUnit(0.67 * weight);
+	const litres = formatUnit(ounces * 0.02841306);
+	const glasses = formatUnit(ounces * 0.2);
+
+	return { ounces, litres, glasses };
+}
+
+export function convertGlassesOfWater(amt: number) {
+	return {
+		glasses: amt,
+		ounces: formatUnit(amt * 5),
+		litres: formatUnit(amt * 0.1479)
+	};
 }
