@@ -138,12 +138,6 @@ export default function WaterIntake({
 			if (res.success && res.data) {
 				const { glasses, ounces, litres } = res.data;
 
-				setWaterConsumed({
-					glasses,
-					ounces,
-					litres
-				});
-
 				setCurrentGlasses(0);
 
 				dispatch(
