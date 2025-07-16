@@ -118,9 +118,11 @@ export default function WaterIntake({
 					Daily Water Requirements
 				</div>
 				<div className='text-blue-600 flex flex-col items-center justify-center w-full'>
-					<div className='text-foreground flex flex-col gap-0 items-start justify-center text-sm pb-4'>
-						<div>1 cup = 8 ounces or 237 millilitres</div>
-						<div>{`1 (6" tall) glass = 16 ounces ${237 * 2} millilitres`}</div>
+					<div className='text-muted-foreground flex flex-col gap-0 items-start justify-center text-sm pb-4'>
+						<div>1 cup = 8 ounces / 237 millilitres</div>
+						<div>{`1 (6" tall) glass = 16 ounces / ${
+							237 * 2
+						} millilitres`}</div>
 					</div>
 
 					{waterData && (
