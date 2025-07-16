@@ -176,7 +176,7 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 								</Button>
 							</ExpendedCaloriesButton>
 
-							<WaterIntake>
+							<WaterIntake useModal={true}>
 								<Button>
 									<FaGlassWater /> Water Intake
 								</Button>
