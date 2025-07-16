@@ -5,6 +5,7 @@ import prisma from '@/db/prisma';
 import {
 	convertGlassesOfWater,
 	formatError,
+	formatUnit,
 	getToday,
 	totalMacrosReducer
 } from '@/lib/utils';
@@ -1021,9 +1022,9 @@ export async function todaysWaterConsumed(glasses: number = 0) {
 					id: existingWaterLog.id
 				},
 				data: {
-					glasses: exGlasses + glasses,
-					ounces: ounces + convertGlassesOfWater(glasses).ounces,
-					litres: litres + convertGlassesOfWater(glasses).litres,
+					glasses: formatUnit(exGlasses + glasses),
+					ounces: formatUnit(ounces + convertGlassesOfWater(glasses).ounces),
+					litres: formatUnit(litres + convertGlassesOfWater(glasses).litres),
 					updatedAt: new Date(getToday().current)
 				}
 			});

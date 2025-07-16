@@ -10,10 +10,10 @@ import {
 } from '@/lib/utils';
 import { BMRData } from '@/types';
 import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useOptimistic, useState, useTransition } from 'react';
 import { BsCupFill } from 'react-icons/bs';
 import { FaGlassWater } from 'react-icons/fa6';
-import { ImSpinner2 } from 'react-icons/im';
+import { ImSpinner2, ImSpinner9 } from 'react-icons/im';
 import { IoIosWater } from 'react-icons/io';
 import IncrementButton from '../increment-button';
 import { Badge } from '../ui/badge';
@@ -38,7 +38,19 @@ export default function WaterIntake({
 		glasses: number;
 		ounces: number;
 		litres: number;
-	}>();
+	}>({
+		glasses: 0,
+		ounces: 0,
+		litres: 0
+	});
+
+	const [optWaterConsumed, setOptWaterConsumed] = useOptimistic(
+		waterConsumed,
+		(state, newWater: number) => ({
+			...state,
+			glasses: formatUnit(state.glasses + newWater)
+		})
+	);
 
 	const [weight, setWeight] = useState<{
 		weightInKilos: number;
@@ -100,15 +112,23 @@ export default function WaterIntake({
 				<div className='relative'>
 					{children}
 					{showBalloon && !popoverOpen && waterData && (
-						<div
-							className={cn(
-								'absolute w-auto h-4 rounded-full  text-xs top-0 right-0 p-1 flex items-center justify-center',
-								waterConsumed && waterData.glasses > waterConsumed?.glasses
-									? 'bg-red-700'
-									: 'bg-green-800'
-							)}>
-							{waterConsumed?.glasses ?? 0}
-						</div>
+						<>
+							{isFetchingWater ? (
+								<div className='absolute w-auto h-4 rounded-full bg-gray-500 text-xs top-0 right-0 p-1 flex items-center justify-center'>
+									<ImSpinner9 className='animate-spin' />
+								</div>
+							) : (
+								<div
+									className={cn(
+										'absolute w-auto h-4 rounded-full  text-xs top-0 right-0 p-1 flex items-center justify-center',
+										waterData.glasses > optWaterConsumed.glasses
+											? 'bg-red-700'
+											: 'bg-green-800'
+									)}>
+									{optWaterConsumed.glasses}
+								</div>
+							)}
+						</>
 					)}
 				</div>
 			</PopoverTrigger>
@@ -188,14 +208,14 @@ export default function WaterIntake({
 					)}
 				</div>
 
-				{waterConsumed && waterData && (
+				{waterData && (
 					<div className='flex flex-col gap-4 w-full items-center justify-center'>
 						<div className='flex flex-col items-center justify-center gap-0 w-full'>
 							<div className='text-blue-600 text-4xl font-extrabold flex flex-row gap-1 items-center justify-evenly w-full'>
 								<div className='flex flex-col gap-0'>
 									<div className='flex flex-row gap-1 items-center justify-center'>
 										<FaGlassWater className='w-8 h-8' />
-										{waterConsumed.glasses}
+										{optWaterConsumed.glasses}
 									</div>
 									<div className='text-xs font-normal text-muted-foreground'>
 										Glasses today
@@ -205,14 +225,14 @@ export default function WaterIntake({
 								<div className='flex flex-col gap-0 items-center justify-center'>
 									<div className='flex flex-row gap-1 items-center justify-center'>
 										<BsCupFill className='w-8 h-8' />
-										{waterConsumed.glasses * 2}
+										{optWaterConsumed.glasses * 2}
 									</div>
 									<div className='text-xs font-normal text-muted-foreground'>
 										Cups today
 									</div>
 								</div>
 
-								{waterConsumed.glasses < waterData.glasses ? (
+								{optWaterConsumed.glasses < waterData.glasses ? (
 									<ArrowDown className='animate-bounce text-red-600' />
 								) : (
 									<ArrowUp className='animate-bounce text-green-600' />
@@ -292,8 +312,12 @@ export default function WaterIntake({
 
 						<Button
 							disabled={isFetchingWater}
-							onClick={() => {
-								setIsFetchingWater(async () => {
+							onClick={async () => {
+								setIsFetchingWater(() => {
+									setOptWaterConsumed(currentGlasses);
+								});
+
+								try {
 									const res = await todaysWaterConsumed(currentGlasses);
 
 									if (res.success && res.data) {
@@ -306,8 +330,14 @@ export default function WaterIntake({
 										});
 
 										setCurrentGlasses(0);
+										setPopoverOpen(false);
 									}
-								});
+								} catch (err) {
+									console.error(
+										`There was a problem updating water consumed: ${err}`
+									);
+									setWaterConsumed(waterConsumed);
+								}
 							}}>
 							{isFetchingWater ? <ImSpinner2 /> : <FaGlassWater />}
 							Log
