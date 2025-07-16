@@ -358,7 +358,7 @@ export function truncate(str: string, maxlength: typeof Infinity) {
 export function calculateWaterIntake(weight: number) {
 	const ounces = formatUnit(0.67 * weight);
 	const litres = formatUnit(ounces * 0.02841306);
-	const glasses = formatUnit(ounces * 0.2);
+	const glasses = formatUnit(ounces * 0.063);
 
 	return { ounces, litres, glasses };
 }
@@ -366,7 +366,7 @@ export function calculateWaterIntake(weight: number) {
 export function convertGlassesOfWater(amt: number) {
 	return {
 		glasses: amt,
-		ounces: formatUnit(amt * 5),
+		ounces: formatUnit(amt * 10),
 		litres: formatUnit(amt * 0.1479)
 	};
 }
