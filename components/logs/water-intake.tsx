@@ -26,7 +26,12 @@ import { toast } from 'sonner';
 import IncrementButton from '../increment-button';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog';
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogTrigger
+} from '../ui/dialog';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Separator } from '../ui/separator';
 import { Skeleton } from '../ui/skeleton';
@@ -398,6 +403,7 @@ export default function WaterIntake({
 								</p>
 							</div>
 						)}
+						<DialogDescription />
 					</DialogContent>
 				</Dialog>
 			) : (
