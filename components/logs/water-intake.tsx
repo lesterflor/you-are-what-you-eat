@@ -318,7 +318,8 @@ export default function WaterIntake({
 				{weight && (
 					<div className='text-muted-foreground text-sm'>
 						<p>
-							The water amounts are based on your weight of{' '}
+							The water amounts are the minimum water reqiurements you need a
+							day, based on your weight of{' '}
 							<span className='font-bold'>{weight.weightInPounds} pounds</span>{' '}
 							/{' '}
 							<span className='font-bold'>
