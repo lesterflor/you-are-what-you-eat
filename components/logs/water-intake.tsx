@@ -348,26 +348,26 @@ export default function WaterIntake({
 										<Button
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(0.5)}>
-											<FaGlassWater className='!w-6 !h-6' />
-											0.5 <BsCupFill className='!w-6 !h-6' /> 1
+											<FaGlassWater />
+											0.5 <BsCupFill /> 1
 										</Button>
 										<Button
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(1)}>
-											<FaGlassWater className='!w-6 !h-6' />
-											1 <BsCupFill className='!w-6 !h-6' /> 2
+											<FaGlassWater />
+											1 <BsCupFill /> 2
 										</Button>
 										<Button
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(1.5)}>
-											<FaGlassWater className='!w-6 !h-6' />
-											1.5 <BsCupFill className='!w-6 !h-6' /> 3
+											<FaGlassWater />
+											1.5 <BsCupFill /> 3
 										</Button>
 										<Button
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(2)}>
-											<FaGlassWater className='!w-6 !h-6' />
-											2 <BsCupFill className='!w-6 !h-6' /> 4
+											<FaGlassWater />
+											2 <BsCupFill /> 4
 										</Button>
 									</div>
 								</div>
@@ -594,26 +594,26 @@ export default function WaterIntake({
 										<Button
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(0.5)}>
-											<FaGlassWater className='!w-6 !h-6' />
-											0.5 <BsCupFill className='!w-6 !h-6' /> 1
+											<FaGlassWater />
+											0.5 <BsCupFill /> 1
 										</Button>
 										<Button
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(1)}>
-											<FaGlassWater className='!w-6 !h-6' />
-											1 <BsCupFill className='!w-6 !h-6' /> 2
+											<FaGlassWater />
+											1 <BsCupFill /> 2
 										</Button>
 										<Button
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(1.5)}>
-											<FaGlassWater className='!w-6 !h-6' />
-											1.5 <BsCupFill className='!w-6 !h-6' /> 3
+											<FaGlassWater />
+											1.5 <BsCupFill /> 3
 										</Button>
 										<Button
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(2)}>
-											<FaGlassWater className='!w-6 !h-6' />
-											2 <BsCupFill className='!w-6 !h-6' /> 4
+											<FaGlassWater />
+											2 <BsCupFill /> 4
 										</Button>
 									</div>
 								</div>
