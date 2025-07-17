@@ -75,12 +75,16 @@ export default function WaterIntake({
 	const [weight, setWeight] = useState<{
 		weightInKilos: number;
 		weightInPounds: number;
-	}>();
+	}>({ weightInKilos: 0, weightInPounds: 0 });
 	const [waterData, setWaterData] = useState<{
 		ounces: number;
 		litres: number;
 		glasses: number;
-	}>();
+	}>({
+		ounces: 0,
+		litres: 0,
+		glasses: 0
+	});
 
 	useEffect(() => {
 		fetchBMR();
@@ -190,7 +194,7 @@ export default function WaterIntake({
 							)}
 						</div>
 					</DialogTrigger>
-					<DialogContent className='flex flex-col gap-4 items-center justify-center max-h-[70vh] !max-w-[95vw] w-[92vw] rounded-md'>
+					<DialogContent className='flex flex-col gap-4 items-center justify-center max-h-[90vh] !max-w-[95vw] w-[92vw] rounded-md'>
 						<DialogTitle className='flex flex-row items-center gap-2 text-xl'>
 							<IoIosWater className='w-10 h-10 text-blue-600' />
 							Daily Water Requirements
