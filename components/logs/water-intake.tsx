@@ -327,8 +327,8 @@ export default function WaterIntake({
 											defaultValue={[currentGlasses]}
 											onValueChange={(val) => setCurrentGlasses(val[0])}
 											step={0.1}
-											min={-10}
-											max={30}
+											min={-waterConsumed.glasses}
+											max={3}
 										/>
 
 										<IncrementButton
@@ -549,8 +549,8 @@ export default function WaterIntake({
 											defaultValue={[currentGlasses]}
 											onValueChange={(val) => setCurrentGlasses(val[0])}
 											step={0.1}
-											min={-10}
-											max={30}
+											min={-waterConsumed.glasses}
+											max={3}
 										/>
 
 										<IncrementButton
