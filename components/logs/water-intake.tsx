@@ -341,7 +341,7 @@ export default function WaterIntake({
 										</IncrementButton>
 									</div>
 
-									<div className='pt-3 flex flex-row flex-wrap gap-2 items-center justify-between'>
+									<div className='pt-3 flex flex-row flex-wrap gap-2 items-center justify-evenly'>
 										<Button
 											className='px-2 gap-1'
 											variant={'secondary'}
@@ -563,7 +563,7 @@ export default function WaterIntake({
 										</IncrementButton>
 									</div>
 
-									<div className='pt-3 flex flex-row flex-wrap gap-2 items-center justify-between'>
+									<div className='pt-3 flex flex-row flex-wrap gap-2 items-center justify-evenly'>
 										<Button
 											className='px-2 gap-1'
 											variant={'secondary'}
