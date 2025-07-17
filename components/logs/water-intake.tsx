@@ -1,6 +1,5 @@
 'use client';
 
-import { getUserBMR } from '@/actions/bmr-actions';
 import { todaysWaterConsumed } from '@/actions/log-actions';
 import {
 	selectWaterLogData,
@@ -18,7 +17,6 @@ import {
 	colateBMRData,
 	formatUnit
 } from '@/lib/utils';
-import { BMRData } from '@/types';
 import { DialogTitle } from '@radix-ui/react-dialog';
 import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useOptimistic, useState, useTransition } from 'react';
@@ -39,7 +37,6 @@ import {
 } from '../ui/dialog';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Separator } from '../ui/separator';
-import { Skeleton } from '../ui/skeleton';
 import { Slider } from '../ui/slider';
 
 export default function WaterIntake({
@@ -60,11 +57,17 @@ export default function WaterIntake({
 
 	useEffect(() => {
 		if (userDataStatus === 'updated') {
-			console.log(JSON.stringify(userData));
+			const { weightInKilos, weightInPounds } = colateBMRData(
+				JSON.parse(userData.data)
+			);
+
+			setWeight({
+				weightInKilos,
+				weightInPounds
+			});
 		}
 	}, [userData, userDataStatus]);
 
-	const [isFetching, setIsFetching] = useTransition();
 	const [isFetchingWater, setIsFetchingWater] = useTransition();
 
 	const [currentGlasses, setCurrentGlasses] = useState(0);
@@ -101,28 +104,10 @@ export default function WaterIntake({
 	});
 
 	useEffect(() => {
-		fetchBMR();
-	}, []);
-
-	useEffect(() => {
 		fetchTodaysWater();
 	}, [waterLogData, waterLogStatus]);
 
 	const [popoverOpen, setPopoverOpen] = useState(false);
-
-	const fetchBMR = () => {
-		setIsFetching(async () => {
-			const res = await getUserBMR();
-
-			if (res.success && res.data) {
-				const { weightInKilos, weightInPounds } = colateBMRData(
-					res.data as BMRData
-				);
-
-				setWeight({ weightInKilos, weightInPounds });
-			}
-		});
-	};
 
 	const fetchTodaysWater = () => {
 		setIsFetchingWater(async () => {
@@ -260,62 +245,23 @@ export default function WaterIntake({
 									<Badge
 										variant={'outline'}
 										className='flex flex-col !gap-0 items-center bg-blue-800 text-background'>
-										{isFetching ? (
-											<>
-												<Skeleton className='w-6 h-5' />
-												<Skeleton className='w-11 h-4' />
-											</>
-										) : (
-											<>
-												{waterData.glasses}{' '}
-												<span className='text-sm'>glasses</span>
-											</>
-										)}
+										{waterData.glasses} <span className='text-sm'>glasses</span>
 									</Badge>
 									<Badge
 										variant={'outline'}
 										className='flex flex-col !gap-0 items-center bg-blue-800 text-background'>
-										{isFetching ? (
-											<>
-												<Skeleton className='w-6 h-5' />
-												<Skeleton className='w-11 h-4' />
-											</>
-										) : (
-											<>
-												{waterData.glasses * 2}{' '}
-												<span className='text-sm'>cups</span>
-											</>
-										)}
+										{waterData.glasses * 2}{' '}
+										<span className='text-sm'>cups</span>
 									</Badge>
 									<Badge
 										variant={'outline'}
 										className='flex flex-col !gap-0 items-center bg-blue-800 text-background'>
-										{isFetching ? (
-											<>
-												<Skeleton className='w-6 h-5' />
-												<Skeleton className='w-11 h-4' />
-											</>
-										) : (
-											<>
-												{waterData.ounces}{' '}
-												<span className='text-sm'>ounces</span>
-											</>
-										)}
+										{waterData.ounces} <span className='text-sm'>ounces</span>
 									</Badge>
 									<Badge
 										variant={'outline'}
 										className='flex flex-col !gap-0 items-center bg-blue-800 text-background'>
-										{isFetching ? (
-											<>
-												<Skeleton className='w-6 h-5' />
-												<Skeleton className='w-11 h-4' />
-											</>
-										) : (
-											<>
-												{waterData.litres}{' '}
-												<span className='text-sm'>litres</span>
-											</>
-										)}
+										{waterData.litres} <span className='text-sm'>litres</span>
 									</Badge>
 								</div>
 							)}
@@ -517,62 +463,23 @@ export default function WaterIntake({
 									<Badge
 										variant={'outline'}
 										className='flex flex-col !gap-0 items-center bg-blue-800 text-background'>
-										{isFetching ? (
-											<>
-												<Skeleton className='w-6 h-5' />
-												<Skeleton className='w-11 h-4' />
-											</>
-										) : (
-											<>
-												{waterData.glasses}{' '}
-												<span className='text-sm'>glasses</span>
-											</>
-										)}
+										{waterData.glasses} <span className='text-sm'>glasses</span>
 									</Badge>
 									<Badge
 										variant={'outline'}
 										className='flex flex-col !gap-0 items-center bg-blue-800 text-background'>
-										{isFetching ? (
-											<>
-												<Skeleton className='w-6 h-5' />
-												<Skeleton className='w-11 h-4' />
-											</>
-										) : (
-											<>
-												{waterData.glasses * 2}{' '}
-												<span className='text-sm'>cups</span>
-											</>
-										)}
+										{waterData.glasses * 2}{' '}
+										<span className='text-sm'>cups</span>
 									</Badge>
 									<Badge
 										variant={'outline'}
 										className='flex flex-col !gap-0 items-center bg-blue-800 text-background'>
-										{isFetching ? (
-											<>
-												<Skeleton className='w-6 h-5' />
-												<Skeleton className='w-11 h-4' />
-											</>
-										) : (
-											<>
-												{waterData.ounces}{' '}
-												<span className='text-sm'>ounces</span>
-											</>
-										)}
+										{waterData.ounces} <span className='text-sm'>ounces</span>
 									</Badge>
 									<Badge
 										variant={'outline'}
 										className='flex flex-col !gap-0 items-center bg-blue-800 text-background'>
-										{isFetching ? (
-											<>
-												<Skeleton className='w-6 h-5' />
-												<Skeleton className='w-11 h-4' />
-											</>
-										) : (
-											<>
-												{waterData.litres}{' '}
-												<span className='text-sm'>litres</span>
-											</>
-										)}
+										{waterData.litres} <span className='text-sm'>litres</span>
 									</Badge>
 								</div>
 							)}
