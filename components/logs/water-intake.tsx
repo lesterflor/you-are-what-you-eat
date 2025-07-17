@@ -193,38 +193,38 @@ export default function WaterIntake({
 							)}
 						</div>
 					</DialogTrigger>
-					<DialogContent className='flex flex-col gap-2 items-center justify-center max-h-[90vh] !max-w-[95vw] w-[92vw] rounded-md p-2 pt-8'>
+					<DialogContent className='flex flex-col gap-2 items-center justify-center max-h-[90vh] !max-w-[95vw] w-[86vw] rounded-md p-2 pt-8'>
+						<Popover>
+							<PopoverTrigger asChild>
+								<GrCircleQuestion className='w-6 h-6 absolute top-2 left-2 text-muted-foreground' />
+							</PopoverTrigger>
+							<PopoverContent>
+								{weight && (
+									<div className='text-muted-foreground text-sm'>
+										<p>
+											The water amounts are the minimum water requirements you
+											need a day, based on your weight of{' '}
+											<span className='font-bold'>
+												{weight.weightInPounds} pounds
+											</span>{' '}
+											/{' '}
+											<span className='font-bold'>
+												{weight.weightInKilos} kilograms.
+											</span>
+										</p>
+										<p>
+											<b>
+												This amount does not take in account water that may be
+												included/part of food consumed.
+											</b>
+										</p>
+									</div>
+								)}
+							</PopoverContent>
+						</Popover>
+
 						<DialogTitle className='flex flex-row items-center gap-2 text-lg'>
 							<div className='flex flex-row items-center gap-2 text-lg'>
-								<Popover>
-									<PopoverTrigger asChild>
-										<GrCircleQuestion className='w-6 h-6' />
-									</PopoverTrigger>
-									<PopoverContent>
-										{weight && (
-											<div className='text-muted-foreground text-sm'>
-												<p>
-													The water amounts are the minimum water requirements
-													you need a day, based on your weight of{' '}
-													<span className='font-bold'>
-														{weight.weightInPounds} pounds
-													</span>{' '}
-													/{' '}
-													<span className='font-bold'>
-														{weight.weightInKilos} kilograms.
-													</span>
-												</p>
-												<p>
-													<b>
-														This amount does not take in account water that may
-														be included/part of food consumed.
-													</b>
-												</p>
-											</div>
-										)}
-									</PopoverContent>
-								</Popover>
-
 								<div className='flex flex-row gap-0 items-center leading-tight'>
 									<IoIosWater className='w-10 h-10 text-blue-600' />
 									Daily Water Requirements
@@ -341,26 +341,30 @@ export default function WaterIntake({
 										</IncrementButton>
 									</div>
 
-									<div className='flex flex-row flex-wrap gap-4 items-center justify-center'>
+									<div className='pt-3 flex flex-row flex-wrap gap-2 items-center justify-between'>
 										<Button
+											className='px-2 gap-1'
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(0.5)}>
 											<FaGlassWater />
 											0.5 <BsCupFill /> 1
 										</Button>
 										<Button
+											className='px-2 gap-1'
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(1)}>
 											<FaGlassWater />
 											1 <BsCupFill /> 2
 										</Button>
 										<Button
+											className='px-2 gap-1'
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(1.5)}>
 											<FaGlassWater />
 											1.5 <BsCupFill /> 3
 										</Button>
 										<Button
+											className='px-2 gap-1'
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(2)}>
 											<FaGlassWater />
@@ -413,37 +417,37 @@ export default function WaterIntake({
 							)}
 						</div>
 					</PopoverTrigger>
-					<PopoverContent className='flex flex-col gap-2 items-center justify-center max-h-[70vh] !max-w-[95vw] w-[92vw]'>
-						<div className='flex flex-row items-center gap-2 text-lg'>
-							<Popover>
-								<PopoverTrigger asChild>
-									<GrCircleQuestion className='w-6 h-6' />
-								</PopoverTrigger>
-								<PopoverContent>
-									{weight && (
-										<div className='text-muted-foreground text-sm'>
-											<p>
-												The water amounts are the minimum water requirements you
-												need a day, based on your weight of{' '}
-												<span className='font-bold'>
-													{weight.weightInPounds} pounds
-												</span>{' '}
-												/{' '}
-												<span className='font-bold'>
-													{weight.weightInKilos} kilograms.
-												</span>
-											</p>
-											<p>
-												<b>
-													This amount does not take in account water that may be
-													included/part of food consumed.
-												</b>
-											</p>
-										</div>
-									)}
-								</PopoverContent>
-							</Popover>
+					<PopoverContent className='flex flex-col gap-2 items-center justify-center max-h-[70vh] !max-w-[95vw] w-[86vw] relative'>
+						<Popover>
+							<PopoverTrigger asChild>
+								<GrCircleQuestion className='w-6 h-6 absolute top-2 left-2 text-muted-foreground' />
+							</PopoverTrigger>
+							<PopoverContent>
+								{weight && (
+									<div className='text-muted-foreground text-sm'>
+										<p>
+											The water amounts are the minimum water requirements you
+											need a day, based on your weight of{' '}
+											<span className='font-bold'>
+												{weight.weightInPounds} pounds
+											</span>{' '}
+											/{' '}
+											<span className='font-bold'>
+												{weight.weightInKilos} kilograms.
+											</span>
+										</p>
+										<p>
+											<b>
+												This amount does not take in account water that may be
+												included/part of food consumed.
+											</b>
+										</p>
+									</div>
+								)}
+							</PopoverContent>
+						</Popover>
 
+						<div className='flex flex-row items-center gap-2 text-lg'>
 							<div className='flex flex-row gap-0 items-center'>
 								<IoIosWater className='w-10 h-10 text-blue-600' />
 								Daily Water Requirements
@@ -559,26 +563,30 @@ export default function WaterIntake({
 										</IncrementButton>
 									</div>
 
-									<div className='flex flex-row flex-wrap gap-4 items-center justify-center'>
+									<div className='pt-3 flex flex-row flex-wrap gap-2 items-center justify-between'>
 										<Button
+											className='px-2 gap-1'
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(0.5)}>
 											<FaGlassWater />
 											0.5 <BsCupFill /> 1
 										</Button>
 										<Button
+											className='px-2 gap-1'
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(1)}>
 											<FaGlassWater />
 											1 <BsCupFill /> 2
 										</Button>
 										<Button
+											className='px-2 gap-1'
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(1.5)}>
 											<FaGlassWater />
 											1.5 <BsCupFill /> 3
 										</Button>
 										<Button
+											className='px-2 gap-1'
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(2)}>
 											<FaGlassWater />
