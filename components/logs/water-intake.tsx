@@ -7,6 +7,10 @@ import {
 	selectWaterLogStatus,
 	updatedWater
 } from '@/lib/features/log/waterLogSlice';
+import {
+	selectUserData,
+	selectUserDataStatus
+} from '@/lib/features/user/userDataSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import {
 	calculateWaterIntake,
@@ -20,6 +24,7 @@ import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useOptimistic, useState, useTransition } from 'react';
 import { BsCupFill } from 'react-icons/bs';
 import { FaGlassWater } from 'react-icons/fa6';
+import { GrCircleQuestion } from 'react-icons/gr';
 import { ImSpinner2, ImSpinner9 } from 'react-icons/im';
 import { IoIosWater } from 'react-icons/io';
 import { toast } from 'sonner';
@@ -49,6 +54,15 @@ export default function WaterIntake({
 	const dispatch = useAppDispatch();
 	const waterLogData = useAppSelector(selectWaterLogData);
 	const waterLogStatus = useAppSelector(selectWaterLogStatus);
+
+	const userData = useAppSelector(selectUserData);
+	const userDataStatus = useAppSelector(selectUserDataStatus);
+
+	useEffect(() => {
+		if (userDataStatus === 'updated') {
+			console.log(JSON.stringify(userData));
+		}
+	}, [userData, userDataStatus]);
 
 	const [isFetching, setIsFetching] = useTransition();
 	const [isFetchingWater, setIsFetchingWater] = useTransition();
@@ -194,10 +208,43 @@ export default function WaterIntake({
 							)}
 						</div>
 					</DialogTrigger>
-					<DialogContent className='flex flex-col gap-4 items-center justify-center max-h-[90vh] !max-w-[95vw] w-[92vw] rounded-md'>
-						<DialogTitle className='flex flex-row items-center gap-2 text-xl'>
-							<IoIosWater className='w-10 h-10 text-blue-600' />
-							Daily Water Requirements
+					<DialogContent className='flex flex-col gap-2 items-center justify-center max-h-[90vh] !max-w-[95vw] w-[92vw] rounded-md p-2 pt-8'>
+						<DialogTitle className='flex flex-row items-center gap-2 text-lg'>
+							<div className='flex flex-row items-center gap-2 text-lg'>
+								<Popover>
+									<PopoverTrigger asChild>
+										<GrCircleQuestion className='w-6 h-6' />
+									</PopoverTrigger>
+									<PopoverContent>
+										{weight && (
+											<div className='text-muted-foreground text-sm'>
+												<p>
+													The water amounts are the minimum water requirements
+													you need a day, based on your weight of{' '}
+													<span className='font-bold'>
+														{weight.weightInPounds} pounds
+													</span>{' '}
+													/{' '}
+													<span className='font-bold'>
+														{weight.weightInKilos} kilograms.
+													</span>
+												</p>
+												<p>
+													<b>
+														This amount does not take in account water that may
+														be included/part of food consumed.
+													</b>
+												</p>
+											</div>
+										)}
+									</PopoverContent>
+								</Popover>
+
+								<div className='flex flex-row gap-0 items-center leading-tight'>
+									<IoIosWater className='w-10 h-10 text-blue-600' />
+									Daily Water Requirements
+								</div>
+							</div>
 						</DialogTitle>
 
 						<div className='text-blue-600 flex flex-col items-center justify-center w-full'>
@@ -389,27 +436,6 @@ export default function WaterIntake({
 							</div>
 						)}
 
-						{weight && (
-							<div className='text-muted-foreground text-sm'>
-								<p>
-									The water amounts are the minimum water requirements you need
-									a day, based on your weight of{' '}
-									<span className='font-bold'>
-										{weight.weightInPounds} pounds
-									</span>{' '}
-									/{' '}
-									<span className='font-bold'>
-										{weight.weightInKilos} kilograms.
-									</span>
-								</p>
-								<p>
-									<b>
-										This amount does not take in account water that may be
-										included/part of food consumed.
-									</b>
-								</p>
-							</div>
-						)}
 						<DialogDescription />
 					</DialogContent>
 				</Dialog>
@@ -441,11 +467,43 @@ export default function WaterIntake({
 							)}
 						</div>
 					</PopoverTrigger>
-					<PopoverContent className='flex flex-col gap-4 items-center justify-center max-h-[70vh] !max-w-[95vw] w-[92vw]'>
-						<div className='flex flex-row items-center gap-2 text-xl'>
-							<IoIosWater className='w-10 h-10 text-blue-600' />
-							Daily Water Requirements
+					<PopoverContent className='flex flex-col gap-2 items-center justify-center max-h-[70vh] !max-w-[95vw] w-[92vw]'>
+						<div className='flex flex-row items-center gap-2 text-lg'>
+							<Popover>
+								<PopoverTrigger asChild>
+									<GrCircleQuestion className='w-6 h-6' />
+								</PopoverTrigger>
+								<PopoverContent>
+									{weight && (
+										<div className='text-muted-foreground text-sm'>
+											<p>
+												The water amounts are the minimum water requirements you
+												need a day, based on your weight of{' '}
+												<span className='font-bold'>
+													{weight.weightInPounds} pounds
+												</span>{' '}
+												/{' '}
+												<span className='font-bold'>
+													{weight.weightInKilos} kilograms.
+												</span>
+											</p>
+											<p>
+												<b>
+													This amount does not take in account water that may be
+													included/part of food consumed.
+												</b>
+											</p>
+										</div>
+									)}
+								</PopoverContent>
+							</Popover>
+
+							<div className='flex flex-row gap-0 items-center'>
+								<IoIosWater className='w-10 h-10 text-blue-600' />
+								Daily Water Requirements
+							</div>
 						</div>
+
 						<div className='text-blue-600 flex flex-col items-center justify-center w-full'>
 							<div className='text-muted-foreground flex flex-col gap-0 items-start justify-center text-sm pb-4'>
 								<div>1 cup = 8 ounces / 237 millilitres</div>
@@ -632,28 +690,6 @@ export default function WaterIntake({
 									)}
 									Log
 								</Button>
-							</div>
-						)}
-
-						{weight && (
-							<div className='text-muted-foreground text-sm'>
-								<p>
-									The water amounts are the minimum water requirements you need
-									a day, based on your weight of{' '}
-									<span className='font-bold'>
-										{weight.weightInPounds} pounds
-									</span>{' '}
-									/{' '}
-									<span className='font-bold'>
-										{weight.weightInKilos} kilograms.
-									</span>
-								</p>
-								<p>
-									<b>
-										This amount does not take in account water that may be
-										included/part of food consumed.
-									</b>
-								</p>
 							</div>
 						)}
 					</PopoverContent>

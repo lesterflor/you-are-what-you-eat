@@ -8,6 +8,7 @@ import {
 	setDishListState
 } from '@/lib/features/dish/preparedDishSlice';
 import { selectData, selectStatus } from '@/lib/features/log/logFoodSlice';
+import { updateData } from '@/lib/features/user/userDataSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { cn, formatUnit, getStorageItem, setStorageItem } from '@/lib/utils';
 import { BaseMetabolicRateType, GetFoodEntry, GetLog } from '@/types';
@@ -105,6 +106,7 @@ export default function FoodLogList({
 					.BaseMetabolicRate as BaseMetabolicRateType[];
 
 				setBmr(bmrArr[0]);
+				dispatch(updateData({ data: JSON.stringify(bmrArr[0]) }));
 
 				setTotalCals(res.data.totalCalories);
 
