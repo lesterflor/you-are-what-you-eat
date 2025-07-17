@@ -126,7 +126,13 @@ export default function FoodListSheet({
 
 				break;
 			case 'input':
-				getFoods(foodSearchData.term ?? '');
+				//getFoods(foodSearchData.term ?? '');
+
+				const searchFoods = items.filter((item) =>
+					item.name.toLowerCase().includes(foodSearchData.term ?? '')
+				);
+
+				setFoods(searchFoods);
 				break;
 			case 'favourites':
 				getFavs();
@@ -171,6 +177,8 @@ export default function FoodListSheet({
 	useEffect(() => {
 		if (debounced) {
 			dispatch(inputSearch(debounced));
+		} else {
+			setFoods(allFoods);
 		}
 	}, [debounced]);
 
