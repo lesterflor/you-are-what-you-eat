@@ -1,14 +1,18 @@
 'use client';
 
 import { updateGroceryList } from '@/actions/grocery-actions';
+import { getPublicUserById } from '@/actions/user-actions';
 import { completeGroceryListState } from '@/lib/features/grocery/grocerySlice';
 import { useAppDispatch } from '@/lib/hooks';
 import { GetGroceryList } from '@/types';
 import { format } from 'date-fns';
 import { Check, PenLineIcon } from 'lucide-react';
 import { useEffect, useState, useTransition } from 'react';
+import { FaUsers } from 'react-icons/fa';
+import { FaUserPen } from 'react-icons/fa6';
 import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'sonner';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
 import {
@@ -46,6 +50,19 @@ export default function GroceryListItemCard({
 	const [listComplete, setListComplete] = useState(false);
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [editSheetOpen, setEditSheetOpen] = useState(false);
+	const [createdBy, setCreatedBy] = useState<{ name: string; image: string }>();
+
+	const getListCreator = async () => {
+		const res = await getPublicUserById(list.userId);
+
+		if (res && res.name && res?.image) {
+			setCreatedBy({ name: res.name, image: res.image });
+		}
+	};
+
+	useEffect(() => {
+		getListCreator();
+	}, []);
 
 	useEffect(() => {}, [editSheetOpen]);
 
@@ -77,10 +94,23 @@ export default function GroceryListItemCard({
 
 	return (
 		<Card className='p-2'>
-			<CardHeader className='p-0 relative pb-4'>
-				<div className='text-xs text-muted-foreground flex flex-row justify-between items-center pr-5'>
-					<div className='w-fit'>{format(grList.createdAt, 'PPP h:mm a')}</div>
-					<SharedListAvatars userIds={grList.sharedUsers} />
+			<CardHeader className='p-0 relative pb-4 flex flex-col gap-0 items-start w-full'>
+				<div className='text-xs text-muted-foreground flex flex-row justify-between items-center pr-5 w-full'>
+					<div className='w-fit'>{format(grList.createdAt, 'PP h:mm a')}</div>
+					<div className='flex flex-row gap-1 items-center justify-center'>
+						<FaUsers className='w-4 h-4 opacity-65' />
+						<SharedListAvatars userIds={grList.sharedUsers} />
+					</div>
+
+					{createdBy && (
+						<div className='flex flex-row gap-1 items-center justify-start text-xs text-muted-foreground'>
+							<FaUserPen className='w-4 h-4 opacity-65' />
+							<Avatar className='w-6 h-6'>
+								<AvatarFallback>{createdBy.name.slice(0, 1)}</AvatarFallback>
+								<AvatarImage src={createdBy.image} />
+							</Avatar>
+						</div>
+					)}
 				</div>
 			</CardHeader>
 			<CardContent className='p-0 flex flex-col gap-2'>

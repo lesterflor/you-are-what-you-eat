@@ -34,14 +34,20 @@ export default function GroceryItemCard({
 
 	const [updating, setUpdating] = useTransition();
 	const [groceryItem, setGroceryItem] = useState<GetGroceryItem>(item);
+	const [itemStatus, setItemStatus] = useState(item.status);
 
 	const updateItemStatus = () => {
 		setUpdating(async () => {
-			item.status = 'completed';
+			const newStatus = itemStatus === 'completed' ? 'pending' : 'completed';
+
+			item.status = newStatus;
+
 			const res = await updateGroceryItem(item);
 
 			if (res.success && res.data) {
 				toast.success(res.message);
+
+				setItemStatus(newStatus);
 
 				setUpdating(() => {
 					setGroceryItem(res.data);
@@ -88,16 +94,13 @@ export default function GroceryItemCard({
 				<div className='flex flex-row items-center gap-2'>
 					<Badge
 						className='text-xl rounded-full'
-						variant={
-							groceryItem.status === 'pending' ? 'destructive' : 'default'
-						}>
+						variant={itemStatus === 'pending' ? 'destructive' : 'default'}>
 						{groceryItem.qty}
 					</Badge>
 					<div
 						className={cn(
 							'capitalize text-xl',
-							groceryItem.status === 'completed' &&
-								'line-through text-muted-foreground'
+							itemStatus === 'completed' && 'line-through text-muted-foreground'
 						)}>
 						{groceryItem.name}
 					</div>
@@ -110,24 +113,26 @@ export default function GroceryItemCard({
 
 			{!displayOnly && (
 				<div>
-					{groceryItem.status === 'pending' ? (
-						<Button
-							disabled={updating}
-							onClick={(e) => {
-								e.preventDefault();
-								updateItemStatus();
-							}}
-							variant='outline'
-							size='lg'>
-							{updating ? (
-								<ImSpinner2 className='w-8 h-8 animate-spin' />
-							) : (
-								<Check className='w-8 h-8' />
-							)}
-						</Button>
-					) : (
-						<Check className='w-8 h-8 text-green-600' />
-					)}
+					<Button
+						className='hover:bg-black'
+						disabled={updating}
+						onClick={(e) => {
+							e.preventDefault();
+							updateItemStatus();
+						}}
+						variant='outline'
+						size='lg'>
+						{updating ? (
+							<ImSpinner2 className='w-8 h-8 animate-spin' />
+						) : (
+							<Check
+								className={cn(
+									'w-8 h-8',
+									itemStatus === 'completed' && 'text-green-600'
+								)}
+							/>
+						)}
+					</Button>
 				</div>
 			)}
 
