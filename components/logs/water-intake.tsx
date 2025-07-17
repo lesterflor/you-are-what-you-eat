@@ -190,7 +190,7 @@ export default function WaterIntake({
 							)}
 						</div>
 					</DialogTrigger>
-					<DialogContent className='flex flex-col gap-4 items-center justify-center max-h-[70vh] !max-w-[95vw] w-[92vw]'>
+					<DialogContent className='flex flex-col gap-4 items-center justify-center max-h-[70vh] !max-w-[95vw] w-[92vw] rounded-md'>
 						<DialogTitle className='flex flex-row items-center gap-2 text-xl'>
 							<IoIosWater className='w-10 h-10 text-blue-600' />
 							Daily Water Requirements
@@ -305,8 +305,15 @@ export default function WaterIntake({
 								<Separator />
 
 								<div className='flex flex-col gap-0 items-center justify-center w-full'>
-									<div className='text-muted-foreground flex flex-row gap-1 items-center justify-center'>
-										<FaGlassWater className='w-6 h-6' /> {currentGlasses}
+									<div className='text-muted-foreground flex flex-row gap-2 items-center justify-center'>
+										<div className='flex flex-row gap-1 w-16 items-center justify-start'>
+											<FaGlassWater className='w-6 h-6' /> {currentGlasses}
+										</div>
+
+										<div className='flex flex-row gap-1 w-16 items-center justify-start'>
+											<BsCupFill className='w-6 h-6' />{' '}
+											{formatUnit(currentGlasses * 2)}
+										</div>
 									</div>
 									<div className='flex flex-row items-center gap-3 justify-center w-full'>
 										<IncrementButton
@@ -337,32 +344,30 @@ export default function WaterIntake({
 										</IncrementButton>
 									</div>
 
-									<div className='flex flex-row flex-wrap gap-2 items-center justify-center'>
-										<FaGlassWater className='w-6 h-6' />
+									<div className='flex flex-row flex-wrap gap-4 items-center justify-center'>
 										<Button
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(0.5)}>
-											0.5
+											<FaGlassWater className='!w-6 !h-6' />
+											0.5 <BsCupFill className='!w-6 !h-6' /> 1
 										</Button>
 										<Button
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(1)}>
-											1
+											<FaGlassWater className='!w-6 !h-6' />
+											1 <BsCupFill className='!w-6 !h-6' /> 2
 										</Button>
 										<Button
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(1.5)}>
-											1.5
+											<FaGlassWater className='!w-6 !h-6' />
+											1.5 <BsCupFill className='!w-6 !h-6' /> 3
 										</Button>
 										<Button
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(2)}>
-											2
-										</Button>
-										<Button
-											variant={'secondary'}
-											onClick={() => setCurrentGlasses(2.5)}>
-											2.5
+											<FaGlassWater className='!w-6 !h-6' />
+											2 <BsCupFill className='!w-6 !h-6' /> 4
 										</Button>
 									</div>
 								</div>
@@ -370,7 +375,11 @@ export default function WaterIntake({
 								<Button
 									disabled={isFetchingWater}
 									onClick={() => updateWaterConsumed()}>
-									{isFetchingWater ? <ImSpinner2 /> : <FaGlassWater />}
+									{isFetchingWater ? (
+										<ImSpinner2 />
+									) : (
+										<IoIosWater className='!w-6 !h-6' />
+									)}
 									Log
 								</Button>
 							</div>
@@ -542,8 +551,15 @@ export default function WaterIntake({
 								<Separator />
 
 								<div className='flex flex-col gap-0 items-center justify-center w-full'>
-									<div className='text-muted-foreground flex flex-row gap-1 items-center justify-center'>
-										<FaGlassWater className='w-6 h-6' /> {currentGlasses}
+									<div className='text-muted-foreground flex flex-row gap-2 items-center justify-center'>
+										<div className='flex flex-row gap-1 w-16 items-center justify-start'>
+											<FaGlassWater className='w-6 h-6' /> {currentGlasses}
+										</div>
+
+										<div className='flex flex-row gap-1 w-16 items-center justify-start'>
+											<BsCupFill className='w-6 h-6' />{' '}
+											{formatUnit(currentGlasses * 2)}
+										</div>
 									</div>
 									<div className='flex flex-row items-center gap-3 justify-center w-full'>
 										<IncrementButton
@@ -574,32 +590,30 @@ export default function WaterIntake({
 										</IncrementButton>
 									</div>
 
-									<div className='flex flex-row flex-wrap gap-2 items-center justify-center'>
-										<FaGlassWater className='w-6 h-6' />
+									<div className='flex flex-row flex-wrap gap-4 items-center justify-center'>
 										<Button
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(0.5)}>
-											0.5
+											<FaGlassWater className='!w-6 !h-6' />
+											0.5 <BsCupFill className='!w-6 !h-6' /> 1
 										</Button>
 										<Button
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(1)}>
-											1
+											<FaGlassWater className='!w-6 !h-6' />
+											1 <BsCupFill className='!w-6 !h-6' /> 2
 										</Button>
 										<Button
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(1.5)}>
-											1.5
+											<FaGlassWater className='!w-6 !h-6' />
+											1.5 <BsCupFill className='!w-6 !h-6' /> 3
 										</Button>
 										<Button
 											variant={'secondary'}
 											onClick={() => setCurrentGlasses(2)}>
-											2
-										</Button>
-										<Button
-											variant={'secondary'}
-											onClick={() => setCurrentGlasses(2.5)}>
-											2.5
+											<FaGlassWater className='!w-6 !h-6' />
+											2 <BsCupFill className='!w-6 !h-6' /> 4
 										</Button>
 									</div>
 								</div>
@@ -607,7 +621,11 @@ export default function WaterIntake({
 								<Button
 									disabled={isFetchingWater}
 									onClick={() => updateWaterConsumed()}>
-									{isFetchingWater ? <ImSpinner2 /> : <FaGlassWater />}
+									{isFetchingWater ? (
+										<ImSpinner2 />
+									) : (
+										<IoIosWater className='!w-6 !h-6' />
+									)}
 									Log
 								</Button>
 							</div>
