@@ -39,11 +39,15 @@ export const waterLogSlice = createAppSlice({
 	}),
 	selectors: {
 		selectWaterLogData: (state) => state.value,
-		selectWaterLogStatus: (state) => state.status
+		selectWaterLogStatus: (state) => state.status,
+		selectWaterLogMessage: (state) => state.message
 	}
 });
 
 export const { updatedWater } = waterLogSlice.actions;
 
-export const { selectWaterLogData, selectWaterLogStatus } =
-	waterLogSlice.selectors;
+export const {
+	selectWaterLogData,
+	selectWaterLogStatus,
+	selectWaterLogMessage
+} = waterLogSlice.selectors;

@@ -20,6 +20,11 @@ import {
 } from '@/lib/features/grocery/grocerySlice';
 import { selectData, selectStatus } from '@/lib/features/log/logFoodSlice';
 import {
+	selectWaterLogData,
+	selectWaterLogMessage,
+	selectWaterLogStatus
+} from '@/lib/features/log/waterLogSlice';
+import {
 	selectNoteMsg,
 	selectNoteUpdateData,
 	selectNoteUpdateStatus
@@ -67,6 +72,10 @@ export default function ReduxStoreLogger({
 	const groceryData = useAppSelector(selectGroceryData);
 	const groceryStatus = useAppSelector(selectGroceryStatus);
 	const groceryMsg = useAppSelector(selectGroceryMsg);
+
+	const waterLogData = useAppSelector(selectWaterLogData);
+	const waterLogStatus = useAppSelector(selectWaterLogStatus);
+	const waterLogMessage = useAppSelector(selectWaterLogMessage);
 
 	const [isFetching, setIsFetching] = useTransition();
 	const [log, setLog] = useState<GetActivityLog>();
@@ -121,6 +130,20 @@ export default function ReduxStoreLogger({
 			setHasOpened(false);
 		}
 	}, [logFoodItem, logFoodItemStatus]);
+
+	useEffect(() => {
+		if (waterLogStatus !== 'idle') {
+			const data = {
+				type: 'waterLog',
+				action: waterLogStatus,
+				data: waterLogMessage
+			};
+
+			logActivityAction(data);
+
+			setHasOpened(false);
+		}
+	}, [waterLogData, waterLogStatus, waterLogMessage]);
 
 	useEffect(() => {
 		if (foodSliceStatus !== 'idle') {

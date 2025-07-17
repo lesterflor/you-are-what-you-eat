@@ -1,10 +1,10 @@
 'use client';
 
+import { cn } from '@/lib/utils';
 import { GetActivityItem } from '@/types';
 import { format } from 'date-fns';
-import { Badge } from '../ui/badge';
 import { Info } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Badge } from '../ui/badge';
 
 const formatItemType = (type: string) => {
 	let lbl = '';
@@ -30,6 +30,10 @@ const formatItemType = (type: string) => {
 		case 'foodData':
 			lbl = 'Food';
 			css = 'text-amber-100';
+			break;
+		case 'waterLog':
+			lbl = 'Water';
+			css = 'text-blue-600';
 			break;
 	}
 
