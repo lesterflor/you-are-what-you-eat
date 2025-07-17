@@ -1,12 +1,12 @@
 'use client';
 
+import { selectFoodSearchStatus } from '@/lib/features/food/foodSearchSlice';
+import { useAppSelector } from '@/lib/hooks';
+import { cn } from '@/lib/utils';
 import { CircleX } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react';
-import { useAppSelector } from '@/lib/hooks';
-import { selectFoodSearchStatus } from '@/lib/features/food/foodSearchSlice';
 
 export default function InputWithButton({
 	children,
@@ -50,13 +50,14 @@ export default function InputWithButton({
 
 			<Button
 				variant='ghost'
-				className='absolute top-0 right-0 h-full px-4'
+				className={cn(
+					'absolute top-0 right-0 h-full px-4',
+					search ? 'block' : 'hidden'
+				)}
 				onClick={() => {
 					setSearch('');
 				}}>
-				<CircleX
-					className={cn('w-6 h-6 opacity-50', search ? 'block' : 'hidden')}
-				/>
+				<CircleX className='opacity-50' />
 			</Button>
 		</div>
 	);
