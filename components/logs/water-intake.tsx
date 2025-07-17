@@ -18,7 +18,13 @@ import {
 	formatUnit
 } from '@/lib/utils';
 import { DialogTitle } from '@radix-ui/react-dialog';
-import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+	ArrowDown,
+	ArrowUp,
+	Check,
+	ChevronLeft,
+	ChevronRight
+} from 'lucide-react';
 import { useEffect, useOptimistic, useState, useTransition } from 'react';
 import { BsCupFill } from 'react-icons/bs';
 import { FaGlassWater } from 'react-icons/fa6';
@@ -293,6 +299,8 @@ export default function WaterIntake({
 
 										{optWaterConsumed.glasses < waterData.glasses ? (
 											<ArrowDown className='animate-bounce text-red-600' />
+										) : optWaterConsumed.glasses === waterData.glasses ? (
+											<Check className='animate-bounce text-green-600' />
 										) : (
 											<ArrowUp className='animate-bounce text-green-600' />
 										)}
@@ -515,6 +523,8 @@ export default function WaterIntake({
 
 										{optWaterConsumed.glasses < waterData.glasses ? (
 											<ArrowDown className='animate-bounce text-red-600' />
+										) : optWaterConsumed.glasses === waterData.glasses ? (
+											<Check className='animate-bounce text-green-600' />
 										) : (
 											<ArrowUp className='animate-bounce text-green-600' />
 										)}
