@@ -127,9 +127,12 @@ export default function FoodListSheet({
 				break;
 			case 'input':
 				//getFoods(foodSearchData.term ?? '');
+				const term = foodSearchData.term
+					? foodSearchData.term.toLowerCase()
+					: '';
 
 				const searchFoods = items.filter((item) =>
-					item.name.toLowerCase().includes(foodSearchData.term ?? '')
+					item.name.toLowerCase().includes(term)
 				);
 
 				setFoods(searchFoods);
