@@ -327,7 +327,7 @@ export default function WaterIntake({
 											defaultValue={[currentGlasses]}
 											onValueChange={(val) => setCurrentGlasses(val[0])}
 											step={0.1}
-											min={-waterConsumed.glasses}
+											min={-1}
 											max={3}
 										/>
 
@@ -549,7 +549,7 @@ export default function WaterIntake({
 											defaultValue={[currentGlasses]}
 											onValueChange={(val) => setCurrentGlasses(val[0])}
 											step={0.1}
-											min={-waterConsumed.glasses}
+											min={-1}
 											max={3}
 										/>
 
