@@ -106,7 +106,6 @@ export default function FoodLogList({
 					.BaseMetabolicRate as BaseMetabolicRateType[];
 
 				setBmr(bmrArr[0]);
-				dispatch(updateData({ data: JSON.stringify(bmrArr[0]) }));
 
 				setTotalCals(res.data.totalCalories);
 
@@ -118,6 +117,17 @@ export default function FoodLogList({
 				) {
 					setCalsBurned(res.data.knownCaloriesBurned[0].calories);
 				}
+
+				dispatch(
+					updateData({
+						bmrData: JSON.stringify(bmrArr[0]),
+						caloricData: JSON.stringify({
+							consumed: res.data.totalCalories,
+							remaining: res.data.remainingCalories,
+							burned: res.data.knownCaloriesBurned[0].calories ?? 0
+						})
+					})
+				);
 			}
 		});
 	};
@@ -384,7 +394,7 @@ export default function FoodLogList({
 						delta === 0 && 'bottom-0'
 					)}>
 					<CardContent className='p-2 pt-5 flex flex-row items-center gap-2 relative'>
-						<div className='absolute -top-6 left-4 flex flex-row items-center justify-center gap-3'>
+						<div className='absolute -top-6 left-4 flex flex-row items-center justify-center gap-2.5'>
 							<DishListSheet showBalloon={true}>
 								<div className='rounded-full w-11 h-11 bg-fuchsia-700 p-1.5 flex flex-col items-center justify-center'>
 									<Soup className='w-6 h-6 animate-pulse' />
@@ -477,7 +487,9 @@ export default function FoodLogList({
 										<div
 											className={cn(
 												'absolute flex flex-row items-center gap-0',
-												iconPosition === 'top' ? '-top-6' : 'top-4 -right-6'
+												iconPosition === 'top'
+													? '-top-6 right-2'
+													: 'top-4 -right-6'
 											)}>
 											{Math.sign(remainingCals) === -1 ? (
 												<>

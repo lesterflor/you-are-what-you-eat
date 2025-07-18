@@ -65,12 +65,6 @@ export default function ExpendedCaloriesButton({
 		}
 	}, [logData, logStatus]);
 
-	// useEffect(() => {
-	// 	if (log?.knownCaloriesBurned && log.knownCaloriesBurned.length > 0) {
-	// 		setCaloriesBurned(log.knownCaloriesBurned[0].calories);
-	// 	}
-	// }, [log]);
-
 	return (
 		<Popover
 			open={popoverOpen}

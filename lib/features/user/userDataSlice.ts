@@ -3,7 +3,8 @@ import { BaseMetabolicRateType } from '@/types';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
 export interface UserDataSliceProps {
-	data: string;
+	bmrData: string;
+	caloricData?: string;
 }
 
 export interface UserDataSlice {
@@ -14,7 +15,7 @@ export interface UserDataSlice {
 
 const initialState: UserDataSlice = {
 	value: {
-		data: JSON.stringify({
+		bmrData: JSON.stringify({
 			weight: 0,
 			id: '',
 			createdAt: new Date(),
@@ -26,6 +27,11 @@ const initialState: UserDataSlice = {
 			age: 0,
 			sex: '',
 			bmr: 0
+		}),
+		caloricData: JSON.stringify({
+			consumed: 0,
+			remaining: 0,
+			burned: 0
 		})
 	},
 	status: 'idle',
@@ -39,7 +45,7 @@ export const userDataSlice = createAppSlice({
 		updateData: create.reducer(
 			(state, action: PayloadAction<UserDataSliceProps>) => {
 				const serialized: BaseMetabolicRateType = JSON.parse(
-					action.payload.data
+					action.payload.bmrData
 				);
 
 				const {
@@ -56,9 +62,13 @@ export const userDataSlice = createAppSlice({
 					bmr
 				} = serialized;
 
+				const { consumed, remaining, burned } = JSON.parse(
+					action.payload.caloricData ?? ''
+				);
+
 				state.status = 'updated';
 				state.value = {
-					data: JSON.stringify({
+					bmrData: JSON.stringify({
 						weight,
 						id,
 						createdAt,
@@ -70,6 +80,11 @@ export const userDataSlice = createAppSlice({
 						age,
 						sex,
 						bmr
+					}),
+					caloricData: JSON.stringify({
+						consumed,
+						remaining,
+						burned
 					})
 				};
 				state.message = 'User data updated';

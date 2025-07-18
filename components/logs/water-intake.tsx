@@ -62,11 +62,17 @@ export default function WaterIntake({
 	const userDataStatus = useAppSelector(selectUserDataStatus);
 
 	useEffect(() => {
-		if (userDataStatus === 'updated') {
-			const { weightInKilos, weightInPounds } = colateBMRData(
-				JSON.parse(userData.data)
-			);
+		const { weightInKilos, weightInPounds } = colateBMRData(
+			JSON.parse(userData.bmrData)
+		);
 
+		console.log(JSON.parse(userData.caloricData ?? ''));
+
+		// update only if state update has different data
+		if (
+			userDataStatus === 'updated' &&
+			weightInPounds !== weight.weightInPounds
+		) {
 			setWeight({
 				weightInKilos,
 				weightInPounds
