@@ -317,11 +317,19 @@ export default function WaterIntake({
 
 								<div className='flex flex-col gap-0 items-center justify-center w-full'>
 									<div className='text-muted-foreground flex flex-row gap-2 items-center justify-center'>
-										<div className='flex flex-row gap-1 w-16 items-center justify-start'>
+										<div
+											className={cn(
+												'flex flex-row gap-1 w-16 items-center justify-start',
+												currentGlasses !== 0 && 'text-green-400'
+											)}>
 											<FaGlassWater className='w-6 h-6' /> {currentGlasses}
 										</div>
 
-										<div className='flex flex-row gap-1 w-16 items-center justify-start'>
+										<div
+											className={cn(
+												'flex flex-row gap-1 w-16 items-center justify-start',
+												currentGlasses !== 0 && 'text-green-400'
+											)}>
 											<BsCupFill className='w-6 h-6' />{' '}
 											{formatUnit(currentGlasses * 2)}
 										</div>
@@ -388,7 +396,7 @@ export default function WaterIntake({
 								</div>
 
 								<Button
-									disabled={isFetchingWater}
+									disabled={isFetchingWater || currentGlasses === 0}
 									onClick={() => updateWaterConsumed()}>
 									{isFetchingWater ? (
 										<ImSpinner2 />
@@ -541,11 +549,19 @@ export default function WaterIntake({
 
 								<div className='flex flex-col gap-0 items-center justify-center w-full'>
 									<div className='text-muted-foreground flex flex-row gap-2 items-center justify-center'>
-										<div className='flex flex-row gap-1 w-16 items-center justify-start'>
+										<div
+											className={cn(
+												'flex flex-row gap-1 w-16 items-center justify-start',
+												currentGlasses !== 0 && 'text-green-400'
+											)}>
 											<FaGlassWater className='w-6 h-6' /> {currentGlasses}
 										</div>
 
-										<div className='flex flex-row gap-1 w-16 items-center justify-start'>
+										<div
+											className={cn(
+												'flex flex-row gap-1 w-16 items-center justify-start',
+												currentGlasses !== 0 && 'text-green-400'
+											)}>
 											<BsCupFill className='w-6 h-6' />{' '}
 											{formatUnit(currentGlasses * 2)}
 										</div>
@@ -612,7 +628,7 @@ export default function WaterIntake({
 								</div>
 
 								<Button
-									disabled={isFetchingWater}
+									disabled={isFetchingWater || currentGlasses === 0}
 									onClick={() => updateWaterConsumed()}>
 									{isFetchingWater ? (
 										<ImSpinner2 />
