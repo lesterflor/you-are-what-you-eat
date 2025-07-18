@@ -61,7 +61,7 @@ export default function FoodListSheet({
 
 	useEffect(() => {
 		if (inView) {
-			setTimeout(checkLocalFoods, 1500);
+			checkLocalFoods();
 		}
 	}, [inView]);
 
