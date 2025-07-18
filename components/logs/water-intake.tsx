@@ -121,6 +121,12 @@ export default function WaterIntake({
 
 	const [popoverOpen, setPopoverOpen] = useState(false);
 
+	useEffect(() => {
+		if (!popoverOpen) {
+			setCurrentGlasses(0);
+		}
+	}, [popoverOpen]);
+
 	const fetchTodaysWater = () => {
 		setIsFetchingWater(async () => {
 			const res = await todaysWaterConsumed();
