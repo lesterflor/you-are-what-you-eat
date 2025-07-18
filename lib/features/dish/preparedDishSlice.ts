@@ -20,11 +20,13 @@ export interface PreparedDishSliceState {
 		| 'logged'
 		| 'checkedItem'
 		| 'dishList';
+	message: string;
 }
 
 const initialState: PreparedDishSliceState = {
 	value: { id: '', name: '', description: '', dishList: '[]' },
-	status: 'idle'
+	status: 'idle',
+	message: ''
 };
 
 export const preparedDishSlice = createAppSlice({
@@ -35,24 +37,28 @@ export const preparedDishSlice = createAppSlice({
 			(state, action: PayloadAction<PreparedDishSliceProps>) => {
 				state.value = action.payload;
 				state.status = 'added';
+				state.message = `You added a new dish, ${action.payload.name}`;
 			}
 		),
 		updateDishState: create.reducer(
 			(state, action: PayloadAction<PreparedDishSliceProps>) => {
 				state.value = action.payload;
 				state.status = 'updated';
+				state.message = `You updated the dish, ${action.payload.name}`;
 			}
 		),
 		deleteDishState: create.reducer(
 			(state, action: PayloadAction<PreparedDishSliceProps>) => {
 				state.value = action.payload;
 				state.status = 'deleted';
+				state.message = `You deleted the dish, ${action.payload.name}`;
 			}
 		),
 		logDishState: create.reducer(
 			(state, action: PayloadAction<PreparedDishSliceProps>) => {
 				state.value = action.payload;
 				state.status = 'logged';
+				state.message = `You logged the dish, ${action.payload.name}`;
 			}
 		),
 
@@ -93,7 +99,8 @@ export const preparedDishSlice = createAppSlice({
 	}),
 	selectors: {
 		selectPreparedDishData: (state) => state.value,
-		selectPreparedDishStatus: (state) => state.status
+		selectPreparedDishStatus: (state) => state.status,
+		selectPreparedDishMsg: (state) => state.message
 	}
 });
 
@@ -107,5 +114,8 @@ export const {
 	setCheckedItemState
 } = preparedDishSlice.actions;
 
-export const { selectPreparedDishData, selectPreparedDishStatus } =
-	preparedDishSlice.selectors;
+export const {
+	selectPreparedDishData,
+	selectPreparedDishStatus,
+	selectPreparedDishMsg
+} = preparedDishSlice.selectors;

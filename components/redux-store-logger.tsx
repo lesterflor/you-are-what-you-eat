@@ -5,6 +5,11 @@ import {
 	logActivity
 } from '@/actions/activity-log-actions';
 import {
+	selectPreparedDishData,
+	selectPreparedDishMsg,
+	selectPreparedDishStatus
+} from '@/lib/features/dish/preparedDishSlice';
+import {
 	selectFoodSearchData,
 	selectFoodSearchStatus
 } from '@/lib/features/food/foodSearchSlice';
@@ -57,6 +62,10 @@ export default function ReduxStoreLogger({
 
 	const logFoodItem = useAppSelector(selectData);
 	const logFoodItemStatus = useAppSelector(selectStatus);
+
+	const dishStateData = useAppSelector(selectPreparedDishData);
+	const dishStateStatus = useAppSelector(selectPreparedDishStatus);
+	const dishStateMsg = useAppSelector(selectPreparedDishMsg);
 
 	const foodSliceData = useAppSelector(selectFoodUpdateData);
 	const foodSliceStatus = useAppSelector(selectFoodUpdateStatus);
@@ -144,6 +153,25 @@ export default function ReduxStoreLogger({
 			setHasOpened(false);
 		}
 	}, [waterLogData, waterLogStatus, waterLogMessage]);
+
+	useEffect(() => {
+		if (
+			dishStateStatus === 'added' ||
+			dishStateStatus === 'updated' ||
+			dishStateStatus === 'deleted' ||
+			dishStateStatus === 'logged'
+		) {
+			const data = {
+				type: 'dishData',
+				action: dishStateStatus,
+				data: dishStateMsg
+			};
+
+			logActivityAction(data);
+
+			setHasOpened(false);
+		}
+	}, [dishStateData, dishStateStatus, dishStateMsg]);
 
 	useEffect(() => {
 		if (foodSliceStatus !== 'idle') {
