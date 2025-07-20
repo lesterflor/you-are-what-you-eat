@@ -79,7 +79,7 @@ export default function ExpendedCaloriesButton({
 					)}
 				</div>
 			</PopoverTrigger>
-			<PopoverContent className='flex flex-col gap-6 items-center justify-center'>
+			<PopoverContent className='flex flex-col gap-6 items-center justify-center select-none'>
 				<div className='flex flex-row items-center gap-2'>
 					<Flame className='w-6 h-6' />
 					Expended Calories
@@ -91,7 +91,7 @@ export default function ExpendedCaloriesButton({
 						optimisticCalories
 					)}
 				</div>
-				<div className='flex flex-row items-center justify-between gap-4 w-full'>
+				<div className='flex flex-row items-center justify-between gap-4 w-full select-none'>
 					<div className='flex flex-col gap-4 items-center justify-center w-full'>
 						<div className='text-xs text-muted-foreground'>{inputVal}</div>
 						<div className='flex flex-row items-center gap-3 justify-center w-full'>
@@ -125,7 +125,7 @@ export default function ExpendedCaloriesButton({
 					</div>
 				</div>
 
-				<div className='flex flex-row gap-2'>
+				<div className='flex flex-row gap-2 select-none'>
 					<Button
 						variant={'secondary'}
 						onClick={() => setInputVal(350)}>
@@ -183,7 +183,7 @@ export default function ExpendedCaloriesButton({
 					Add
 				</Button>
 
-				<div className='text-muted-foreground text-xs'>
+				<div className='text-muted-foreground text-xs select-none'>
 					* If you are aware of calories you have burned outside your BMR (Base
 					Metabolic Rate), enter it here. You can add more at any time to keep
 					adding to the calories you have burned throughout the day.
