@@ -26,7 +26,7 @@ import {
 	totalMacrosReducer
 } from '@/lib/utils';
 import { format } from 'date-fns';
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useState } from 'react';
 import { FaGlassWater } from 'react-icons/fa6';
 import { IoFastFoodOutline } from 'react-icons/io5';
 import { useInView } from 'react-intersection-observer';
@@ -40,7 +40,6 @@ import {
 	DialogTrigger
 } from '../ui/dialog';
 import { Separator } from '../ui/separator';
-import { Skeleton } from '../ui/skeleton';
 import { LogChart } from './log-chart';
 import LogFoodCard from './log-food-card';
 import LogMacrosSummary from './log-macros-summary';
@@ -55,7 +54,6 @@ export default function LogEntry({
 	const { ref, inView } = useInView();
 	const [render, setRender] = useState(false);
 	const [hasFetchedWater, setHasFetchedWater] = useState(false);
-	const [isFetchingWater, setIsFetchingWater] = useTransition();
 	const [waterLog, setWaterLog] = useState<GetWaterConsumed>();
 	const [metWaterNeeds, setMetWaterNeeds] = useState(false);
 
@@ -66,26 +64,24 @@ export default function LogEntry({
 		}
 	}, [inView]);
 
-	const fetchWaterLog = () => {
+	const fetchWaterLog = async () => {
 		if (!hasFetchedWater) {
-			setIsFetchingWater(async () => {
-				const res = await getWaterConsumedOnDay(log.createdAt);
+			const res = await getWaterConsumedOnDay(log.createdAt);
 
-				if (res.success && res.data) {
-					const waterConsumed: GetWaterConsumed = res.data;
+			if (res.success && res.data) {
+				const waterConsumed: GetWaterConsumed = res.data;
 
-					setWaterLog(waterConsumed);
-					setHasFetchedWater(true);
+				setWaterLog(waterConsumed);
+				setHasFetchedWater(true);
 
-					if (userInfo) {
-						const { glasses: requiredGlasses } = calculateWaterIntake(
-							userInfo.weightInPounds
-						);
+				if (userInfo) {
+					const { glasses: requiredGlasses } = calculateWaterIntake(
+						userInfo.weightInPounds
+					);
 
-						setMetWaterNeeds(waterConsumed.glasses >= requiredGlasses);
-					}
+					setMetWaterNeeds(waterConsumed.glasses >= requiredGlasses);
 				}
-			});
+			}
 		}
 	};
 
@@ -126,18 +122,12 @@ export default function LogEntry({
 									<div className='flex flex-row gap-1 items-center'>
 										<FaGlassWater className='w-4 h-4 text-blue-600' />
 										<span className='flex flex-row items-center gap-1'>
-											{isFetchingWater ? (
-												<Skeleton className='w-16 h-4' />
+											{formatUnit(waterLog.glasses)}{' '}
+											{waterLog.glasses === 1 ? 'glass' : 'glasses'}
+											{metWaterNeeds ? (
+												<Check className='text-green-600 w-4 h-4' />
 											) : (
-												<>
-													{formatUnit(waterLog.glasses)}{' '}
-													{waterLog.glasses === 1 ? 'glass' : 'glasses'}
-													{metWaterNeeds ? (
-														<Check className='text-green-600 w-4 h-4' />
-													) : (
-														<ArrowDown className='w-4 h-4 text-red-600' />
-													)}
-												</>
+												<ArrowDown className='w-4 h-4 text-red-600' />
 											)}
 										</span>
 									</div>
