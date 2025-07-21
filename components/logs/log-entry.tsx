@@ -1,6 +1,11 @@
 'use client';
 
-import { GetFoodEntry, GetLog, GetWaterConsumed } from '@/types';
+import {
+	ColatedBMRData,
+	GetFoodEntry,
+	GetLog,
+	GetWaterConsumed
+} from '@/types';
 import {
 	ArrowDown,
 	ArrowUp,
@@ -15,14 +20,8 @@ import {
 
 import { getWaterConsumedOnDay } from '@/actions/log-actions';
 import {
-	selectUserData,
-	selectUserDataStatus
-} from '@/lib/features/user/userDataSlice';
-import { useAppSelector } from '@/lib/hooks';
-import {
 	calculateWaterIntake,
 	cn,
-	colateBMRData,
 	formatUnit,
 	totalMacrosReducer
 } from '@/lib/utils';
@@ -46,28 +45,19 @@ import { LogChart } from './log-chart';
 import LogFoodCard from './log-food-card';
 import LogMacrosSummary from './log-macros-summary';
 
-export default function LogEntry({ log }: { log: GetLog }) {
+export default function LogEntry({
+	log,
+	userInfo
+}: {
+	log: GetLog;
+	userInfo?: ColatedBMRData;
+}) {
 	const { ref, inView } = useInView();
 	const [render, setRender] = useState(false);
 	const [hasFetchedWater, setHasFetchedWater] = useState(false);
 	const [isFetchingWater, setIsFetchingWater] = useTransition();
 	const [waterLog, setWaterLog] = useState<GetWaterConsumed>();
 	const [metWaterNeeds, setMetWaterNeeds] = useState(false);
-
-	const userData = useAppSelector(selectUserData);
-	const userDataStatus = useAppSelector(selectUserDataStatus);
-
-	useEffect(() => {
-		if (userDataStatus !== 'idle') {
-			const { weightInPounds } = colateBMRData(JSON.parse(userData.bmrData));
-
-			const { glasses: requiredGlasses } = calculateWaterIntake(weightInPounds);
-
-			if (waterLog) {
-				setMetWaterNeeds(waterLog.glasses >= requiredGlasses);
-			}
-		}
-	}, [userData, userDataStatus, waterLog]);
 
 	useEffect(() => {
 		if (inView) {
@@ -82,8 +72,18 @@ export default function LogEntry({ log }: { log: GetLog }) {
 				const res = await getWaterConsumedOnDay(log.createdAt);
 
 				if (res.success && res.data) {
-					setWaterLog(res.data);
+					const waterConsumed: GetWaterConsumed = res.data;
+
+					setWaterLog(waterConsumed);
 					setHasFetchedWater(true);
+
+					if (userInfo) {
+						const { glasses: requiredGlasses } = calculateWaterIntake(
+							userInfo.weightInPounds
+						);
+
+						setMetWaterNeeds(waterConsumed.glasses >= requiredGlasses);
+					}
 				}
 			});
 		}

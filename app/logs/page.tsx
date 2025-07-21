@@ -1,8 +1,10 @@
+import { getBMRById } from '@/actions/bmr-actions';
 import { getLogsByUserId } from '@/actions/log-actions';
 import LogEntry from '@/components/logs/log-entry';
 import LogHistoryTitle from '@/components/logs/log-history-title';
 import { auth } from '@/db/auth';
-import { GetLog, GetUser } from '@/types';
+import { colateBMRData } from '@/lib/utils';
+import { BMRData, GetLog, GetUser } from '@/types';
 import { CalendarOff } from 'lucide-react';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
@@ -30,6 +32,11 @@ export default async function LogsPage(props: {
 
 	const { data = [] } = res;
 
+	const bmrRes = await getBMRById(user.id);
+
+	const { data: bmrData } = bmrRes;
+	const userInfo = colateBMRData(bmrData as BMRData);
+
 	return (
 		<div className='flex flex-col gap-4 relative'>
 			<LogHistoryTitle />
@@ -40,6 +47,7 @@ export default async function LogsPage(props: {
 						<LogEntry
 							key={log.id}
 							log={log as GetLog}
+							userInfo={userInfo}
 						/>
 					))
 				) : (
