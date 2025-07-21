@@ -487,50 +487,6 @@ export async function createLogRemainder(logId: string) {
 	}
 }
 
-// export async function addKnownCaloriesBurned(calories: number) {
-// 	try {
-// 		const session = await auth();
-// 		const user = session?.user as GetUser;
-
-// 		if (!session || !user) {
-// 			throw new Error('User must be authenticated');
-// 		}
-
-// 		const currentLog = await createDailyLog();
-
-// 		if (!currentLog?.data) {
-// 			throw new Error('There was a problem getting the most recent log');
-// 		}
-
-// 		// technically there should only be 1 item for every log
-// 		const { id, calories: existingCalories } =
-// 			currentLog.data.knownCaloriesBurned[0];
-
-// 		const update = await prisma.knownCaloriesBurned.update({
-// 			where: {
-// 				id
-// 			},
-// 			data: {
-// 				calories: existingCalories + calories
-// 			}
-// 		});
-
-// 		if (!update) {
-// 			throw new Error('There was a problem updating the Known Calories Burned');
-// 		}
-
-// 		return {
-// 			success: true,
-// 			message: 'Updated Calories Burned'
-// 		};
-// 	} catch (error: unknown) {
-// 		return {
-// 			success: false,
-// 			message: formatError(error)
-// 		};
-// 	}
-// }
-
 export async function addKnownCaloriesBurned(calories: number) {
 	try {
 		const session = await auth();
@@ -658,6 +614,8 @@ export async function deleteFoodLogEntry(foodEntryId: string) {
 		if (!update) {
 			throw new Error('There was a problem updating the log');
 		}
+
+		revalidatePath('/');
 
 		return {
 			success: true,

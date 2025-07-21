@@ -83,8 +83,6 @@ export default function LogEntry({
 				setMetWaterNeeds(dayWater[0].glasses >= requiredGlasses);
 			}
 		}
-
-		console.log('log for day: ', log.createdAt.getDate(), dayWater);
 	};
 
 	const bmrData = log.user.BaseMetabolicRate;

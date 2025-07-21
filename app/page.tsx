@@ -1,11 +1,14 @@
+import { createDailyLog } from '@/actions/log-actions';
 import AddFoodSheet from '@/components/food-items/add-food-sheet';
 import FoodListSheet from '@/components/food-items/food-list-sheet';
 import LandingContent from '@/components/landing-content';
 import FoodLogList from '@/components/logs/log-list';
 import { auth } from '@/db/auth';
+import { GetLog } from '@/types';
 
 export default async function Home() {
 	const session = await auth();
+	const todaysLog = await createDailyLog();
 
 	return (
 		<>
@@ -24,6 +27,7 @@ export default async function Home() {
 							useFloaterNav={true}
 							iconPosition='top'
 							forceColumn={false}
+							todaysLog={todaysLog?.data as GetLog}
 						/>
 					</div>
 				</div>

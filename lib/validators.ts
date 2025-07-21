@@ -249,7 +249,9 @@ export const getLogSchema = z.object({
 	comparisons: z.any().optional().nullable(),
 	user: z.object({
 		BaseMetabolicRate: z.array(getBaseMetabolicRateSchema)
-	})
+	}),
+	totalCalories: z.number(),
+	remainingCalories: z.number()
 });
 
 export const logRemainderSchema = z.object({

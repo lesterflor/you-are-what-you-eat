@@ -53,18 +53,20 @@ export default function FoodLogList({
 	forceColumn = true,
 	useScroller = true,
 	iconPosition = 'right',
-	useFloaterNav = false
+	useFloaterNav = false,
+	todaysLog
 }: {
 	useScroller?: boolean;
 	iconPosition?: 'right' | 'top';
 	forceColumn?: boolean;
 	useFloaterNav?: boolean;
+	todaysLog?: GetLog;
 }) {
 	const dispatch = useAppDispatch();
 
 	const [totalCals, setTotalCals] = useState(0);
 	const [logList, setLogList] = useState<GetFoodEntry[]>([]);
-	const [log, setLog] = useState<GetLog>();
+	const [log, setLog] = useState<GetLog>(todaysLog as GetLog);
 	const [bmr, setBmr] = useState<BaseMetabolicRateType>();
 	const [calsBurned, setCalsBurned] = useState(0);
 	const [remainingCals, setRemainingCals] = useState(0);
@@ -95,41 +97,10 @@ export default function FoodLogList({
 	const logData = useAppSelector(selectData);
 
 	const getLog = async () => {
-		setFetchingLog(async () => {
-			const res = await createDailyLog();
-
-			if (res?.success && res.data) {
-				setLog(res.data as GetLog);
-
-				setLogList(res.data.foodItems as GetFoodEntry[]);
-				const bmrArr = res.data.user
-					.BaseMetabolicRate as BaseMetabolicRateType[];
-
-				setBmr(bmrArr[0]);
-
-				setTotalCals(res.data.totalCalories);
-
-				setRemainingCals(res.data.remainingCalories);
-
-				if (
-					res.data.knownCaloriesBurned &&
-					res.data.knownCaloriesBurned.length > 0
-				) {
-					setCalsBurned(res.data.knownCaloriesBurned[0].calories);
-				}
-
-				dispatch(
-					updateData({
-						bmrData: JSON.stringify(bmrArr[0]),
-						caloricData: JSON.stringify({
-							consumed: res.data.totalCalories,
-							remaining: res.data.remainingCalories,
-							burned: res.data.knownCaloriesBurned[0].calories ?? 0
-						})
-					})
-				);
-			}
-		});
+		const res = await createDailyLog();
+		if (res?.success && res.data) {
+			parseLog(res.data as GetLog);
+		}
 	};
 
 	const fetchKDC = async () => {
@@ -153,9 +124,13 @@ export default function FoodLogList({
 	}, [totalCals, bmr]);
 
 	useEffect(() => {
-		if (logStatus !== 'expended calories') {
+		if (
+			logStatus === 'added' ||
+			logStatus === 'deleted' ||
+			logStatus === 'updated'
+		) {
 			getLog();
-		} else {
+		} else if (logStatus === 'expended calories') {
 			// get expended calories
 			fetchKDC();
 		}
@@ -170,7 +145,55 @@ export default function FoodLogList({
 	useEffect(() => {
 		const savedFormat = getStorageItem('logFormat') ?? 'card';
 		setDataFormat(savedFormat);
+
+		initialPageLoad();
 	}, []);
+
+	const initialPageLoad = () => {
+		if (todaysLog) {
+			parseLog(todaysLog);
+		}
+	};
+
+	const parseLog = (log: GetLog) => {
+		const {
+			foodItems,
+			totalCalories,
+			remainingCalories,
+			knownCaloriesBurned,
+			user: { BaseMetabolicRate = [] }
+		} = log;
+
+		setFetchingLog(() => {
+			setLog(log);
+
+			setLogList(foodItems as GetFoodEntry[]);
+			const bmrArr = BaseMetabolicRate;
+
+			if (bmrArr.length > 0) {
+				setBmr(bmrArr[0]);
+			}
+
+			setTotalCals(totalCalories);
+
+			setRemainingCals(remainingCalories);
+
+			if (knownCaloriesBurned && knownCaloriesBurned.length > 0) {
+				setCalsBurned(knownCaloriesBurned[0].calories);
+			}
+
+			dispatch(
+				updateData({
+					bmrData: JSON.stringify(bmrArr[0]),
+					caloricData: JSON.stringify({
+						consumed: totalCalories,
+						remaining: remainingCalories,
+						burned: knownCaloriesBurned[0].calories ?? 0
+					})
+				})
+			);
+		});
+	};
 
 	return (
 		<>
@@ -299,11 +322,6 @@ export default function FoodLogList({
 								: 'flex flex-row flex-wrap gap-4 portrait:flex-col'
 						)}>
 						<>
-							{/* fetchingLog ? (
-								<div className='w-full flex items-center justify-center h-32'>
-									<ImSpinner2 className='animate-spin w-12 h-12 opacity-25' />
-								</div>
-							) : */}
 							{logList.length > 0 ? (
 								<>
 									{dataFormat === 'card'
@@ -424,12 +442,6 @@ export default function FoodLogList({
 									<IoWaterOutline className='w-6 h-6 animate-pulse' />
 								</div>
 							</WaterIntake>
-
-							{/* <FoodListSheetPaged>
-								<div className='rounded-full dark:bg-green-700 bg-green-500 p-3'>
-									<TbDatabaseSearch className='w-6 h-6 animate-pulse' />
-								</div>
-							</FoodListSheetPaged> */}
 						</div>
 
 						<div className={cn('flex flex-col items-start w-full gap-1')}>
