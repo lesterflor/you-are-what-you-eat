@@ -6,6 +6,7 @@ import {
 	ArrowUp,
 	Calendar,
 	ChartColumnBig,
+	Check,
 	CookingPot,
 	Flame,
 	Frown,
@@ -13,7 +14,18 @@ import {
 } from 'lucide-react';
 
 import { getWaterConsumedOnDay } from '@/actions/log-actions';
-import { cn, formatUnit, totalMacrosReducer } from '@/lib/utils';
+import {
+	selectUserData,
+	selectUserDataStatus
+} from '@/lib/features/user/userDataSlice';
+import { useAppSelector } from '@/lib/hooks';
+import {
+	calculateWaterIntake,
+	cn,
+	colateBMRData,
+	formatUnit,
+	totalMacrosReducer
+} from '@/lib/utils';
 import { format } from 'date-fns';
 import { useEffect, useState, useTransition } from 'react';
 import { FaGlassWater } from 'react-icons/fa6';
@@ -40,6 +52,22 @@ export default function LogEntry({ log }: { log: GetLog }) {
 	const [hasFetchedWater, setHasFetchedWater] = useState(false);
 	const [isFetchingWater, setIsFetchingWater] = useTransition();
 	const [waterLog, setWaterLog] = useState<GetWaterConsumed>();
+	const [metWaterNeeds, setMetWaterNeeds] = useState(false);
+
+	const userData = useAppSelector(selectUserData);
+	const userDataStatus = useAppSelector(selectUserDataStatus);
+
+	useEffect(() => {
+		if (userDataStatus !== 'idle') {
+			const { weightInPounds } = colateBMRData(JSON.parse(userData.bmrData));
+
+			const { glasses: requiredGlasses } = calculateWaterIntake(weightInPounds);
+
+			if (waterLog) {
+				setMetWaterNeeds(waterLog.glasses >= requiredGlasses);
+			}
+		}
+	}, [userData, userDataStatus, waterLog]);
 
 	useEffect(() => {
 		if (inView) {
@@ -97,13 +125,18 @@ export default function LogEntry({ log }: { log: GetLog }) {
 									<span className='text-muted-foreground'>Water Consumed</span>{' '}
 									<div className='flex flex-row gap-1 items-center'>
 										<FaGlassWater className='w-4 h-4 text-blue-600' />
-										<span>
+										<span className='flex flex-row items-center gap-1'>
 											{isFetchingWater ? (
 												<Skeleton className='w-16 h-4' />
 											) : (
 												<>
 													{formatUnit(waterLog.glasses)}{' '}
 													{waterLog.glasses === 1 ? 'glass' : 'glasses'}
+													{metWaterNeeds ? (
+														<Check className='text-green-600 w-4 h-4' />
+													) : (
+														<ArrowDown className='w-4 h-4 text-red-600' />
+													)}
 												</>
 											)}
 										</span>
