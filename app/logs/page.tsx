@@ -1,5 +1,8 @@
 import { getBMRById } from '@/actions/bmr-actions';
-import { getLogsByUserId } from '@/actions/log-actions';
+import {
+	getAllUserWaterConsumption,
+	getLogsByUserId
+} from '@/actions/log-actions';
 import LogEntry from '@/components/logs/log-entry';
 import LogHistoryTitle from '@/components/logs/log-history-title';
 import { auth } from '@/db/auth';
@@ -37,6 +40,10 @@ export default async function LogsPage(props: {
 	const { data: bmrData } = bmrRes;
 	const userInfo = colateBMRData(bmrData as BMRData);
 
+	const fetchUserWater = await getAllUserWaterConsumption();
+
+	const { data: userWaterLogs } = fetchUserWater;
+
 	return (
 		<div className='flex flex-col gap-4 relative'>
 			<LogHistoryTitle />
@@ -48,6 +55,7 @@ export default async function LogsPage(props: {
 							key={log.id}
 							log={log as GetLog}
 							userInfo={userInfo}
+							waterLogs={userWaterLogs}
 						/>
 					))
 				) : (

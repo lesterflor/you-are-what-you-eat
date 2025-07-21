@@ -1082,3 +1082,35 @@ export async function getWaterConsumedOnDay(day: Date) {
 		};
 	}
 }
+
+export async function getAllUserWaterConsumption() {
+	try {
+		const session = await auth();
+		const user = session?.user as GetUser;
+
+		if (!user) {
+			throw new Error('User must be authenticated');
+		}
+
+		const res = await prisma.waterConsumed.findMany({
+			where: {
+				userId: user.id
+			}
+		});
+
+		if (!res) {
+			throw new Error('No water logs found for user');
+		}
+
+		return {
+			success: true,
+			message: 'success',
+			data: res
+		};
+	} catch (err: unknown) {
+		return {
+			success: false,
+			message: formatError(err)
+		};
+	}
+}

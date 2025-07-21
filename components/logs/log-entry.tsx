@@ -18,7 +18,6 @@ import {
 	Smile
 } from 'lucide-react';
 
-import { getWaterConsumedOnDay } from '@/actions/log-actions';
 import {
 	calculateWaterIntake,
 	cn,
@@ -46,43 +45,46 @@ import LogMacrosSummary from './log-macros-summary';
 
 export default function LogEntry({
 	log,
-	userInfo
+	userInfo,
+	waterLogs
 }: {
 	log: GetLog;
 	userInfo?: ColatedBMRData;
+	waterLogs?: GetWaterConsumed[];
 }) {
 	const { ref, inView } = useInView();
 	const [render, setRender] = useState(false);
-	const [hasFetchedWater, setHasFetchedWater] = useState(false);
 	const [waterLog, setWaterLog] = useState<GetWaterConsumed>();
 	const [metWaterNeeds, setMetWaterNeeds] = useState(false);
 
 	useEffect(() => {
 		if (inView) {
 			setRender(true);
-			fetchWaterLog();
 		}
 	}, [inView]);
 
-	const fetchWaterLog = async () => {
-		if (!hasFetchedWater) {
-			const res = await getWaterConsumedOnDay(log.createdAt);
+	useEffect(() => {
+		filterWaterLog();
+	}, []);
 
-			if (res.success && res.data) {
-				const waterConsumed: GetWaterConsumed = res.data;
+	const filterWaterLog = () => {
+		const dayWater = waterLogs?.filter(
+			(wLog) => log.createdAt.getDate() === wLog.createdAt.getDate()
+		);
 
-				setWaterLog(waterConsumed);
-				setHasFetchedWater(true);
+		if (dayWater && dayWater.length > 0) {
+			setWaterLog(dayWater[0]);
 
-				if (userInfo) {
-					const { glasses: requiredGlasses } = calculateWaterIntake(
-						userInfo.weightInPounds
-					);
+			if (userInfo) {
+				const { glasses: requiredGlasses } = calculateWaterIntake(
+					userInfo.weightInPounds
+				);
 
-					setMetWaterNeeds(waterConsumed.glasses >= requiredGlasses);
-				}
+				setMetWaterNeeds(dayWater[0].glasses >= requiredGlasses);
 			}
 		}
+
+		console.log('log for day: ', log.createdAt.getDate(), dayWater);
 	};
 
 	const bmrData = log.user.BaseMetabolicRate;
