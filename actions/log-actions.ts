@@ -1050,3 +1050,35 @@ export async function todaysWaterConsumed(glasses: number = 0) {
 		};
 	}
 }
+
+export async function getWaterConsumedOnDay(day: Date) {
+	try {
+		const waterDate = day;
+		const endDate = new Date();
+		endDate.setDate(waterDate.getDate() + 1);
+
+		const waterLog = await prisma.waterConsumed.findFirst({
+			where: {
+				createdAt: {
+					gte: waterDate,
+					lte: endDate
+				}
+			}
+		});
+
+		if (!waterLog) {
+			throw new Error('There was no water log found for this date');
+		}
+
+		return {
+			success: true,
+			message: 'success',
+			data: waterLog
+		};
+	} catch (err: unknown) {
+		return {
+			success: false,
+			message: formatError(err)
+		};
+	}
+}

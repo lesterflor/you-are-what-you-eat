@@ -1,23 +1,26 @@
 'use client';
 
-import { GetFoodEntry, GetLog } from '@/types';
+import { GetFoodEntry, GetLog, GetWaterConsumed } from '@/types';
 import {
 	ArrowDown,
 	ArrowUp,
 	Calendar,
 	ChartColumnBig,
 	CookingPot,
+	Flame,
 	Frown,
 	Smile
 } from 'lucide-react';
 
-import React, { useEffect, useState } from 'react';
-import LogMacrosSummary from './log-macros-summary';
-import LogFoodCard from './log-food-card';
-import { Separator } from '../ui/separator';
-import { format } from 'date-fns';
+import { getWaterConsumedOnDay } from '@/actions/log-actions';
 import { cn, formatUnit, totalMacrosReducer } from '@/lib/utils';
+import { format } from 'date-fns';
+import { useEffect, useState, useTransition } from 'react';
+import { FaGlassWater } from 'react-icons/fa6';
+import { IoFastFoodOutline } from 'react-icons/io5';
+import { useInView } from 'react-intersection-observer';
 import TruncateSection from '../truncate-section';
+import { Button } from '../ui/button';
 import {
 	Dialog,
 	DialogContent,
@@ -25,19 +28,38 @@ import {
 	DialogTitle,
 	DialogTrigger
 } from '../ui/dialog';
-import { Button } from '../ui/button';
+import { Separator } from '../ui/separator';
+import { Skeleton } from '../ui/skeleton';
 import { LogChart } from './log-chart';
-import { useInView } from 'react-intersection-observer';
+import LogFoodCard from './log-food-card';
+import LogMacrosSummary from './log-macros-summary';
 
 export default function LogEntry({ log }: { log: GetLog }) {
 	const { ref, inView } = useInView();
 	const [render, setRender] = useState(false);
+	const [hasFetchedWater, setHasFetchedWater] = useState(false);
+	const [isFetchingWater, setIsFetchingWater] = useTransition();
+	const [waterLog, setWaterLog] = useState<GetWaterConsumed>();
 
 	useEffect(() => {
 		if (inView) {
 			setRender(true);
+			fetchWaterLog();
 		}
 	}, [inView]);
+
+	const fetchWaterLog = () => {
+		if (!hasFetchedWater) {
+			setIsFetchingWater(async () => {
+				const res = await getWaterConsumedOnDay(log.createdAt);
+
+				if (res.success && res.data) {
+					setWaterLog(res.data);
+					setHasFetchedWater(true);
+				}
+			});
+		}
+	};
 
 	const bmrData = log.user.BaseMetabolicRate;
 	const bmr = bmrData[0].bmr ? bmrData[0].bmr : 0;
@@ -70,13 +92,35 @@ export default function LogEntry({ log }: { log: GetLog }) {
 					</div>
 					<div className='flex flex-row items-center justify-start gap-8 rounded-md border-2 p-2'>
 						<div className='flex flex-col items-center gap-2'>
+							{waterLog && (
+								<div className='flex flex-col items-center justify-center gap-0 rounded-md border-2 p-1 text-xs w-full'>
+									<span className='text-muted-foreground'>Water Consumed</span>{' '}
+									<div className='flex flex-row gap-1 items-center'>
+										<FaGlassWater className='w-4 h-4 text-blue-600' />
+										<span>
+											{isFetchingWater ? (
+												<Skeleton className='w-16 h-4' />
+											) : (
+												<>
+													{formatUnit(waterLog.glasses)}{' '}
+													{waterLog.glasses === 1 ? 'glass' : 'glasses'}
+												</>
+											)}
+										</span>
+									</div>
+								</div>
+							)}
+
 							{bmr && (
 								<div className='flex flex-col gap-2 text-xs'>
 									<div className='flex flex-col items-center justify-center gap-0 rounded-md border-2 p-1'>
 										<span className='text-muted-foreground'>
 											Calories Consumed
 										</span>{' '}
-										<span>{formatUnit(calories)}</span>
+										<div className='flex flex-row items-center gap-1'>
+											<IoFastFoodOutline className='w-4 h-4 text-green-600' />
+											<span>{formatUnit(calories)}</span>
+										</div>
 									</div>
 
 									<div className='flex flex-col items-center justify-center gap-0 rounded-md border-2 p-1'>
@@ -90,7 +134,10 @@ export default function LogEntry({ log }: { log: GetLog }) {
 										<span className='text-muted-foreground'>
 											Calories expended
 										</span>{' '}
-										{formatUnit(kcBurned)}
+										<div className='flex flex-row items-center gap-1'>
+											<Flame className='w-4 h-4 text-amber-600' />
+											{formatUnit(kcBurned)}
+										</div>
 									</div>
 
 									<div
