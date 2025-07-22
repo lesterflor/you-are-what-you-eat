@@ -1,12 +1,14 @@
-import type { Metadata, Viewport } from 'next';
-import './globals.css';
-import { Toaster } from '@/components/ui/sonner';
-import { SessionProvider } from 'next-auth/react';
-import { auth } from '@/db/auth';
-import { Suspense } from 'react';
 import SiteHeader from '@/components/header/header';
-import { ThemeProvider } from '@/components/theme-provider';
 import { StoreProvider } from '@/components/StoreProvider';
+import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from '@/components/ui/sonner';
+import { auth } from '@/db/auth';
+import type { Metadata, Viewport } from 'next';
+import { SessionProvider } from 'next-auth/react';
+import { Suspense } from 'react';
+import './globals.css';
+
+export const experimental_ppr = true;
 
 export const metadata: Metadata = {
 	title: {
