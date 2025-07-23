@@ -7,12 +7,14 @@ export default function TruncateSection({
 	children,
 	allowSeeMore = true,
 	pixelHeight = 120,
-	label = 'Read more'
+	label = 'Read more',
+	useCardBG = false
 }: {
 	children: React.ReactNode;
 	allowSeeMore?: boolean;
 	pixelHeight?: number;
 	label?: string;
+	useCardBG?: boolean;
 }) {
 	const [hasClickedSeeMore, setHasClickedSeeMore] = useState(false);
 
@@ -29,17 +31,17 @@ export default function TruncateSection({
 
 	return (
 		<>
-			<div className='flex flex-col items-end relative'>
+			<div className='flex flex-col items-end relative w-full'>
 				<div
 					className='w-full text-[110%] absolute opacity-0 -top-[500vh] pointer-events-none'
 					ref={htmlDiv}>
 					{children}
 				</div>
-				<div className='relative flex flex-col items-end gap-0'>
+				<div className='relative flex flex-col items-end gap-0 w-full'>
 					<div
 						ref={divRef}
 						className={cn(
-							'overflow-hidden transition-height duration-500 ease-in-out'
+							'overflow-hidden transition-height duration-500 ease-in-out w-full'
 						)}
 						style={{
 							height:
@@ -51,7 +53,10 @@ export default function TruncateSection({
 					</div>
 
 					<div
-						className={cn('gradientback', hasClickedSeeMore && 'hidden')}></div>
+						className={cn(
+							useCardBG ? 'gradientback-2' : 'gradientback',
+							hasClickedSeeMore && 'hidden'
+						)}></div>
 				</div>
 
 				{!hasClickedSeeMore ? (

@@ -24,6 +24,7 @@ import ShareListButton from '../grocery/share-list-button';
 import SharedListAvatars from '../grocery/shared-list-avatars';
 import TakePhoto from '../image/take-photo';
 import NumberIncrementor from '../number-incrementor';
+import TruncateSection from '../truncate-section';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import {
@@ -153,7 +154,7 @@ export default function DishCard({
 					) : (
 						<div
 							className={cn(
-								'text-md w-36 text-fuchsia-200 !leading-5 capitalize',
+								'text-md w-32 text-fuchsia-200 !leading-5 capitalize',
 								readOnly && 'text-lg w-48'
 							)}>
 							{prepDish.name}
@@ -308,71 +309,78 @@ export default function DishCard({
 			)}
 			<CardContent className='flex flex-col gap-2 w-full px-2'>
 				<DishImageGallery dish={prepDish} />
-				{items &&
-					items.length > 0 &&
-					items.map((item, indx) => (
-						<DishFoodItem
-							noDeleteButton={readOnly}
-							readOnly={readOnly}
-							onDelete={(item) => {
-								setIsUpdating(async () => {
-									const upd = { ...dish };
 
-									const newList = upd.foodItems.filter(
-										(dItem) =>
-											dItem.id !== item.id || dItem.eatenAt !== item.eatenAt
-									);
+				<TruncateSection
+					useCardBG={true}
+					label='See more'>
+					<div className='w-full'>
+						{items &&
+							items.length > 0 &&
+							items.map((item, indx) => (
+								<DishFoodItem
+									noDeleteButton={readOnly}
+									readOnly={readOnly}
+									onDelete={(item) => {
+										setIsUpdating(async () => {
+											const upd = { ...dish };
 
-									upd.foodItems = newList;
+											const newList = upd.foodItems.filter(
+												(dItem) =>
+													dItem.id !== item.id || dItem.eatenAt !== item.eatenAt
+											);
 
-									setPrepDish(upd);
-									setItems(upd.foodItems);
+											upd.foodItems = newList;
 
-									const res = await updateDish(upd);
+											setPrepDish(upd);
+											setItems(upd.foodItems);
 
-									if (res.success) {
-										toast.success(res.message);
-										setPrepDish(res.data as GetPreparedDish);
+											const res = await updateDish(upd);
 
-										dispatchDishState();
-									} else {
-										toast.error(res.message);
-									}
-								});
-							}}
-							onEdit={(item) => {
-								setIsUpdating(async () => {
-									const upd = { ...dish };
+											if (res.success) {
+												toast.success(res.message);
+												setPrepDish(res.data as GetPreparedDish);
 
-									const editItem = upd.foodItems.find(
-										(dItem) =>
-											dItem.id === item.id && dItem.eatenAt === item.eatenAt
-									);
+												dispatchDishState();
+											} else {
+												toast.error(res.message);
+											}
+										});
+									}}
+									onEdit={(item) => {
+										setIsUpdating(async () => {
+											const upd = { ...dish };
 
-									if (editItem) {
-										Object.assign(editItem, item);
-									}
+											const editItem = upd.foodItems.find(
+												(dItem) =>
+													dItem.id === item.id && dItem.eatenAt === item.eatenAt
+											);
 
-									setPrepDish(upd);
-									setItems(upd.foodItems);
+											if (editItem) {
+												Object.assign(editItem, item);
+											}
 
-									const res = await updateDish(upd);
+											setPrepDish(upd);
+											setItems(upd.foodItems);
 
-									if (res.success) {
-										toast.success(res.message);
-										setPrepDish(res.data as GetPreparedDish);
+											const res = await updateDish(upd);
 
-										dispatchDishState();
-									} else {
-										toast.error(res.message);
-									}
-								});
-							}}
-							key={`${item.id}-${item.eatenAt}-${indx}`}
-							indx={indx}
-							item={item}
-						/>
-					))}
+											if (res.success) {
+												toast.success(res.message);
+												setPrepDish(res.data as GetPreparedDish);
+
+												dispatchDishState();
+											} else {
+												toast.error(res.message);
+											}
+										});
+									}}
+									key={`${item.id}-${item.eatenAt}-${indx}`}
+									indx={indx}
+									item={item}
+								/>
+							))}
+					</div>
+				</TruncateSection>
 
 				<div className='flex flex-row flex-wrap items-center justify-evenly	gap-1 pt-4 w-full'>
 					<Badge
