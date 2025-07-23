@@ -188,7 +188,10 @@ export default function FoodLogList({
 					caloricData: JSON.stringify({
 						consumed: totalCalories,
 						remaining: remainingCalories,
-						burned: knownCaloriesBurned[0].calories ?? 0
+						burned:
+							knownCaloriesBurned && knownCaloriesBurned.length > 0
+								? knownCaloriesBurned[0].calories
+								: 0
 					})
 				})
 			);

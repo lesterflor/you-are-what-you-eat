@@ -123,7 +123,12 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 			logForToday.knownCaloriesBurned.length === 0 ||
 			!logForToday.knownCaloriesBurned
 		) {
-			await createKnowDailyCalories(logForToday.id);
+			// get todays kcb and attach it to the logForTday
+			const kcb = await createKnowDailyCalories(logForToday.id);
+
+			if (kcb.success && kcb.data) {
+				logForToday.knownCaloriesBurned = [kcb.data];
+			}
 		}
 
 		await createLogRemainder(logForToday.id);
@@ -405,7 +410,19 @@ export async function createKnowDailyCalories(logId: string) {
 			}
 		});
 
-		if (!existing) {
+		const existingToday = await prisma.knownCaloriesBurned.findFirst({
+			where: {
+				createdAt: {
+					gte: new Date(getToday().todayStart),
+					lte: new Date(getToday().todayEnd)
+				},
+				userId: user.id
+			}
+		});
+
+		console.log(`with log: ${existing} - no log: ${existingToday}`);
+
+		if (!existing && !existingToday) {
 			const newKDC = await prisma.knownCaloriesBurned.create({
 				data: {
 					createdAt: new Date(getToday().current),
@@ -422,8 +439,10 @@ export async function createKnowDailyCalories(logId: string) {
 
 			retData = newKDC;
 		} else {
-			retData = existing;
+			retData = !existing ? existingToday : existing;
 		}
+
+		console.log(retData);
 
 		return {
 			success: true,
