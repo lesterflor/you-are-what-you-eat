@@ -157,10 +157,10 @@ export default function FoodLogList({
 
 	const parseLog = (log: GetLog) => {
 		const {
-			foodItems,
-			totalCalories,
-			remainingCalories,
-			knownCaloriesBurned,
+			foodItems = [],
+			totalCalories = 0,
+			remainingCalories = 0,
+			knownCaloriesBurned = [],
 			user: { BaseMetabolicRate = [] }
 		} = log;
 

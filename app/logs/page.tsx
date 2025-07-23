@@ -4,6 +4,7 @@ import {
 	getLogsByUserId
 } from '@/actions/log-actions';
 import LogEntry from '@/components/logs/log-entry';
+import LogEntrySkeleton from '@/components/logs/log-entry-skeleton';
 import LogHistoryTitle from '@/components/logs/log-history-title';
 import { auth } from '@/db/auth';
 import { colateBMRData } from '@/lib/utils';
@@ -48,7 +49,7 @@ export default async function LogsPage(props: {
 		<div className='flex flex-col gap-4 relative'>
 			<LogHistoryTitle />
 
-			<Suspense fallback={'Loading...'}>
+			<Suspense fallback={<LogEntrySkeleton />}>
 				{data && data.length > 0 ? (
 					data.map((log) => (
 						<LogEntry
