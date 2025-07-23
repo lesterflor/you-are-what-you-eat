@@ -475,7 +475,17 @@ export async function createLogRemainder(logId: string) {
 			}
 		});
 
-		if (!existing) {
+		const existingToday = await prisma.logRemainder.findFirst({
+			where: {
+				createdAt: {
+					gte: new Date(getToday().todayStart),
+					lte: new Date(getToday().todayEnd)
+				},
+				userId: user.id
+			}
+		});
+
+		if (!existing || !existingToday) {
 			const newRemainder = await prisma.logRemainder.create({
 				data: {
 					createdAt: new Date(getToday().current),
@@ -490,7 +500,7 @@ export async function createLogRemainder(logId: string) {
 
 			retVal = newRemainder;
 		} else {
-			retVal = existing;
+			retVal = !existing ? existingToday : existing;
 		}
 
 		return {
