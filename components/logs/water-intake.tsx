@@ -66,8 +66,6 @@ export default function WaterIntake({
 			JSON.parse(userData.bmrData)
 		);
 
-		console.log(JSON.parse(userData.caloricData ?? ''));
-
 		// update only if state update has different data
 		if (
 			userDataStatus === 'updated' &&
@@ -199,10 +197,10 @@ export default function WaterIntake({
 									) : (
 										<div
 											className={cn(
-												'absolute w-auto h-4 rounded-full  text-xs top-0 right-0 p-1 flex items-center justify-center',
-												waterData.glasses > optWaterConsumed.glasses
-													? 'bg-red-700'
-													: 'bg-green-800'
+												'absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center',
+												waterData.glasses < optWaterConsumed.glasses &&
+													optWaterConsumed.glasses !== 0 &&
+													'bg-green-700'
 											)}>
 											{optWaterConsumed.glasses}
 										</div>
@@ -292,17 +290,23 @@ export default function WaterIntake({
 										<div className='flex flex-col gap-0'>
 											<div className='flex flex-row gap-1 items-center justify-center'>
 												<FaGlassWater className='w-8 h-8' />
-												{optWaterConsumed.glasses}
+												<span className='text-foreground'>
+													{optWaterConsumed.glasses}
+												</span>
 											</div>
 											<div className='text-xs font-normal text-muted-foreground'>
 												Glasses today
 											</div>
 										</div>
 
+										<div className='text-muted-foreground font-normal'>=</div>
+
 										<div className='flex flex-col gap-0 items-center justify-center'>
 											<div className='flex flex-row gap-1 items-center justify-center'>
 												<BsCupFill className='w-8 h-8' />
-												{optWaterConsumed.glasses * 2}
+												<span className='text-foreground'>
+													{optWaterConsumed.glasses * 2}
+												</span>
 											</div>
 											<div className='text-xs font-normal text-muted-foreground'>
 												Cups today
@@ -433,10 +437,10 @@ export default function WaterIntake({
 									) : (
 										<div
 											className={cn(
-												'absolute w-auto h-4 rounded-full  text-xs top-0 right-0 p-1 flex items-center justify-center',
-												waterData.glasses > optWaterConsumed.glasses
-													? 'bg-red-700'
-													: 'bg-green-800'
+												'absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center',
+												waterData.glasses < optWaterConsumed.glasses &&
+													optWaterConsumed.glasses !== 0 &&
+													'bg-green-700'
 											)}>
 											{optWaterConsumed.glasses}
 										</div>
@@ -524,17 +528,23 @@ export default function WaterIntake({
 										<div className='flex flex-col gap-0'>
 											<div className='flex flex-row gap-1 items-center justify-center'>
 												<FaGlassWater className='w-8 h-8' />
-												{optWaterConsumed.glasses}
+												<span className='text-foreground'>
+													{optWaterConsumed.glasses}
+												</span>
 											</div>
 											<div className='text-xs font-normal text-muted-foreground'>
 												Glasses today
 											</div>
 										</div>
 
+										<div className='text-muted-foreground font-normal'>=</div>
+
 										<div className='flex flex-col gap-0 items-center justify-center'>
 											<div className='flex flex-row gap-1 items-center justify-center'>
 												<BsCupFill className='w-8 h-8' />
-												{optWaterConsumed.glasses * 2}
+												<span className='text-foreground'>
+													{optWaterConsumed.glasses * 2}
+												</span>
 											</div>
 											<div className='text-xs font-normal text-muted-foreground'>
 												Cups today
