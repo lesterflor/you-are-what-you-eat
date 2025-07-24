@@ -60,6 +60,7 @@ export default function LogEntry({
 	useEffect(() => {
 		if (inView) {
 			setRender(true);
+			console.log(log);
 		}
 	}, [inView]);
 

@@ -90,7 +90,8 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 						BaseMetabolicRate: true
 					}
 				},
-				knownCaloriesBurned: true
+				knownCaloriesBurned: true,
+				logRemainder: true
 			}
 		});
 
@@ -107,7 +108,8 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 							BaseMetabolicRate: true
 						}
 					},
-					knownCaloriesBurned: true
+					knownCaloriesBurned: true,
+					logRemainder: true
 				}
 			});
 		} else {
@@ -119,10 +121,7 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 			logForToday = todaysLog;
 		}
 
-		if (
-			logForToday.knownCaloriesBurned.length === 0 ||
-			!logForToday.knownCaloriesBurned
-		) {
+		if (logForToday.knownCaloriesBurned.length === 0) {
 			// get todays kcb and attach it to the logForTday
 			const kcb = await createKnowDailyCalories(logForToday.id);
 
@@ -392,6 +391,39 @@ export async function getLogsByUserId(logId: string = '') {
 	}
 }
 
+export async function getKCBByDate(date: Date) {
+	try {
+		const session = await auth();
+		const user = session?.user as GetUser;
+
+		if (!session || !user) {
+			throw new Error('User must be authenticated');
+		}
+
+		const endOfDay = new Date(date.getDate() + 1);
+
+		const log = await prisma.knownCaloriesBurned.findFirst({
+			where: {
+				createdAt: {
+					gte: date,
+					lt: endOfDay
+				}
+			}
+		});
+
+		return {
+			success: true,
+			message: 'success',
+			data: log
+		};
+	} catch (err: unknown) {
+		return {
+			success: false,
+			message: formatError(err)
+		};
+	}
+}
+
 export async function createKnowDailyCalories(logId: string) {
 	try {
 		const session = await auth();
@@ -439,7 +471,25 @@ export async function createKnowDailyCalories(logId: string) {
 
 			retData = newKDC;
 		} else {
-			retData = !existing ? existingToday : existing;
+			if (!existing && existingToday) {
+				// if there is no existing with logId, ensure the one found with a date is attached the logId passed in the method
+				const updateLogId = await prisma.knownCaloriesBurned.update({
+					where: {
+						id: existingToday.id
+					},
+					data: {
+						logId
+					}
+				});
+
+				if (!updateLogId) {
+					throw new Error('There was a problem updating the logId on KCB');
+				}
+
+				retData = existingToday;
+			} else {
+				retData = existing;
+			}
 		}
 
 		console.log(retData);
@@ -500,7 +550,24 @@ export async function createLogRemainder(logId: string) {
 
 			retVal = newRemainder;
 		} else {
-			retVal = !existing ? existingToday : existing;
+			if (!existing && existingToday) {
+				const updateLogId = await prisma.logRemainder.update({
+					where: {
+						id: existingToday.id
+					},
+					data: {
+						logId
+					}
+				});
+
+				if (!updateLogId) {
+					throw new Error('There was a problem attaching logId to remainder');
+				}
+
+				retVal = existingToday;
+			} else {
+				retVal = existing;
+			}
 		}
 
 		return {
