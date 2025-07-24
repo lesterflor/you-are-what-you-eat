@@ -19,6 +19,7 @@ import {
 	Frown,
 	IdCard,
 	List,
+	LucideUtensilsCrossed,
 	Smile,
 	Soup,
 	ThumbsDown,
@@ -27,7 +28,6 @@ import {
 import { useEffect, useState, useTransition } from 'react';
 import { BiSolidFoodMenu } from 'react-icons/bi';
 import { BsBookmarkStarFill } from 'react-icons/bs';
-import { GiEmptyMetalBucket } from 'react-icons/gi';
 import { ImSpinner2 } from 'react-icons/im';
 import { IoFastFoodOutline, IoWaterOutline } from 'react-icons/io5';
 import { TbDatabaseSearch } from 'react-icons/tb';
@@ -382,9 +382,12 @@ export default function FoodLogList({
 										  ))}
 								</>
 							) : (
-								<div className='flex flex-col items-center justify-center gap-2 text-muted-foreground opacity-30 fixed top-[12vh] w-[95%]'>
-									<GiEmptyMetalBucket className='w-48 h-48 animate-pulse' />
-									Nothing logged yet!
+								<div className='flex flex-col items-center justify-center gap-2 text-muted-foreground  fixed top-[16vh] w-[95%]'>
+									<div className='flex flex-col items-center gap-2 opacity-35'>
+										<LucideUtensilsCrossed className='w-32 h-32 animate-pulse ' />
+										Nothing logged yet!
+									</div>
+
 									<CommonLoggedItems />
 								</div>
 							)}

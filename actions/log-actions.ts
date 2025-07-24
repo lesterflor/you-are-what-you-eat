@@ -883,10 +883,14 @@ export async function getCommonItemsInLog() {
 
 		items.sort((a, b) => a.name.localeCompare(b.name));
 
+		const clone = [...logs];
+		clone.sort((a, b) => a.createdAt.getDate() - b.createdAt.getDate());
+
 		return {
 			success: true,
 			message: 'success',
-			data: items
+			data: items,
+			firstLog: clone[0]
 		};
 	} catch (error: unknown) {
 		return {
