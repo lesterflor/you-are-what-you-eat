@@ -75,7 +75,7 @@ export default function FoodItemCard({
 	const [photoDlgOpen, setPhotoDlgOpen] = useState(false);
 
 	const [logFoodItem, setLogFoodItem] = useState<FoodEntry>({
-		id: item.id,
+		id: `${item.id}-${new Date().getTime()}`,
 		name: item.name,
 		category: item.category,
 		description: item.description ?? '',
@@ -309,7 +309,7 @@ export default function FoodItemCard({
 											setPortionAmount(val);
 
 											const entry: FoodEntry = {
-												id: currentItem.id,
+												id: `${currentItem.id}-${new Date().getTime()}`,
 												name: currentItem.name,
 												category: currentItem.category,
 												description: currentItem.description ?? '',

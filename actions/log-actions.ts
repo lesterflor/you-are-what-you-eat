@@ -51,6 +51,10 @@ export async function getCurrentLog(compareToYesterday: boolean = false) {
 			throw new Error('There was a problem getting the log');
 		}
 
+		todaysLog.foodItems.sort(
+			(a, b) => b.eatenAt.getTime() - a.eatenAt.getTime()
+		);
+
 		let comparisons: LogComparisonType = null;
 
 		// compare log from yesterday (in header macros summary)
