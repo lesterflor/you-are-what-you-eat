@@ -19,7 +19,7 @@ import {
 import { revalidatePath } from 'next/cache';
 import { DateRange } from 'react-day-picker';
 
-export async function getCurrentLog() {
+export async function getCurrentLog(compareToYesterday: boolean = false) {
 	try {
 		const session = await auth();
 		const user = session?.user;
@@ -51,10 +51,101 @@ export async function getCurrentLog() {
 			throw new Error('There was a problem getting the log');
 		}
 
+		let comparisons: LogComparisonType = null;
+
+		// compare log from yesterday (in header macros summary)
+		if (compareToYesterday) {
+			const yLog = await prisma.log.findFirst({
+				where: {
+					userId: user.id,
+					createdAt: {
+						gte: getToday().yesterday,
+						lt: getToday().todayStart
+					}
+				},
+				include: {
+					user: {
+						select: {
+							BaseMetabolicRate: {
+								select: {
+									bmr: true
+								}
+							}
+						}
+					},
+					knownCaloriesBurned: {
+						select: {
+							calories: true
+						}
+					},
+					logRemainder: {
+						select: {
+							calories: true
+						}
+					}
+				}
+			});
+
+			if (yLog) {
+				const yfood = yLog.foodItems as GetFoodEntry[];
+				const todaysFood = todaysLog.foodItems as GetFoodEntry[];
+
+				comparisons = {
+					calories: {
+						yesterday: totalMacrosReducer(yfood).calories,
+						today: totalMacrosReducer(todaysFood).calories,
+						belowYesterday:
+							totalMacrosReducer(todaysFood).calories <
+							totalMacrosReducer(yfood).calories
+					},
+					protein: {
+						yesterday: totalMacrosReducer(yfood).protein,
+						today: totalMacrosReducer(todaysFood).protein,
+						belowYesterday:
+							totalMacrosReducer(todaysFood).protein <
+							totalMacrosReducer(yfood).protein
+					},
+					carbs: {
+						yesterday: totalMacrosReducer(yfood).carbs,
+						today: totalMacrosReducer(todaysFood).carbs,
+						belowYesterday:
+							totalMacrosReducer(todaysFood).carbs <
+							totalMacrosReducer(yfood).carbs
+					},
+					fat: {
+						yesterday: totalMacrosReducer(yfood).fat,
+						today: totalMacrosReducer(todaysFood).fat,
+						belowYesterday:
+							totalMacrosReducer(todaysFood).fat < totalMacrosReducer(yfood).fat
+					}
+				};
+			}
+		}
+
+		const totalCalories = Math.round(
+			todaysLog.foodItems.reduce((acc, curr) => {
+				const sub = curr.calories * curr.numServings;
+				return acc + sub;
+			}, 0)
+		);
+
+		const remainingCalories =
+			totalCalories -
+			(todaysLog.user.BaseMetabolicRate[0].bmr ||
+				0 + todaysLog.knownCaloriesBurned[0].calories ||
+				0);
+
+		const revisedLog = {
+			...todaysLog,
+			comparisons,
+			totalCalories,
+			remainingCalories
+		};
+
 		return {
 			success: true,
 			message: 'success',
-			data: todaysLog
+			data: revisedLog
 		};
 	} catch (err: unknown) {
 		return {

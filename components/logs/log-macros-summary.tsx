@@ -1,6 +1,6 @@
 'use client';
 
-import { createDailyLog } from '@/actions/log-actions';
+import { getCurrentLog } from '@/actions/log-actions';
 import { pieChartConfig } from '@/config';
 import {
 	selectPreparedDishData,
@@ -89,7 +89,7 @@ export default function LogMacrosSummary({
 
 	const getLog = () => {
 		setIsFetching(async () => {
-			const res = await createDailyLog(getTodayMode);
+			const res = await getCurrentLog(getTodayMode);
 
 			if (res?.success && res.data) {
 				const { foodItems, comparisons } = res.data;

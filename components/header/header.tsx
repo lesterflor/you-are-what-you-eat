@@ -1,4 +1,4 @@
-import { createDailyLog } from '@/actions/log-actions';
+import { getCurrentLog } from '@/actions/log-actions';
 import { auth } from '@/db/auth';
 import { getToday } from '@/lib/utils';
 import { GetLog } from '@/types';
@@ -18,7 +18,7 @@ export default async function SiteHeader() {
 	const session = await auth();
 	const { current } = getToday();
 
-	const log = await createDailyLog(true);
+	const log = await getCurrentLog(true);
 
 	return (
 		<header className='w-full border-b fixed top-0 z-50 bg-white dark:bg-green-950 select-none px-0'>
@@ -61,10 +61,10 @@ export default async function SiteHeader() {
 					</Link>
 				</div>
 
-				{session && log && log.data && (
+				{session && (
 					<div className='flex flex-col items-center gap-0'>
 						<LogMacrosSummary
-							log={log.data as GetLog}
+							log={log?.data as GetLog}
 							compactMode={true}
 							useSkeleton={false}>
 							<div className='flex flex-row items-center gap-2'>

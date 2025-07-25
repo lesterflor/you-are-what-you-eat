@@ -1,6 +1,6 @@
 'use client';
 
-import { createDailyLog, getKnownCaloriesBurned } from '@/actions/log-actions';
+import { getCurrentLog, getKnownCaloriesBurned } from '@/actions/log-actions';
 import { useScrolling } from '@/hooks/use-scroll';
 import {
 	selectPreparedDishData,
@@ -97,7 +97,7 @@ export default function FoodLogList({
 	const logData = useAppSelector(selectData);
 
 	const getLog = async () => {
-		const res = await createDailyLog();
+		const res = await getCurrentLog();
 		if (res?.success && res.data) {
 			parseLog(res.data as GetLog);
 		}
