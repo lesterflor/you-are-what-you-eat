@@ -370,3 +370,39 @@ export function convertGlassesOfWater(amt: number) {
 		litres: formatUnit(amt * 0.1479)
 	};
 }
+
+export function generateMacroComparisons(
+	todaysFood: GetFoodEntry[],
+	yesterdaysFood: GetFoodEntry[]
+) {
+	const {
+		calories: yCalories,
+		protein: yProtein,
+		carbs: yCarbs,
+		fat: yFat
+	} = totalMacrosReducer(yesterdaysFood);
+	const { calories, protein, carbs, fat } = totalMacrosReducer(todaysFood);
+
+	return {
+		calories: {
+			yesterday: yCalories,
+			today: calories,
+			belowYesterday: calories < yCalories
+		},
+		protein: {
+			yesterday: yProtein,
+			today: protein,
+			belowYesterday: protein < yProtein
+		},
+		carbs: {
+			yesterday: yCarbs,
+			today: carbs,
+			belowYesterday: carbs < yCarbs
+		},
+		fat: {
+			yesterday: yFat,
+			today: fat,
+			belowYesterday: fat < yFat
+		}
+	};
+}

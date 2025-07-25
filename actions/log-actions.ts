@@ -6,6 +6,7 @@ import {
 	convertGlassesOfWater,
 	formatError,
 	formatUnit,
+	generateMacroComparisons,
 	getToday,
 	totalMacrosReducer
 } from '@/lib/utils';
@@ -91,38 +92,10 @@ export async function getCurrentLog(compareToYesterday: boolean = false) {
 			});
 
 			if (yLog) {
-				const yfood = yLog.foodItems as GetFoodEntry[];
-				const todaysFood = todaysLog.foodItems as GetFoodEntry[];
-
-				comparisons = {
-					calories: {
-						yesterday: totalMacrosReducer(yfood).calories,
-						today: totalMacrosReducer(todaysFood).calories,
-						belowYesterday:
-							totalMacrosReducer(todaysFood).calories <
-							totalMacrosReducer(yfood).calories
-					},
-					protein: {
-						yesterday: totalMacrosReducer(yfood).protein,
-						today: totalMacrosReducer(todaysFood).protein,
-						belowYesterday:
-							totalMacrosReducer(todaysFood).protein <
-							totalMacrosReducer(yfood).protein
-					},
-					carbs: {
-						yesterday: totalMacrosReducer(yfood).carbs,
-						today: totalMacrosReducer(todaysFood).carbs,
-						belowYesterday:
-							totalMacrosReducer(todaysFood).carbs <
-							totalMacrosReducer(yfood).carbs
-					},
-					fat: {
-						yesterday: totalMacrosReducer(yfood).fat,
-						today: totalMacrosReducer(todaysFood).fat,
-						belowYesterday:
-							totalMacrosReducer(todaysFood).fat < totalMacrosReducer(yfood).fat
-					}
-				};
+				comparisons = generateMacroComparisons(
+					todaysLog.foodItems as GetFoodEntry[],
+					yLog.foodItems as GetFoodEntry[]
+				);
 			}
 		}
 
@@ -263,38 +236,10 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 			});
 
 			if (yLog) {
-				const yfood = yLog.foodItems as GetFoodEntry[];
-				const todaysFood = logForToday.foodItems as GetFoodEntry[];
-
-				comparisons = {
-					calories: {
-						yesterday: totalMacrosReducer(yfood).calories,
-						today: totalMacrosReducer(todaysFood).calories,
-						belowYesterday:
-							totalMacrosReducer(todaysFood).calories <
-							totalMacrosReducer(yfood).calories
-					},
-					protein: {
-						yesterday: totalMacrosReducer(yfood).protein,
-						today: totalMacrosReducer(todaysFood).protein,
-						belowYesterday:
-							totalMacrosReducer(todaysFood).protein <
-							totalMacrosReducer(yfood).protein
-					},
-					carbs: {
-						yesterday: totalMacrosReducer(yfood).carbs,
-						today: totalMacrosReducer(todaysFood).carbs,
-						belowYesterday:
-							totalMacrosReducer(todaysFood).carbs <
-							totalMacrosReducer(yfood).carbs
-					},
-					fat: {
-						yesterday: totalMacrosReducer(yfood).fat,
-						today: totalMacrosReducer(todaysFood).fat,
-						belowYesterday:
-							totalMacrosReducer(todaysFood).fat < totalMacrosReducer(yfood).fat
-					}
-				};
+				comparisons = generateMacroComparisons(
+					logForToday.foodItems as GetFoodEntry[],
+					yLog.foodItems as GetFoodEntry[]
+				);
 			}
 		}
 
@@ -547,7 +492,7 @@ export async function createKnowDailyCalories(logId: string) {
 			}
 		});
 
-		console.log(`with log: ${existing} - no log: ${existingToday}`);
+		//console.log(`with log: ${existing} - no log: ${existingToday}`);
 
 		if (!existing && !existingToday) {
 			const newKDC = await prisma.knownCaloriesBurned.create({
@@ -587,7 +532,7 @@ export async function createKnowDailyCalories(logId: string) {
 			}
 		}
 
-		console.log(retData);
+		//console.log(retData);
 
 		return {
 			success: true,
