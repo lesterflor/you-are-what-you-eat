@@ -780,7 +780,7 @@ export async function deleteFoodLogEntry(foodEntryId: string) {
 			throw new Error('User must be authenticated');
 		}
 
-		const currentLog = await createDailyLog();
+		const currentLog = await getCurrentLog();
 
 		if (!currentLog?.data) {
 			throw new Error('There was a problem getting the most recent log');
@@ -829,7 +829,7 @@ export async function updateFoodLogEntry(foodEntry: GetFoodEntry) {
 			throw new Error('User must be authenticated');
 		}
 
-		const currentLog = await createDailyLog();
+		const currentLog = await getCurrentLog();
 
 		if (!currentLog?.data) {
 			throw new Error('There was a problem getting the most recent log');
@@ -943,7 +943,7 @@ export async function getLogRemainder() {
 		).calories;
 		const remainder = bmrCalories + expendedCals - yesterdayConsumed;
 
-		const todaysLog = await createDailyLog();
+		const todaysLog = await getCurrentLog();
 
 		if (!todaysLog) {
 			throw new Error('There was a problem getting todays log');

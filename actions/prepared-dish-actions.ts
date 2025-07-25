@@ -10,7 +10,7 @@ import {
 	GetUser,
 	PreparedDish
 } from '@/types';
-import { createDailyLog, updateLog } from './log-actions';
+import { getCurrentLog, updateLog } from './log-actions';
 
 export async function createDish(dish: PreparedDish) {
 	try {
@@ -336,7 +336,7 @@ export async function logDishItems(dish: GetPreparedDish) {
 			eatenAt: new Date()
 		}));
 
-		const getLatestLog = await createDailyLog();
+		const getLatestLog = await getCurrentLog();
 
 		const currentFoodItems = getLatestLog?.data?.foodItems || [];
 

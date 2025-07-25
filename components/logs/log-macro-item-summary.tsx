@@ -1,6 +1,6 @@
 'use client';
 
-import { createDailyLog } from '@/actions/log-actions';
+import { getCurrentLog } from '@/actions/log-actions';
 import { formatUnit } from '@/lib/utils';
 import { GetFoodEntry } from '@/types';
 import { useCallback, useEffect, useState, useTransition } from 'react';
@@ -19,7 +19,7 @@ export default function LogMacroItemSummary({
 
 	const fetchMacros = useCallback(() => {
 		setIsFetching(async () => {
-			const res = await createDailyLog();
+			const res = await getCurrentLog();
 
 			if (res?.success && res.data) {
 				let sortedFoodList;
