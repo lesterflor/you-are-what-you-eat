@@ -153,7 +153,10 @@ export default function LogMacrosSummary({
 												value={formatUnit(currentData.calories)}
 											/>
 										) : (
-											formatUnit(currentData.calories)
+											<ComparisonPopover
+												field='calories'
+												value={formatUnit(currentData.calories)}
+											/>
 										)}
 									</div>
 								</div>
@@ -171,7 +174,11 @@ export default function LogMacrosSummary({
 												unitLabel='(grams)'
 											/>
 										) : (
-											formatUnit(currentData.protein)
+											<ComparisonPopover
+												field='protein'
+												value={formatUnit(currentData.protein)}
+												unitLabel='(grams)'
+											/>
 										)}
 									</div>
 								</div>
@@ -189,7 +196,11 @@ export default function LogMacrosSummary({
 												unitLabel='(grams)'
 											/>
 										) : (
-											formatUnit(currentData.carbs)
+											<ComparisonPopover
+												field='carbs'
+												value={formatUnit(currentData.carbs)}
+												unitLabel='(grams)'
+											/>
 										)}
 									</div>
 								</div>
@@ -207,7 +218,11 @@ export default function LogMacrosSummary({
 												unitLabel='(grams)'
 											/>
 										) : (
-											formatUnit(currentData.fat)
+											<ComparisonPopover
+												field='fat'
+												value={formatUnit(currentData.fat)}
+												unitLabel='(grams)'
+											/>
 										)}
 									</div>
 								</div>

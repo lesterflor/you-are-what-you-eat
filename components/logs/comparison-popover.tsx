@@ -12,13 +12,29 @@ export default function ComparisonPopover({
 	value,
 	unitLabel = ''
 }: {
-	data: LogComparisonType;
+	data?: LogComparisonType;
 	field: 'calories' | 'protein' | 'carbs' | 'fat';
 	value: number;
 	unitLabel?: string;
 }) {
 	if (!data) {
-		return null;
+		return (
+			<Popover>
+				<PopoverTrigger>
+					<div className='flex flex-row items-center gap-0'>
+						<div className='whitespace-nowrap'>{value}</div>
+					</div>
+				</PopoverTrigger>
+				<PopoverContent className='flex flex-col gap-0 items-center text-xs w-48 pr-4 pl-2 bg-green-900'>
+					<div className='flex flex-row gap-1 items-center'>
+						<div className='capitalize'>{field}</div>
+						<div>{unitLabel}</div>
+					</div>
+
+					<LogMacroItemSummary macro={field} />
+				</PopoverContent>
+			</Popover>
+		);
 	}
 
 	const fieldData = data[field];
