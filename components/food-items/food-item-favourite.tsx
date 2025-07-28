@@ -4,6 +4,8 @@ import {
 	bookmarkFoodItem,
 	checkFoodItemBookmarked
 } from '@/actions/food-actions';
+import { addBookmark, removeBookmark } from '@/lib/features/food/bookmarkSlice';
+import { useAppDispatch } from '@/lib/hooks';
 import { GetFoodItem } from '@/types';
 import { useEffect, useState, useTransition } from 'react';
 import { BsBookmarkPlus, BsBookmarkStarFill } from 'react-icons/bs';
@@ -11,6 +13,7 @@ import { ImSpinner2 } from 'react-icons/im';
 import { useInView } from 'react-intersection-observer';
 
 export default function FoodItemFavourite({ item }: { item: GetFoodItem }) {
+	const dispatch = useAppDispatch();
 	const [isBookmarked, setIsBookmarked] = useState(false);
 	const [isBookmarking, setIsBookmarking] = useTransition();
 	const [ref, isInView] = useInView();
@@ -29,7 +32,15 @@ export default function FoodItemFavourite({ item }: { item: GetFoodItem }) {
 
 			if (res.success) {
 				setIsBookmarking(() => {
-					setIsBookmarked(!!res.bookmarked);
+					const isBookmarked = !!res.bookmarked;
+
+					setIsBookmarked(isBookmarked);
+
+					dispatch(
+						isBookmarked
+							? addBookmark(JSON.stringify({ id: item.id, name: item.name }))
+							: removeBookmark(JSON.stringify({ id: item.id, name: item.name }))
+					);
 				});
 			}
 		});

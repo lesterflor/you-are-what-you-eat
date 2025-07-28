@@ -1,6 +1,7 @@
 import type { Action, ThunkAction } from '@reduxjs/toolkit';
 import { combineSlices, configureStore } from '@reduxjs/toolkit';
 import { preparedDishSlice } from './features/dish/preparedDishSlice';
+import { bookmarkFoodSlice } from './features/food/bookmarkSlice';
 import { foodSearchSlice } from './features/food/foodSearchSlice';
 import { foodUpdateSlice } from './features/food/foodUpdateSlice';
 import { grocerySlice } from './features/grocery/grocerySlice';
@@ -23,7 +24,8 @@ const rootReducer = combineSlices(
 	logCumulativeSlice,
 	imageSlice,
 	waterLogSlice,
-	userDataSlice
+	userDataSlice,
+	bookmarkFoodSlice
 );
 // Infer the `RootState` type from the root reducer
 export type RootState = ReturnType<typeof rootReducer>;

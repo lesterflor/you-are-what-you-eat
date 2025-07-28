@@ -1,6 +1,11 @@
 'use client';
 
 import { getFavouriteFoods } from '@/actions/food-actions';
+import {
+	selectBookmarkFoodData,
+	selectBookmarkFoodStatus
+} from '@/lib/features/food/bookmarkSlice';
+import { useAppSelector } from '@/lib/hooks';
 import { GetFoodItem } from '@/types';
 import { useCallback, useEffect, useState, useTransition } from 'react';
 import { BsBookmarkStarFill } from 'react-icons/bs';
@@ -25,6 +30,13 @@ export default function FoodFavouriteListSheet({
 	const [favs, setFavs] = useState<GetFoodItem[]>();
 	const [isFetching, setIsFetching] = useTransition();
 
+	const bookmarkFoodData = useAppSelector(selectBookmarkFoodData);
+	const bookmarkFoodStatus = useAppSelector(selectBookmarkFoodStatus);
+
+	useEffect(() => {
+		fetchFavs();
+	}, [bookmarkFoodData, bookmarkFoodStatus]);
+
 	const fetchFavs = useCallback(() => {
 		setIsFetching(async () => {
 			const res = await getFavouriteFoods();
@@ -36,10 +48,6 @@ export default function FoodFavouriteListSheet({
 			}
 		});
 	}, [favs]);
-
-	useEffect(() => {
-		fetchFavs();
-	}, []);
 
 	return (
 		<>
