@@ -35,6 +35,10 @@ const formatItemType = (type: string) => {
 			lbl = 'Water';
 			css = 'text-blue-600';
 			break;
+		case 'bookmarkFood':
+			lbl = 'Bookmarks';
+			css = 'text-teal-600';
+			break;
 		case 'dishData':
 			lbl = 'Prepared Dish';
 			css = 'text-fuchsia-600';

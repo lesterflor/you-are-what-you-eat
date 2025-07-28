@@ -10,6 +10,11 @@ import {
 	selectPreparedDishStatus
 } from '@/lib/features/dish/preparedDishSlice';
 import {
+	selectBookmarkFoodData,
+	selectBookmarkFoodMessage,
+	selectBookmarkFoodStatus
+} from '@/lib/features/food/bookmarkSlice';
+import {
 	selectFoodSearchData,
 	selectFoodSearchStatus
 } from '@/lib/features/food/foodSearchSlice';
@@ -86,6 +91,10 @@ export default function ReduxStoreLogger({
 	const waterLogStatus = useAppSelector(selectWaterLogStatus);
 	const waterLogMessage = useAppSelector(selectWaterLogMessage);
 
+	const bookmarkFoodData = useAppSelector(selectBookmarkFoodData);
+	const bookmarkFoodStatus = useAppSelector(selectBookmarkFoodStatus);
+	const bookmarkFoodMsg = useAppSelector(selectBookmarkFoodMessage);
+
 	const [isFetching, setIsFetching] = useTransition();
 	const [log, setLog] = useState<GetActivityLog>();
 	const [activities, setActivities] = useState<GetActivityItem[]>([]);
@@ -153,6 +162,20 @@ export default function ReduxStoreLogger({
 			setHasOpened(false);
 		}
 	}, [waterLogData, waterLogStatus, waterLogMessage]);
+
+	useEffect(() => {
+		if (bookmarkFoodStatus !== 'idle') {
+			const data = {
+				type: 'bookmarkFood',
+				action: bookmarkFoodStatus,
+				data: bookmarkFoodMsg
+			};
+
+			logActivityAction(data);
+
+			setHasOpened(false);
+		}
+	}, [bookmarkFoodData, bookmarkFoodStatus, bookmarkFoodMsg]);
 
 	useEffect(() => {
 		if (
