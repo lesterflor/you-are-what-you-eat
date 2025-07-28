@@ -198,7 +198,7 @@ export default function WaterIntake({
 										<div
 											className={cn(
 												'absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center',
-												waterData.glasses < optWaterConsumed.glasses &&
+												optWaterConsumed.glasses >= waterData.glasses &&
 													optWaterConsumed.glasses !== 0 &&
 													'bg-green-700'
 											)}>
@@ -438,7 +438,7 @@ export default function WaterIntake({
 										<div
 											className={cn(
 												'absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center',
-												waterData.glasses < optWaterConsumed.glasses &&
+												optWaterConsumed.glasses >= waterData.glasses &&
 													optWaterConsumed.glasses !== 0 &&
 													'bg-green-700'
 											)}>

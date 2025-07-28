@@ -88,11 +88,8 @@ export default function FoodListSheet({
 		const savedFoods: GetFoodItem[] = getStorageItem('foodList') || [];
 
 		if (savedFoods.length > 0) {
-			setIsFetching(() => {
-				setAllFoods(savedFoods);
-
-				checkFoodStatus(foodSearchStatus);
-			});
+			setAllFoods(savedFoods);
+			checkFoodStatus(foodSearchStatus);
 		} else {
 			getFoods();
 		}
