@@ -185,7 +185,7 @@ export default function AddFoodItemForm({
 														onChange={(val) => {
 															form.setValue('servingSize', val);
 														}}>
-														<div className='text-xs text-muted-foreground'>
+														<div className='text-xs text-muted-foreground select-none'>
 															Serving Size
 														</div>
 													</NumberIncrementor>
@@ -209,7 +209,7 @@ export default function AddFoodItemForm({
 														onChange={(val) => {
 															form.setValue('carbGrams', val);
 														}}>
-														<div className='text-xs text-muted-foreground'>
+														<div className='text-xs text-muted-foreground select-none'>
 															Carbs in grams
 														</div>
 													</NumberIncrementor>
@@ -233,7 +233,7 @@ export default function AddFoodItemForm({
 														onChange={(val) => {
 															form.setValue('proteinGrams', val);
 														}}>
-														<div className='text-xs text-muted-foreground'>
+														<div className='text-xs text-muted-foreground select-none'>
 															Protein in grams
 														</div>
 													</NumberIncrementor>
@@ -257,7 +257,7 @@ export default function AddFoodItemForm({
 														onChange={(val) => {
 															form.setValue('fatGrams', val);
 														}}>
-														<div className='text-xs text-muted-foreground'>
+														<div className='text-xs text-muted-foreground select-none'>
 															Fat in grams
 														</div>
 													</NumberIncrementor>

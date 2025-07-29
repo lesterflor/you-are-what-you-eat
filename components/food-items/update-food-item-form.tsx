@@ -168,7 +168,7 @@ export default function UpdateFoodItemForm({
 										control={form.control}
 										render={() => (
 											<FormItem className='flex flex-col items-center'>
-												<FormLabel className='text-xs text-muted-foreground'>
+												<FormLabel className='text-xs text-muted-foreground select-none'>
 													Serving Size
 												</FormLabel>
 												<FormControl>
@@ -190,7 +190,7 @@ export default function UpdateFoodItemForm({
 										control={form.control}
 										render={() => (
 											<FormItem className='flex flex-col items-center'>
-												<FormLabel className='text-xs text-muted-foreground'>
+												<FormLabel className='text-xs text-muted-foreground select-none'>
 													Carbs in grams
 												</FormLabel>
 												<FormControl>
@@ -211,7 +211,7 @@ export default function UpdateFoodItemForm({
 										control={form.control}
 										render={() => (
 											<FormItem className='flex flex-col items-center'>
-												<FormLabel className='text-xs text-muted-foreground'>
+												<FormLabel className='text-xs text-muted-foreground select-none'>
 													Protein in grams
 												</FormLabel>
 												<FormControl>
@@ -232,7 +232,7 @@ export default function UpdateFoodItemForm({
 										control={form.control}
 										render={() => (
 											<FormItem className='flex flex-col items-center'>
-												<FormLabel className='text-xs text-muted-foreground'>
+												<FormLabel className='text-xs text-muted-foreground select-none'>
 													Fat in grams
 												</FormLabel>
 												<FormControl>
