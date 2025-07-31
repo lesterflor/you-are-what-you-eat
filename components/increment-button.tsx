@@ -1,8 +1,8 @@
 'use client';
 
+import { useLongPress } from '@uidotdev/usehooks';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from './ui/button';
-import { useLongPress } from '@uidotdev/usehooks';
 
 export default function IncrementButton({
 	children,
