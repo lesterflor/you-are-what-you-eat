@@ -1,12 +1,14 @@
 import IncrementButton from '@/components/increment-button';
-import NumberIncrementor from '@/components/number-incrementor';
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { useArgs } from 'storybook/internal/preview-api';
+import { Plus } from 'lucide-react';
+
+import { fn } from 'storybook/test';
 
 const meta = {
 	title: 'increment button',
 	component: IncrementButton,
-	tags: ['autodocs']
+	tags: ['autodocs'],
+	args: { onChange: fn() }
 } satisfies Meta<typeof IncrementButton>;
 
 export default meta;
@@ -21,36 +23,38 @@ type IncremntorProps = {
 };
 
 const renderer = (args: IncremntorProps) => {
-	const [, setArgs] = useArgs();
+	// const [, setArgs] = useArgs();
 
-	const onChange = (value: number) => {
-		// Call the provided callback
-		args.onChange?.(value);
+	// const onChange = (value: number) => {
+	// 	// Call the provided callback
+	// 	args.onChange?.(value);
 
-		// Update the arg in Storybook
-		setArgs({ value });
-	};
+	// 	// Update the arg in Storybook
+	// 	setArgs({ value });
+	// };
 
 	// Forward all args and overwrite onChange
 	return (
-		<NumberIncrementor
-			{...args}
-			onChange={onChange}
-		/>
+		<>
+			<div className='text-muted-foreground'>{args.increment}</div>
+			<IncrementButton
+				{...args}
+				//onChange={onChange}
+			/>
+		</>
 	);
 };
 
 export const Primary: Story = {
 	args: {
-		onChange: (value) => value,
+		//onChange: (value) => value,
 		allowLongPress: true,
 		increment: 1,
 		children: [
-			<div
+			<Plus
 				key={0}
-				className='text-xs'>
-				Number incrementor with defaults
-			</div>
+				className='w-6 h-6'
+			/>
 		]
 	},
 	render: renderer
@@ -58,26 +62,30 @@ export const Primary: Story = {
 
 export const NoLongPress: Story = {
 	args: {
-		onChange: (value) => value,
+		//onChange: (value) => value,
 		allowLongPress: false,
 		increment: 1,
 		children: [
-			<div
+			<Plus
 				key={0}
-				className='text-xs'>
-				No long press on buttons
-			</div>
+				className='w-6 h-6'
+			/>
 		]
 	},
 	render: renderer
 };
 
-export const NoChildren: Story = {
+export const IncrementBy5: Story = {
 	args: {
-		onChange: (value) => value,
+		//onChange: (value) => value,
 		allowLongPress: false,
-		increment: 1,
-		children: []
+		increment: 5,
+		children: [
+			<Plus
+				key={0}
+				className='w-6 h-6'
+			/>
+		]
 	},
 	render: renderer
 };
