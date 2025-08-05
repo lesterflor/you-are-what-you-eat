@@ -221,15 +221,20 @@ export default function FoodLogList({
 					)}
 
 					<ToggleGroup
-						variant={'outline'}
+						className='rounded-md'
+						variant={'default'}
 						value={dataFormat}
 						onValueChange={setDataFormat}
 						type='single'
 						defaultValue='card'>
-						<ToggleGroupItem value='list'>
+						<ToggleGroupItem
+							value='list'
+							className='data-[state=on]:bg-green-500/10'>
 							<List className='w-4 h-4' />
 						</ToggleGroupItem>
-						<ToggleGroupItem value='card'>
+						<ToggleGroupItem
+							value='card'
+							className='data-[state=on]:bg-green-500/10'>
 							<IdCard className='w-4 h-4' />
 						</ToggleGroupItem>
 					</ToggleGroup>

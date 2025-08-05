@@ -8,6 +8,9 @@ const getAbsolutePath = (packageName: string): any =>
 		.replace(/^file:\/\//, '');
 
 const config: StorybookConfig = {
+	features: {
+		experimentalRSC: true
+	},
 	stories: [
 		'../stories/**/*.mdx',
 		'../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)'
