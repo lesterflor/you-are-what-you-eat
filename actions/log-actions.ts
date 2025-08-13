@@ -324,7 +324,78 @@ export async function updateLog(foodEntries: FoodEntry[]) {
 
 		return {
 			success: true,
-			message: 'success'
+			message: 'success',
+			data: update
+		};
+	} catch (error: unknown) {
+		return {
+			success: false,
+			message: formatError(error)
+		};
+	}
+}
+
+export async function updateLogWithOrder(foodEntries: FoodEntry[]) {
+	const session = await auth();
+	const user = session?.user;
+
+	if (!user) {
+		throw new Error('User is not authenticated');
+	}
+
+	try {
+		let logUpdate;
+
+		const existing = await prisma.log.findFirst({
+			where: {
+				userId: user.id,
+				createdAt: {
+					gte: getToday().todayStart,
+					lt: getToday().todayEnd
+				}
+			}
+		});
+
+		if (!existing) {
+			const newLog = await createDailyLog();
+
+			logUpdate = newLog?.data;
+		} else {
+			logUpdate = existing;
+		}
+
+		const currentFoodItems = logUpdate?.foodItems || [];
+
+		const cleanArr = currentFoodItems.map((item) => ({
+			...item,
+			description: item.description || '',
+			image: item.image || ''
+		}));
+
+		const foodItems = [...cleanArr];
+
+		const listUpdates = foodItems.concat(foodEntries);
+
+		const update = await prisma.log.update({
+			where: {
+				id: logUpdate?.id
+			},
+			data: {
+				foodItems: listUpdates,
+				updatedAt: new Date(getToday().current)
+			}
+		});
+
+		if (!update) {
+			throw new Error('There was a problem updating the log');
+		}
+
+		//revalidatePath('/');
+
+		return {
+			success: true,
+			message: 'success',
+			data: update
 		};
 	} catch (error: unknown) {
 		return {

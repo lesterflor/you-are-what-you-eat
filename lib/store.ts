@@ -6,6 +6,7 @@ import { foodSearchSlice } from './features/food/foodSearchSlice';
 import { foodUpdateSlice } from './features/food/foodUpdateSlice';
 import { grocerySlice } from './features/grocery/grocerySlice';
 import { logCumulativeSlice } from './features/log/cumulativeLogSlice';
+import { foodLogSlice } from './features/log/foodLogSlice';
 import { logFoodSlice } from './features/log/logFoodSlice';
 import { waterLogSlice } from './features/log/waterLogSlice';
 import { noteUpdateSlice } from './features/notes/noteUpdateSlice';
@@ -25,7 +26,8 @@ const rootReducer = combineSlices(
 	imageSlice,
 	waterLogSlice,
 	userDataSlice,
-	bookmarkFoodSlice
+	bookmarkFoodSlice,
+	foodLogSlice
 );
 // Infer the `RootState` type from the root reducer
 export type RootState = ReturnType<typeof rootReducer>;

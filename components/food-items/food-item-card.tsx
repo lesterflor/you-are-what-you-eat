@@ -1,7 +1,7 @@
 'use client';
 
 import { getFoodItemById } from '@/actions/food-actions';
-import { createDailyLog, updateLog } from '@/actions/log-actions';
+import { updateLogWithOrder } from '@/actions/log-actions';
 import { setCheckedItemState } from '@/lib/features/dish/preparedDishSlice';
 import {
 	selectFoodUpdateData,
@@ -91,24 +91,16 @@ export default function FoodItemCard({
 	const [portionAmount, setPortionAmount] = useState(1);
 
 	const sendFoodItems = () => {
+		// dispatch(
+		// 	logFoodState({
+		// 		listItems: JSON.stringify([logFoodItem])
+		// 	})
+		// );
+
 		setIsSubmitting(async () => {
-			const getLatestLog = await createDailyLog();
-
-			const currentFoodItems = getLatestLog?.data?.foodItems || [];
-
-			const cleanArr = currentFoodItems.map((item) => ({
-				...item,
-				description: item.description || '',
-				image: item.image || ''
-			}));
-
-			const foodItems = [...cleanArr];
-			foodItems.push(logFoodItem);
-			const res = await updateLog(foodItems);
+			const res = await updateLogWithOrder([logFoodItem]);
 
 			if (res.success) {
-				toast.success('Added to your daily log!');
-
 				// redux
 				dispatch(
 					added({
@@ -118,6 +110,8 @@ export default function FoodItemCard({
 				);
 
 				setShowDetails(false);
+
+				toast.success('Added to your daily log!');
 			} else {
 				toast.error('Oops, Something went wrong with adding the item.');
 			}
