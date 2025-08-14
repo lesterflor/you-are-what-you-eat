@@ -62,6 +62,9 @@ export default function IncrementButton({
 
 	return (
 		<Button
+			onContextMenu={(e) => {
+				e.preventDefault();
+			}}
 			size='icon'
 			variant='outline'
 			id='intUp'

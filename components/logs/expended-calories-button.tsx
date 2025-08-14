@@ -94,7 +94,11 @@ export default function ExpendedCaloriesButton({
 				<div className='flex flex-row items-center justify-between gap-4 w-full select-none'>
 					<div className='flex flex-col gap-4 items-center justify-center w-full'>
 						<div className='text-xs text-muted-foreground'>{inputVal}</div>
-						<div className='flex flex-row items-center gap-3 justify-center w-full'>
+						<div
+							className='flex flex-row items-center gap-3 justify-center w-full'
+							onContextMenu={(e) => {
+								e.preventDefault();
+							}}>
 							<IncrementButton
 								increment={1}
 								allowLongPress={true}
