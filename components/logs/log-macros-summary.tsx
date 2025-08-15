@@ -236,53 +236,46 @@ export default function LogMacrosSummary({
 									Calories breakdown
 								</div>
 
-								<div className='flex flex-row items-center gap-2 flex-wrap'>
+								<div className='flex flex-row items-center justify-center gap-3 flex-wrap'>
 									<div className='flex flex-col items-center gap-0 rounded-md border-2 p-1'>
 										<span className='text-muted-foreground'>Carbs</span>
-
-										<div className='flex flex-row items-center gap-1'>
-											<span>{formatUnit(currentData.carbs * 4)}</span>
-											<span className='text-muted-foreground'>
-												(
-												{getMacroPercOfCals(
-													currentData.carbs,
-													currentData.calories,
-													'carb'
-												)}
-												)
-											</span>
-										</div>
+										<span>{formatUnit(currentData.carbs * 4)}</span>
+										<span className='text-muted-foreground'>
+											(
+											{getMacroPercOfCals(
+												currentData.carbs,
+												currentData.calories,
+												'carb'
+											)}
+											)
+										</span>
 									</div>
 									<div className='flex flex-col items-center gap-0 rounded-md border-2 p-1'>
 										<span className='text-muted-foreground'>Fat</span>
-										<div className='flex flex-row items-center gap-1'>
-											<span>{formatUnit(currentData.fat * 9)}</span>
-											<span className='text-muted-foreground'>
-												(
-												{getMacroPercOfCals(
-													currentData.fat,
-													currentData.calories,
-													'fat'
-												)}
-												)
-											</span>
-										</div>
+										<span>{formatUnit(currentData.fat * 9)}</span>
+										<span className='text-muted-foreground'>
+											(
+											{getMacroPercOfCals(
+												currentData.fat,
+												currentData.calories,
+												'fat'
+											)}
+											)
+										</span>
 									</div>
 
 									<div className='flex flex-col items-center gap-0 rounded-md border-2 p-1'>
 										<span className='text-muted-foreground'>Protein</span>{' '}
-										<div className='flex flex-row items-center gap-1'>
-											<span>{formatUnit(currentData.protein * 4)}</span>
-											<span className='text-muted-foreground'>
-												(
-												{getMacroPercOfCals(
-													currentData.protein,
-													currentData.calories,
-													'protein'
-												)}
-												)
-											</span>
-										</div>
+										<span>{formatUnit(currentData.protein * 4)}</span>
+										<span className='text-muted-foreground'>
+											(
+											{getMacroPercOfCals(
+												currentData.protein,
+												currentData.calories,
+												'protein'
+											)}
+											)
+										</span>
 									</div>
 								</div>
 							</div>
