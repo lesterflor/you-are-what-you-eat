@@ -373,7 +373,8 @@ export default function LogMacrosSummary({
 			)}
 
 			{showPie && currentData.calories > 0 && (
-				<div className='w-auto'>
+				<div className='w-auto pt-4'>
+					<div className='font-semibold text-xs'>Grams breakdown</div>
 					{!revealPie ? (
 						<div className='w-full flex flex-col items-center justify-center portrait:h-[25vh]'>
 							<ImSpinner2 className='w-20 h-20 animate-spin opacity-5' />
