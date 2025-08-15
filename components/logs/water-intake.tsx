@@ -330,7 +330,7 @@ export default function WaterIntake({
 										<div
 											className={cn(
 												'flex flex-row gap-1 w-16 items-center justify-start',
-												currentGlasses !== 0 && 'text-green-400'
+												currentGlasses !== 0 && 'text-green-400 animate-pulse'
 											)}>
 											<FaGlassWater className='w-6 h-6' /> {currentGlasses}
 										</div>
@@ -338,7 +338,7 @@ export default function WaterIntake({
 										<div
 											className={cn(
 												'flex flex-row gap-1 w-16 items-center justify-start',
-												currentGlasses !== 0 && 'text-green-400'
+												currentGlasses !== 0 && 'text-green-400 animate-pulse'
 											)}>
 											<BsCupFill className='w-6 h-6' />{' '}
 											{formatUnit(currentGlasses * 2)}
@@ -568,7 +568,7 @@ export default function WaterIntake({
 										<div
 											className={cn(
 												'flex flex-row gap-1 w-16 items-center justify-start',
-												currentGlasses !== 0 && 'text-green-400'
+												currentGlasses !== 0 && 'text-green-400 animate-pulse'
 											)}>
 											<FaGlassWater className='w-6 h-6' /> {currentGlasses}
 										</div>
@@ -576,7 +576,7 @@ export default function WaterIntake({
 										<div
 											className={cn(
 												'flex flex-row gap-1 w-16 items-center justify-start',
-												currentGlasses !== 0 && 'text-green-400'
+												currentGlasses !== 0 && 'text-green-400 animate-pulse'
 											)}>
 											<BsCupFill className='w-6 h-6' />{' '}
 											{formatUnit(currentGlasses * 2)}
