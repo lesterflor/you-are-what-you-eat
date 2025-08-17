@@ -88,7 +88,7 @@ export default function TakePhoto<T>({
 					const res = await uploadDishImage(formData, data as GetPreparedDish);
 					if (res.success && res.data) {
 						toast.success(res.message);
-						setCameraActive(false);
+
 						onSuccess?.();
 						const { preparedDishId, url, alt } =
 							res.data as GetPreparedDishImage;
@@ -101,15 +101,18 @@ export default function TakePhoto<T>({
 								type: 'dish'
 							})
 						);
+
+						setCameraActive(false);
 					} else {
 						toast.error(res.message);
 					}
+
 					setShowImage(!res.success);
 				} else if (type === 'foodItem') {
 					const res = await uploadFoodItemImage(formData, data as GetFoodItem);
 					if (res.success && res.data) {
 						toast.success(res.message);
-						setCameraActive(false);
+
 						onSuccess?.();
 						const { foodItemId, url, alt } = res.data as GetFoodItemImage;
 
@@ -121,6 +124,8 @@ export default function TakePhoto<T>({
 								type: 'foodItem'
 							})
 						);
+
+						setCameraActive(false);
 					} else {
 						toast.error(res.message);
 					}
@@ -273,9 +278,9 @@ export default function TakePhoto<T>({
 							)}></div>
 
 						{showImage && (
-							<div className='z-50 absolute bottom-6 left-24'>
+							<div className='z-50 absolute bottom-6 left-1'>
 								<Button
-									className='!bg-green-400/25 !p-8 !px-10 rounded-full animate-pulse	text-xl'
+									className='!bg-green-400/25 !p-8 !px-10 rounded-full animate-pulse text-xl w-[96vw]'
 									variant={'outline'}
 									disabled={uploading}
 									onClick={() => {
