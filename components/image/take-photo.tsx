@@ -275,7 +275,7 @@ export default function TakePhoto<T>({
 						{showImage && (
 							<div className='z-50 absolute bottom-2 left-2'>
 								<Button
-									className='!bg-gray-950/25 !p-6 rounded-full'
+									className='!bg-green-400/25 !p-6 rounded-full animate-pulse	text-xl'
 									variant={'outline'}
 									disabled={uploading}
 									onClick={() => {
@@ -286,7 +286,7 @@ export default function TakePhoto<T>({
 									) : (
 										<Save className='!w-6 !h-6' />
 									)}
-									Save
+									Save?
 								</Button>
 							</div>
 						)}
