@@ -18,7 +18,7 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { cn, getStorageItem, setStorageItem } from '@/lib/utils';
 import { GetFoodItem } from '@/types';
 import { Search } from 'lucide-react';
-import { useEffect, useRef, useState, useTransition } from 'react';
+import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 import { BsCloudCheck } from 'react-icons/bs';
 import { ImSpinner2, ImSpinner8, ImSpinner9 } from 'react-icons/im';
 import { TbDatabaseSearch } from 'react-icons/tb';
@@ -67,7 +67,7 @@ export default function FoodListSheet({
 
 	const [isSyncing, setIsSyncing] = useTransition();
 
-	const checkLocalFoods = () => {
+	const checkLocalFoods = useCallback(() => {
 		setIsSyncing(async () => {
 			const res = await compareLocalFoods(allFoods);
 
@@ -81,7 +81,7 @@ export default function FoodListSheet({
 				});
 			}
 		});
-	};
+	}, [allFoods]);
 
 	useEffect(() => {
 		// on mount get all foods and do local sorting in redux handler
