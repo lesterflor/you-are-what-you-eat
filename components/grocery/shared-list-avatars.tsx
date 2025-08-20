@@ -1,28 +1,21 @@
 'use client';
 
 import { getUserAvatars } from '@/actions/user-actions';
-import { useEffect, useState, useTransition } from 'react';
-import { ImSpinner2 } from 'react-icons/im';
+import { useEffect, useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
 export default function SharedListAvatars({ userIds }: { userIds: string[] }) {
-	const [isFetching, setIsFetching] = useTransition();
-
 	const [users, setUsers] = useState<
 		{ id: string; name: string; image: string }[]
 	>([]);
 
-	const getAvatars = () => {
-		setIsFetching(async () => {
-			const res = await getUserAvatars(userIds);
+	const getAvatars = async () => {
+		const res = await getUserAvatars(userIds);
 
-			if (res.success && res.data) {
-				setIsFetching(() => {
-					setUsers(res.data as { id: string; name: string; image: string }[]);
-				});
-			}
-		});
+		if (res.success && res.data) {
+			setUsers(res.data as { id: string; name: string; image: string }[]);
+		}
 	};
 
 	useEffect(() => {
@@ -33,11 +26,7 @@ export default function SharedListAvatars({ userIds }: { userIds: string[] }) {
 
 	return (
 		<>
-			{isFetching ? (
-				<div className='w-8 h-8 flex flex-col items-center justify-center'>
-					<ImSpinner2 className='w-6 h-6 animate-spin opacity-25' />
-				</div>
-			) : (
+			{users.length > 0 && (
 				<div>
 					{users.length > 1 ? (
 						<>

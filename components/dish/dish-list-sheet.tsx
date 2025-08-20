@@ -6,6 +6,7 @@ import {
 	selectPreparedDishStatus
 } from '@/lib/features/dish/preparedDishSlice';
 import { useAppSelector } from '@/lib/hooks';
+import { getStorageItem, setStorageItem } from '@/lib/utils';
 import { GetPreparedDish } from '@/types';
 import { Soup } from 'lucide-react';
 import { useCallback, useEffect, useState, useTransition } from 'react';
@@ -52,13 +53,22 @@ export default function DishListSheet({
 			if (res.success) {
 				setFetchingDishes(() => {
 					setDishes(res.data as GetPreparedDish[]);
+					setStorageItem('preparedDishes', res.data);
 				});
 			}
 		});
 	}, [dishes]);
 
 	useEffect(() => {
-		getDishes();
+		// on mount get all foods and do local sorting in redux handler
+		const savedDishes: GetPreparedDish[] =
+			getStorageItem('preparedDishes') || [];
+
+		if (savedDishes.length > 0) {
+			setDishes(savedDishes);
+		} else {
+			getDishes();
+		}
 	}, []);
 
 	return (
