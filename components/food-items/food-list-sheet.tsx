@@ -18,7 +18,14 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { cn, getStorageItem, setStorageItem } from '@/lib/utils';
 import { GetFoodItem } from '@/types';
 import { Search } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
+import {
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+	useTransition
+} from 'react';
 import { BsCloudCheck } from 'react-icons/bs';
 import { ImSpinner2, ImSpinner8, ImSpinner9 } from 'react-icons/im';
 import { TbDatabaseSearch } from 'react-icons/tb';
@@ -95,31 +102,34 @@ export default function FoodListSheet({
 		}
 	}, []);
 
+	const foodCategoryFilter = useMemo(() => {
+		const items = [...allFoods];
+
+		return items.filter((item) => item.category === foodSearchData.category);
+	}, [allFoods, foodSearchData]);
+
+	const foodUserFilter = useMemo(() => {
+		const items = [...allFoods];
+
+		return items.filter((item) => item.userId === foodSearchData.user);
+	}, [allFoods, foodSearchData]);
+
+	const allFoodItems = useMemo(() => {
+		return [...allFoods];
+	}, [allFoods]);
+
 	const checkFoodStatus = (status: string) => {
 		const items = [...allFoods];
 
 		switch (status) {
 			case 'category':
-				//getFoods('', foodSearchData.category);
-
-				const update = items.filter(
-					(item) => item.category === foodSearchData.category
-				);
-				setFoods(update);
-
+				setFoods(foodCategoryFilter);
 				break;
 			case 'user':
-				//getFoods('', '', foodSearchData.user);
-
-				const userFoods = items.filter(
-					(item) => item.userId === foodSearchData.user
-				);
-				setFoods(userFoods);
-
+				setFoods(foodUserFilter);
 				break;
 			case 'all':
-				//getFoods();
-				setFoods(items);
+				setFoods(allFoodItems);
 
 				break;
 			case 'input':
