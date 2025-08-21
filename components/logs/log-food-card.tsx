@@ -7,7 +7,7 @@ import { cn, formatUnit } from '@/lib/utils';
 import { FoodEntry, GetFoodEntry } from '@/types';
 import { format } from 'date-fns';
 import { Clock, FilePenLine, RefreshCwOff, Trash2, X } from 'lucide-react';
-import { useEffect, useRef, useState, useTransition } from 'react';
+import { memo, useEffect, useRef, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { RxUpdate } from 'react-icons/rx';
 import { toast } from 'sonner';
@@ -30,7 +30,7 @@ import {
 	DialogTrigger
 } from '../ui/dialog';
 
-export default function LogFoodCard({
+const LogFoodCard = memo(function LogFoodCard({
 	item,
 	indx,
 	allowEdit = false
@@ -268,4 +268,6 @@ export default function LogFoodCard({
 			)}
 		</Card>
 	);
-}
+});
+
+export default LogFoodCard;
