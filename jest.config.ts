@@ -108,7 +108,20 @@ const config: Config = {
 	// 	'^@/(.*)': '<rootDir>/$1'
 	// },
 
-	preset: 'ts-jest'
+	preset: 'ts-jest',
+	testEnvironment: 'jsdom',
+	transform: {
+		'^.+\\.[jt]sx?$': 'ts-jest'
+	},
+	moduleNameMapper: {
+		'^@/(.*)$': '<rootDir>/$1'
+	},
+	moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json', 'node'],
+	testMatch: [
+		'**/__tests__/**/*.?(m)[jt]s?(x)',
+		'**/?(*.)+(spec|test).?(m)[jt]s?(x)'
+	],
+	transformIgnorePatterns: ['/node_modules/', '\\.pnp\\.[^\\/]+$']
 
 	//setupFiles: ['<rootDir>/jest.setup.ts']
 
