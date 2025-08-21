@@ -29,7 +29,6 @@ import {
 import { BsCloudCheck } from 'react-icons/bs';
 import { ImSpinner2, ImSpinner8, ImSpinner9 } from 'react-icons/im';
 import { TbDatabaseSearch } from 'react-icons/tb';
-import { useInView } from 'react-intersection-observer';
 import { useDebounce } from 'use-debounce';
 import DishCreationPopover from '../dish/dish-creation-popover';
 import InputWithButton from '../input-with-button';
@@ -63,14 +62,7 @@ export default function FoodListSheet({
 	const foodSearchData = useAppSelector(selectFoodSearchData);
 	const foodSearchStatus = useAppSelector(selectFoodSearchStatus);
 
-	const [ref, inView] = useInView();
 	const [upToDate, setUpToDate] = useState(true);
-
-	useEffect(() => {
-		if (inView) {
-			checkLocalFoods();
-		}
-	}, [inView]);
 
 	const [isSyncing, setIsSyncing] = useTransition();
 
@@ -221,11 +213,25 @@ export default function FoodListSheet({
 		}
 	};
 
+	const foodListComponents = useMemo(
+		() =>
+			foods.map((item, indx) => (
+				<FoodItemCard
+					indx={indx}
+					item={item as GetFoodItem}
+					key={item.id}
+					selfSearch={true}
+				/>
+			)),
+		[foods]
+	);
+
 	return (
 		<>
 			<div className='portrait:hidden'>
 				<Sheet>
 					<SheetTrigger
+						onClick={() => checkLocalFoods()}
 						asChild
 						disabled={isFetching}>
 						{children ? (
@@ -282,9 +288,7 @@ export default function FoodListSheet({
 									</Popover>
 								)}
 							</div>
-							<div
-								className='flex flex-row gap-2 justify-between items-center pt-2'
-								ref={ref}>
+							<div className='flex flex-row gap-2 justify-between items-center pt-2'>
 								<InputWithButton
 									className='w-[90%]'
 									onChange={(val) => {
@@ -313,14 +317,7 @@ export default function FoodListSheet({
 										: 'grid grid-cols-2 lg:grid-cols-3'
 								)}>
 								{foods && foods.length > 0 ? (
-									foods.map((item, indx) => (
-										<FoodItemCard
-											indx={indx}
-											item={item as GetFoodItem}
-											key={item.id}
-											selfSearch={true}
-										/>
-									))
+									foodListComponents
 								) : (
 									<div className='w-full text-center text-muted-foreground font-normal'>
 										There are no results for the search you provided.
@@ -335,6 +332,7 @@ export default function FoodListSheet({
 			<div className='hidden portrait:block'>
 				<Sheet>
 					<SheetTrigger
+						onClick={() => checkLocalFoods()}
 						asChild
 						disabled={isFetching}>
 						{children ? (
@@ -399,9 +397,7 @@ export default function FoodListSheet({
 								)}
 							</div>
 
-							<div
-								className='flex flex-row gap-2 justify-between items-center mt-4'
-								ref={ref}>
+							<div className='flex flex-row gap-2 justify-between items-center mt-4'>
 								<div className='flex flex-row items-center gap-4'>
 									<InputWithButton
 										className='w-[60%]'
@@ -444,14 +440,7 @@ export default function FoodListSheet({
 										: 'grid grid-cols-2'
 								)}>
 								{foods && foods.length > 0 ? (
-									foods.map((item, indx) => (
-										<FoodItemCard
-											indx={indx}
-											item={item as GetFoodItem}
-											key={item.id}
-											selfSearch={true}
-										/>
-									))
+									foodListComponents
 								) : (
 									<div className='w-full text-center text-muted-foreground font-normal'>
 										There are no results for the search you provided.
