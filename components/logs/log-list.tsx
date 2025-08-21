@@ -25,7 +25,7 @@ import {
 	ThumbsDown,
 	ThumbsUp
 } from 'lucide-react';
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useMemo, useState, useTransition } from 'react';
 import { BiSolidFoodMenu } from 'react-icons/bi';
 import { BsBookmarkStarFill } from 'react-icons/bs';
 import { ImSpinner2 } from 'react-icons/im';
@@ -198,6 +198,62 @@ export default function FoodLogList({
 		});
 	};
 
+	const logFoodCards = useMemo(() => {
+		return logList.map((item, indx) => (
+			<LogFoodCard
+				allowEdit={true}
+				indx={indx}
+				item={item}
+				key={`${item.id}-${item.eatenAt.getTime()}`}
+			/>
+		));
+	}, [logList]);
+
+	const logListItems = useMemo(() => {
+		return logList.map((item, indx) => (
+			<LogFoodListItem
+				onCheck={(data) => {
+					// add or delete foodEntry from the dishList state
+
+					const itemsOnly = dishList.map((item) => item.item);
+
+					if (!itemsOnly.includes(data.item) && !!data.add) {
+						const up = [...dishList];
+
+						up.push(data);
+						setDishList(up);
+
+						dispatch(
+							setDishListState({
+								id: '',
+								name: '',
+								description: '',
+								dishList: JSON.stringify(up)
+							})
+						);
+					} else {
+						const up = [...dishList];
+						const flt = up.filter((entry) => entry.item.id !== data.item.id);
+
+						setDishList(flt);
+						dispatch(
+							setDishListState({
+								id: '',
+								name: '',
+								description: '',
+								dishList: JSON.stringify(flt)
+							})
+						);
+					}
+				}}
+				allowEdit={true}
+				indx={indx}
+				item={item}
+				key={`${item.id}-${item.eatenAt.getTime()}`}
+			/>
+		));
+	}, [logList]);
+
 	return (
 		<>
 			{logList.length > 0 && (
@@ -331,61 +387,7 @@ export default function FoodLogList({
 						)}>
 						<>
 							{logList.length > 0 ? (
-								<>
-									{dataFormat === 'card'
-										? logList.map((item, indx) => (
-												<LogFoodCard
-													allowEdit={true}
-													indx={indx}
-													item={item}
-													key={`${item.id}-${item.eatenAt.getTime()}`}
-												/>
-										  ))
-										: logList.map((item, indx) => (
-												<LogFoodListItem
-													onCheck={(data) => {
-														// add or delete foodEntry from the dishList state
-
-														const itemsOnly = dishList.map((item) => item.item);
-
-														if (!itemsOnly.includes(data.item) && !!data.add) {
-															const up = [...dishList];
-
-															up.push(data);
-															setDishList(up);
-
-															dispatch(
-																setDishListState({
-																	id: '',
-																	name: '',
-																	description: '',
-																	dishList: JSON.stringify(up)
-																})
-															);
-														} else {
-															const up = [...dishList];
-															const flt = up.filter(
-																(entry) => entry.item.id !== data.item.id
-															);
-
-															setDishList(flt);
-															dispatch(
-																setDishListState({
-																	id: '',
-																	name: '',
-																	description: '',
-																	dishList: JSON.stringify(flt)
-																})
-															);
-														}
-													}}
-													allowEdit={true}
-													indx={indx}
-													item={item}
-													key={`${item.id}-${item.eatenAt.getTime()}`}
-												/>
-										  ))}
-								</>
+								<>{dataFormat === 'card' ? logFoodCards : logListItems}</>
 							) : (
 								<div className='flex flex-col items-center justify-center gap-2 text-muted-foreground  fixed top-[16vh] w-[95%]'>
 									<div className='flex flex-col items-center gap-2 opacity-35'>
@@ -402,16 +404,7 @@ export default function FoodLogList({
 				</div>
 			) : (
 				<div className='flex flex-col gap-4 w-full'>
-					<div className='flex flex-col gap-4'>
-						{logList.map((item, indx) => (
-							<LogFoodCard
-								allowEdit={true}
-								indx={indx}
-								item={item}
-								key={`${item.id}-${item.eatenAt.getTime()}`}
-							/>
-						))}
-					</div>
+					<div className='flex flex-col gap-4'>{logFoodCards}</div>
 				</div>
 			)}
 
