@@ -68,7 +68,7 @@ export default function FoodListSheet({
 
 	const checkLocalFoods = useCallback(() => {
 		setIsSyncing(async () => {
-			const res = await compareLocalFoods(allFoods);
+			const res = await compareLocalFoods(JSON.stringify(allFoods).length);
 
 			setUpToDate(res.success);
 

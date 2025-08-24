@@ -1,11 +1,16 @@
 'use client';
 
 import { GetFoodEntry } from '@/types';
-import { Card, CardContent, CardDescription, CardHeader } from '../ui/card';
 import { Badge } from 'lucide-react';
+import { memo } from 'react';
+import { Card, CardContent, CardDescription, CardHeader } from '../ui/card';
 import FoodCategoryIconMapper from './food-category-icon-mapper';
 
-export default function FoodEntryCard({ item }: { item: GetFoodEntry }) {
+const FoodEntryCard = memo(function FoodEntryCard({
+	item
+}: {
+	item: GetFoodEntry;
+}) {
 	return (
 		<Card>
 			<CardHeader>
@@ -29,4 +34,6 @@ export default function FoodEntryCard({ item }: { item: GetFoodEntry }) {
 			</CardContent>
 		</Card>
 	);
-}
+});
+
+export default FoodEntryCard;

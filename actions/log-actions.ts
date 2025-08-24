@@ -484,6 +484,10 @@ export async function getLogsByUserId(logId: string = '') {
 			}
 		});
 
+		console.log(
+			`Fetched logs for user: ${JSON.stringify(user)} - logs: ${logs.length}`
+		);
+
 		if (!logs) {
 			throw new Error('There was a problem fetching logs for user');
 		}

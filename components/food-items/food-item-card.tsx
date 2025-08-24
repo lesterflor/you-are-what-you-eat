@@ -14,7 +14,7 @@ import { cn, formatUnit, getMacroPercOfCals } from '@/lib/utils';
 import { FoodEntry, GetFoodItem, GetUser } from '@/types';
 import { Aperture, FilePlus, Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { useEffect, useRef, useState, useTransition } from 'react';
+import { memo, useEffect, useRef, useState, useTransition } from 'react';
 import { GiSpoon } from 'react-icons/gi';
 import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'sonner';
@@ -40,7 +40,7 @@ import FoodItemFavourite from './food-item-favourite';
 import FoodItemImageGallery from './food-item-image-gallery';
 import FoodUserAvatar from './food-user-avatar';
 
-export default function FoodItemCard({
+const FoodItemCard = memo(function FoodItemCard({
 	item,
 	selfSearch = false,
 	indx = 0
@@ -420,4 +420,6 @@ export default function FoodItemCard({
 			)}
 		</Card>
 	);
-}
+});
+
+export default FoodItemCard;

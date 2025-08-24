@@ -5,7 +5,6 @@ import prisma from '@/db/prisma';
 import { formatError } from '@/lib/utils';
 import { foodItemSchema } from '@/lib/validators';
 import { FoodItem, GetFoodItem, GetUser } from '@/types';
-import { isEqual } from 'lodash';
 import { revalidatePath } from 'next/cache';
 
 export async function getAllFoodItemsPaged(
@@ -152,7 +151,7 @@ export async function getFoodItems(
 	}
 }
 
-export async function compareLocalFoods(localList: GetFoodItem[]) {
+export async function compareLocalFoods(strLen: number) {
 	try {
 		const dbFoods = await prisma.foodItem.findMany({
 			include: {
@@ -185,19 +184,16 @@ export async function compareLocalFoods(localList: GetFoodItem[]) {
 		dbFoods.sort((a, b) => a.name.localeCompare(b.name));
 
 		const dbStr = JSON.stringify(dbFoods);
-		const localStr = JSON.stringify(localList);
 
-		const listsTheSame = dbStr === localStr;
+		const listsTheSame = dbStr.length === strLen;
 
 		console.log(
 			'are the lists the same? ',
 			listsTheSame,
-			' lodash: ',
-			isEqual(dbFoods, localList),
 			' local: ',
-			localList.length,
+			strLen,
 			' fetched: ',
-			dbFoods.length
+			dbStr.length
 		);
 
 		return {

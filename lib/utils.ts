@@ -304,7 +304,14 @@ export function calculateBMR(data: BMRData) {
 }
 
 export function colateBMRData(data: BMRData): ColatedBMRData {
-	const { age, weight, weightUnit, height, heightUnit, sex } = data;
+	const {
+		age = 0,
+		weight = 0,
+		weightUnit = 'kilo',
+		height = 0,
+		heightUnit = 'inch',
+		sex = 'male'
+	} = { ...data };
 
 	const inchesFromCM = height / INCH_TO_CM;
 	const inchesToFeetAndInches = inchesFromCM / 12;
