@@ -5,14 +5,21 @@ import { GetLog } from '@/types';
 import { format } from 'date-fns';
 import { Calculator, UtensilsCrossed } from 'lucide-react';
 import Link from 'next/link';
-import DishCreationPopover from '../dish/dish-creation-popover';
+import { lazy } from 'react';
 import LogButton from '../logs/log-button';
 import LogMacrosSummary from '../logs/log-macros-summary';
 import LogSheet from '../logs/log-sheet';
-import ReduxStoreLogger from '../redux-store-logger';
 import ModeToggle from './mode-toggle';
 import SideMenu from './side-menu';
 import UserButton from './user-button';
+
+const DishCreationPopoverLazy = lazy(
+	() => import('@/components/dish/dish-creation-popover')
+);
+
+const ReduxStoreLoggerLazy = lazy(
+	() => import('@/components/redux-store-logger')
+);
 
 export default async function SiteHeader() {
 	const session = await auth();
@@ -24,8 +31,8 @@ export default async function SiteHeader() {
 		<header className='w-full border-b fixed top-0 z-50 bg-white dark:bg-green-950 select-none px-0'>
 			<div className='wrapper flex flex-between justify-between items-center w-full p-2 relative'>
 				<div className='absolute -bottom-4 left-0 flex flex-row items-center gap-2'>
-					<ReduxStoreLogger />
-					<DishCreationPopover />
+					<ReduxStoreLoggerLazy />
+					<DishCreationPopoverLazy />
 				</div>
 				<div className='flex flex-row items-center justify-start gap-5 portrait:gap-0 h-full'>
 					<Link href='/'>

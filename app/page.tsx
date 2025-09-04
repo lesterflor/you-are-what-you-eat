@@ -1,10 +1,14 @@
 import { createDailyLog } from '@/actions/log-actions';
 import AddFoodSheet from '@/components/food-items/add-food-sheet';
-import FoodListSheet from '@/components/food-items/food-list-sheet';
 import LandingContent from '@/components/landing-content';
 import FoodLogList from '@/components/logs/log-list';
 import { auth } from '@/db/auth';
 import { GetLog } from '@/types';
+import { lazy } from 'react';
+
+const FoodListSheetLazy = lazy(
+	() => import('@/components/food-items/food-list-sheet')
+);
 
 export default async function Home() {
 	const session = await auth();
@@ -19,7 +23,7 @@ export default async function Home() {
 							<AddFoodSheet />
 						</div>
 						<div className='flex flex-row items-center gap-4'>
-							<FoodListSheet />
+							<FoodListSheetLazy />
 						</div>
 					</div>
 					<div className='relative pt-10'>

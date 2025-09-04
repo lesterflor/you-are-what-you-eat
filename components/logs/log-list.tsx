@@ -25,16 +25,13 @@ import {
 	ThumbsDown,
 	ThumbsUp
 } from 'lucide-react';
-import { useEffect, useMemo, useState, useTransition } from 'react';
+import { lazy, useEffect, useMemo, useState, useTransition } from 'react';
 import { BiSolidFoodMenu } from 'react-icons/bi';
 import { BsBookmarkStarFill } from 'react-icons/bs';
 import { ImSpinner2 } from 'react-icons/im';
 import { IoFastFoodOutline, IoWaterOutline } from 'react-icons/io5';
 import { TbDatabaseSearch } from 'react-icons/tb';
 import BMRBadge from '../bmr/bmr-badge';
-import DishListSheet from '../dish/dish-list-sheet';
-import FoodFavouriteListSheet from '../food-items/food-favourite-list-sheet';
-import FoodListSheet from '../food-items/food-list-sheet';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
@@ -48,6 +45,18 @@ import LogFoodListItem from './log-food-list-item';
 import LogMacrosSummary from './log-macros-summary';
 import LogRemainderBadge from './log-remainder-badge';
 import WaterIntake from './water-intake';
+
+const FoodListSheetLazy = lazy(
+	() => import('@/components/food-items/food-list-sheet')
+);
+
+const DishListSheetLazy = lazy(
+	() => import('@/components/dish/dish-list-sheet')
+);
+
+const FoodFavouriteListSheetLazy = lazy(
+	() => import('@/components/food-items/food-favourite-list-sheet')
+);
 
 export default function FoodLogList({
 	forceColumn = true,
@@ -417,23 +426,23 @@ export default function FoodLogList({
 					)}>
 					<CardContent className='p-2 pt-5 flex flex-row items-center gap-2 relative'>
 						<div className='absolute -top-6 left-4 flex flex-row items-center justify-center gap-2.5'>
-							<DishListSheet showBalloon={true}>
+							<DishListSheetLazy showBalloon={true}>
 								<div className='rounded-full w-11 h-11 bg-fuchsia-700 p-1.5 flex flex-col items-center justify-center'>
 									<Soup className='w-6 h-6 animate-pulse' />
 								</div>
-							</DishListSheet>
+							</DishListSheetLazy>
 
-							<FoodFavouriteListSheet showBalloon={true}>
+							<FoodFavouriteListSheetLazy showBalloon={true}>
 								<div className='w-11 h-11 rounded-full p-2 bg-teal-600 flex flex-col items-center justify-center mt-1'>
 									<BsBookmarkStarFill className='w-6 h-6 animate-pulse' />
 								</div>
-							</FoodFavouriteListSheet>
+							</FoodFavouriteListSheetLazy>
 
-							<FoodListSheet>
+							<FoodListSheetLazy>
 								<div className='rounded-full dark:bg-green-950 bg-green-500 p-3'>
 									<TbDatabaseSearch className='w-6 h-6 animate-pulse' />
 								</div>
-							</FoodListSheet>
+							</FoodListSheetLazy>
 
 							<ExpendedCaloriesButton showBalloon={true}>
 								<div className='mt-2 rounded-full p-2 bg-amber-700 w-10 h-10 flex flex-col items-center justify-center'>

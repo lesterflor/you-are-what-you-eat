@@ -13,6 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import CreateDishForm from './create-dish-form';
 
 export default function DishCreationPopover() {
+	const [isMounted, setIsMounted] = useState(false);
 	const [createDishSheetOpen, setCreateDishSheetOpen] = useState(false);
 	const [dishCreationIndicator, setDishCreationIndicator] = useState(false);
 	const [dishList, setDishList] = useState<
@@ -47,27 +48,38 @@ export default function DishCreationPopover() {
 		}
 	}, [dishList]);
 
+	useEffect(() => {
+		setIsMounted(true);
+	}, []);
+
+	if (!isMounted) {
+		return null;
+	}
+
 	return (
 		<Popover
 			modal={true}
 			open={createDishSheetOpen}
 			onOpenChange={setCreateDishSheetOpen}>
-			<PopoverTrigger disabled={!dishCreationIndicator}>
-				<div
-					className={cn(
-						'p-1 rounded-full',
-						dishCreationIndicator
-							? 'animate-ping bg-fuchsia-500'
-							: 'bg-gray-700'
-					)}>
-					<Soup
+			{dishCreationIndicator && (
+				<PopoverTrigger>
+					<div
 						className={cn(
-							'w-4 h-4',
-							dishCreationIndicator ? 'opacity-100' : 'opacity-20'
-						)}
-					/>
-				</div>
-			</PopoverTrigger>
+							'p-1 rounded-full',
+							dishCreationIndicator
+								? 'animate-ping bg-fuchsia-500'
+								: 'bg-gray-700'
+						)}>
+						<Soup
+							className={cn(
+								'w-4 h-4',
+								dishCreationIndicator ? 'opacity-100' : 'opacity-20'
+							)}
+						/>
+					</div>
+				</PopoverTrigger>
+			)}
+
 			<PopoverContent className='bg-emerald-950 relative max-w-[95vw] w-[90vw] py-2 px-2'>
 				<CreateDishForm
 					foodItems={dishList.map((item) => item.item)}
