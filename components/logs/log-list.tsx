@@ -25,13 +25,21 @@ import {
 	ThumbsDown,
 	ThumbsUp
 } from 'lucide-react';
-import { lazy, useEffect, useMemo, useState, useTransition } from 'react';
+import {
+	lazy,
+	Suspense,
+	useEffect,
+	useMemo,
+	useState,
+	useTransition
+} from 'react';
 import { BiSolidFoodMenu } from 'react-icons/bi';
 import { BsBookmarkStarFill } from 'react-icons/bs';
 import { ImSpinner2 } from 'react-icons/im';
 import { IoFastFoodOutline, IoWaterOutline } from 'react-icons/io5';
 import { TbDatabaseSearch } from 'react-icons/tb';
 import BMRBadge from '../bmr/bmr-badge';
+import SubToolsSkeleton from '../skeletons/sub-tools-skeleton';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
@@ -39,12 +47,10 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Skeleton } from '../ui/skeleton';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 import CommonLoggedItems from './common-logged-items';
-import ExpendedCaloriesButton from './expended-calories-button';
 import LogFoodCard from './log-food-card';
 import LogFoodListItem from './log-food-list-item';
 import LogMacrosSummary from './log-macros-summary';
 import LogRemainderBadge from './log-remainder-badge';
-import WaterIntake from './water-intake';
 
 const FoodListSheetLazy = lazy(
 	() => import('@/components/food-items/food-list-sheet')
@@ -57,6 +63,12 @@ const DishListSheetLazy = lazy(
 const FoodFavouriteListSheetLazy = lazy(
 	() => import('@/components/food-items/food-favourite-list-sheet')
 );
+
+const ExpendedCaloriesButtonLazy = lazy(
+	() => import('@/components/logs/expended-calories-button')
+);
+
+const WaterIntakeLazy = lazy(() => import('./water-intake'));
 
 export default function FoodLogList({
 	forceColumn = true,
@@ -72,6 +84,8 @@ export default function FoodLogList({
 	todaysLog?: GetLog;
 }) {
 	const dispatch = useAppDispatch();
+
+	const [logFetched, setLogFetched] = useState(false);
 
 	const [totalCals, setTotalCals] = useState(0);
 	const [logList, setLogList] = useState<GetFoodEntry[]>([]);
@@ -172,6 +186,10 @@ export default function FoodLogList({
 			knownCaloriesBurned = [],
 			user: { BaseMetabolicRate = [] }
 		} = log;
+
+		setTimeout(() => {
+			setLogFetched(true);
+		}, 3000);
 
 		setFetchingLog(() => {
 			setLog(log);
@@ -426,35 +444,39 @@ export default function FoodLogList({
 					)}>
 					<CardContent className='p-2 pt-5 flex flex-row items-center gap-2 relative'>
 						<div className='absolute -top-6 left-4 flex flex-row items-center justify-center gap-2.5'>
-							<DishListSheetLazy showBalloon={true}>
-								<div className='rounded-full w-11 h-11 bg-fuchsia-700 p-1.5 flex flex-col items-center justify-center'>
-									<Soup className='w-6 h-6 animate-pulse' />
-								</div>
-							</DishListSheetLazy>
+							{logFetched && (
+								<Suspense fallback={<SubToolsSkeleton />}>
+									<DishListSheetLazy showBalloon={true}>
+										<div className='transition-opacity fade-in animate-in duration-1000 rounded-full w-11 h-11 bg-fuchsia-700 p-1.5 flex flex-col items-center justify-center'>
+											<Soup className='w-6 h-6 animate-pulse' />
+										</div>
+									</DishListSheetLazy>
 
-							<FoodFavouriteListSheetLazy showBalloon={true}>
-								<div className='w-11 h-11 rounded-full p-2 bg-teal-600 flex flex-col items-center justify-center mt-1'>
-									<BsBookmarkStarFill className='w-6 h-6 animate-pulse' />
-								</div>
-							</FoodFavouriteListSheetLazy>
+									<FoodFavouriteListSheetLazy showBalloon={true}>
+										<div className='transition-opacity fade-in animate-in duration-1000 w-11 h-11 rounded-full p-2 bg-teal-600 flex flex-col items-center justify-center mt-1'>
+											<BsBookmarkStarFill className='w-6 h-6 animate-pulse' />
+										</div>
+									</FoodFavouriteListSheetLazy>
 
-							<FoodListSheetLazy>
-								<div className='rounded-full dark:bg-green-950 bg-green-500 p-3'>
-									<TbDatabaseSearch className='w-6 h-6 animate-pulse' />
-								</div>
-							</FoodListSheetLazy>
+									<FoodListSheetLazy>
+										<div className='transition-opacity fade-in animate-in duration-1000 rounded-full dark:bg-green-950 bg-green-500 p-3'>
+											<TbDatabaseSearch className='w-6 h-6 animate-pulse' />
+										</div>
+									</FoodListSheetLazy>
 
-							<ExpendedCaloriesButton showBalloon={true}>
-								<div className='mt-2 rounded-full p-2 bg-amber-700 w-10 h-10 flex flex-col items-center justify-center'>
-									<Flame className='w-6 h-6 animate-pulse' />
-								</div>
-							</ExpendedCaloriesButton>
+									<ExpendedCaloriesButtonLazy showBalloon={true}>
+										<div className='transition-opacity fade-in animate-in duration-1000 mt-2 rounded-full p-2 bg-amber-700 w-10 h-10 flex flex-col items-center justify-center'>
+											<Flame className='w-6 h-6 animate-pulse' />
+										</div>
+									</ExpendedCaloriesButtonLazy>
 
-							<WaterIntake showBalloon={true}>
-								<div className='mt-2 rounded-full p-2 bg-blue-700 w-10 h-10 flex flex-col items-center justify-center'>
-									<IoWaterOutline className='w-6 h-6 animate-pulse' />
-								</div>
-							</WaterIntake>
+									<WaterIntakeLazy showBalloon={true}>
+										<div className='transition-opacity fade-in animate-in duration-1000 mt-2 rounded-full p-2 bg-blue-700 w-10 h-10 flex flex-col items-center justify-center'>
+											<IoWaterOutline className='w-6 h-6 animate-pulse' />
+										</div>
+									</WaterIntakeLazy>
+								</Suspense>
+							)}
 						</div>
 
 						<div className={cn('flex flex-col items-start w-full gap-1')}>

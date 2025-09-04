@@ -3,6 +3,7 @@
 import { formatUnit } from '@/lib/utils';
 import { LogComparisonType } from '@/types';
 import { ArrowDown, ArrowUp } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import LogMacroItemSummary from './log-macro-item-summary';
 
@@ -17,6 +18,16 @@ export default function ComparisonPopover({
 	value: number;
 	unitLabel?: string;
 }) {
+	const [isMounted, setIsMounted] = useState(false);
+
+	useEffect(() => {
+		setIsMounted(true);
+	}, []);
+
+	if (!isMounted) {
+		return null;
+	}
+
 	if (!data) {
 		return (
 			<Popover>

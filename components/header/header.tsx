@@ -7,10 +7,8 @@ import { Calculator, UtensilsCrossed } from 'lucide-react';
 import Link from 'next/link';
 import { lazy } from 'react';
 import LogButton from '../logs/log-button';
-import LogMacrosSummary from '../logs/log-macros-summary';
 import LogSheet from '../logs/log-sheet';
 import ModeToggle from './mode-toggle';
-import SideMenu from './side-menu';
 import UserButton from './user-button';
 
 const DishCreationPopoverLazy = lazy(
@@ -19,6 +17,12 @@ const DishCreationPopoverLazy = lazy(
 
 const ReduxStoreLoggerLazy = lazy(
 	() => import('@/components/redux-store-logger')
+);
+
+const SideMenuLazy = lazy(() => import('@/components/header/side-menu'));
+
+const LogMacrosSummaryLazy = lazy(
+	() => import('@/components/logs/log-macros-summary')
 );
 
 export default async function SiteHeader() {
@@ -70,7 +74,7 @@ export default async function SiteHeader() {
 
 				{session && (
 					<div className='flex flex-col items-center gap-0'>
-						<LogMacrosSummary
+						<LogMacrosSummaryLazy
 							log={log?.data as GetLog}
 							compactMode={true}
 							useSkeleton={false}>
@@ -78,7 +82,7 @@ export default async function SiteHeader() {
 								<Calculator className='w-4 h-4' />
 								<div>{format(current, 'eee PP h:mm a')}</div>
 							</div>
-						</LogMacrosSummary>
+						</LogMacrosSummaryLazy>
 						<div className='text-xs text-muted-foreground pt-1'>
 							You are what you eat,{' '}
 							<span className='font-semibold'>{session.user?.name}</span>
@@ -101,7 +105,7 @@ export default async function SiteHeader() {
 					<UserButton />
 
 					<div>
-						<SideMenu log={log?.data as GetLog} />
+						<SideMenuLazy log={log?.data as GetLog} />
 					</div>
 				</div>
 			</div>

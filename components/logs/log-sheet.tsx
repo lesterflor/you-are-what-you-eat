@@ -25,6 +25,7 @@ export default function LogSheet({
 }) {
 	const pathname = usePathname();
 	const [isOpen, setIsOpen] = useState(false);
+	const [isMounted, setIsMounted] = useState(false);
 
 	useEffect(() => {
 		if (isOpen) {
@@ -32,7 +33,11 @@ export default function LogSheet({
 		}
 	}, [isOpen]);
 
-	if (!log) {
+	useEffect(() => {
+		setIsMounted(true);
+	}, []);
+
+	if (!log || !isMounted) {
 		return null;
 	}
 	return (
