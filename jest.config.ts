@@ -5,6 +5,22 @@
 
 import type { Config } from 'jest';
 
+import nextJest from 'next/jest';
+
+const createJestConfig = nextJest({
+	dir: './' // Path to your Next.js app
+});
+
+const customJestConfig = {
+	testEnvironment: 'jsdom',
+	moduleNameMapper: {
+		'^@/(.*)$': '<rootDir>/$1', // Support for @/* imports
+		'\\.(css|less|scss|sass)$': 'identity-obj-proxy', // Handle CSS imports
+		'\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.ts' // Handle static files
+	},
+	setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'] // Optional, for @testing-library/jest-dom
+};
+
 const config: Config = {
 	// All imported modules in your tests should be mocked automatically
 	// automock: false,
@@ -217,4 +233,4 @@ const config: Config = {
 	// watchman: true,
 };
 
-export default config;
+export default createJestConfig(customJestConfig);
