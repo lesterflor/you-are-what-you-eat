@@ -1,5 +1,6 @@
 import type { Action, ThunkAction } from '@reduxjs/toolkit';
 import { combineSlices, configureStore } from '@reduxjs/toolkit';
+import logger from 'redux-logger';
 import { preparedDishSlice } from './features/dish/preparedDishSlice';
 import { bookmarkFoodSlice } from './features/food/bookmarkSlice';
 import { foodSearchSlice } from './features/food/foodSearchSlice';
@@ -38,12 +39,12 @@ export type RootState = ReturnType<typeof rootReducer>;
 // are needed for each request to prevent cross-request state pollution.
 export const makeStore = () => {
 	return configureStore({
-		reducer: rootReducer
+		reducer: rootReducer,
 		// Adding the api middleware enables caching, invalidation, polling,
 		// and other useful features of `rtk-query`.
-		// middleware: (getDefaultMiddleware) => {
-		//   return getDefaultMiddleware().concat(quotesApiSlice.middleware);
-		// },
+		middleware: (getDefaultMiddleware) => {
+			return getDefaultMiddleware().concat(logger);
+		}
 	});
 };
 

@@ -86,8 +86,8 @@ export default function LogEntry({
 		}
 	};
 
-	const bmrData = log.user.BaseMetabolicRate;
-	const bmr = bmrData[0].bmr ? bmrData[0].bmr : 0;
+	const bmrData = log.user.BaseMetabolicRate || [];
+	const bmr = bmrData[0]?.bmr ? bmrData[0].bmr : 0;
 	const kcBurned =
 		(log.knownCaloriesBurned &&
 			log.knownCaloriesBurned.length > 0 &&

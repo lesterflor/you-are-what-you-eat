@@ -521,10 +521,12 @@ export default function FoodLogList({
 										</div>
 									)}
 								</div>
-							) : (
+							) : logList.length > 0 ? (
 								<div className='flex flex-col items-center justify-center w-[25vw]'>
 									<ImSpinner2 className='w-10 h-10 animate-spin opacity-25' />
 								</div>
+							) : (
+								<div className='flex flex-col items-center justify-center w-[25vw]'></div>
 							)}
 						</div>
 					</CardContent>
