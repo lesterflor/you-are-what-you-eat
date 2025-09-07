@@ -8,12 +8,14 @@ export default function IncrementButton({
 	children,
 	increment = 1,
 	onChange,
-	allowLongPress = true
+	allowLongPress = true,
+	dataTestId = ''
 }: {
 	children: React.ReactNode;
 	increment: number;
 	onChange?: (data: number) => void;
 	allowLongPress?: boolean;
+	dataTestId?: string;
 }) {
 	const [val, setVal] = useState(0);
 	const incRef: { current: NodeJS.Timeout | null } = useRef(null);
@@ -62,6 +64,7 @@ export default function IncrementButton({
 
 	return (
 		<Button
+			data-testid={dataTestId}
 			onContextMenu={(e) => {
 				e.preventDefault();
 			}}

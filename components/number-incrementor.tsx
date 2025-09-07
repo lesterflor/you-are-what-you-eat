@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@/lib/utils';
 import {
 	ChevronLeft,
 	ChevronRight,
@@ -7,7 +8,6 @@ import {
 	ChevronsRight
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { cn } from '@/lib/utils';
 import IncrementButton from './increment-button';
 
 export default function NumberIncrementor({
@@ -49,6 +49,7 @@ export default function NumberIncrementor({
 						compactMode && 'gap-1'
 					)}>
 					<IncrementButton
+						dataTestId='decrement-button'
 						allowLongPress={allowLongPress}
 						increment={-1}
 						onChange={(rVal) => {
@@ -87,6 +88,7 @@ export default function NumberIncrementor({
 					)}
 				</div>
 				<div
+					data-testid='current-value'
 					className={cn(
 						'text-2xl font-bold w-12 text-center',
 						compactMode && 'text-lg w-7'
@@ -116,6 +118,7 @@ export default function NumberIncrementor({
 					)}
 
 					<IncrementButton
+						dataTestId='increment-button'
 						allowLongPress={allowLongPress}
 						increment={1}
 						onChange={(rVal) => {
