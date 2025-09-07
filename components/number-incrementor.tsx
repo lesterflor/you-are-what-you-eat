@@ -69,6 +69,7 @@ export default function NumberIncrementor({
 
 					{allowDecimalIncrement && (
 						<IncrementButton
+							dataTestId='decrement-button-decimal'
 							allowLongPress={allowLongPress}
 							increment={-0.1}
 							onChange={(rVal) => {
@@ -102,6 +103,7 @@ export default function NumberIncrementor({
 					)}>
 					{allowDecimalIncrement && (
 						<IncrementButton
+							dataTestId='increment-button-decimal'
 							allowLongPress={allowLongPress}
 							increment={0.1}
 							onChange={(rVal) => {
