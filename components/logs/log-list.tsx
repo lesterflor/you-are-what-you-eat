@@ -38,7 +38,6 @@ import { BsBookmarkStarFill } from 'react-icons/bs';
 import { ImSpinner2 } from 'react-icons/im';
 import { IoFastFoodOutline, IoWaterOutline } from 'react-icons/io5';
 import { TbDatabaseSearch } from 'react-icons/tb';
-import BMRBadge from '../bmr/bmr-badge';
 import SubToolsSkeleton from '../skeletons/sub-tools-skeleton';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -46,11 +45,16 @@ import { Card, CardContent } from '../ui/card';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Skeleton } from '../ui/skeleton';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
-import CommonLoggedItems from './common-logged-items';
 import LogFoodCard from './log-food-card';
 import LogFoodListItem from './log-food-list-item';
 import LogMacrosSummary from './log-macros-summary';
 import LogRemainderBadge from './log-remainder-badge';
+
+const BMRBadgeLazy = lazy(() => import('@/components/bmr/bmr-badge'));
+
+const CommonLoggedItemsLazy = lazy(
+	() => import('@/components/logs/common-logged-items')
+);
 
 const FoodListSheetLazy = lazy(
 	() => import('@/components/food-items/food-list-sheet')
@@ -354,7 +358,9 @@ export default function FoodLogList({
 					</Popover>
 
 					<div className='flex flex-row gap-2 w-full'>
-						<BMRBadge />
+						<Suspense>
+							<BMRBadgeLazy />
+						</Suspense>
 
 						{calsBurned > 0 && (
 							<div className='transition-opacity fade-in animate-in duration-1000 p-1 rounded-md border-2 font-normal text-xs flex flex-col gap-0 items-center w-16'>
@@ -422,7 +428,7 @@ export default function FoodLogList({
 										Nothing logged yet!
 									</div>
 
-									<CommonLoggedItems />
+									<CommonLoggedItemsLazy />
 								</div>
 							)}
 						</>
@@ -500,7 +506,9 @@ export default function FoodLogList({
 							</Popover>
 
 							<div className='flex flex-row gap-2 w-full'>
-								<BMRBadge />
+								<Suspense>
+									<BMRBadgeLazy />
+								</Suspense>
 
 								{calsBurned > 0 && (
 									<div className='transition-opacity fade-in animate-in duration-1000 p-1 rounded-md border-2 font-normal text-xs flex flex-col gap-0 items-center w-16'>

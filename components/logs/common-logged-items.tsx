@@ -4,12 +4,12 @@ import { getCommonItemsInLog } from '@/actions/log-actions';
 import { cn, formatUnit } from '@/lib/utils';
 import { GetFoodEntry } from '@/types';
 import { format } from 'date-fns';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import FoodCategoryIconMapper from '../food-items/food-category-icon-mapper';
 import { Badge } from '../ui/badge';
 import { ScrollArea } from '../ui/scroll-area';
 
-export default function CommonLoggedItems() {
+const CommonLoggedItems = memo(function CommonLoggedItems() {
 	const [categories, setCategories] = useState<{
 		fruit: number;
 		grain: number;
@@ -151,4 +151,6 @@ export default function CommonLoggedItems() {
 			)}
 		</>
 	);
-}
+});
+
+export default CommonLoggedItems;
