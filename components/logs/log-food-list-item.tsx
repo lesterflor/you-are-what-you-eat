@@ -1,12 +1,18 @@
 'use client';
 
 import { getFoodItemById } from '@/actions/food-actions';
-import { deleteFoodLogEntry, updateFoodLogEntry } from '@/actions/log-actions';
+import { updateFoodLogEntry } from '@/actions/log-actions';
 import {
 	selectPreparedDishData,
 	selectPreparedDishStatus
 } from '@/lib/features/dish/preparedDishSlice';
-import { deleted, updated } from '@/lib/features/log/logFoodSlice';
+import {
+	deleteLogItemAsync,
+	selectData,
+	selectDeletedItem,
+	selectStatus,
+	updated
+} from '@/lib/features/log/logFoodSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { cn, formatUnit } from '@/lib/utils';
 import { FoodEntry, GetFoodEntry, GetFoodItem } from '@/types';
@@ -57,6 +63,17 @@ const LogFoodListItem = memo(function LogFoodListItem({
 
 	const preparedDishData = useAppSelector(selectPreparedDishData);
 	const preparedDishStatus = useAppSelector(selectPreparedDishStatus);
+
+	const logData = useAppSelector(selectData);
+	const logDataStatus = useAppSelector(selectStatus);
+	const logDataDeleted = useAppSelector(selectDeletedItem);
+
+	useEffect(() => {
+		if (logDataStatus === 'deleted' && logDataDeleted?.id === item.id) {
+			toast.success(logData.message);
+			setDialogOpen(false);
+		}
+	}, [logDataStatus, logDataDeleted, logData]);
 
 	useEffect(() => {
 		if (
@@ -190,25 +207,26 @@ const LogFoodListItem = memo(function LogFoodListItem({
 											disabled={isDeleting}
 											onClick={() => {
 												setIsDeleting(async () => {
-													const res = await deleteFoodLogEntry(item.id);
+													// const res = await deleteFoodLogEntry(item.id);
 
-													if (res.success) {
-														toast.success(res.message);
+													// if (res.success) {
+													// 	toast.success(res.message);
 
-														// redux
-														dispatch(
-															deleted({
-																id: item.id,
-																name: item.name,
-																servings: item.numServings
-															})
-														);
-													} else {
-														toast.error(res.message);
-													}
+													// 	// redux
+													// 	dispatch(
+													// 		deleted({
+													// 			id: item.id,
+													// 			name: item.name,
+													// 			servings: item.numServings
+													// 		})
+													// 	);
+													// } else {
+													// 	toast.error(res.message);
+													// }
+													dispatch(deleteLogItemAsync(item.id));
 												});
 
-												setDialogOpen(false);
+												//setDialogOpen(false);
 											}}>
 											{isDeleting ? (
 												<ImSpinner2 className='w-4 h-4 animate-spin' />

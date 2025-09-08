@@ -815,6 +815,11 @@ export async function deleteFoodLogEntry(foodEntryId: string) {
 			(item) => item.id !== foodEntryId
 		);
 
+		//get the item to be deleted from the list
+		const toBeDeleted = currentLog.data.foodItems.filter(
+			(item) => item.id === foodEntryId
+		);
+
 		// update the log
 		const update = await prisma.log.update({
 			where: {
@@ -834,7 +839,8 @@ export async function deleteFoodLogEntry(foodEntryId: string) {
 
 		return {
 			success: true,
-			message: 'Log updated successfully'
+			message: 'Log updated successfully',
+			data: toBeDeleted[0]
 		};
 	} catch (error: unknown) {
 		return {

@@ -1,4 +1,4 @@
-import { updateLogWithOrder } from '@/actions/log-actions';
+import { deleteFoodLogEntry, updateLogWithOrder } from '@/actions/log-actions';
 import { createAppSlice } from '@/lib/createAppSlice';
 import { FoodEntry } from '@/types';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -32,11 +32,13 @@ export interface LogFoodSliceState {
 		userId?: string;
 		foodItems?: FoodItemsState[];
 	};
+	deletedItem?: FoodItemsState;
 	status:
 		| 'idle'
 		| 'added'
 		| 'updated'
 		| 'deleted'
+		| 'deleting'
 		| 'expended calories'
 		| 'adding'
 		| 'failed';
@@ -51,6 +53,7 @@ const initialState: LogFoodSliceState = {
 		message: ''
 	},
 	log: undefined,
+	deletedItem: undefined,
 	status: 'idle'
 };
 
@@ -154,6 +157,53 @@ export const logFoodSlice = createAppSlice({
 		// will call the thunk with the `dispatch` function as the first argument. Async
 		// code can then be executed and other actions can be dispatched. Thunks are
 		// typically used to make async requests.
+		deleteLogItemAsync: create.asyncThunk(
+			async (id: string) => {
+				const res = await deleteFoodLogEntry(id);
+
+				if (res.data && res.success) {
+					return { ...res.data, eatenAt: res.data.eatenAt.toString() };
+				}
+
+				return null;
+			},
+			{
+				pending: (state) => {
+					state.status = 'deleting';
+				},
+				fulfilled: (state, action) => {
+					state.status = 'deleted';
+
+					if (action.payload) {
+						state.deletedItem = action.payload;
+					}
+
+					if (action.payload && state.log?.foodItems) {
+						const dateString = `${new Date().getTime()}`;
+
+						state.value = {
+							name: action.payload.name,
+							servings: action.payload.numServings,
+							time: dateString,
+							caloriesExpended: state.value.caloriesExpended,
+							message: `You deleted your logged food item, ${action.payload.name}`
+						};
+
+						state.log.foodItems = state.log.foodItems?.filter(
+							(item) => item.id !== action.payload?.id
+						);
+					}
+				},
+				rejected: (state) => {
+					state.status = 'failed';
+					state.value = {
+						...state.value,
+						message: 'Failed to delete item from your log'
+					};
+				}
+			}
+		),
+
 		logFoodAsync: create.asyncThunk(
 			async ({
 				logFoodItem,
@@ -223,7 +273,8 @@ export const logFoodSlice = createAppSlice({
 	selectors: {
 		selectData: (counter) => counter.value,
 		selectStatus: (counter) => counter.status,
-		selectLog: (state) => state.log
+		selectLog: (state) => state.log,
+		selectDeletedItem: (state) => state.deletedItem
 	}
 });
 
@@ -234,11 +285,13 @@ export const {
 	deleted,
 	expendedCaloriesUpdated,
 	logFoodAsync,
+	deleteLogItemAsync,
 	reset
 } = logFoodSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
-export const { selectData, selectStatus, selectLog } = logFoodSlice.selectors;
+export const { selectData, selectStatus, selectLog, selectDeletedItem } =
+	logFoodSlice.selectors;
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.

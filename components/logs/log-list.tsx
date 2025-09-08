@@ -10,6 +10,7 @@ import {
 import {
 	reset,
 	selectData,
+	selectDeletedItem,
 	selectLog,
 	selectStatus
 } from '@/lib/features/log/logFoodSlice';
@@ -131,6 +132,7 @@ export default function FoodLogList({
 	const logStatus = useAppSelector(selectStatus);
 	const logData = useAppSelector(selectData);
 	const logDataLog = useAppSelector(selectLog);
+	const logDataDeleted = useAppSelector(selectDeletedItem);
 
 	const getLog = async (ignoreLogList: boolean = false) => {
 		const res = await getCurrentLog();
@@ -151,6 +153,14 @@ export default function FoodLogList({
 		setRemainingCals(cals - (metRate + calsBurned));
 	};
 
+	const resetLogState = () => {
+		// If the log was added, we need to update the log in order to update other info (e.g. total calories)
+		getLog(true);
+
+		// reset slice as navigation changes will persist added state
+		dispatch(reset());
+	};
+
 	useEffect(() => {
 		setRemainingCalories(totalCals, bmr?.bmr ?? 0);
 	}, [calsBurned]);
@@ -162,10 +172,16 @@ export default function FoodLogList({
 	useEffect(() => {
 		if (
 			//logStatus === 'added' ||
-			logStatus === 'deleted' ||
+			//logStatus === 'deleted' ||
 			logStatus === 'updated'
 		) {
 			getLog();
+		} else if (logStatus === 'deleted') {
+			setLogList((prev) => {
+				return prev.filter((item) => item.id !== logDataDeleted?.id);
+			});
+
+			resetLogState();
 		} else if (logStatus === 'added') {
 			setLogList((prev) => {
 				if (
@@ -196,16 +212,12 @@ export default function FoodLogList({
 				return prev;
 			});
 
-			// If the log was added, we need to update the log in order to update other info (e.g. total calories)
-			getLog(true);
-
-			// reset slice as navigation changes will persist added state
-			dispatch(reset());
+			resetLogState();
 		} else if (logStatus === 'expended calories') {
 			// get expended calories
 			fetchKDC();
 		}
-	}, [logStatus, logData, logDataLog]);
+	}, [logStatus, logData, logDataLog, logDataDeleted]);
 
 	useEffect(() => {
 		if (dataFormat) {
