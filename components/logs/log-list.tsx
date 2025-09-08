@@ -7,7 +7,12 @@ import {
 	selectPreparedDishStatus,
 	setDishListState
 } from '@/lib/features/dish/preparedDishSlice';
-import { selectData, selectStatus } from '@/lib/features/log/logFoodSlice';
+import {
+	reset,
+	selectData,
+	selectLog,
+	selectStatus
+} from '@/lib/features/log/logFoodSlice';
 import { updateData } from '@/lib/features/user/userDataSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { cn, formatUnit, getStorageItem, setStorageItem } from '@/lib/utils';
@@ -48,7 +53,10 @@ import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 import LogFoodCard from './log-food-card';
 import LogFoodListItem from './log-food-list-item';
 import LogMacrosSummary from './log-macros-summary';
-import LogRemainderBadge from './log-remainder-badge';
+
+const LogRemainderBadgeLazy = lazy(
+	() => import('@/components/logs/log-remainder-badge')
+);
 
 const BMRBadgeLazy = lazy(() => import('@/components/bmr/bmr-badge'));
 
@@ -122,11 +130,12 @@ export default function FoodLogList({
 
 	const logStatus = useAppSelector(selectStatus);
 	const logData = useAppSelector(selectData);
+	const logDataLog = useAppSelector(selectLog);
 
-	const getLog = async () => {
+	const getLog = async (ignoreLogList: boolean = false) => {
 		const res = await getCurrentLog();
 		if (res?.success && res.data) {
-			parseLog(res.data as GetLog);
+			parseLog(res.data as GetLog, ignoreLogList);
 		}
 	};
 
@@ -152,16 +161,51 @@ export default function FoodLogList({
 
 	useEffect(() => {
 		if (
-			logStatus === 'added' ||
+			//logStatus === 'added' ||
 			logStatus === 'deleted' ||
 			logStatus === 'updated'
 		) {
 			getLog();
+		} else if (logStatus === 'added') {
+			setLogList((prev) => {
+				if (
+					logDataLog &&
+					logDataLog.foodItems &&
+					logDataLog.foodItems?.length > 0
+				) {
+					const item = {
+						...logDataLog.foodItems[logDataLog.foodItems.length - 1]
+					};
+
+					const update = {
+						id: item.id,
+						name: item.name,
+						category: item.category,
+						description: item.description ?? '',
+						numServings: item.numServings,
+						image: item.image ?? '',
+						carbGrams: item.carbGrams,
+						fatGrams: item.fatGrams,
+						proteinGrams: item.proteinGrams,
+						calories: item.calories,
+						eatenAt: item.eatenAt ? new Date(item.eatenAt) : new Date()
+					};
+
+					return [update, ...prev];
+				}
+				return prev;
+			});
+
+			// If the log was added, we need to update the log in order to update other info (e.g. total calories)
+			getLog(true);
+
+			// reset slice as navigation changes will persist added state
+			dispatch(reset());
 		} else if (logStatus === 'expended calories') {
 			// get expended calories
 			fetchKDC();
 		}
-	}, [logStatus, logData]);
+	}, [logStatus, logData, logDataLog]);
 
 	useEffect(() => {
 		if (dataFormat) {
@@ -182,7 +226,7 @@ export default function FoodLogList({
 		}
 	};
 
-	const parseLog = (log: GetLog) => {
+	const parseLog = (log: GetLog, ignoreLogList: boolean = false) => {
 		const {
 			foodItems = [],
 			totalCalories = 0,
@@ -198,7 +242,10 @@ export default function FoodLogList({
 		setFetchingLog(() => {
 			setLog(log);
 
-			setLogList(foodItems as GetFoodEntry[]);
+			if (!ignoreLogList) {
+				setLogList(foodItems as GetFoodEntry[]);
+			}
+
 			const bmrArr = BaseMetabolicRate;
 
 			if (bmrArr.length > 0) {
@@ -369,7 +416,11 @@ export default function FoodLogList({
 							</div>
 						)}
 
-						{bmr && <LogRemainderBadge />}
+						{bmr && (
+							<Suspense fallback={<Skeleton className='w-full h-full' />}>
+								<LogRemainderBadgeLazy />
+							</Suspense>
+						)}
 					</div>
 				</div>
 
@@ -517,7 +568,11 @@ export default function FoodLogList({
 									</div>
 								)}
 
-								{bmr && <LogRemainderBadge />}
+								{bmr && (
+									<Suspense fallback={<Skeleton className='w-full h-full' />}>
+										<LogRemainderBadgeLazy />
+									</Suspense>
+								)}
 							</div>
 						</div>
 						{/*calories remaining  */}

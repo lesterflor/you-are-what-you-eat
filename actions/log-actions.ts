@@ -390,12 +390,16 @@ export async function updateLogWithOrder(foodEntries: FoodEntry[]) {
 			throw new Error('There was a problem updating the log');
 		}
 
+		// sort by latest consumption
+		const clone = { ...update };
+		clone.foodItems.sort((a, b) => a.eatenAt.getTime() - b.eatenAt.getTime());
+
 		//revalidatePath('/');
 
 		return {
 			success: true,
 			message: 'success',
-			data: update
+			data: clone
 		};
 	} catch (error: unknown) {
 		return {

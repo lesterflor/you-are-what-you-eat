@@ -198,6 +198,7 @@ const LogFoodListItem = memo(function LogFoodListItem({
 														// redux
 														dispatch(
 															deleted({
+																id: item.id,
 																name: item.name,
 																servings: item.numServings
 															})

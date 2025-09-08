@@ -1,13 +1,16 @@
 'use client';
 
 import { getFoodItemById } from '@/actions/food-actions';
-import { updateLogWithOrder } from '@/actions/log-actions';
 import { setCheckedItemState } from '@/lib/features/dish/preparedDishSlice';
 import {
 	selectFoodUpdateData,
 	selectFoodUpdateStatus
 } from '@/lib/features/food/foodUpdateSlice';
-import { added } from '@/lib/features/log/logFoodSlice';
+import {
+	logFoodAsync,
+	selectData,
+	selectStatus
+} from '@/lib/features/log/logFoodSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { selectImageData, selectImageStatus } from '@/lib/image/imageSlice';
 import { cn, formatUnit, getMacroPercOfCals } from '@/lib/utils';
@@ -51,6 +54,9 @@ const FoodItemCard = memo(function FoodItemCard({
 }) {
 	const dispatch = useAppDispatch();
 	const cardRef = useRef<HTMLDivElement>(null);
+
+	const logData = useAppSelector(selectData);
+	const logDataStatus = useAppSelector(selectStatus);
 
 	const [currentItem, setCurrentItem] = useState<GetFoodItem>(item);
 	const [isFetching, setIsFetching] = useTransition();
@@ -98,25 +104,43 @@ const FoodItemCard = memo(function FoodItemCard({
 		// );
 
 		setIsSubmitting(async () => {
-			const res = await updateLogWithOrder([logFoodItem]);
+			// 	const res = await updateLogWithOrder([logFoodItem]);
 
-			if (res.success) {
-				// redux
-				dispatch(
-					added({
-						name: logFoodItem.name,
-						servings: logFoodItem.numServings
-					})
-				);
+			// 	if (res.success) {
+			// 		// redux
+			// 		dispatch(
+			// 			added({
+			// 				name: logFoodItem.name,
+			// 				servings: logFoodItem.numServings
+			// 			})
+			// 		);
 
-				setShowDetails(false);
+			// 		setShowDetails(false);
 
-				toast.success('Added to your daily log!');
-			} else {
-				toast.error('Oops, Something went wrong with adding the item.');
-			}
+			// 		toast.success('Added to your daily log!');
+			// 	} else {
+			// 		toast.error('Oops, Something went wrong with adding the item.');
+			// 	}
+			// });
+
+			dispatch(
+				logFoodAsync({
+					logFoodItem,
+					name: logFoodItem.name,
+					servings: logFoodItem.numServings
+				})
+			);
 		});
 	};
+
+	useEffect(() => {
+		if (logDataStatus === 'added' && logData.name === item.name) {
+			toast.success(logData.message);
+			setShowDetails(false);
+		} else if (logDataStatus === 'failed' && logData.name === item.name) {
+			toast.error(logData.message);
+		}
+	}, [logData, logDataStatus]);
 
 	const [fadeClass, setFadeClass] = useState(false);
 	useEffect(() => {
