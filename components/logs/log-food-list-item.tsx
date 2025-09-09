@@ -1,7 +1,6 @@
 'use client';
 
 import { getFoodItemById } from '@/actions/food-actions';
-import { updateFoodLogEntry } from '@/actions/log-actions';
 import {
 	selectPreparedDishData,
 	selectPreparedDishStatus
@@ -11,7 +10,8 @@ import {
 	selectData,
 	selectDeletedItem,
 	selectStatus,
-	updated
+	selectUpdatedItem,
+	updateItemAsync
 } from '@/lib/features/log/logFoodSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { cn, formatUnit } from '@/lib/utils';
@@ -67,13 +67,29 @@ const LogFoodListItem = memo(function LogFoodListItem({
 	const logData = useAppSelector(selectData);
 	const logDataStatus = useAppSelector(selectStatus);
 	const logDataDeleted = useAppSelector(selectDeletedItem);
+	const logDataUpdated = useAppSelector(selectUpdatedItem);
 
 	useEffect(() => {
 		if (logDataStatus === 'deleted' && logDataDeleted?.id === item.id) {
 			toast.success(logData.message);
 			setDialogOpen(false);
+		} else if (
+			logDataUpdated &&
+			logDataStatus === 'updated' &&
+			logDataUpdated.id === item.id
+		) {
+			toast.success(logData.message);
+
+			setIsUpdating(() => {
+				setServingSize(formatUnit(logDataUpdated.numServings));
+			});
+		} else if (
+			logDataStatus === 'failed' &&
+			logData.pendingItemId === item.id
+		) {
+			toast.error(logData.message);
 		}
-	}, [logDataStatus, logDataDeleted, logData]);
+	}, [logDataStatus, logDataDeleted, logData, logDataUpdated]);
 
 	useEffect(() => {
 		if (
@@ -320,29 +336,31 @@ const LogFoodListItem = memo(function LogFoodListItem({
 											numServings: servingSize
 										};
 
-										const res = await updateFoodLogEntry(updatedEntry);
+										dispatch(updateItemAsync(updatedEntry));
 
-										if (res.success) {
-											toast.success(res.message);
+										// const res = await updateFoodLogEntry(updatedEntry);
 
-											if (res.data) {
-												const { numServings } = res.data;
+										// if (res.success) {
+										// 	toast.success(res.message);
 
-												setIsUpdating(() => {
-													setServingSize(formatUnit(numServings));
-												});
+										// 	if (res.data) {
+										// 		const { numServings } = res.data;
 
-												// redux
-												dispatch(
-													updated({
-														name: item.name,
-														servings: formatUnit(numServings)
-													})
-												);
-											}
-										} else {
-											toast.error(res.message);
-										}
+										// 		setIsUpdating(() => {
+										// 			setServingSize(formatUnit(numServings));
+										// 		});
+
+										// 		// redux
+										// 		dispatch(
+										// 			updated({
+										// 				name: item.name,
+										// 				servings: formatUnit(numServings)
+										// 			})
+										// 		);
+										// 	}
+										// } else {
+										// 	toast.error(res.message);
+										// }
 									});
 
 									setIsEditing(false);

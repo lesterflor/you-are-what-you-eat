@@ -12,7 +12,8 @@ import {
 	selectData,
 	selectDeletedItem,
 	selectLog,
-	selectStatus
+	selectStatus,
+	selectUpdatedItem
 } from '@/lib/features/log/logFoodSlice';
 import { updateData } from '@/lib/features/user/userDataSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
@@ -133,6 +134,7 @@ export default function FoodLogList({
 	const logData = useAppSelector(selectData);
 	const logDataLog = useAppSelector(selectLog);
 	const logDataDeleted = useAppSelector(selectDeletedItem);
+	const logDataUpdated = useAppSelector(selectUpdatedItem);
 
 	const getLog = async (ignoreLogList: boolean = false) => {
 		const res = await getCurrentLog();
@@ -170,12 +172,20 @@ export default function FoodLogList({
 	}, [totalCals, bmr]);
 
 	useEffect(() => {
-		if (
-			//logStatus === 'added' ||
-			//logStatus === 'deleted' ||
-			logStatus === 'updated'
-		) {
-			getLog();
+		if (logStatus === 'updated') {
+			const update = [...logList].map((item) => {
+				if (logDataUpdated && item.id === logDataUpdated.id) {
+					return {
+						...item,
+						numServings: logDataUpdated.numServings
+					};
+				}
+				return item;
+			});
+
+			setLogList(update);
+
+			resetLogState();
 		} else if (logStatus === 'deleted') {
 			setLogList((prev) => {
 				return prev.filter((item) => item.id !== logDataDeleted?.id);
@@ -217,7 +227,7 @@ export default function FoodLogList({
 			// get expended calories
 			fetchKDC();
 		}
-	}, [logStatus, logData, logDataLog, logDataDeleted]);
+	}, [logStatus, logData, logDataLog, logDataDeleted, logDataUpdated]);
 
 	useEffect(() => {
 		if (dataFormat) {
@@ -417,7 +427,7 @@ export default function FoodLogList({
 					</Popover>
 
 					<div className='flex flex-row gap-2 w-full'>
-						<Suspense>
+						<Suspense fallback={<Skeleton className='w-16 h-10' />}>
 							<BMRBadgeLazy />
 						</Suspense>
 
@@ -569,7 +579,7 @@ export default function FoodLogList({
 							</Popover>
 
 							<div className='flex flex-row gap-2 w-full'>
-								<Suspense>
+								<Suspense fallback={<Skeleton className='w-16 h-10' />}>
 									<BMRBadgeLazy />
 								</Suspense>
 

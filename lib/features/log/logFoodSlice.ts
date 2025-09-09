@@ -1,4 +1,8 @@
-import { deleteFoodLogEntry, updateLogWithOrder } from '@/actions/log-actions';
+import {
+	deleteFoodLogEntry,
+	updateFoodLogEntry,
+	updateLogWithOrder
+} from '@/actions/log-actions';
 import { createAppSlice } from '@/lib/createAppSlice';
 import { FoodEntry } from '@/types';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -24,6 +28,7 @@ export interface LogFoodSliceState {
 		time: string;
 		caloriesExpended: number;
 		message: string;
+		pendingItemId?: string;
 	};
 	log?: {
 		id?: string;
@@ -33,10 +38,12 @@ export interface LogFoodSliceState {
 		foodItems?: FoodItemsState[];
 	};
 	deletedItem?: FoodItemsState;
+	updatedItem?: FoodItemsState;
 	status:
 		| 'idle'
 		| 'added'
 		| 'updated'
+		| 'updating'
 		| 'deleted'
 		| 'deleting'
 		| 'expended calories'
@@ -50,10 +57,12 @@ const initialState: LogFoodSliceState = {
 		servings: 0,
 		time: '',
 		caloriesExpended: 0,
-		message: ''
+		message: '',
+		pendingItemId: undefined
 	},
 	log: undefined,
 	deletedItem: undefined,
+	updatedItem: undefined,
 	status: 'idle'
 };
 
@@ -158,14 +167,14 @@ export const logFoodSlice = createAppSlice({
 		// code can then be executed and other actions can be dispatched. Thunks are
 		// typically used to make async requests.
 		deleteLogItemAsync: create.asyncThunk(
-			async (id: string) => {
+			async (id: string, { rejectWithValue }) => {
 				const res = await deleteFoodLogEntry(id);
 
 				if (res.data && res.success) {
 					return { ...res.data, eatenAt: res.data.eatenAt.toString() };
 				}
 
-				return null;
+				return rejectWithValue({ pendingId: id });
 			},
 			{
 				pending: (state) => {
@@ -194,10 +203,11 @@ export const logFoodSlice = createAppSlice({
 						);
 					}
 				},
-				rejected: (state) => {
+				rejected: (state, action) => {
 					state.status = 'failed';
 					state.value = {
 						...state.value,
+						pendingItemId: (action.payload as { pendingId: string })?.pendingId,
 						message: 'Failed to delete item from your log'
 					};
 				}
@@ -266,6 +276,77 @@ export const logFoodSlice = createAppSlice({
 					};
 				}
 			}
+		),
+
+		updateItemAsync: create.asyncThunk(
+			async (entry: FoodEntry, { rejectWithValue }) => {
+				const res = await updateFoodLogEntry(entry);
+
+				if (res.success && res.data) {
+					return {
+						data: { ...res.data, eatenAt: res.data?.eatenAt.toString() },
+						log: {
+							...res.log,
+							createdAt: res.log && res.log.createdAt?.toString(),
+							updatedAt: res.log && res.log.updatedAt?.toString(),
+							foodItems:
+								res.log &&
+								res.log.foodItems?.map((fi) => ({
+									...fi,
+									eatenAt: fi.eatenAt.toString()
+								}))
+						}
+					};
+				}
+
+				return rejectWithValue({
+					pendingId: entry.id
+				});
+			},
+			{
+				pending: (state) => {
+					state.status = 'updating';
+				},
+				fulfilled: (state, action) => {
+					state.status = 'updated';
+
+					if (action.payload.data) {
+						const dateString = `${new Date().getTime()}`;
+						state.value = {
+							name: action.payload.data.name as string,
+							servings: action.payload.data.numServings as number,
+							time: dateString,
+							caloriesExpended: state.value.caloriesExpended,
+							message: `You updated the serving of ${action.payload.data.name} to ${action.payload.data.numServings}`
+						};
+
+						state.updatedItem = {
+							...action.payload.data,
+							id: action.payload.data.id as string,
+							name: action.payload.data.name as string,
+							category: action.payload.data.category as string,
+							description: action.payload.data.description as string,
+							numServings: action.payload.data.numServings as number,
+							image: action.payload.data.image as string,
+							carbGrams: action.payload.data.carbGrams as number,
+							fatGrams: action.payload.data.fatGrams as number,
+							proteinGrams: action.payload.data.proteinGrams as number,
+							calories: action.payload.data.calories as number,
+							eatenAt: action.payload.data.eatenAt as string
+						};
+						state.log = action.payload.log;
+					}
+				},
+				rejected: (state, action) => {
+					state.status = 'failed';
+
+					state.value = {
+						...state.value,
+						pendingItemId: (action.payload as { pendingId: string })?.pendingId,
+						message: 'Failed to update item in your log'
+					};
+				}
+			}
 		)
 	}),
 	// You can define your selectors here. These selectors receive the slice
@@ -274,7 +355,9 @@ export const logFoodSlice = createAppSlice({
 		selectData: (counter) => counter.value,
 		selectStatus: (counter) => counter.status,
 		selectLog: (state) => state.log,
-		selectDeletedItem: (state) => state.deletedItem
+		selectDeletedItem: (state) => state.deletedItem,
+		selectUpdatedItem: (state) => state.updatedItem,
+		selectStateMessage: (state) => state.value.message
 	}
 });
 
@@ -286,12 +369,19 @@ export const {
 	expendedCaloriesUpdated,
 	logFoodAsync,
 	deleteLogItemAsync,
+	updateItemAsync,
 	reset
 } = logFoodSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
-export const { selectData, selectStatus, selectLog, selectDeletedItem } =
-	logFoodSlice.selectors;
+export const {
+	selectData,
+	selectStatus,
+	selectLog,
+	selectDeletedItem,
+	selectUpdatedItem,
+	selectStateMessage
+} = logFoodSlice.selectors;
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.

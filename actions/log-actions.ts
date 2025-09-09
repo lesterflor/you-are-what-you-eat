@@ -912,7 +912,8 @@ export async function updateFoodLogEntry(foodEntry: GetFoodEntry) {
 		return {
 			success: true,
 			message: 'Log updated successfully',
-			data: theUpdate[0]
+			data: theUpdate[0],
+			log: update
 		};
 	} catch (error: unknown) {
 		return {
