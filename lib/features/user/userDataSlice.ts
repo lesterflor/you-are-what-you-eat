@@ -97,7 +97,8 @@ export const userDataSlice = createAppSlice({
 				const returnObj = {
 					consumed: 0,
 					remaining: 0,
-					burned: 0
+					burned: 0,
+					cumulativeRemaining: 0
 				};
 
 				// action to add new known calories burned
@@ -113,6 +114,10 @@ export const userDataSlice = createAppSlice({
 				if (resTotRemain?.success && resTotRemain?.data) {
 					returnObj.remaining = resTotRemain?.data.remainingCalories ?? 0;
 					returnObj.consumed = resTotRemain?.data.totalCalories ?? 0;
+					returnObj.cumulativeRemaining =
+						Math.sign(returnObj.remaining) === -1
+							? returnObj.remaining + -returnObj.burned
+							: returnObj.remaining + returnObj.burned;
 				}
 
 				return returnObj;

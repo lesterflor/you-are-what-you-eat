@@ -260,23 +260,23 @@ export default function WaterIntake({
 								<div className='flex flex-row flex-wrap gap-2 items-center justify-center w-full'>
 									<Badge
 										variant={'outline'}
-										className='flex flex-col !gap-0 items-center bg-blue-800 text-background'>
+										className='flex flex-col !gap-0 items-center bg-blue-800 text-white font-normal'>
 										{waterData.glasses} <span className='text-sm'>glasses</span>
 									</Badge>
 									<Badge
 										variant={'outline'}
-										className='flex flex-col !gap-0 items-center bg-blue-800 text-background'>
+										className='flex flex-col !gap-0 items-center bg-blue-800 text-white font-normal'>
 										{waterData.glasses * 2}{' '}
 										<span className='text-sm'>cups</span>
 									</Badge>
 									<Badge
 										variant={'outline'}
-										className='flex flex-col !gap-0 items-center bg-blue-800 text-background'>
+										className='flex flex-col !gap-0 items-center bg-blue-800 text-white font-normal'>
 										{waterData.ounces} <span className='text-sm'>ounces</span>
 									</Badge>
 									<Badge
 										variant={'outline'}
-										className='flex flex-col !gap-0 items-center bg-blue-800 text-background'>
+										className='flex flex-col !gap-0 items-center bg-blue-800 text-white font-normal'>
 										{waterData.litres} <span className='text-sm'>litres</span>
 									</Badge>
 								</div>
@@ -498,23 +498,23 @@ export default function WaterIntake({
 								<div className='flex flex-row flex-wrap gap-2 items-center justify-center w-full'>
 									<Badge
 										variant={'outline'}
-										className='flex flex-col !gap-0 items-center bg-blue-800 text-background'>
+										className='flex flex-col !gap-0 items-center bg-blue-800 text-white font-normal'>
 										{waterData.glasses} <span className='text-sm'>glasses</span>
 									</Badge>
 									<Badge
 										variant={'outline'}
-										className='flex flex-col !gap-0 items-center bg-blue-800 text-background'>
+										className='flex flex-col !gap-0 items-center bg-blue-800 text-white font-normal'>
 										{waterData.glasses * 2}{' '}
 										<span className='text-sm'>cups</span>
 									</Badge>
 									<Badge
 										variant={'outline'}
-										className='flex flex-col !gap-0 items-center bg-blue-800 text-background'>
+										className='flex flex-col !gap-0 items-center bg-blue-800 text-white font-normal'>
 										{waterData.ounces} <span className='text-sm'>ounces</span>
 									</Badge>
 									<Badge
 										variant={'outline'}
-										className='flex flex-col !gap-0 items-center bg-blue-800 text-background'>
+										className='flex flex-col !gap-0 items-center bg-blue-800 text-white font-normal'>
 										{waterData.litres} <span className='text-sm'>litres</span>
 									</Badge>
 								</div>

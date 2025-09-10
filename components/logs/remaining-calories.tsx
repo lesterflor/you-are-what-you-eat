@@ -23,15 +23,19 @@ export default function RemainingCalories({
 				burned: number;
 				remaining: number;
 				bmr?: number;
+				cumulativeRemaining: number;
 		  }
 		| undefined
 	>(undefined);
 
 	useEffect(() => {
 		if (userDataStatus === 'updated' && userData) {
-			const { consumed, burned, remaining } = JSON.parse(
-				userData.caloricData || '{}'
-			);
+			const {
+				consumed,
+				burned,
+				remaining,
+				cumulativeRemaining = remaining
+			} = JSON.parse(userData.caloricData || '{}');
 
 			const bmrData = JSON.parse(userData.bmrData || '{}');
 			const bmr = bmrData?.bmr || 0;
@@ -40,7 +44,26 @@ export default function RemainingCalories({
 				consumed,
 				burned,
 				remaining,
-				bmr
+				bmr,
+				cumulativeRemaining: cumulativeRemaining
+			});
+		} else if (userDataStatus === 'loggedCalories' && userData) {
+			const {
+				consumed,
+				burned,
+				remaining,
+				cumulativeRemaining = remaining
+			} = JSON.parse(userData.caloricData || '{}');
+
+			const bmrData = JSON.parse(userData.bmrData || '{}');
+			const bmr = bmrData?.bmr || 0;
+
+			setUserInfo({
+				consumed,
+				burned,
+				remaining: remaining + burned,
+				bmr,
+				cumulativeRemaining: cumulativeRemaining
 			});
 		}
 	}, [userData, userDataStatus]);
@@ -52,15 +75,15 @@ export default function RemainingCalories({
 					<div
 						className={cn(
 							'transition-opacity fade-in animate-in duration-1000 text-2xl text-center flex flex-col items-center gap-0 relative font-bold',
-							Math.sign(userInfo.remaining) === -1
+							Math.sign(userInfo.cumulativeRemaining) === -1
 								? 'text-foreground'
 								: 'text-muted-foreground'
 						)}>
 						<div className='font-semibold'>
-							{Math.abs(formatUnit(userInfo.remaining))}
+							{Math.abs(formatUnit(userInfo.cumulativeRemaining))}
 						</div>
 						<div className='text-xs font-normal'>
-							{Math.sign(userInfo.remaining) === -1
+							{Math.sign(userInfo.cumulativeRemaining) === -1
 								? 'calories remaining'
 								: 'calories over'}
 						</div>
@@ -71,7 +94,7 @@ export default function RemainingCalories({
 									'absolute flex flex-row items-center gap-0',
 									iconPosition === 'top' ? '-top-6 right-2' : 'top-4 -right-6'
 								)}>
-								{Math.sign(userInfo.remaining) === -1 ? (
+								{Math.sign(userInfo.cumulativeRemaining) === -1 ? (
 									<>
 										<ArrowDown className='w-6 h-6 text-green-600 animate-bounce' />
 										<Smile className='w-6 h-6' />
