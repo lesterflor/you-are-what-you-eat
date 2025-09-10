@@ -76,7 +76,8 @@ const LogFoodListItem = memo(function LogFoodListItem({
 		} else if (
 			logDataUpdated &&
 			logDataStatus === 'updated' &&
-			logDataUpdated.id === item.id
+			logDataUpdated.id === item.id &&
+			item.eatenAt.getTime() === new Date(logDataUpdated.eatenAt).getTime()
 		) {
 			toast.success(logData.message);
 

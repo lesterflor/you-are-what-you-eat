@@ -1,14 +1,13 @@
 'use client';
 
+import { getKnownCaloriesBurned } from '@/actions/log-actions';
+import { selectData, selectStatus } from '@/lib/features/log/logFoodSlice';
 import {
-	addKnownCaloriesBurned,
-	getKnownCaloriesBurned
-} from '@/actions/log-actions';
-import {
-	expendedCaloriesUpdated,
-	selectData,
-	selectStatus
-} from '@/lib/features/log/logFoodSlice';
+	caloriesUpdatedAsync,
+	selectUserData,
+	selectUserDataMessage,
+	selectUserDataStatus
+} from '@/lib/features/user/userDataSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { ChevronLeft, ChevronRight, Flame, InfoIcon, Plus } from 'lucide-react';
 import { useEffect, useOptimistic, useState, useTransition } from 'react';
@@ -32,6 +31,10 @@ export default function ExpendedCaloriesButton({
 	const logStatus = useAppSelector(selectStatus);
 	const logData = useAppSelector(selectData);
 
+	const userData = useAppSelector(selectUserData);
+	const userDataStatus = useAppSelector(selectUserDataStatus);
+	const userDataMessage = useAppSelector(selectUserDataMessage);
+
 	const [isPending, startPendingTransition] = useTransition();
 
 	const [caloriesBurned, setCaloriesBurned] = useState(0);
@@ -44,6 +47,21 @@ export default function ExpendedCaloriesButton({
 	const [fetching, startFetchingTransition] = useTransition();
 	const [inputVal, setInputVal] = useState(10);
 	const [popoverOpen, setPopoverOpen] = useState(false);
+
+	useEffect(() => {
+		if (userDataStatus === 'loggedCalories' && userData) {
+			const caloricData = JSON.parse(userData?.caloricData || '{}');
+			if (caloricData && caloricData.burned !== undefined) {
+				setCaloriesBurned(caloricData.burned);
+
+				setInputVal(0);
+				setPopoverOpen(false);
+				toast.success(userDataMessage);
+			}
+		} else if (userDataStatus === 'failed') {
+			toast.error(userDataMessage);
+		}
+	}, [userData, userDataStatus, userDataMessage]);
 
 	useEffect(() => {
 		if (!popoverOpen) {
@@ -233,24 +251,26 @@ export default function ExpendedCaloriesButton({
 						startPendingTransition(async () => {
 							setOptimisticCalories(inputVal);
 
-							try {
-								const res = await addKnownCaloriesBurned(inputVal);
-								if (res.success && res.data) {
-									toast.success(res.message);
+							dispatch(caloriesUpdatedAsync(inputVal));
 
-									setCaloriesBurned(res.data.calories);
+							// try {
+							// 	const res = await addKnownCaloriesBurned(inputVal);
+							// 	if (res.success && res.data) {
+							// 		toast.success(res.message);
 
-									// redux
-									dispatch(expendedCaloriesUpdated(inputVal));
+							// 		setCaloriesBurned(res.data.calories);
 
-									setInputVal(0);
-									setPopoverOpen(false);
-								} else {
-									toast.error(res.message);
-								}
-							} catch (err) {
-								console.error(`failed to add calories: ${err}`);
-							}
+							// 		// redux
+							// 		dispatch(expendedCaloriesUpdated(inputVal));
+
+							// 		setInputVal(0);
+							// 		setPopoverOpen(false);
+							// 	} else {
+							// 		toast.error(res.message);
+							// 	}
+							// } catch (err) {
+							// 	console.error(`failed to add calories: ${err}`);
+							// }
 						});
 					}}>
 					{isPending ? (

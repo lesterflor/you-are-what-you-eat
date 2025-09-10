@@ -23,7 +23,7 @@ export default function BMRBadge() {
 
 	return (
 		<div className='h-11'>
-			{bmr && (
+			{bmr && bmr.bmr > 0 && (
 				<div className='transition-opacity fade-in animate-in duration-1000 p-1 rounded-md border-2 items-center font-normal text-xs flex flex-col gap-0 w-16'>
 					<span>BMR</span>
 					<span>{formatUnit(bmr.bmr)}</span>

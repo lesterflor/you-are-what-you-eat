@@ -1,3 +1,4 @@
+import { addKnownCaloriesBurned, getCurrentLog } from '@/actions/log-actions';
 import { createAppSlice } from '@/lib/createAppSlice';
 import { BaseMetabolicRateType } from '@/types';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -9,7 +10,7 @@ export interface UserDataSliceProps {
 
 export interface UserDataSlice {
 	value: UserDataSliceProps;
-	status: 'idle' | 'updated';
+	status: 'idle' | 'updated' | 'loggingCalories' | 'loggedCalories' | 'failed';
 	message: string;
 }
 
@@ -59,7 +60,7 @@ export const userDataSlice = createAppSlice({
 					heightUnit,
 					age,
 					sex,
-					bmr
+					bmr = 0
 				} = serialized;
 
 				const { consumed, remaining, burned } = JSON.parse(
@@ -89,14 +90,62 @@ export const userDataSlice = createAppSlice({
 				};
 				state.message = 'User data updated';
 			}
+		),
+		caloriesUpdatedAsync: create.asyncThunk(
+			async (calories: number) => {
+				// prop object
+				const returnObj = {
+					consumed: 0,
+					remaining: 0,
+					burned: 0
+				};
+
+				// action to add new known calories burned
+				const resCals = await addKnownCaloriesBurned(calories);
+
+				if (resCals.success && resCals.data) {
+					returnObj.burned = resCals.data.calories;
+				}
+
+				// action to get total and remaining
+				const resTotRemain = await getCurrentLog();
+
+				if (resTotRemain?.success && resTotRemain?.data) {
+					returnObj.remaining = resTotRemain?.data.remainingCalories ?? 0;
+					returnObj.consumed = resTotRemain?.data.totalCalories ?? 0;
+				}
+
+				return returnObj;
+			},
+			{
+				pending: (state) => {
+					state.status = 'loggingCalories';
+				},
+				fulfilled: (state, action) => {
+					state.status = 'loggedCalories';
+					state.value = {
+						...state.value,
+						caloricData: JSON.stringify(action.payload)
+					};
+					state.message = `You've burnt ${action.payload.burned} ${
+						action.payload.burned === 1 ? 'calorie' : 'calories'
+					} today.`;
+				},
+				rejected: (state) => {
+					state.status = 'failed';
+					state.message = 'Failed to log calories';
+				}
+			}
 		)
 	}),
 	selectors: {
 		selectUserData: (state) => state.value,
-		selectUserDataStatus: (state) => state.status
+		selectUserDataStatus: (state) => state.status,
+		selectUserDataMessage: (state) => state.message
 	}
 });
 
-export const { updateData } = userDataSlice.actions;
+export const { updateData, caloriesUpdatedAsync } = userDataSlice.actions;
 
-export const { selectUserData, selectUserDataStatus } = userDataSlice.selectors;
+export const { selectUserData, selectUserDataStatus, selectUserDataMessage } =
+	userDataSlice.selectors;

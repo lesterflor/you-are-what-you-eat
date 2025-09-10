@@ -17,21 +17,9 @@ import {
 } from '@/lib/features/log/logFoodSlice';
 import { updateData } from '@/lib/features/user/userDataSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { cn, formatUnit, getStorageItem, setStorageItem } from '@/lib/utils';
+import { cn, getStorageItem, setStorageItem } from '@/lib/utils';
 import { BaseMetabolicRateType, GetFoodEntry, GetLog } from '@/types';
-import {
-	ArrowDown,
-	ArrowUp,
-	Flame,
-	Frown,
-	IdCard,
-	List,
-	LucideUtensilsCrossed,
-	Smile,
-	Soup,
-	ThumbsDown,
-	ThumbsUp
-} from 'lucide-react';
+import { Flame, IdCard, List, LucideUtensilsCrossed, Soup } from 'lucide-react';
 import {
 	lazy,
 	Suspense,
@@ -52,9 +40,11 @@ import { Card, CardContent } from '../ui/card';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Skeleton } from '../ui/skeleton';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
+import ExpendedBadge from './expended-badge';
 import LogFoodCard from './log-food-card';
 import LogFoodListItem from './log-food-list-item';
 import LogMacrosSummary from './log-macros-summary';
+import RemainingCalories from './remaining-calories';
 
 const LogRemainderBadgeLazy = lazy(
 	() => import('@/components/logs/log-remainder-badge')
@@ -106,7 +96,6 @@ export default function FoodLogList({
 	const [log, setLog] = useState<GetLog>(todaysLog as GetLog);
 	const [bmr, setBmr] = useState<BaseMetabolicRateType>();
 	const [calsBurned, setCalsBurned] = useState(0);
-	const [remainingCals, setRemainingCals] = useState(0);
 	const [dataFormat, setDataFormat] = useState('');
 	const [dishList, setDishList] = useState<
 		{ add: boolean; item: GetFoodEntry }[]
@@ -152,7 +141,18 @@ export default function FoodLogList({
 	};
 
 	const setRemainingCalories = (cals: number, metRate: number) => {
-		setRemainingCals(cals - (metRate + calsBurned));
+		const remainder = cals - (metRate + calsBurned);
+
+		dispatch(
+			updateData({
+				bmrData: JSON.stringify(bmr || {}),
+				caloricData: JSON.stringify({
+					consumed: totalCals,
+					remaining: remainder,
+					burned: calsBurned && calsBurned > 0 ? calsBurned : 0
+				})
+			})
+		);
 	};
 
 	const resetLogState = () => {
@@ -165,11 +165,7 @@ export default function FoodLogList({
 
 	useEffect(() => {
 		setRemainingCalories(totalCals, bmr?.bmr ?? 0);
-	}, [calsBurned]);
-
-	useEffect(() => {
-		setRemainingCalories(totalCals, bmr?.bmr ?? 0);
-	}, [totalCals, bmr]);
+	}, [totalCals, bmr, calsBurned]);
 
 	useEffect(() => {
 		if (logStatus === 'updated') {
@@ -252,7 +248,6 @@ export default function FoodLogList({
 		const {
 			foodItems = [],
 			totalCalories = 0,
-			remainingCalories = 0,
 			knownCaloriesBurned = [],
 			user: { BaseMetabolicRate = [] }
 		} = log;
@@ -276,25 +271,9 @@ export default function FoodLogList({
 
 			setTotalCals(totalCalories);
 
-			setRemainingCals(remainingCalories);
-
 			if (knownCaloriesBurned && knownCaloriesBurned.length > 0) {
 				setCalsBurned(knownCaloriesBurned[0].calories);
 			}
-
-			dispatch(
-				updateData({
-					bmrData: JSON.stringify(bmrArr[0]),
-					caloricData: JSON.stringify({
-						consumed: totalCalories,
-						remaining: remainingCalories,
-						burned:
-							knownCaloriesBurned && knownCaloriesBurned.length > 0
-								? knownCaloriesBurned[0].calories
-								: 0
-					})
-				})
-			);
 		});
 	};
 
@@ -431,12 +410,7 @@ export default function FoodLogList({
 							<BMRBadgeLazy />
 						</Suspense>
 
-						{calsBurned > 0 && (
-							<div className='transition-opacity fade-in animate-in duration-1000 p-1 rounded-md border-2 font-normal text-xs flex flex-col gap-0 items-center w-16'>
-								<span>Expended</span>
-								<span>{formatUnit(calsBurned)}</span>
-							</div>
-						)}
+						<ExpendedBadge />
 
 						{bmr && (
 							<Suspense fallback={<Skeleton className='w-full h-full' />}>
@@ -447,36 +421,11 @@ export default function FoodLogList({
 				</div>
 
 				{bmr ? (
-					<div
-						className={cn(
-							'transition-opacity fade-in animate-in duration-1000 text-3xl portrait:text-2xl text-center flex flex-col items-center gap-0 relative font-bold',
-							Math.sign(remainingCals) === -1
-								? 'text-foreground'
-								: 'text-muted-foreground',
-							useFloaterNav && 'hidden'
-						)}>
-						<div className='font-semibold'>
-							{Math.abs(formatUnit(remainingCals))}
-						</div>
-						<div className='text-xs font-normal'>
-							{Math.sign(remainingCals) === -1
-								? 'calories remaining'
-								: 'calories over'}
-						</div>
-						{totalCals > 0 && (
-							<div
-								className={cn(
-									'absolute',
-									iconPosition === 'top' ? '-top-5' : 'top-4 -right-6'
-								)}>
-								{Math.sign(remainingCals) === -1 ? (
-									<ThumbsUp className='w-4 h-4 animate-ping' />
-								) : (
-									<ThumbsDown className='w-4 h-4 animate-ping' />
-								)}
-							</div>
+					<>
+						{!useFloaterNav && (
+							<RemainingCalories iconPosition={iconPosition} />
 						)}
-					</div>
+					</>
 				) : (
 					<Skeleton className={cn('w-14 h-14', useFloaterNav && 'hidden')} />
 				)}
@@ -583,12 +532,7 @@ export default function FoodLogList({
 									<BMRBadgeLazy />
 								</Suspense>
 
-								{calsBurned > 0 && (
-									<div className='transition-opacity fade-in animate-in duration-1000 p-1 rounded-md border-2 font-normal text-xs flex flex-col gap-0 items-center w-16'>
-										<span>Expended</span>
-										<span>{formatUnit(calsBurned)}</span>
-									</div>
-								)}
+								<ExpendedBadge />
 
 								{bmr && (
 									<Suspense fallback={<Skeleton className='w-full h-full' />}>
@@ -597,54 +541,7 @@ export default function FoodLogList({
 								)}
 							</div>
 						</div>
-						{/*calories remaining  */}
-						<div className='portrait:w-[100%]'>
-							{bmr ? (
-								<div
-									className={cn(
-										'transition-opacity fade-in animate-in duration-1000 text-2xl text-center flex flex-col items-center gap-0 relative font-bold',
-										Math.sign(remainingCals) === -1
-											? 'text-foreground'
-											: 'text-muted-foreground'
-									)}>
-									<div className='font-semibold'>
-										{Math.abs(formatUnit(remainingCals))}
-									</div>
-									<div className='text-xs font-normal'>
-										{Math.sign(remainingCals) === -1
-											? 'calories remaining'
-											: 'calories over'}
-									</div>
-									{totalCals > 0 && (
-										<div
-											className={cn(
-												'absolute flex flex-row items-center gap-0',
-												iconPosition === 'top'
-													? '-top-6 right-2'
-													: 'top-4 -right-6'
-											)}>
-											{Math.sign(remainingCals) === -1 ? (
-												<>
-													<ArrowDown className='w-6 h-6 text-green-600 animate-bounce' />
-													<Smile className='w-6 h-6' />
-												</>
-											) : (
-												<>
-													<ArrowUp className='w-6 h-6 text-red-600 animate-bounce' />
-													<Frown className='w-6 h-6' />
-												</>
-											)}
-										</div>
-									)}
-								</div>
-							) : logList.length > 0 ? (
-								<div className='flex flex-col items-center justify-center w-[25vw]'>
-									<ImSpinner2 className='w-10 h-10 animate-spin opacity-25' />
-								</div>
-							) : (
-								<div className='flex flex-col items-center justify-center w-[25vw]'></div>
-							)}
-						</div>
+						<RemainingCalories iconPosition={iconPosition} />
 					</CardContent>
 				</Card>
 			)}
