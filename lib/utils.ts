@@ -1,4 +1,12 @@
-import { BMRData, ColatedBMRData, GetFoodEntry, MacroType } from '@/types';
+import {
+	BaseMetabolicRateType,
+	BMRData,
+	ColatedBMRData,
+	GetFoodEntry,
+	GetKnowCaloriesBurned,
+	GetLogRemainder,
+	MacroType
+} from '@/types';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -410,6 +418,44 @@ export function generateMacroComparisons(
 			yesterday: yFat,
 			today: fat,
 			belowYesterday: fat < yFat
+		}
+	};
+}
+
+export function deserializeLog(log: string) {
+	const logObj = JSON.parse(log);
+
+	return {
+		...logObj,
+		createdAt: logObj.createdAt?.toString(),
+		updatedAt: logObj.updatedAt?.toString(),
+		foodItems: logObj.foodItems?.map((fi: GetFoodEntry) => ({
+			...fi,
+			eatenAt: new Date(fi.eatenAt)
+		})),
+		knownCaloriesBurned: logObj.knownCaloriesBurned?.map(
+			(kc: GetKnowCaloriesBurned) => ({
+				...kc,
+				createdAt: new Date(kc.createdAt),
+				updatedAt: new Date(kc.updatedAt)
+			})
+		),
+		logRemainder: logObj.logRemainder?.map((lr: GetLogRemainder) => ({
+			...lr,
+			createdAt: new Date(lr.createdAt),
+			updatedAt: new Date(lr.updatedAt)
+		})),
+		user: logObj.user && {
+			...logObj.user,
+			createdAt: new Date(logObj.user.createdAt),
+			updatedAt: new Date(logObj.user.updatedAt),
+			BaseMetabolicRate: logObj.user.BaseMetabolicRate?.map(
+				(bmr: BaseMetabolicRateType) => ({
+					...bmr,
+					createdAt: new Date(bmr.createdAt),
+					updatedAt: new Date(bmr.updatedAt)
+				})
+			)
 		}
 	};
 }

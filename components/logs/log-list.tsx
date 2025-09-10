@@ -7,6 +7,7 @@ import {
 	selectPreparedDishStatus,
 	setDishListState
 } from '@/lib/features/dish/preparedDishSlice';
+import { setInitialLog } from '@/lib/features/log/cumulativeLogSlice';
 import {
 	reset,
 	selectData,
@@ -90,9 +91,10 @@ export default function FoodLogList({
 	const dispatch = useAppDispatch();
 
 	const [logFetched, setLogFetched] = useState(false);
-
 	const [totalCals, setTotalCals] = useState(0);
-	const [logList, setLogList] = useState<GetFoodEntry[]>([]);
+	const [logList, setLogList] = useState<GetFoodEntry[]>(
+		todaysLog?.foodItems || []
+	);
 	const [log, setLog] = useState<GetLog>(todaysLog as GetLog);
 	const [bmr, setBmr] = useState<BaseMetabolicRateType>();
 	const [calsBurned, setCalsBurned] = useState(0);
@@ -104,6 +106,11 @@ export default function FoodLogList({
 
 	const preparedDishData = useAppSelector(selectPreparedDishData);
 	const preparedDishStatus = useAppSelector(selectPreparedDishStatus);
+	const logStatus = useAppSelector(selectStatus);
+	const logData = useAppSelector(selectData);
+	const logDataLog = useAppSelector(selectLog);
+	const logDataDeleted = useAppSelector(selectDeletedItem);
+	const logDataUpdated = useAppSelector(selectUpdatedItem);
 
 	useEffect(() => {
 		if (
@@ -118,12 +125,6 @@ export default function FoodLogList({
 	}, [preparedDishData, preparedDishStatus]);
 
 	const { scrollingUp, delta } = useScrolling();
-
-	const logStatus = useAppSelector(selectStatus);
-	const logData = useAppSelector(selectData);
-	const logDataLog = useAppSelector(selectLog);
-	const logDataDeleted = useAppSelector(selectDeletedItem);
-	const logDataUpdated = useAppSelector(selectUpdatedItem);
 
 	const getLog = async (ignoreLogList: boolean = false) => {
 		const res = await getCurrentLog();
@@ -200,16 +201,9 @@ export default function FoodLogList({
 					};
 
 					const update = {
-						id: item.id,
-						name: item.name,
-						category: item.category,
+						...item,
 						description: item.description ?? '',
-						numServings: item.numServings,
 						image: item.image ?? '',
-						carbGrams: item.carbGrams,
-						fatGrams: item.fatGrams,
-						proteinGrams: item.proteinGrams,
-						calories: item.calories,
 						eatenAt: item.eatenAt ? new Date(item.eatenAt) : new Date()
 					};
 
@@ -240,6 +234,7 @@ export default function FoodLogList({
 
 	const initialPageLoad = () => {
 		if (todaysLog) {
+			dispatch(setInitialLog(JSON.stringify(todaysLog)));
 			parseLog(todaysLog);
 		}
 	};
@@ -297,9 +292,8 @@ export default function FoodLogList({
 					const itemsOnly = dishList.map((item) => item.item);
 
 					if (!itemsOnly.includes(data.item) && !!data.add) {
-						const up = [...dishList];
+						const up = [...dishList, data];
 
-						up.push(data);
 						setDishList(up);
 
 						dispatch(
@@ -331,7 +325,7 @@ export default function FoodLogList({
 				key={`${item.id}-${item.eatenAt.getTime()}`}
 			/>
 		));
-	}, [logList]);
+	}, [logList, dishList]);
 
 	return (
 		<>
