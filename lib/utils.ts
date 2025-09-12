@@ -4,6 +4,7 @@ import {
 	ColatedBMRData,
 	GetFoodEntry,
 	GetKnowCaloriesBurned,
+	GetLogEnhanced,
 	GetLogRemainder,
 	MacroType
 } from '@/types';
@@ -457,5 +458,24 @@ export function deserializeLog(log: string) {
 				})
 			)
 		}
+	};
+}
+
+export function serializeLog(log: GetLogEnhanced) {
+	return {
+		...log,
+		createdAt: log && log.createdAt?.toString(),
+		updatedAt: log && log.updatedAt?.toString(),
+		user: {
+			...log.user,
+			createdAt: log.user.createdAt?.toString(),
+			updatedAt: log.user.updatedAt?.toString()
+		},
+		foodItems:
+			log &&
+			log.foodItems?.map((fi) => ({
+				...fi,
+				eatenAt: fi.eatenAt.toString()
+			}))
 	};
 }

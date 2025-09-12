@@ -1,25 +1,25 @@
 'use client';
 
-import { getCurrentLog, getKnownCaloriesBurned } from '@/actions/log-actions';
 import { useScrolling } from '@/hooks/use-scroll';
 import {
 	selectPreparedDishData,
 	selectPreparedDishStatus,
 	setDishListState
 } from '@/lib/features/dish/preparedDishSlice';
-import { setInitialLog } from '@/lib/features/log/cumulativeLogSlice';
 import {
 	reset,
+	selectCurrentDishItems,
 	selectData,
 	selectDeletedItem,
 	selectLog,
+	selectMacros,
 	selectStatus,
-	selectUpdatedItem
+	selectUpdatedItem,
+	setCurrentLog
 } from '@/lib/features/log/logFoodSlice';
-import { updateData } from '@/lib/features/user/userDataSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { cn, getStorageItem, setStorageItem } from '@/lib/utils';
-import { BaseMetabolicRateType, GetFoodEntry, GetLog } from '@/types';
+import { GetFoodEntry, GetLog } from '@/types';
 import { Flame, IdCard, List, LucideUtensilsCrossed, Soup } from 'lucide-react';
 import {
 	lazy,
@@ -90,14 +90,10 @@ export default function FoodLogList({
 }) {
 	const dispatch = useAppDispatch();
 
-	const [logFetched, setLogFetched] = useState(false);
-	const [totalCals, setTotalCals] = useState(0);
 	const [logList, setLogList] = useState<GetFoodEntry[]>(
 		todaysLog?.foodItems || []
 	);
 	const [log, setLog] = useState<GetLog>(todaysLog as GetLog);
-	const [bmr, setBmr] = useState<BaseMetabolicRateType>();
-	const [calsBurned, setCalsBurned] = useState(0);
 	const [dataFormat, setDataFormat] = useState('');
 	const [dishList, setDishList] = useState<
 		{ add: boolean; item: GetFoodEntry }[]
@@ -111,6 +107,8 @@ export default function FoodLogList({
 	const logDataLog = useAppSelector(selectLog);
 	const logDataDeleted = useAppSelector(selectDeletedItem);
 	const logDataUpdated = useAppSelector(selectUpdatedItem);
+	const logDataCurrentDish = useAppSelector(selectCurrentDishItems);
+	const logDataMacros = useAppSelector(selectMacros);
 
 	useEffect(() => {
 		if (
@@ -120,53 +118,16 @@ export default function FoodLogList({
 		) {
 			setDishList([]);
 		} else if (preparedDishStatus === 'logged') {
-			getLog();
+			parseLog(JSON.parse(preparedDishData.log || '{}'));
 		}
 	}, [preparedDishData, preparedDishStatus]);
 
 	const { scrollingUp, delta } = useScrolling();
 
-	const getLog = async (ignoreLogList: boolean = false) => {
-		const res = await getCurrentLog();
-		if (res?.success && res.data) {
-			parseLog(res.data as GetLog, ignoreLogList);
-		}
-	};
-
-	const fetchKDC = async () => {
-		const res = await getKnownCaloriesBurned();
-
-		if (res.success && res.data) {
-			setCalsBurned(res.data.calories);
-		}
-	};
-
-	const setRemainingCalories = (cals: number, metRate: number) => {
-		const remainder = cals - (metRate + calsBurned);
-
-		dispatch(
-			updateData({
-				bmrData: JSON.stringify(bmr || {}),
-				caloricData: JSON.stringify({
-					consumed: totalCals,
-					remaining: remainder,
-					burned: calsBurned && calsBurned > 0 ? calsBurned : 0
-				})
-			})
-		);
-	};
-
 	const resetLogState = () => {
-		// If the log was added, we need to update the log in order to update other info (e.g. total calories)
-		getLog(true);
-
 		// reset slice as navigation changes will persist added state
 		dispatch(reset());
 	};
-
-	useEffect(() => {
-		setRemainingCalories(totalCals, bmr?.bmr ?? 0);
-	}, [totalCals, bmr, calsBurned]);
 
 	useEffect(() => {
 		if (logStatus === 'updated') {
@@ -213,11 +174,30 @@ export default function FoodLogList({
 			});
 
 			resetLogState();
-		} else if (logStatus === 'expended calories') {
-			// get expended calories
-			fetchKDC();
+		} else if (
+			logStatus === 'loggedDish' &&
+			logDataCurrentDish &&
+			logDataCurrentDish?.length > 0
+		) {
+			const updates = logDataCurrentDish.map((item) => ({
+				...item,
+				description: item.description ?? '',
+				image: item.image ?? '',
+				eatenAt: item.eatenAt ? new Date(item.eatenAt) : new Date()
+			}));
+
+			setLogList((prev) => updates.concat(...prev));
+
+			resetLogState();
 		}
-	}, [logStatus, logData, logDataLog, logDataDeleted, logDataUpdated]);
+	}, [
+		logStatus,
+		logData,
+		logDataLog,
+		logDataDeleted,
+		logDataUpdated,
+		logDataCurrentDish
+	]);
 
 	useEffect(() => {
 		if (dataFormat) {
@@ -234,40 +214,19 @@ export default function FoodLogList({
 
 	const initialPageLoad = () => {
 		if (todaysLog) {
-			dispatch(setInitialLog(JSON.stringify(todaysLog)));
+			dispatch(setCurrentLog(JSON.stringify(todaysLog)));
 			parseLog(todaysLog);
 		}
 	};
 
 	const parseLog = (log: GetLog, ignoreLogList: boolean = false) => {
-		const {
-			foodItems = [],
-			totalCalories = 0,
-			knownCaloriesBurned = [],
-			user: { BaseMetabolicRate = [] }
-		} = log;
-
-		setTimeout(() => {
-			setLogFetched(true);
-		}, 3000);
+		const { foodItems = [] } = log;
 
 		setFetchingLog(() => {
 			setLog(log);
 
 			if (!ignoreLogList) {
 				setLogList(foodItems as GetFoodEntry[]);
-			}
-
-			const bmrArr = BaseMetabolicRate;
-
-			if (bmrArr.length > 0) {
-				setBmr(bmrArr[0]);
-			}
-
-			setTotalCals(totalCalories);
-
-			if (knownCaloriesBurned && knownCaloriesBurned.length > 0) {
-				setCalsBurned(knownCaloriesBurned[0].calories);
 			}
 		});
 	};
@@ -278,7 +237,7 @@ export default function FoodLogList({
 				allowEdit={true}
 				indx={indx}
 				item={item}
-				key={`${item.id}-${item.eatenAt.getTime()}`}
+				key={`${item.id}-${new Date(item.eatenAt).getTime()}`}
 			/>
 		));
 	}, [logList]);
@@ -322,7 +281,7 @@ export default function FoodLogList({
 				allowEdit={true}
 				indx={indx}
 				item={item}
-				key={`${item.id}-${item.eatenAt.getTime()}`}
+				key={`${item.id}-${new Date(item.eatenAt).getTime()}`}
 			/>
 		));
 	}, [logList, dishList]);
@@ -385,7 +344,10 @@ export default function FoodLogList({
 							<Button className='p-1 portrait:text-sm flex flex-row gap-2 w-60'>
 								<IoFastFoodOutline className='w-4 h-4 animate-pulse' />
 								Calories Consumed
-								<span className='font-semibold'> {totalCals}</span>
+								<span className='font-semibold'>
+									{' '}
+									{logDataMacros.caloriesConsumed}
+								</span>
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent className='max-w-[80vw] w-auto'>
@@ -406,15 +368,13 @@ export default function FoodLogList({
 
 						<ExpendedBadge />
 
-						{bmr && (
-							<Suspense fallback={<Skeleton className='w-full h-full' />}>
-								<LogRemainderBadgeLazy />
-							</Suspense>
-						)}
+						<Suspense fallback={<Skeleton className='w-full h-full' />}>
+							<LogRemainderBadgeLazy />
+						</Suspense>
 					</div>
 				</div>
 
-				{bmr ? (
+				{logDataMacros.caloriesRemaining ? (
 					<>
 						{!useFloaterNav && (
 							<RemainingCalories iconPosition={iconPosition} />
@@ -466,39 +426,37 @@ export default function FoodLogList({
 					)}>
 					<CardContent className='p-2 pt-5 flex flex-row items-center gap-2 relative'>
 						<div className='absolute -top-6 left-4 flex flex-row items-center justify-center gap-2.5'>
-							{logFetched && (
-								<Suspense fallback={<SubToolsSkeleton />}>
-									<DishListSheetLazy showBalloon={true}>
-										<div className='transition-opacity fade-in animate-in duration-1000 rounded-full w-11 h-11 bg-fuchsia-700 p-1.5 flex flex-col items-center justify-center'>
-											<Soup className='w-6 h-6 animate-pulse' />
-										</div>
-									</DishListSheetLazy>
+							<Suspense fallback={<SubToolsSkeleton />}>
+								<DishListSheetLazy showBalloon={true}>
+									<div className='transition-opacity fade-in animate-in duration-1000 rounded-full w-11 h-11 bg-fuchsia-700 p-1.5 flex flex-col items-center justify-center'>
+										<Soup className='w-6 h-6 animate-pulse' />
+									</div>
+								</DishListSheetLazy>
 
-									<FoodFavouriteListSheetLazy showBalloon={true}>
-										<div className='transition-opacity fade-in animate-in duration-1000 w-11 h-11 rounded-full p-2 bg-teal-600 flex flex-col items-center justify-center mt-1'>
-											<BsBookmarkStarFill className='w-6 h-6 animate-pulse' />
-										</div>
-									</FoodFavouriteListSheetLazy>
+								<FoodFavouriteListSheetLazy showBalloon={true}>
+									<div className='transition-opacity fade-in animate-in duration-1000 w-11 h-11 rounded-full p-2 bg-teal-600 flex flex-col items-center justify-center mt-1'>
+										<BsBookmarkStarFill className='w-6 h-6 animate-pulse' />
+									</div>
+								</FoodFavouriteListSheetLazy>
 
-									<FoodListSheetLazy>
-										<div className='transition-opacity fade-in animate-in duration-1000 rounded-full dark:bg-green-950 bg-green-500 p-3'>
-											<TbDatabaseSearch className='w-6 h-6 animate-pulse' />
-										</div>
-									</FoodListSheetLazy>
+								<FoodListSheetLazy>
+									<div className='transition-opacity fade-in animate-in duration-1000 rounded-full dark:bg-green-950 bg-green-500 p-3'>
+										<TbDatabaseSearch className='w-6 h-6 animate-pulse' />
+									</div>
+								</FoodListSheetLazy>
 
-									<ExpendedCaloriesButtonLazy showBalloon={true}>
-										<div className='transition-opacity fade-in animate-in duration-1000 mt-2 rounded-full p-2 bg-amber-700 w-10 h-10 flex flex-col items-center justify-center'>
-											<Flame className='w-6 h-6 animate-pulse' />
-										</div>
-									</ExpendedCaloriesButtonLazy>
+								<ExpendedCaloriesButtonLazy showBalloon={true}>
+									<div className='transition-opacity fade-in animate-in duration-1000 mt-2 rounded-full p-2 bg-amber-700 w-10 h-10 flex flex-col items-center justify-center'>
+										<Flame className='w-6 h-6 animate-pulse' />
+									</div>
+								</ExpendedCaloriesButtonLazy>
 
-									<WaterIntakeLazy showBalloon={true}>
-										<div className='transition-opacity fade-in animate-in duration-1000 mt-2 rounded-full p-2 bg-blue-700 w-10 h-10 flex flex-col items-center justify-center'>
-											<IoWaterOutline className='w-6 h-6 animate-pulse' />
-										</div>
-									</WaterIntakeLazy>
-								</Suspense>
-							)}
+								<WaterIntakeLazy showBalloon={true}>
+									<div className='transition-opacity fade-in animate-in duration-1000 mt-2 rounded-full p-2 bg-blue-700 w-10 h-10 flex flex-col items-center justify-center'>
+										<IoWaterOutline className='w-6 h-6 animate-pulse' />
+									</div>
+								</WaterIntakeLazy>
+							</Suspense>
 						</div>
 
 						<div className={cn('flex flex-col items-start w-full gap-1')}>
@@ -507,7 +465,10 @@ export default function FoodLogList({
 									<Button className='p-1 portrait:text-sm flex flex-row gap-2 w-60'>
 										<IoFastFoodOutline className='w-4 h-4 animate-pulse' />
 										Calories Consumed
-										<span className='font-semibold'> {totalCals}</span>
+										<span className='font-semibold'>
+											{' '}
+											{logDataMacros.caloriesConsumed}
+										</span>
 									</Button>
 								</PopoverTrigger>
 								<PopoverContent className='max-w-[90vw] w-auto'>
@@ -528,11 +489,9 @@ export default function FoodLogList({
 
 								<ExpendedBadge />
 
-								{bmr && (
-									<Suspense fallback={<Skeleton className='w-full h-full' />}>
-										<LogRemainderBadgeLazy />
-									</Suspense>
-								)}
+								<Suspense fallback={<Skeleton className='w-full h-full' />}>
+									<LogRemainderBadgeLazy />
+								</Suspense>
 							</div>
 						</div>
 						<RemainingCalories iconPosition={iconPosition} />

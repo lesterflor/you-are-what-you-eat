@@ -5,7 +5,7 @@ import {
 	getLogRemainderByUserIdInRange
 } from '@/actions/log-actions';
 import { remainderConfig } from '@/config';
-import { selectStatus } from '@/lib/features/log/logFoodSlice';
+import { selectMacros, selectStatus } from '@/lib/features/log/logFoodSlice';
 import { useAppSelector } from '@/lib/hooks';
 import { formatUnit, totalMacrosReducer } from '@/lib/utils';
 import { GetFoodEntry, GetLog, LogRemainderDataType } from '@/types';
@@ -31,12 +31,15 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { ScrollArea } from '../ui/scroll-area';
 
 export default function LogRemainderBadge() {
+	const logMacros = useAppSelector(selectMacros);
+	const logDataStatus = useAppSelector(selectStatus);
+
 	const [logRemainder, setLogRemainder] = useState<LogRemainderDataType>();
-	const logStatus = useAppSelector(selectStatus);
+
 	const [popOpen, setPopOpen] = useState(false);
 	const [isFetching, setIsFetching] = useTransition();
 	const [remainders, setRemainders] = useState<GetLog[]>();
-	const [remainder, setRemainder] = useState(0);
+	const [remainder, setRemainder] = useState(logMacros.caloriesRemaining ?? 0);
 	const [remainderStr, setRemainderStr] = useState('');
 	const [range, setRange] = useState<DateRange | undefined>();
 	const [chartData, setChartData] = useState<
@@ -45,6 +48,21 @@ export default function LogRemainderBadge() {
 			createdAt: string;
 		}[]
 	>();
+
+	useEffect(() => {
+		if (
+			(logDataStatus === 'initial' ||
+				logDataStatus === 'loggedCalories' ||
+				logDataStatus === 'added' ||
+				logDataStatus === 'updated' ||
+				logDataStatus === 'deleted' ||
+				logDataStatus === 'loggedDish') &&
+			logMacros.caloriesRemainingCumulative
+		) {
+			getLogCalsRemaining();
+			setRemainder(logMacros.caloriesRemainingCumulative);
+		}
+	}, [logMacros, logDataStatus]);
 
 	useEffect(() => {
 		if (!popOpen) {
@@ -130,10 +148,6 @@ export default function LogRemainderBadge() {
 		}
 	}, [range]);
 
-	useEffect(() => {
-		getLogCalsRemaining();
-	}, [logStatus]);
-
 	const CustomTooltip = ({
 		active,
 		payload
@@ -179,8 +193,28 @@ export default function LogRemainderBadge() {
 	return (
 		<>
 			{isFetching ? (
-				<div className='w-20 h-8 flex flex-col items-center justify-center'>
-					<ImSpinner2 className='w-4 h-4 animate-spin opacity-25' />
+				<div className='flex flex-col items-center justify-center'>
+					{/* <ImSpinner2 className='w-4 h-4 animate-spin opacity-25' /> */}
+					<>
+						{remainder && (
+							<Badge
+								variant='secondary'
+								className='transition-opacity fade-in animate-in duration-1000 select-none p-1 rounded-md border-2 font-normal text-xs flex flex-row gap-1 items-start'>
+								<ImSpinner2 className='w-4 h-4 animate-spin opacity-25' />
+								<div className='flex flex-col gap-0'>
+									<span className='whitespace-nowrap'>Cumulative</span>
+									<div className='flex flex-row gap-1 items-center'>
+										{Math.sign(formatUnit(remainder)) === -1 ? (
+											<ArrowUp className='w-3 h-3 text-red-600 animate-bounce' />
+										) : (
+											<ArrowDown className='w-3 h-3 text-green-600 animate-bounce' />
+										)}
+										<span>{Math.abs(formatUnit(remainder))}</span>
+									</div>
+								</div>
+							</Badge>
+						)}
+					</>
 				</div>
 			) : (
 				logRemainder && (
@@ -190,7 +224,7 @@ export default function LogRemainderBadge() {
 						<PopoverTrigger>
 							<Badge
 								variant='secondary'
-								className='transition-opacity fade-in animate-in duration-1000 select-none p-1 rounded-md border-2 font-normal text-xs flex flex-row gap-1 items-start'>
+								className='select-none p-1 rounded-md border-2 font-normal text-xs flex flex-row gap-1 items-start'>
 								<Info className='w-4 h-4' />
 								<div className='flex flex-col gap-0'>
 									<span className='whitespace-nowrap'>Cumulative</span>
@@ -230,14 +264,14 @@ export default function LogRemainderBadge() {
 											{formatUnit(logRemainder.yesterdaysExpended)}
 										</div>
 										<div>Base Metabolic Rate</div>
-										<div className='text-foreground'>{logRemainder.bmr}</div>
+										<div className='text-foreground'>{logMacros.bmr}</div>
 										<div>Yesterday&apos;s Remainder</div>
 										<div className='text-foreground'>
 											{formatUnit(logRemainder.yesterdaysRemainder)}
 										</div>
 										<div>Today&apos; Calories</div>
 										<div className='text-foreground'>
-											{formatUnit(logRemainder.todaysConsumed)}
+											{formatUnit(logMacros.caloriesConsumed ?? 0)}
 										</div>
 										<div className='col-span-2'>
 											(BMR Calories + Expended Yesterday - Consumed Yesterday) +

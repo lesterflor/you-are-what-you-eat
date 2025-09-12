@@ -49,6 +49,8 @@ export const userDataSlice = createAppSlice({
 					action.payload.bmrData
 				);
 
+				// TODO - call for this from loglist needs to reflect initial log for today - water intake bmr is missing because of this
+
 				const {
 					weight,
 					id,

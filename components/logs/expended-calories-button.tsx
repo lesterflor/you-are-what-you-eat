@@ -1,20 +1,16 @@
 'use client';
 
-import { getKnownCaloriesBurned } from '@/actions/log-actions';
-import { selectData, selectStatus } from '@/lib/features/log/logFoodSlice';
 import {
-	caloriesUpdatedAsync,
-	selectUserData,
-	selectUserDataMessage,
-	selectUserDataStatus
-} from '@/lib/features/user/userDataSlice';
+	logCaloriesBurnedAsync,
+	selectMacros,
+	selectStatus
+} from '@/lib/features/log/logFoodSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { ChevronLeft, ChevronRight, Flame, InfoIcon, Plus } from 'lucide-react';
 import { useEffect, useOptimistic, useState, useTransition } from 'react';
 import { FaWalking } from 'react-icons/fa';
 import { GiWeightLiftingUp } from 'react-icons/gi';
 import { ImSpinner2 } from 'react-icons/im';
-import { toast } from 'sonner';
 import IncrementButton from '../increment-button';
 import { Button } from '../ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
@@ -29,11 +25,7 @@ export default function ExpendedCaloriesButton({
 }) {
 	const dispatch = useAppDispatch();
 	const logStatus = useAppSelector(selectStatus);
-	const logData = useAppSelector(selectData);
-
-	const userData = useAppSelector(selectUserData);
-	const userDataStatus = useAppSelector(selectUserDataStatus);
-	const userDataMessage = useAppSelector(selectUserDataMessage);
+	const logDataMacros = useAppSelector(selectMacros);
 
 	const [isPending, startPendingTransition] = useTransition();
 
@@ -44,24 +36,8 @@ export default function ExpendedCaloriesButton({
 			currentCalories + optimisticValue
 	);
 
-	const [fetching, startFetchingTransition] = useTransition();
 	const [inputVal, setInputVal] = useState(10);
 	const [popoverOpen, setPopoverOpen] = useState(false);
-
-	useEffect(() => {
-		if (userDataStatus === 'loggedCalories' && userData) {
-			const caloricData = JSON.parse(userData?.caloricData || '{}');
-			if (caloricData && caloricData.burned !== undefined) {
-				setCaloriesBurned(caloricData.burned);
-
-				setInputVal(0);
-				setPopoverOpen(false);
-				toast.success(userDataMessage);
-			}
-		} else if (userDataStatus === 'failed') {
-			toast.error(userDataMessage);
-		}
-	}, [userData, userDataStatus, userDataMessage]);
 
 	useEffect(() => {
 		if (!popoverOpen) {
@@ -69,27 +45,15 @@ export default function ExpendedCaloriesButton({
 		}
 	}, [popoverOpen]);
 
-	const getKnownCalories = async () => {
-		startFetchingTransition(async () => {
-			const res = await getKnownCaloriesBurned();
-
-			if (res?.success && res.data) {
-				startFetchingTransition(() => {
-					setCaloriesBurned(res.data.calories);
-				});
-			}
-		});
-	};
-
 	useEffect(() => {
-		getKnownCalories();
-	}, []);
-
-	useEffect(() => {
-		if (logStatus !== 'idle') {
-			getKnownCalories();
+		if (logStatus === 'initial' && logDataMacros) {
+			setCaloriesBurned(logDataMacros.caloriesBurned as number);
+		} else if (logStatus === 'loggedCalories') {
+			setInputVal(0);
+			setCaloriesBurned(logDataMacros.caloriesBurned as number);
+			setPopoverOpen(false);
 		}
-	}, [logData, logStatus]);
+	}, [logDataMacros, logStatus]);
 
 	return (
 		<Popover
@@ -126,11 +90,7 @@ export default function ExpendedCaloriesButton({
 					Expended Calories
 				</div>
 				<div className='text-3xl font-semibold text-amber-600 h-6 flex flex-col items-center justify-center'>
-					{fetching ? (
-						<ImSpinner2 className='animate-spin' />
-					) : (
-						optimisticCalories
-					)}
+					{optimisticCalories}
 				</div>
 				<div className='flex flex-row items-center justify-between gap-4 w-full select-none'>
 					<div className='flex flex-col gap-4 items-center justify-center w-full'>
@@ -251,26 +211,7 @@ export default function ExpendedCaloriesButton({
 						startPendingTransition(async () => {
 							setOptimisticCalories(inputVal);
 
-							dispatch(caloriesUpdatedAsync(inputVal));
-
-							// try {
-							// 	const res = await addKnownCaloriesBurned(inputVal);
-							// 	if (res.success && res.data) {
-							// 		toast.success(res.message);
-
-							// 		setCaloriesBurned(res.data.calories);
-
-							// 		// redux
-							// 		dispatch(expendedCaloriesUpdated(inputVal));
-
-							// 		setInputVal(0);
-							// 		setPopoverOpen(false);
-							// 	} else {
-							// 		toast.error(res.message);
-							// 	}
-							// } catch (err) {
-							// 	console.error(`failed to add calories: ${err}`);
-							// }
+							dispatch(logCaloriesBurnedAsync(inputVal));
 						});
 					}}>
 					{isPending ? (

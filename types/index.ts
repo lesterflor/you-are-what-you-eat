@@ -209,3 +209,87 @@ export type LogComparisonType = {
 		belowYesterday: boolean;
 	};
 } | null;
+
+export type GetLogEnhanced = {
+	user: {
+		createdAt?: Date;
+		updatedAt?: Date;
+		BaseMetabolicRate: {
+			bmr: number;
+		}[];
+	};
+	knownCaloriesBurned: {
+		calories: number;
+	}[];
+	logRemainder: {
+		calories: number;
+	}[];
+} & {
+	id: string;
+	createdAt: Date;
+	updatedAt: Date;
+	userId: string;
+	foodItems: {
+		id: string;
+		name: string;
+		category: string;
+		description: string | null;
+		numServings: number;
+		image: string | null;
+		carbGrams: number;
+		fatGrams: number;
+		proteinGrams: number;
+		calories: number;
+		eatenAt: Date;
+	}[];
+};
+
+export type GetLogDetailed = {
+	comparisons: LogComparisonType;
+	totalCalories: number;
+	remainingCalories: number;
+	user: {
+		BaseMetabolicRate: {
+			weight: number;
+			weightUnit: string;
+			height: number;
+			heightUnit: string;
+			age: number;
+			sex: string;
+			bmr: number;
+		}[];
+	} & {
+		id: string;
+		createdAt: Date;
+		updatedAt: Date;
+		name: string | null;
+		image: string | null;
+		email: string | null;
+		emailVerified: Date | null;
+		password: string | null;
+		role: string;
+	};
+	knownCaloriesBurned: {
+		calories: number;
+	}[];
+	logRemainder: {
+		calories: number;
+	}[];
+	id: string;
+	createdAt: Date;
+	updatedAt: Date;
+	userId: string;
+	foodItems: {
+		id: string;
+		name: string;
+		category: string;
+		description: string | null;
+		numServings: number;
+		image: string | null;
+		carbGrams: number;
+		fatGrams: number;
+		proteinGrams: number;
+		calories: number;
+		eatenAt: Date;
+	}[];
+};

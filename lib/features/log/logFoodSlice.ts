@@ -1,19 +1,37 @@
 import {
+	addKnownCaloriesBurned,
 	deleteFoodLogEntry,
 	updateFoodLogEntry,
 	updateLogWithOrder
 } from '@/actions/log-actions';
+import { logDishItems } from '@/actions/prepared-dish-actions';
 import { createAppSlice } from '@/lib/createAppSlice';
-import { FoodEntry } from '@/types';
+import { serializeLog, totalMacrosReducer } from '@/lib/utils';
+import { FoodEntry, GetLogEnhanced, GetPreparedDish } from '@/types';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import { toast } from 'sonner';
 
-export interface FoodItemsState {
+type SerializedFoodItems = {
+	eatenAt: string;
 	id: string;
 	name: string;
 	category: string;
 	description: string | null;
 	numServings: number;
 	image: string | null;
+	carbGrams: number;
+	fatGrams: number;
+	proteinGrams: number;
+	calories: number;
+}[];
+
+export interface FoodItemsState {
+	id: string;
+	name: string;
+	category: string;
+	description?: string | null;
+	numServings: number;
+	image?: string | null;
 	carbGrams: number;
 	fatGrams: number;
 	proteinGrams: number;
@@ -32,21 +50,52 @@ export interface LogFoodSliceState {
 	};
 	log?: {
 		id?: string;
-		createdAt?: string;
-		updatedAt?: string;
+		createdAt?: string | Date;
+		updatedAt?: string | Date;
 		userId?: string;
 		foodItems?: FoodItemsState[];
 	};
+
+	currentDishItems?: FoodItemsState[];
+
+	macros: {
+		caloriesBurned?: number | undefined;
+		caloriesConsumed?: number | undefined;
+		caloriesRemaining?: number | undefined;
+		caloriesRemainingCumulative?: number | undefined;
+		bmr?: number | undefined;
+		totalCarbs?: number | undefined;
+		totalProtein?: number | undefined;
+		totalFat?: number | undefined;
+	};
+
+	bmrData: {
+		bmr: number | undefined;
+		weightUnit: string | undefined;
+		weight: number | undefined;
+		heightUnit: string | undefined;
+		height: number | undefined;
+		age: number | undefined;
+		sex: string | undefined;
+	};
+
+	currentLog?: string;
+
 	deletedItem?: FoodItemsState;
 	updatedItem?: FoodItemsState;
 	status:
 		| 'idle'
+		| 'initial'
 		| 'added'
 		| 'updated'
 		| 'updating'
 		| 'deleted'
 		| 'deleting'
 		| 'expended calories'
+		| 'loggingCalories'
+		| 'loggedCalories'
+		| 'loggingDish'
+		| 'loggedDish'
 		| 'adding'
 		| 'failed';
 }
@@ -60,6 +109,27 @@ const initialState: LogFoodSliceState = {
 		message: '',
 		pendingItemId: undefined
 	},
+	currentDishItems: [],
+	macros: {
+		caloriesBurned: undefined,
+		caloriesConsumed: undefined,
+		caloriesRemaining: undefined,
+		caloriesRemainingCumulative: undefined,
+		bmr: undefined,
+		totalCarbs: undefined,
+		totalProtein: undefined,
+		totalFat: undefined
+	},
+	bmrData: {
+		bmr: undefined,
+		weightUnit: undefined,
+		weight: undefined,
+		heightUnit: undefined,
+		height: undefined,
+		age: undefined,
+		sex: undefined
+	},
+	currentLog: '',
 	log: undefined,
 	deletedItem: undefined,
 	updatedItem: undefined,
@@ -147,11 +217,14 @@ export const logFoodSlice = createAppSlice({
 						action.payload === 1 ? 'calorie' : 'calories'
 					} to your expended calories`
 				};
+				state.macros.caloriesBurned =
+					(state.value.caloriesExpended ?? 0) + action.payload;
 				state.status = 'expended calories';
 			}
 		),
 		reset: create.reducer((state) => {
 			state.value = {
+				...state.value,
 				name: '',
 				servings: 0,
 				time: '',
@@ -159,6 +232,50 @@ export const logFoodSlice = createAppSlice({
 				message: ''
 			};
 			state.status = 'idle';
+		}),
+
+		setCurrentLog: create.reducer((state, action: PayloadAction<string>) => {
+			state.currentLog = action.payload;
+
+			// must deserialize first to pass to totalMacrosReducer
+			const logSer = JSON.parse(action.payload);
+
+			const { totalCarbs, totalFat, totalProtein, caloriesConsumed } =
+				deserFoodItemsMacros(logSer.foodItems);
+
+			const {
+				remainingCalories,
+				logRemainder,
+				knownCaloriesBurned,
+				user: { BaseMetabolicRate: bmrArr }
+			} = logSer;
+
+			state.macros = {
+				...state.macros,
+				bmr: bmrArr[0].bmr,
+				caloriesBurned: knownCaloriesBurned[0].calories,
+				caloriesRemaining: remainingCalories,
+				caloriesRemainingCumulative: logRemainder[0].calories,
+				caloriesConsumed,
+				totalCarbs,
+				totalFat,
+				totalProtein
+			};
+
+			const { bmr, weight, weightUnit, height, heightUnit, age, sex } =
+				logSer.user.BaseMetabolicRate[0];
+
+			state.bmrData = {
+				bmr,
+				weightUnit,
+				weight,
+				height,
+				heightUnit,
+				age,
+				sex
+			};
+
+			state.status = 'initial';
 		}),
 
 		// The function below is called a thunk and allows us to perform async logic. It
@@ -171,10 +288,25 @@ export const logFoodSlice = createAppSlice({
 				const res = await deleteFoodLogEntry(id);
 
 				if (res.data && res.success) {
-					return { ...res.data, eatenAt: res.data.eatenAt.toString() };
+					return {
+						...res.data,
+						eatenAt: res.data.eatenAt.toString(),
+						log: {
+							...res.log,
+							createdAt: res.log.createdAt.toString(),
+							updatedAt: res.log.updatedAt.toString(),
+							foodItems:
+								res.log &&
+								res.log.foodItems?.map((fi) => ({
+									...fi,
+									eatenAt: fi.eatenAt.toString()
+								}))
+						},
+						message: res.message
+					};
 				}
 
-				return rejectWithValue({ pendingId: id });
+				return rejectWithValue({ pendingId: id, error: res.message as string });
 			},
 			{
 				pending: (state) => {
@@ -187,8 +319,11 @@ export const logFoodSlice = createAppSlice({
 						state.deletedItem = action.payload;
 					}
 
-					if (action.payload && state.log?.foodItems) {
+					if (action.payload && action.payload.log?.foodItems) {
 						const dateString = `${new Date().getTime()}`;
+
+						const { totalCarbs, totalFat, totalProtein, caloriesConsumed } =
+							deserFoodItemsMacros(action.payload.log.foodItems);
 
 						state.value = {
 							name: action.payload.name,
@@ -198,49 +333,174 @@ export const logFoodSlice = createAppSlice({
 							message: `You deleted your logged food item, ${action.payload.name}`
 						};
 
-						state.log.foodItems = state.log.foodItems?.filter(
-							(item) => item.id !== action.payload?.id
+						toast.success(
+							`You deleted your logged food item, ${action.payload.name}`
 						);
+
+						state.log = {
+							...state.log,
+							foodItems: action.payload.log.foodItems?.filter(
+								(item) => item.id !== action.payload?.id
+							)
+						};
+
+						const serLog = {
+							...action.payload.log
+						};
+
+						state.log = serLog;
+						state.currentLog = JSON.stringify(serLog);
+
+						state.macros.totalCarbs = totalCarbs;
+						state.macros.totalFat = totalFat;
+						state.macros.totalProtein = totalProtein;
+						state.macros.caloriesBurned =
+							action.payload.log.knownCaloriesBurned[0]?.calories ?? 0;
+						state.macros.caloriesConsumed = caloriesConsumed;
+						state.macros.caloriesRemaining =
+							caloriesConsumed -
+							(action.payload.log.knownCaloriesBurned[0].calories +
+								action.payload.log.user.BaseMetabolicRate[0].bmr);
+						state.macros.bmr = action.payload.log.user.BaseMetabolicRate[0].bmr;
 					}
 				},
 				rejected: (state, action) => {
+					const errMsg = (
+						action.payload as { pendingId: string; error: string }
+					).error;
 					state.status = 'failed';
 					state.value = {
 						...state.value,
 						pendingItemId: (action.payload as { pendingId: string })?.pendingId,
-						message: 'Failed to delete item from your log'
+						message: errMsg
 					};
+					toast.error(errMsg);
+				}
+			}
+		),
+
+		logPrepDishAsync: create.asyncThunk(
+			async (dish: GetPreparedDish, { rejectWithValue }) => {
+				const res = await logDishItems(dish);
+
+				if (res.success) {
+					return {
+						dishItems: res.data?.map((item) => ({
+							...item,
+							eatenAt: item.eatenAt.toString()
+						})),
+						message: res.message,
+						log: {
+							...res.log,
+							createdAt: res.log && res.log.createdAt?.toString(),
+							updatedAt: res.log && res.log.updatedAt?.toString(),
+							user: {
+								...res.log?.user,
+								createdAt: res.log?.user.createdAt.toString(),
+								updatedAt: res.log?.user.updatedAt.toString()
+							},
+							foodItems:
+								res.log &&
+								res.log.foodItems?.map((fi) => ({
+									...fi,
+									eatenAt: fi.eatenAt.toString()
+								}))
+						}
+					};
+				} else {
+					return rejectWithValue(dish);
+				}
+			},
+			{
+				pending: (state) => {
+					state.status = 'loggingDish';
+				},
+				fulfilled: (state, action) => {
+					state.status = 'loggedDish';
+					state.value.message = action.payload.message;
+					state.currentLog = JSON.stringify(action.payload.log);
+
+					state.currentDishItems = action.payload.dishItems;
+
+					const serLog = {
+						...action.payload.log
+					};
+
+					state.log = serLog;
+
+					if (serLog.foodItems) {
+						const { totalCarbs, totalFat, totalProtein, caloriesConsumed } =
+							deserFoodItemsMacros(serLog.foodItems);
+
+						state.macros.totalCarbs = totalCarbs;
+						state.macros.totalFat = totalFat;
+						state.macros.totalProtein = totalProtein;
+
+						if (
+							action.payload.log.knownCaloriesBurned &&
+							action.payload.log.user.BaseMetabolicRate
+						) {
+							state.macros = {
+								...state.macros,
+								caloriesBurned:
+									action.payload.log.knownCaloriesBurned[0]?.calories ?? 0,
+								caloriesConsumed,
+								caloriesRemaining:
+									caloriesConsumed -
+									(action.payload.log.knownCaloriesBurned[0].calories +
+										action.payload.log.user.BaseMetabolicRate[0].bmr),
+								bmr: action.payload.log.user.BaseMetabolicRate[0].bmr
+							};
+						}
+					}
+
+					toast.success(action.payload.message);
+				},
+				rejected: (state, action) => {
+					const failedDish = action.payload as GetPreparedDish;
+					state.status = 'failed';
+					state.value.message = `Failed to log dish, ${failedDish.name}`;
+					toast.error(`Failed to log dish, ${failedDish.name}`);
 				}
 			}
 		),
 
 		logFoodAsync: create.asyncThunk(
-			async ({
-				logFoodItem,
-				name,
-				servings
-			}: {
-				logFoodItem: FoodEntry;
-				name: string;
-				servings: number;
-			}) => {
-				const res = await updateLogWithOrder([logFoodItem]);
-				// The value we return becomes the `fulfilled` action payload
-				return {
-					log: {
-						...res.data,
-						createdAt: res.data && res.data.createdAt?.toString(),
-						updatedAt: res.data && res.data.updatedAt?.toString(),
-						foodItems:
-							res.data &&
-							res.data.foodItems?.map((fi) => ({
-								...fi,
-								eatenAt: fi.eatenAt.toString()
-							}))
-					},
+			async (
+				{
+					logFoodItem,
 					name,
 					servings
-				};
+				}: {
+					logFoodItem: FoodEntry;
+					name: string;
+					servings: number;
+				},
+				{ rejectWithValue }
+			) => {
+				const res = await updateLogWithOrder([logFoodItem]);
+				// The value we return becomes the `fulfilled` action payload
+
+				if (res.data) {
+					return {
+						log: {
+							...res.data,
+							createdAt: res.data && res.data.createdAt?.toString(),
+							updatedAt: res.data && res.data.updatedAt?.toString(),
+							foodItems:
+								res.data &&
+								res.data.foodItems?.map((fi) => ({
+									...fi,
+									eatenAt: fi.eatenAt.toString()
+								}))
+						},
+						name,
+						servings,
+						message: res.message
+					};
+				}
+
+				return rejectWithValue({ error: res.message });
 			},
 			{
 				pending: (state) => {
@@ -250,15 +510,23 @@ export const logFoodSlice = createAppSlice({
 					state.status = 'added';
 
 					if (action.payload) {
+						const successMsg = `You logged ${action.payload.servings} ${
+							action.payload.servings === 1 ? 'serving' : 'servings'
+						} of ${action.payload.name}`;
+
+						toast.success(successMsg);
+
 						const dateString = `${new Date().getTime()}`;
+
+						const { totalCarbs, totalFat, totalProtein, caloriesConsumed } =
+							deserFoodItemsMacros(action.payload.log.foodItems);
+
 						state.value = {
 							name: action.payload.name,
 							servings: action.payload.servings,
 							time: dateString,
 							caloriesExpended: state.value.caloriesExpended,
-							message: `You logged ${action.payload.servings} ${
-								action.payload.servings === 1 ? 'serving' : 'servings'
-							} of ${action.payload.name}`
+							message: successMsg
 						};
 
 						const serLog = {
@@ -266,14 +534,79 @@ export const logFoodSlice = createAppSlice({
 						};
 
 						state.log = serLog;
+						state.currentLog = JSON.stringify(serLog);
+
+						state.macros.totalCarbs = totalCarbs;
+						state.macros.totalFat = totalFat;
+						state.macros.totalProtein = totalProtein;
+						state.macros.caloriesBurned =
+							action.payload.log.knownCaloriesBurned[0]?.calories ?? 0;
+						state.macros.caloriesConsumed = caloriesConsumed;
+						state.macros.caloriesRemaining =
+							caloriesConsumed -
+							(action.payload.log.knownCaloriesBurned[0].calories +
+								action.payload.log.user.BaseMetabolicRate[0].bmr);
+						state.macros.bmr = action.payload.log.user.BaseMetabolicRate[0].bmr;
 					}
 				},
-				rejected: (state) => {
+				rejected: (state, action) => {
+					const errMsg = (action.payload as { error: string })?.error;
 					state.status = 'failed';
 					state.value = {
 						...state.value,
-						message: 'Failed to add food to your log'
+						message: errMsg
 					};
+
+					toast.error(errMsg);
+				}
+			}
+		),
+
+		logCaloriesBurnedAsync: create.asyncThunk(
+			async (cals: number, { rejectWithValue }) => {
+				// action to add new known calories burned
+				const res = await addKnownCaloriesBurned(cals);
+
+				if (res.success) {
+					return {
+						calories: res.data?.calories ?? 0,
+						log: serializeLog(res.log as GetLogEnhanced),
+						message: res.message
+					};
+				}
+
+				return rejectWithValue(res.message);
+			},
+			{
+				pending: (state) => {
+					state.status = 'loggingCalories';
+				},
+				fulfilled: (state, action) => {
+					state.status = 'loggedCalories';
+
+					if (action.payload?.log) {
+						const { totalCarbs, totalFat, totalProtein, caloriesConsumed } =
+							deserFoodItemsMacros(action.payload.log.foodItems);
+
+						state.macros.totalCarbs = totalCarbs;
+						state.macros.totalFat = totalFat;
+						state.macros.totalProtein = totalProtein;
+						state.macros.caloriesBurned =
+							action.payload.log.knownCaloriesBurned[0]?.calories ?? 0;
+						state.macros.caloriesConsumed = caloriesConsumed;
+						state.macros.caloriesRemaining =
+							caloriesConsumed -
+							(action.payload.log.knownCaloriesBurned[0].calories +
+								action.payload.log.user.BaseMetabolicRate[0].bmr);
+						state.macros.bmr = action.payload.log.user.BaseMetabolicRate[0].bmr;
+
+						toast.success(action.payload.message);
+					}
+				},
+				rejected: (state, action) => {
+					state.status = 'failed';
+					state.value.message = action.payload as string;
+					toast.error(action.payload as string);
 				}
 			}
 		),
@@ -285,22 +618,13 @@ export const logFoodSlice = createAppSlice({
 				if (res.success && res.data) {
 					return {
 						data: { ...res.data, eatenAt: res.data?.eatenAt.toString() },
-						log: {
-							...res.log,
-							createdAt: res.log && res.log.createdAt?.toString(),
-							updatedAt: res.log && res.log.updatedAt?.toString(),
-							foodItems:
-								res.log &&
-								res.log.foodItems?.map((fi) => ({
-									...fi,
-									eatenAt: fi.eatenAt.toString()
-								}))
-						}
+						log: serializeLog(res.log)
 					};
 				}
 
 				return rejectWithValue({
-					pendingId: entry.id
+					pendingId: entry.id,
+					error: res.message
 				});
 			},
 			{
@@ -312,13 +636,33 @@ export const logFoodSlice = createAppSlice({
 
 					if (action.payload.data) {
 						const dateString = `${new Date().getTime()}`;
+
+						const { totalCarbs, totalFat, totalProtein, caloriesConsumed } =
+							deserFoodItemsMacros(action.payload.log.foodItems);
+
+						const successMsg = `You updated the serving of ${action.payload.data.name} to ${action.payload.data.numServings}`;
+
 						state.value = {
 							name: action.payload.data.name as string,
 							servings: action.payload.data.numServings as number,
 							time: dateString,
 							caloriesExpended: state.value.caloriesExpended,
-							message: `You updated the serving of ${action.payload.data.name} to ${action.payload.data.numServings}`
+							message: successMsg
 						};
+
+						toast.success(successMsg);
+
+						state.macros.totalCarbs = totalCarbs;
+						state.macros.totalFat = totalFat;
+						state.macros.totalProtein = totalProtein;
+						state.macros.caloriesBurned =
+							action.payload.log.knownCaloriesBurned[0]?.calories ?? 0;
+						state.macros.caloriesConsumed = caloriesConsumed;
+						state.macros.caloriesRemaining =
+							caloriesConsumed -
+							(action.payload.log.knownCaloriesBurned[0].calories +
+								action.payload.log.user.BaseMetabolicRate[0].bmr);
+						state.macros.bmr = action.payload.log.user.BaseMetabolicRate[0].bmr;
 
 						state.updatedItem = {
 							...action.payload.data,
@@ -340,11 +684,19 @@ export const logFoodSlice = createAppSlice({
 				rejected: (state, action) => {
 					state.status = 'failed';
 
+					const errMsg = (
+						action.payload as { pendingId: string; error: string }
+					)?.error;
+
 					state.value = {
 						...state.value,
-						pendingItemId: (action.payload as { pendingId: string })?.pendingId,
-						message: 'Failed to update item in your log'
+						pendingItemId: (
+							action.payload as { pendingId: string; error: string }
+						)?.pendingId,
+						message: errMsg
 					};
+
+					toast.error(errMsg);
 				}
 			}
 		)
@@ -357,7 +709,11 @@ export const logFoodSlice = createAppSlice({
 		selectLog: (state) => state.log,
 		selectDeletedItem: (state) => state.deletedItem,
 		selectUpdatedItem: (state) => state.updatedItem,
-		selectStateMessage: (state) => state.value.message
+		selectStateMessage: (state) => state.value.message,
+		selectMacros: (state) => state.macros,
+		selectCurrentLog: (state) => state.currentLog,
+		selectBMRData: (state) => state.bmrData,
+		selectCurrentDishItems: (state) => state.currentDishItems
 	}
 });
 
@@ -370,7 +726,10 @@ export const {
 	logFoodAsync,
 	deleteLogItemAsync,
 	updateItemAsync,
-	reset
+	reset,
+	setCurrentLog,
+	logCaloriesBurnedAsync,
+	logPrepDishAsync
 } = logFoodSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
@@ -380,7 +739,11 @@ export const {
 	selectLog,
 	selectDeletedItem,
 	selectUpdatedItem,
-	selectStateMessage
+	selectStateMessage,
+	selectMacros,
+	selectCurrentLog,
+	selectBMRData,
+	selectCurrentDishItems
 } = logFoodSlice.selectors;
 
 // We can also write thunks by hand, which may contain both sync and async logic.
@@ -394,3 +757,24 @@ export const {
 // 			dispatch(incrementByAmount(amount));
 // 		}
 // 	};
+
+const deserFoodItemsMacros = (items: SerializedFoodItems) => {
+	// must deserialize first to pass to totalMacrosReducer
+	const foodEntriesDeserialized = [...items].map((item) => ({
+		...item,
+		description: item.description ?? '',
+		image: item.image ?? '',
+		eatenAt: new Date(item.eatenAt)
+	}));
+
+	const { calories, carbs, fat, protein } = totalMacrosReducer(
+		foodEntriesDeserialized
+	);
+
+	return {
+		totalCarbs: carbs,
+		totalFat: fat,
+		totalProtein: protein,
+		caloriesConsumed: calories
+	};
+};

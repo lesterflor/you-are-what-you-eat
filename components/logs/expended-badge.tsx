@@ -1,5 +1,6 @@
 'use client';
 
+import { selectMacros, selectStatus } from '@/lib/features/log/logFoodSlice';
 import {
 	selectUserData,
 	selectUserDataStatus
@@ -11,7 +12,16 @@ import { useEffect, useState } from 'react';
 export default function ExpendedBadge() {
 	const userData = useAppSelector(selectUserData);
 	const userDataStatus = useAppSelector(selectUserDataStatus);
+	const logMacros = useAppSelector(selectMacros);
+	const logDataStatus = useAppSelector(selectStatus);
+
 	const [calsBurned, setCalsBurned] = useState(0);
+
+	useEffect(() => {
+		if (logDataStatus === 'initial' && logMacros.caloriesBurned) {
+			setCalsBurned(logMacros.caloriesBurned);
+		}
+	}, [logMacros, logDataStatus]);
 
 	useEffect(() => {
 		if (

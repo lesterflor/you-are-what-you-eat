@@ -1,5 +1,8 @@
+import { logDishItems } from '@/actions/prepared-dish-actions';
 import { createAppSlice } from '@/lib/createAppSlice';
+import { GetPreparedDish } from '@/types';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import { toast } from 'sonner';
 
 export interface PreparedDishSliceProps {
 	id: string;
@@ -7,6 +10,8 @@ export interface PreparedDishSliceProps {
 	description: string;
 	dishList: string;
 	checkedItem?: string;
+	failedItem?: string;
+	log?: string;
 }
 
 export interface PreparedDishSliceState {
@@ -18,6 +23,8 @@ export interface PreparedDishSliceState {
 		| 'updated'
 		| 'cleared'
 		| 'logged'
+		| 'logging'
+		| 'failed'
 		| 'checkedItem'
 		| 'dishList';
 	message: string;
@@ -59,6 +66,60 @@ export const preparedDishSlice = createAppSlice({
 				state.value = action.payload;
 				state.status = 'logged';
 				state.message = `You logged the dish, ${action.payload.name}`;
+			}
+		),
+
+		logDishAsync: create.asyncThunk(
+			async (dish: GetPreparedDish, { rejectWithValue }) => {
+				const res = await logDishItems(dish);
+
+				if (res.success) {
+					return {
+						dishItems: {
+							...res.data?.map((item) => ({
+								...item,
+								eatenAt: item.eatenAt.toString()
+							}))
+						},
+						message: res.message,
+						log: {
+							...res.log,
+							createdAt: res.log && res.log.createdAt?.toString(),
+							updatedAt: res.log && res.log.updatedAt?.toString(),
+							user: {
+								...res.log?.user,
+								createdAt: res.log?.user.createdAt.toString(),
+								updatedAt: res.log?.user.updatedAt.toString()
+							},
+							foodItems:
+								res.log &&
+								res.log.foodItems?.map((fi) => ({
+									...fi,
+									eatenAt: fi.eatenAt.toString()
+								}))
+						}
+					};
+				} else {
+					return rejectWithValue(dish);
+				}
+			},
+			{
+				pending: (state) => {
+					state.status = 'logging';
+				},
+				fulfilled: (state, action) => {
+					state.status = 'logged';
+					state.message = action.payload.message;
+					state.value.log = JSON.stringify(action.payload.log);
+					toast.success(action.payload.message);
+				},
+				rejected: (state, action) => {
+					const failedDish = action.payload as GetPreparedDish;
+					state.status = 'failed';
+					state.value.failedItem = JSON.stringify(action.payload);
+					state.message = `Failed to log dish, ${failedDish.name}`;
+					toast.error(`Failed to log dish, ${failedDish.name}`);
+				}
 			}
 		),
 
@@ -110,6 +171,7 @@ export const {
 	deleteDishState,
 	clearItems,
 	logDishState,
+	logDishAsync,
 	setDishListState,
 	setCheckedItemState
 } = preparedDishSlice.actions;

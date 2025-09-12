@@ -1,15 +1,12 @@
 'use client';
 
 import { todaysWaterConsumed } from '@/actions/log-actions';
+import { selectBMRData, selectStatus } from '@/lib/features/log/logFoodSlice';
 import {
 	selectWaterLogData,
 	selectWaterLogStatus,
 	updatedWater
 } from '@/lib/features/log/waterLogSlice';
-import {
-	selectUserData,
-	selectUserDataStatus
-} from '@/lib/features/user/userDataSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import {
 	calculateWaterIntake,
@@ -17,6 +14,7 @@ import {
 	colateBMRData,
 	formatUnit
 } from '@/lib/utils';
+import { BMRData } from '@/types';
 import { DialogTitle } from '@radix-ui/react-dialog';
 import {
 	ArrowDown,
@@ -58,17 +56,17 @@ export default function WaterIntake({
 	const waterLogData = useAppSelector(selectWaterLogData);
 	const waterLogStatus = useAppSelector(selectWaterLogStatus);
 
-	const userData = useAppSelector(selectUserData);
-	const userDataStatus = useAppSelector(selectUserDataStatus);
+	const logBMRData = useAppSelector(selectBMRData);
+	const logDataStatus = useAppSelector(selectStatus);
 
 	useEffect(() => {
 		const { weightInKilos, weightInPounds } = colateBMRData(
-			JSON.parse(userData.bmrData)
+			logBMRData as BMRData
 		);
 
-		// update only if state update has different data
 		if (
-			userDataStatus === 'updated' &&
+			logDataStatus === 'initial' &&
+			logBMRData &&
 			weightInPounds !== weight.weightInPounds
 		) {
 			setWeight({
@@ -76,7 +74,7 @@ export default function WaterIntake({
 				weightInPounds
 			});
 		}
-	}, [userData, userDataStatus]);
+	}, [logBMRData, logDataStatus]);
 
 	const [isFetchingWater, setIsFetchingWater] = useTransition();
 

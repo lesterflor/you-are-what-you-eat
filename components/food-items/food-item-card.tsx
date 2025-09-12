@@ -97,32 +97,7 @@ const FoodItemCard = memo(function FoodItemCard({
 	const [portionAmount, setPortionAmount] = useState(1);
 
 	const sendFoodItems = () => {
-		// dispatch(
-		// 	logFoodState({
-		// 		listItems: JSON.stringify([logFoodItem])
-		// 	})
-		// );
-
 		setIsSubmitting(async () => {
-			// 	const res = await updateLogWithOrder([logFoodItem]);
-
-			// 	if (res.success) {
-			// 		// redux
-			// 		dispatch(
-			// 			added({
-			// 				name: logFoodItem.name,
-			// 				servings: logFoodItem.numServings
-			// 			})
-			// 		);
-
-			// 		setShowDetails(false);
-
-			// 		toast.success('Added to your daily log!');
-			// 	} else {
-			// 		toast.error('Oops, Something went wrong with adding the item.');
-			// 	}
-			// });
-
 			dispatch(
 				logFoodAsync({
 					logFoodItem,
@@ -135,10 +110,7 @@ const FoodItemCard = memo(function FoodItemCard({
 
 	useEffect(() => {
 		if (logDataStatus === 'added' && logData.name === item.name) {
-			toast.success(logData.message);
 			setShowDetails(false);
-		} else if (logDataStatus === 'failed' && logData.name === item.name) {
-			toast.error(logData.message);
 		}
 	}, [logData, logDataStatus]);
 

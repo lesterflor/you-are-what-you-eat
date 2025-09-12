@@ -1,9 +1,6 @@
 'use client';
 
-import {
-	selectUserData,
-	selectUserDataStatus
-} from '@/lib/features/user/userDataSlice';
+import { selectMacros, selectStatus } from '@/lib/features/log/logFoodSlice';
 import { useAppSelector } from '@/lib/hooks';
 import { cn, formatUnit } from '@/lib/utils';
 import { ArrowDown, ArrowUp, Frown, Smile } from 'lucide-react';
@@ -14,8 +11,8 @@ export default function RemainingCalories({
 }: {
 	iconPosition?: 'right' | 'top';
 }) {
-	const userData = useAppSelector(selectUserData);
-	const userDataStatus = useAppSelector(selectUserDataStatus);
+	const logMacros = useAppSelector(selectMacros);
+	const logDataStatus = useAppSelector(selectStatus);
 
 	const [userInfo, setUserInfo] = useState<
 		| {
@@ -29,44 +26,31 @@ export default function RemainingCalories({
 	>(undefined);
 
 	useEffect(() => {
-		if (userDataStatus === 'updated' && userData) {
+		if (
+			(logDataStatus === 'updated' ||
+				logDataStatus === 'initial' ||
+				logDataStatus === 'added' ||
+				logDataStatus === 'deleted' ||
+				logDataStatus === 'loggedCalories' ||
+				logDataStatus === 'loggedDish') &&
+			logMacros
+		) {
 			const {
-				consumed,
-				burned,
-				remaining,
-				cumulativeRemaining = remaining
-			} = JSON.parse(userData.caloricData || '{}');
-
-			const bmrData = JSON.parse(userData.bmrData || '{}');
-			const bmr = bmrData?.bmr || 0;
+				caloriesBurned = 0,
+				caloriesConsumed = 0,
+				caloriesRemaining = 0,
+				bmr = 0
+			} = logMacros;
 
 			setUserInfo({
-				consumed,
-				burned,
-				remaining,
+				consumed: caloriesConsumed,
+				burned: caloriesBurned,
+				remaining: caloriesRemaining,
 				bmr,
-				cumulativeRemaining: cumulativeRemaining
-			});
-		} else if (userDataStatus === 'loggedCalories' && userData) {
-			const {
-				consumed,
-				burned,
-				remaining,
-				cumulativeRemaining = remaining
-			} = JSON.parse(userData.caloricData || '{}');
-
-			const bmrData = JSON.parse(userData.bmrData || '{}');
-			const bmr = bmrData?.bmr || 0;
-
-			setUserInfo({
-				consumed,
-				burned,
-				remaining: remaining + burned,
-				bmr,
-				cumulativeRemaining: cumulativeRemaining
+				cumulativeRemaining: caloriesRemaining
 			});
 		}
-	}, [userData, userDataStatus]);
+	}, [logMacros, logDataStatus]);
 
 	return (
 		<>
@@ -100,10 +84,10 @@ export default function RemainingCalories({
 										<Smile className='w-6 h-6' />
 									</>
 								) : (
-									<div>
+									<>
 										<ArrowUp className='w-6 h-6 text-red-600 animate-bounce' />
 										<Frown className='w-6 h-6' />
-									</div>
+									</>
 								)}
 							</div>
 						) : (

@@ -21,7 +21,6 @@ import { Clock, FilePenLine, RefreshCwOff, Trash2, X } from 'lucide-react';
 import { memo, useEffect, useRef, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { RxUpdate } from 'react-icons/rx';
-import { toast } from 'sonner';
 import FoodCategoryIconMapper from '../food-items/food-category-icon-mapper';
 import FoodItemImageGallery from '../food-items/food-item-image-gallery';
 import NumberIncrementor from '../number-incrementor';
@@ -71,24 +70,15 @@ const LogFoodListItem = memo(function LogFoodListItem({
 
 	useEffect(() => {
 		if (logDataStatus === 'deleted' && logDataDeleted?.id === item.id) {
-			toast.success(logData.message);
 			setDialogOpen(false);
 		} else if (
 			logDataUpdated &&
 			logDataStatus === 'updated' &&
-			logDataUpdated.id === item.id &&
-			item.eatenAt.getTime() === new Date(logDataUpdated.eatenAt).getTime()
+			logDataUpdated.id === item.id
 		) {
-			toast.success(logData.message);
-
 			setIsUpdating(() => {
 				setServingSize(formatUnit(logDataUpdated.numServings));
 			});
-		} else if (
-			logDataStatus === 'failed' &&
-			logData.pendingItemId === item.id
-		) {
-			toast.error(logData.message);
 		}
 	}, [logDataStatus, logDataDeleted, logData, logDataUpdated]);
 
@@ -224,26 +214,8 @@ const LogFoodListItem = memo(function LogFoodListItem({
 											disabled={isDeleting}
 											onClick={() => {
 												setIsDeleting(async () => {
-													// const res = await deleteFoodLogEntry(item.id);
-
-													// if (res.success) {
-													// 	toast.success(res.message);
-
-													// 	// redux
-													// 	dispatch(
-													// 		deleted({
-													// 			id: item.id,
-													// 			name: item.name,
-													// 			servings: item.numServings
-													// 		})
-													// 	);
-													// } else {
-													// 	toast.error(res.message);
-													// }
 													dispatch(deleteLogItemAsync(item.id));
 												});
-
-												//setDialogOpen(false);
 											}}>
 											{isDeleting ? (
 												<ImSpinner2 className='w-4 h-4 animate-spin' />
@@ -338,30 +310,6 @@ const LogFoodListItem = memo(function LogFoodListItem({
 										};
 
 										dispatch(updateItemAsync(updatedEntry));
-
-										// const res = await updateFoodLogEntry(updatedEntry);
-
-										// if (res.success) {
-										// 	toast.success(res.message);
-
-										// 	if (res.data) {
-										// 		const { numServings } = res.data;
-
-										// 		setIsUpdating(() => {
-										// 			setServingSize(formatUnit(numServings));
-										// 		});
-
-										// 		// redux
-										// 		dispatch(
-										// 			updated({
-										// 				name: item.name,
-										// 				servings: formatUnit(numServings)
-										// 			})
-										// 		);
-										// 	}
-										// } else {
-										// 	toast.error(res.message);
-										// }
 									});
 
 									setIsEditing(false);

@@ -1,15 +1,11 @@
 'use client';
 
-import {
-	deleteDish,
-	logDishItems,
-	updateDish
-} from '@/actions/prepared-dish-actions';
+import { deleteDish, updateDish } from '@/actions/prepared-dish-actions';
 import {
 	deleteDishState,
-	logDishState,
 	updateDishState
 } from '@/lib/features/dish/preparedDishSlice';
+import { logPrepDishAsync } from '@/lib/features/log/logFoodSlice';
 import { useAppDispatch } from '@/lib/hooks';
 import { cn, formatUnit, totalMacrosReducer } from '@/lib/utils';
 import { GetFoodEntry, GetPreparedDish, GetUser } from '@/types';
@@ -490,24 +486,8 @@ export default function DishCard({
 						disabled={loggingDish}
 						onClick={() => {
 							setLoggingDish(async () => {
-								const res = await logDishItems(prepDish);
-
-								if (res.success) {
-									toast.success(res.message);
-
-									dispatch(
-										logDishState({
-											id: prepDish.id,
-											name: prepDish.name,
-											description: prepDish.description,
-											dishList: JSON.stringify(res.data)
-										})
-									);
-
-									onLogged?.();
-								} else {
-									toast.error(res.message);
-								}
+								dispatch(logPrepDishAsync(prepDish));
+								onLogged?.();
 							});
 						}}>
 						{loggingDish ? (

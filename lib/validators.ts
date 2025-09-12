@@ -211,11 +211,11 @@ export const getFoodEntrySchema = z.object({
 });
 
 export const getKnownCaloriesBurnedSchema = z.object({
-	id: z.string(),
-	createdAt: z.date(),
-	updatedAt: z.date(),
-	userId: z.string(),
-	logId: z.string(),
+	id: z.string().optional(),
+	createdAt: z.date().optional(),
+	updatedAt: z.date().optional(),
+	userId: z.string().optional(),
+	logId: z.string().optional(),
 	calories: z.number()
 });
 
@@ -225,10 +225,10 @@ export const logSchema = z.object({
 });
 
 export const getBaseMetabolicRateSchema = z.object({
-	id: z.string(),
-	createdAt: z.date(),
-	updatedAt: z.date(),
-	userId: z.string(),
+	id: z.string().optional(),
+	createdAt: z.date().optional(),
+	updatedAt: z.date().optional(),
+	userId: z.string().optional(),
 	weight: z.number(),
 	weightUnit: z.string(),
 	height: z.number(),
@@ -239,9 +239,9 @@ export const getBaseMetabolicRateSchema = z.object({
 });
 
 export const getLogSchema = z.object({
-	id: z.string(),
-	createdAt: z.date(),
-	updatedAt: z.date(),
+	id: z.string().optional(),
+	createdAt: z.date().optional(),
+	updatedAt: z.date().optional(),
 	userId: z.string(),
 	foodItems: z.array(getFoodEntrySchema),
 	knownCaloriesBurned: z.array(getKnownCaloriesBurnedSchema),

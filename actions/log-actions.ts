@@ -31,7 +31,6 @@ export async function getCurrentLog(compareToYesterday: boolean = false) {
 
 		const todaysLog = await prisma.log.findFirst({
 			where: {
-				//userId: '67db518ff10abb25395df978',
 				userId: user.id,
 				createdAt: {
 					gte: getToday().todayStart,
@@ -155,11 +154,29 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 			include: {
 				user: {
 					include: {
-						BaseMetabolicRate: true
+						BaseMetabolicRate: {
+							select: {
+								bmr: true,
+								weightUnit: true,
+								heightUnit: true,
+								weight: true,
+								height: true,
+								age: true,
+								sex: true
+							}
+						}
 					}
 				},
-				knownCaloriesBurned: true,
-				logRemainder: true
+				knownCaloriesBurned: {
+					select: {
+						calories: true
+					}
+				},
+				logRemainder: {
+					select: {
+						calories: true
+					}
+				}
 			}
 		});
 
@@ -173,11 +190,29 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 				include: {
 					user: {
 						include: {
-							BaseMetabolicRate: true
+							BaseMetabolicRate: {
+								select: {
+									bmr: true,
+									weightUnit: true,
+									heightUnit: true,
+									weight: true,
+									height: true,
+									age: true,
+									sex: true
+								}
+							}
 						}
 					},
-					knownCaloriesBurned: true,
-					logRemainder: true
+					knownCaloriesBurned: {
+						select: {
+							calories: true
+						}
+					},
+					logRemainder: {
+						select: {
+							calories: true
+						}
+					}
 				}
 			});
 		} else {
@@ -243,18 +278,18 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 			}
 		}
 
-		const totalCalories = Math.round(
-			logForToday.foodItems.reduce((acc, curr) => {
-				const sub = curr.calories * curr.numServings;
-				return acc + sub;
-			}, 0)
+		const { calories: totalCalories } = totalMacrosReducer(
+			[...logForToday.foodItems].map((item) => ({
+				...item,
+				image: item.image ?? '',
+				description: item.description ?? ''
+			}))
 		);
 
-		const remainingCalories =
-			totalCalories -
-			(logForToday.user.BaseMetabolicRate[0].bmr ||
-				0 + logForToday.knownCaloriesBurned[0].calories ||
-				0);
+		const bmrVal = logForToday.user.BaseMetabolicRate[0].bmr ?? 0;
+		const burnedVal = logForToday.knownCaloriesBurned[0].calories ?? 0;
+
+		const remainingCalories = totalCalories - (bmrVal + burnedVal);
 
 		const revisedLog = {
 			...logForToday,
@@ -262,6 +297,8 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 			totalCalories,
 			remainingCalories
 		};
+
+		//console.log('first entry log:', revisedLog.user);
 
 		return {
 			success: true,
@@ -313,6 +350,33 @@ export async function updateLog(foodEntries: FoodEntry[]) {
 			data: {
 				foodItems: foodEntries,
 				updatedAt: new Date(getToday().current)
+			},
+			include: {
+				user: {
+					include: {
+						BaseMetabolicRate: {
+							select: {
+								bmr: true,
+								weightUnit: true,
+								heightUnit: true,
+								weight: true,
+								height: true,
+								age: true,
+								sex: true
+							}
+						}
+					}
+				},
+				knownCaloriesBurned: {
+					select: {
+						calories: true
+					}
+				},
+				logRemainder: {
+					select: {
+						calories: true
+					}
+				}
 			}
 		});
 
@@ -383,6 +447,27 @@ export async function updateLogWithOrder(foodEntries: FoodEntry[]) {
 			data: {
 				foodItems: listUpdates,
 				updatedAt: new Date(getToday().current)
+			},
+			include: {
+				user: {
+					select: {
+						BaseMetabolicRate: {
+							select: {
+								bmr: true
+							}
+						}
+					}
+				},
+				knownCaloriesBurned: {
+					select: {
+						calories: true
+					}
+				},
+				logRemainder: {
+					select: {
+						calories: true
+					}
+				}
 			}
 		});
 
@@ -739,10 +824,14 @@ export async function addKnownCaloriesBurned(calories: number) {
 			throw new Error('There was a problem updating the Known Calories Burned');
 		}
 
+		// return the latest log for slice
+		const currentLog = await createDailyLog();
+
 		return {
 			success: true,
-			message: 'Updated Calories Burned',
-			data: update
+			message: `Updated ${calories} calories to your total calories burned`,
+			data: update,
+			log: currentLog?.data
 		};
 	} catch (error: unknown) {
 		return {
@@ -828,6 +917,33 @@ export async function deleteFoodLogEntry(foodEntryId: string) {
 			data: {
 				foodItems: updatedFoodItems,
 				updatedAt: new Date(getToday().current)
+			},
+			include: {
+				user: {
+					select: {
+						BaseMetabolicRate: {
+							select: {
+								bmr: true,
+								weightUnit: true,
+								heightUnit: true,
+								weight: true,
+								height: true,
+								age: true,
+								sex: true
+							}
+						}
+					}
+				},
+				knownCaloriesBurned: {
+					select: {
+						calories: true
+					}
+				},
+				logRemainder: {
+					select: {
+						calories: true
+					}
+				}
 			}
 		});
 
@@ -840,7 +956,8 @@ export async function deleteFoodLogEntry(foodEntryId: string) {
 		return {
 			success: true,
 			message: 'Log updated successfully',
-			data: toBeDeleted[0]
+			data: toBeDeleted[0],
+			log: update
 		};
 	} catch (error: unknown) {
 		return {
@@ -895,6 +1012,27 @@ export async function updateFoodLogEntry(foodEntry: GetFoodEntry) {
 			data: {
 				foodItems: updatedFoodItems,
 				updatedAt: new Date(getToday().current)
+			},
+			include: {
+				user: {
+					select: {
+						BaseMetabolicRate: {
+							select: {
+								bmr: true
+							}
+						}
+					}
+				},
+				knownCaloriesBurned: {
+					select: {
+						calories: true
+					}
+				},
+				logRemainder: {
+					select: {
+						calories: true
+					}
+				}
 			}
 		});
 

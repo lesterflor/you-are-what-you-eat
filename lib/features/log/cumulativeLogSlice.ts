@@ -69,14 +69,10 @@ export const logCumulativeSlice = createAppSlice({
 								eatenAt: fi.eatenAt.toString()
 							})),
 						knownCaloriesBurned: res.data.knownCaloriesBurned?.map((kc) => ({
-							...kc,
-							createdAt: kc.createdAt.toString(),
-							updatedAt: kc.updatedAt.toString()
+							...kc
 						})),
 						logRemainder: res.data.logRemainder?.map((lr) => ({
-							...lr,
-							createdAt: lr.createdAt.toString(),
-							updatedAt: lr.updatedAt.toString()
+							...lr
 						})),
 						user: res.data.user && {
 							...res.data.user,
@@ -84,9 +80,7 @@ export const logCumulativeSlice = createAppSlice({
 							updatedAt: res.data.user.updatedAt.toString(),
 							BaseMetabolicRate: res.data.user.BaseMetabolicRate?.map(
 								(bmr) => ({
-									...bmr,
-									createdAt: bmr.createdAt.toString(),
-									updatedAt: bmr.updatedAt.toString()
+									...bmr
 								})
 							)
 						}
