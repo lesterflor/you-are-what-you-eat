@@ -1,9 +1,14 @@
 'use client';
 
 import { getLogsByUserId } from '@/actions/log-actions';
+import { cn } from '@/lib/utils';
 import { GetLog, GetUser } from '@/types';
+import { format } from 'date-fns';
+import { Filter } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { Button } from '../ui/button';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -13,12 +18,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger
 } from '../ui/dropdown-menu';
-import { Button } from '../ui/button';
-import { Filter } from 'lucide-react';
-import { format } from 'date-fns';
-import { useRouter } from 'next/navigation';
 import { ScrollArea } from '../ui/scroll-area';
-import { cn } from '@/lib/utils';
 
 export default function LogFilter() {
 	const [logs, setLogs] = useState<GetLog[]>([]);
@@ -85,8 +85,8 @@ export default function LogFilter() {
 											item.id === filter && 'text-foreground font-semibold'
 										)}
 										key={item.id}
-										value={item.id}>
-										{format(item.createdAt, 'eee PP')}
+										value={item.id as string}>
+										{item.createdAt && format(item.createdAt, 'eee PP')}
 									</DropdownMenuRadioItem>
 								))}
 							</DropdownMenuRadioGroup>

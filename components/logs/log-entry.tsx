@@ -70,7 +70,7 @@ export default function LogEntry({
 
 	const filterWaterLog = () => {
 		const dayWater = waterLogs?.filter(
-			(wLog) => log.createdAt.getDate() === wLog.createdAt.getDate()
+			(wLog) => log.createdAt?.getDate() === wLog.createdAt.getDate()
 		);
 
 		if (dayWater && dayWater.length > 0) {
@@ -111,7 +111,7 @@ export default function LogEntry({
 						<Calendar className='w-4 h-4 portrait:w-6 portrait:h-6  ' />
 						<div className='portrait:text-sm flex flex-row items-center gap-4 justify-between flex-wrap w-full'>
 							<div className='portrait:text-md font-semibold text-muted-foreground'>
-								{format(log.createdAt, 'eee PP')}
+								{log.createdAt && format(log.createdAt, 'eee PP')}
 							</div>
 						</div>
 					</div>
@@ -194,7 +194,7 @@ export default function LogEntry({
 										<DialogContent className='max-w-[65vw] min-h-[70vh] portrait:max-w-[95vw] portrait:min-h-[75vh] flex flex-col justify-start'>
 											<DialogDescription></DialogDescription>
 											<DialogTitle>
-												{format(log.createdAt, 'eee PPP')}
+												{log.createdAt && format(log.createdAt, 'eee PPP')}
 											</DialogTitle>
 											<LogChart log={log} />
 										</DialogContent>
