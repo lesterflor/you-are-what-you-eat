@@ -1,9 +1,9 @@
-import { createDailyLog } from '@/actions/log-actions';
+import { createDailyLog, todaysWaterConsumed } from '@/actions/log-actions';
 import AddFoodSheet from '@/components/food-items/add-food-sheet';
 import LandingContent from '@/components/landing-content';
 import FoodLogList from '@/components/logs/log-list';
 import { auth } from '@/db/auth';
-import { GetLog } from '@/types';
+import { GetLog, GetWaterConsumed } from '@/types';
 import { lazy } from 'react';
 
 const FoodListSheetLazy = lazy(
@@ -13,6 +13,7 @@ const FoodListSheetLazy = lazy(
 export default async function Home() {
 	const session = await auth();
 	const todaysLog = await createDailyLog();
+	const currentWater = await todaysWaterConsumed();
 
 	return (
 		<>
@@ -32,6 +33,7 @@ export default async function Home() {
 							iconPosition='top'
 							forceColumn={false}
 							todaysLog={todaysLog?.data as GetLog}
+							currentWater={currentWater.data as GetWaterConsumed}
 						/>
 					</div>
 				</div>

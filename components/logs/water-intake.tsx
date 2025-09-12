@@ -1,11 +1,10 @@
 'use client';
 
-import { todaysWaterConsumed } from '@/actions/log-actions';
 import { selectBMRData, selectStatus } from '@/lib/features/log/logFoodSlice';
 import {
 	selectWaterLogData,
 	selectWaterLogStatus,
-	updatedWater
+	updateWaterAsync
 } from '@/lib/features/log/waterLogSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import {
@@ -29,7 +28,6 @@ import { FaGlassWater } from 'react-icons/fa6';
 import { GrCircleQuestion } from 'react-icons/gr';
 import { ImSpinner2, ImSpinner9 } from 'react-icons/im';
 import { IoIosWater } from 'react-icons/io';
-import { toast } from 'sonner';
 import IncrementButton from '../increment-button';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -112,7 +110,25 @@ export default function WaterIntake({
 	});
 
 	useEffect(() => {
-		fetchTodaysWater();
+		const { glasses, ounces, litres } = waterLogData;
+
+		if (waterLogStatus === 'updated') {
+			setWaterConsumed({
+				glasses,
+				ounces,
+				litres
+			});
+			setCurrentGlasses(0);
+			setPopoverOpen(false);
+		} else if (waterLogStatus === 'initial') {
+			setWaterConsumed({
+				glasses,
+				ounces,
+				litres
+			});
+		} else if (waterLogStatus === 'failed') {
+			setWaterConsumed(waterConsumed);
+		}
 	}, [waterLogData, waterLogStatus]);
 
 	const [popoverOpen, setPopoverOpen] = useState(false);
@@ -122,21 +138,6 @@ export default function WaterIntake({
 			setCurrentGlasses(0);
 		}
 	}, [popoverOpen]);
-
-	const fetchTodaysWater = () => {
-		setIsFetchingWater(async () => {
-			const res = await todaysWaterConsumed();
-
-			if (res.success && res.data) {
-				const { glasses, ounces, litres } = res.data;
-				setWaterConsumed({
-					glasses,
-					ounces,
-					litres
-				});
-			}
-		});
-	};
 
 	useEffect(() => {
 		if (weight && weight.weightInPounds > 0) {
@@ -149,32 +150,7 @@ export default function WaterIntake({
 			setOptWaterConsumed(currentGlasses);
 		});
 
-		try {
-			const res = await todaysWaterConsumed(currentGlasses);
-
-			if (res.success && res.data) {
-				const { glasses, ounces, litres } = res.data;
-
-				setCurrentGlasses(0);
-
-				dispatch(
-					updatedWater({
-						glasses,
-						ounces,
-						litres
-					})
-				);
-
-				toast.success(res.message);
-
-				setPopoverOpen(false);
-			} else {
-				toast.error(res.message);
-			}
-		} catch (err) {
-			console.error(`There was a problem updating water consumed: ${err}`);
-			setWaterConsumed(waterConsumed);
-		}
+		dispatch(updateWaterAsync(currentGlasses));
 	};
 
 	return (

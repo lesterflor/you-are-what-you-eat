@@ -17,9 +17,10 @@ import {
 	selectUpdatedItem,
 	setCurrentLog
 } from '@/lib/features/log/logFoodSlice';
+import { setInitialAmount } from '@/lib/features/log/waterLogSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { cn, getStorageItem, setStorageItem } from '@/lib/utils';
-import { GetFoodEntry, GetLog } from '@/types';
+import { GetFoodEntry, GetLog, GetWaterConsumed } from '@/types';
 import { Flame, IdCard, List, LucideUtensilsCrossed, Soup } from 'lucide-react';
 import {
 	lazy,
@@ -80,13 +81,15 @@ export default function FoodLogList({
 	useScroller = true,
 	iconPosition = 'right',
 	useFloaterNav = false,
-	todaysLog
+	todaysLog,
+	currentWater
 }: {
 	useScroller?: boolean;
 	iconPosition?: 'right' | 'top';
 	forceColumn?: boolean;
 	useFloaterNav?: boolean;
 	todaysLog?: GetLog;
+	currentWater?: GetWaterConsumed;
 }) {
 	const dispatch = useAppDispatch();
 
@@ -216,6 +219,18 @@ export default function FoodLogList({
 		if (todaysLog) {
 			dispatch(setCurrentLog(JSON.stringify(todaysLog)));
 			parseLog(todaysLog);
+		}
+
+		if (currentWater) {
+			const { glasses, ounces, litres } = currentWater;
+
+			dispatch(
+				setInitialAmount({
+					glasses,
+					ounces,
+					litres
+				})
+			);
 		}
 	};
 
