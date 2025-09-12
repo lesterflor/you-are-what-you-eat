@@ -62,10 +62,9 @@ describe('getLogSchema', () => {
 	test('fails if required fields are missing', () => {
 		const now = new Date();
 		const invalid = {
-			// id missing
+			// userId missing
 			createdAt: now,
 			updatedAt: now,
-			userId: 'user1',
 			foodItems: [],
 			knownCaloriesBurned: [],
 			user: { BaseMetabolicRate: [] },
