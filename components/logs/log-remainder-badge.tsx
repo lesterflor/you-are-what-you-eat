@@ -1,19 +1,22 @@
 'use client';
 
-import {
-	getLogRemainder,
-	getLogRemainderByUserIdInRange
-} from '@/actions/log-actions';
 import { remainderConfig } from '@/config';
 import { selectMacros, selectStatus } from '@/lib/features/log/logFoodSlice';
-import { useAppSelector } from '@/lib/hooks';
-import { formatUnit, totalMacrosReducer } from '@/lib/utils';
-import { GetFoodEntry, GetLog, LogRemainderDataType } from '@/types';
-import { format } from 'date-fns';
+import {
+	fetchLogRemaindersInRange,
+	getRemaining,
+	selectRemainderChartData,
+	selectRemainderData,
+	selectRemainderStatus
+} from '@/lib/features/log/logRemainderSlice';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { formatUnit } from '@/lib/utils';
+import { LogRemainderDataType } from '@/types';
 import { ArrowDown, ArrowUp, Info } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DateRange } from 'react-day-picker';
 import { ImSpinner2 } from 'react-icons/im';
+import { useInView } from 'react-intersection-observer';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import {
 	NameType,
@@ -29,17 +32,30 @@ import {
 } from '../ui/chart';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { ScrollArea } from '../ui/scroll-area';
+import { Skeleton } from '../ui/skeleton';
 
 export default function LogRemainderBadge() {
+	const dispatch = useAppDispatch();
 	const logMacros = useAppSelector(selectMacros);
 	const logDataStatus = useAppSelector(selectStatus);
+	const logRemainderData = useAppSelector(selectRemainderData);
+	const logRemainderStatus = useAppSelector(selectRemainderStatus);
+	const logRemainderChartData = useAppSelector(selectRemainderChartData);
 
 	const [logRemainder, setLogRemainder] = useState<LogRemainderDataType>();
+	const [mounted, setMounted] = useState(false);
+	const [ref, inView] = useInView();
+
+	useEffect(() => {
+		if (inView && !mounted) {
+			setMounted(true);
+			dispatch(getRemaining());
+			setIsFetching(true);
+		}
+	}, [inView]);
 
 	const [popOpen, setPopOpen] = useState(false);
-	const [isFetching, setIsFetching] = useTransition();
-	const [remainders, setRemainders] = useState<GetLog[]>();
-	const [remainder, setRemainder] = useState(logMacros.caloriesRemaining ?? 0);
+	const [isFetching, setIsFetching] = useState(false);
 	const [remainderStr, setRemainderStr] = useState('');
 	const [range, setRange] = useState<DateRange | undefined>();
 	const [chartData, setChartData] = useState<
@@ -50,21 +66,28 @@ export default function LogRemainderBadge() {
 	>();
 
 	useEffect(() => {
-		getLogCalsRemaining();
-	}, []);
+		if (logRemainderStatus === 'fetched') {
+			setLogRemainder(logRemainderData);
+			setIsFetching(false);
+		} else if (
+			logRemainderStatus === 'fetchedChartData' &&
+			logRemainderChartData
+		) {
+			setChartData(logRemainderChartData.data);
+			setRemainderStr(logRemainderChartData.text);
+		}
+	}, [logRemainderData, logRemainderStatus, logRemainderChartData]);
 
 	useEffect(() => {
 		if (
-			(logDataStatus === 'initial' ||
-				logDataStatus === 'loggedCalories' ||
-				logDataStatus === 'added' ||
-				logDataStatus === 'updated' ||
-				logDataStatus === 'deleted' ||
-				logDataStatus === 'loggedDish') &&
-			logMacros.caloriesRemainingCumulative
+			logDataStatus === 'loggedCalories' ||
+			logDataStatus === 'added' ||
+			logDataStatus === 'updated' ||
+			logDataStatus === 'deleted' ||
+			logDataStatus === 'loggedDish'
 		) {
-			getLogCalsRemaining();
-			setRemainder(logMacros.caloriesRemainingCumulative);
+			dispatch(getRemaining());
+			setIsFetching(true);
 		}
 	}, [logMacros, logDataStatus]);
 
@@ -77,78 +100,9 @@ export default function LogRemainderBadge() {
 
 	useEffect(() => {
 		if (range && range.from && range?.to) {
-			fetchLogRemainder();
+			dispatch(fetchLogRemaindersInRange(range));
 		} else {
 			setChartData([]);
-		}
-	}, [range]);
-
-	const getLogCalsRemaining = () => {
-		setIsFetching(async () => {
-			const res = await getLogRemainder();
-
-			if (res.success && res.data) {
-				setIsFetching(() => {
-					setLogRemainder(res.data);
-				});
-			}
-		});
-	};
-
-	useEffect(() => {
-		if (remainders && remainders.length > 0) {
-			const amt = remainders.reduce(
-				(acc, curr) =>
-					acc +
-					curr.knownCaloriesBurned[0].calories +
-					curr.user.BaseMetabolicRate[0].bmr -
-					totalMacrosReducer(curr.foodItems as GetFoodEntry[]).calories,
-				0
-			);
-
-			let phrase = '';
-			const frmRemainder = formatUnit(amt / 1200);
-
-			switch (true) {
-				case frmRemainder === 1:
-					phrase = 'pound lost';
-					break;
-				case frmRemainder === -1:
-					phrase = 'pound gained';
-					break;
-				case frmRemainder > 1:
-					phrase = 'pounds lost';
-					break;
-				case frmRemainder < 0:
-					phrase = 'pounds gained';
-					break;
-				default:
-					phrase = 'pounds lost';
-			}
-
-			setRemainderStr(phrase);
-			setRemainder(amt);
-		}
-	}, [remainders]);
-
-	const fetchLogRemainder = useCallback(async () => {
-		if (range) {
-			const res = await getLogRemainderByUserIdInRange(range);
-
-			if (res.success && res.data) {
-				setRemainders(res.data as GetLog[]);
-
-				setChartData(
-					res.data.map((item) => ({
-						calories: formatUnit(
-							item.knownCaloriesBurned[0].calories +
-								item.user.BaseMetabolicRate[0].bmr -
-								totalMacrosReducer(item.foodItems as GetFoodEntry[]).calories
-						),
-						createdAt: format(item.createdAt, 'P')
-					}))
-				);
-			}
 		}
 	}, [range]);
 
@@ -195,42 +149,22 @@ export default function LogRemainderBadge() {
 	}, [chartData]);
 
 	return (
-		<>
-			{isFetching ? (
-				<div className='flex flex-col items-center justify-center'>
-					{/* <ImSpinner2 className='w-4 h-4 animate-spin opacity-25' /> */}
-					<>
-						{remainder && (
-							<Badge
-								variant='secondary'
-								className='transition-opacity fade-in animate-in duration-1000 select-none p-1 rounded-md border-2 font-normal text-xs flex flex-row gap-1 items-start'>
-								<ImSpinner2 className='w-4 h-4 animate-spin opacity-25' />
-								<div className='flex flex-col gap-0'>
-									<span className='whitespace-nowrap'>Cumulative</span>
-									<div className='flex flex-row gap-1 items-center'>
-										{Math.sign(formatUnit(remainder)) === -1 ? (
-											<ArrowUp className='w-3 h-3 text-red-600 animate-bounce' />
-										) : (
-											<ArrowDown className='w-3 h-3 text-green-600 animate-bounce' />
-										)}
-										<span>{Math.abs(formatUnit(remainder))}</span>
-									</div>
-								</div>
-							</Badge>
+		<div ref={ref}>
+			<Popover
+				open={popOpen}
+				onOpenChange={setPopOpen}>
+				<PopoverTrigger>
+					<Badge
+						variant='secondary'
+						className='select-none p-1 rounded-md border-2 font-normal text-xs flex flex-row gap-1 items-start'>
+						{isFetching ? (
+							<ImSpinner2 className='w-4 h-4 animate-spin opacity-25' />
+						) : (
+							<>{logRemainder ? <Info className='w-4 h-4' /> : ''}</>
 						)}
-					</>
-				</div>
-			) : (
-				logRemainder && (
-					<Popover
-						open={popOpen}
-						onOpenChange={setPopOpen}>
-						<PopoverTrigger>
-							<Badge
-								variant='secondary'
-								className='select-none p-1 rounded-md border-2 font-normal text-xs flex flex-row gap-1 items-start'>
-								<Info className='w-4 h-4' />
-								<div className='flex flex-col gap-0'>
+						<div className='flex flex-col gap-0'>
+							{logRemainder ? (
+								<>
 									<span className='whitespace-nowrap'>Cumulative</span>
 									<div className='flex flex-row gap-1 items-center'>
 										{Math.sign(formatUnit(logRemainder.remainder)) === -1 ? (
@@ -240,25 +174,35 @@ export default function LogRemainderBadge() {
 										)}
 										<span>{Math.abs(formatUnit(logRemainder.remainder))}</span>
 									</div>
-								</div>
-							</Badge>
-						</PopoverTrigger>
-						<PopoverContent className='text-xs text-muted-foreground flex flex-col gap-2 max-w-[95vw] w-[90vw] bg-neutral-800'>
-							<ScrollArea className='w-full'>
-								<div className='max-h-[65vh]'>
-									<div className='flex flex-row items-center gap-2'>
-										<Info className='w-4 h-4 text-foreground' />
-										<span className='text-foreground text-lg'>
-											Cumulative Values
-										</span>
+								</>
+							) : (
+								<>
+									<span className='whitespace-nowrap'>Cumulative</span>
+									<div className='flex flex-row gap-1 items-center'>
+										<Skeleton className='w-10 h-4' />
 									</div>
-									<div>
-										The cumulative value are the calories that you left off with
-										from yesterday&apos;s total calories consumed, minus your
-										BMR and the calories expended that you may or may not have
-										entered.
-									</div>
-									<div className='grid grid-cols-[75%,25%] gap-2 w-full pt-4'>
+								</>
+							)}
+						</div>
+					</Badge>
+				</PopoverTrigger>
+				<PopoverContent className='text-xs text-muted-foreground flex flex-col gap-2 max-w-[95vw] w-[90vw] bg-neutral-800'>
+					<ScrollArea className='w-full'>
+						<div className='max-h-[65vh]'>
+							<div className='flex flex-row items-center gap-2'>
+								<Info className='w-4 h-4 text-foreground' />
+								<span className='text-foreground text-lg'>
+									Cumulative Values
+								</span>
+							</div>
+							<div>
+								The cumulative value are the calories that you left off with
+								from yesterday&apos;s total calories consumed, minus your BMR
+								and the calories expended that you may or may not have entered.
+							</div>
+							<div className='grid grid-cols-[75%,25%] gap-2 w-full pt-4'>
+								{logRemainder && (
+									<>
 										<div>Yesterday&apos;s Calories</div>
 										<div className='text-foreground'>
 											{formatUnit(logRemainder.yesterdaysConsumed)}
@@ -284,97 +228,98 @@ export default function LogRemainderBadge() {
 												{formatUnit(logRemainder.remainder)}
 											</span>
 										</div>
-									</div>
+									</>
+								)}
+							</div>
 
-									<div className='pt-5 flex flex-col gap-2'>
-										<div className='text-lg text-foreground'>
-											Cumulative Loss/Gain
-										</div>
-										<div>
-											Select a date range to calculate weight loss/gain based on
-											the cumulative values you have accrued.
-										</div>
-										<div>
-											<DateRangeChooser
-												onSelect={(range) => {
-													setRange(range);
-												}}
-											/>
-										</div>
-									</div>
-
-									<div className='flex flex-col gap-0'>
-										{chartData && chartData.length > 0 && (
-											<>
-												<div className='text-3xl text-center text-foreground'>
-													{Math.abs(formatUnit(remainder / 1200))}
-												</div>
-												<div className='flex flex-row items-center justify-center gap-2'>
-													<div className='text-center'>{remainderStr}</div>
-													<div>
-														{Math.sign(formatUnit((remainder / 1200) * -1)) ===
-														-1 ? (
-															<ArrowDown className='animate-bounce text-green-600' />
-														) : (
-															<ArrowUp className='animate-bounce text-red-600' />
-														)}
-													</div>
-												</div>
-
-												<div ref={chartRef}>
-													<ChartContainer
-														config={remainderConfig}
-														className='min-h-[50vh] min-w-[200px] portrait:w-[75vw] mr-4'>
-														<BarChart
-															data={chartData}
-															barSize={30}
-															compact={false}
-															margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
-															layout='vertical'>
-															<CartesianGrid vertical={false} />
-															<XAxis
-																angle={-90}
-																className='text-xs'
-																tickLine={false}
-																tickMargin={10}
-																offset={10}
-																tickCount={120}
-																height={35}
-																axisLine={false}
-																type='number'
-															/>
-
-															<YAxis
-																width={75}
-																tickCount={10}
-																dataKey='createdAt'
-																type='category'
-																offset={0}
-																tickMargin={1}
-															/>
-
-															<ChartTooltip content={<CustomTooltip />} />
-															<ChartLegend
-																className='mt-1'
-																content={<ChartLegendContent />}
-															/>
-
-															<Bar
-																dataKey='calories'
-																fill='hsl(var(--chart-5))'
-															/>
-														</BarChart>
-													</ChartContainer>
-												</div>
-											</>
-										)}
-									</div>
+							<div className='pt-5 flex flex-col gap-2'>
+								<div className='text-lg text-foreground'>
+									Cumulative Loss/Gain
 								</div>
-							</ScrollArea>
-						</PopoverContent>
-					</Popover>
-				)
-			)}
-		</>
+								<div>
+									Select a date range to calculate weight loss/gain based on the
+									cumulative values you have accrued.
+								</div>
+								<div>
+									<DateRangeChooser
+										onSelect={(range) => {
+											setRange(range);
+										}}
+									/>
+								</div>
+							</div>
+
+							<div className='flex flex-col gap-0'>
+								{logRemainder && chartData && chartData.length > 0 && (
+									<>
+										<div className='text-3xl text-center text-foreground'>
+											{Math.abs(formatUnit(logRemainder.remainder / 1200))}
+										</div>
+										<div className='flex flex-row items-center justify-center gap-2'>
+											<div className='text-center'>{remainderStr}</div>
+											<div>
+												{Math.sign(
+													formatUnit((logRemainder.remainder / 1200) * -1)
+												) === -1 ? (
+													<ArrowDown className='animate-bounce text-green-600' />
+												) : (
+													<ArrowUp className='animate-bounce text-red-600' />
+												)}
+											</div>
+										</div>
+
+										<div ref={chartRef}>
+											<ChartContainer
+												config={remainderConfig}
+												className='min-h-[50vh] min-w-[200px] portrait:w-[75vw] mr-4'>
+												<BarChart
+													data={chartData}
+													barSize={30}
+													compact={false}
+													margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
+													layout='vertical'>
+													<CartesianGrid vertical={false} />
+													<XAxis
+														angle={-90}
+														className='text-xs'
+														tickLine={false}
+														tickMargin={10}
+														offset={10}
+														tickCount={120}
+														height={35}
+														axisLine={false}
+														type='number'
+													/>
+
+													<YAxis
+														width={75}
+														tickCount={10}
+														dataKey='createdAt'
+														type='category'
+														offset={0}
+														tickMargin={1}
+													/>
+
+													<ChartTooltip content={<CustomTooltip />} />
+													<ChartLegend
+														className='mt-1'
+														content={<ChartLegendContent />}
+													/>
+
+													<Bar
+														dataKey='calories'
+														fill='hsl(var(--chart-5))'
+													/>
+												</BarChart>
+											</ChartContainer>
+										</div>
+									</>
+								)}
+							</div>
+						</div>
+					</ScrollArea>
+				</PopoverContent>
+			</Popover>
+		</div>
 	);
 }

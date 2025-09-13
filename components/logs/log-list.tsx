@@ -509,9 +509,11 @@ export default function FoodLogList({
 
 								<ExpendedBadge />
 
-								<Suspense fallback={<Skeleton className='w-full h-full' />}>
-									<LogRemainderBadgeLazy />
-								</Suspense>
+								{logParsed && (
+									<Suspense fallback={<Skeleton className='w-full h-full' />}>
+										<LogRemainderBadgeLazy />
+									</Suspense>
+								)}
 							</div>
 						</div>
 						<RemainingCalories iconPosition={iconPosition} />

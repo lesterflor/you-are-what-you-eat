@@ -1288,7 +1288,7 @@ export async function getLogRemainderByUserIdInRange(range: DateRange) {
 
 		return {
 			success: true,
-			messaage: 'success',
+			message: 'success',
 			data: res
 		};
 	} catch (err: unknown) {
