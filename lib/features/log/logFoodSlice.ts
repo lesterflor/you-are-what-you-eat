@@ -98,8 +98,6 @@ export interface LogFoodSliceState {
 		| 'loggedCalories'
 		| 'loggingDish'
 		| 'loggedDish'
-		| 'loggingRemainder'
-		| 'loggedRemainder'
 		| 'adding'
 		| 'failed';
 }

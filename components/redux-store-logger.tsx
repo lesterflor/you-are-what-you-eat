@@ -127,16 +127,22 @@ export default function ReduxStoreLogger({
 
 	useEffect(() => {
 		if (log?.activityItems) {
+			const clean = log.activityItems.filter((item) => !!item.data);
+
 			setActivities(
-				log.activityItems.sort(
-					(a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-				)
+				clean.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 			);
 		}
 	}, [log]);
 
 	useEffect(() => {
-		if (logFoodItemStatus !== 'idle') {
+		if (
+			logFoodItemStatus === 'added' ||
+			logFoodItemStatus === 'updated' ||
+			logFoodItemStatus === 'deleted' ||
+			logFoodItemStatus === 'loggedCalories' ||
+			logFoodItemStatus === 'loggedDish'
+		) {
 			const data = {
 				type: 'logFood',
 				action: logFoodItemStatus,
@@ -150,7 +156,7 @@ export default function ReduxStoreLogger({
 	}, [logFoodItem, logFoodItemStatus]);
 
 	useEffect(() => {
-		if (waterLogStatus !== 'idle') {
+		if (waterLogStatus === 'updated') {
 			const data = {
 				type: 'waterLog',
 				action: waterLogStatus,
