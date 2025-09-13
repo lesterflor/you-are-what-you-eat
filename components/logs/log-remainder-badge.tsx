@@ -50,6 +50,10 @@ export default function LogRemainderBadge() {
 	>();
 
 	useEffect(() => {
+		getLogCalsRemaining();
+	}, []);
+
+	useEffect(() => {
 		if (
 			(logDataStatus === 'initial' ||
 				logDataStatus === 'loggedCalories' ||

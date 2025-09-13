@@ -96,6 +96,7 @@ export default function FoodLogList({
 	const [logList, setLogList] = useState<GetFoodEntry[]>(
 		todaysLog?.foodItems || []
 	);
+	const [logParsed, setLogParsed] = useState(false);
 	const [log, setLog] = useState<GetLog>(todaysLog as GetLog);
 	const [dataFormat, setDataFormat] = useState('');
 	const [dishList, setDishList] = useState<
@@ -244,6 +245,8 @@ export default function FoodLogList({
 				setLogList(foodItems as GetFoodEntry[]);
 			}
 		});
+
+		setLogParsed(true);
 	};
 
 	const logFoodCards = useMemo(() => {
@@ -441,37 +444,39 @@ export default function FoodLogList({
 					)}>
 					<CardContent className='p-2 pt-5 flex flex-row items-center gap-2 relative'>
 						<div className='absolute -top-6 left-4 flex flex-row items-center justify-center gap-2.5'>
-							<Suspense fallback={<SubToolsSkeleton />}>
-								<DishListSheetLazy showBalloon={true}>
-									<div className='transition-opacity fade-in animate-in duration-1000 rounded-full w-11 h-11 bg-fuchsia-700 p-1.5 flex flex-col items-center justify-center'>
-										<Soup className='w-6 h-6 animate-pulse' />
-									</div>
-								</DishListSheetLazy>
+							{logParsed && (
+								<Suspense fallback={<SubToolsSkeleton />}>
+									<DishListSheetLazy showBalloon={true}>
+										<div className='transition-opacity fade-in animate-in duration-1000 rounded-full w-11 h-11 bg-fuchsia-700 p-1.5 flex flex-col items-center justify-center'>
+											<Soup className='w-6 h-6 animate-pulse' />
+										</div>
+									</DishListSheetLazy>
 
-								<FoodFavouriteListSheetLazy showBalloon={true}>
-									<div className='transition-opacity fade-in animate-in duration-1000 w-11 h-11 rounded-full p-2 bg-teal-600 flex flex-col items-center justify-center mt-1'>
-										<BsBookmarkStarFill className='w-6 h-6 animate-pulse' />
-									</div>
-								</FoodFavouriteListSheetLazy>
+									<FoodFavouriteListSheetLazy showBalloon={true}>
+										<div className='transition-opacity fade-in animate-in duration-1000 w-11 h-11 rounded-full p-2 bg-teal-600 flex flex-col items-center justify-center mt-1'>
+											<BsBookmarkStarFill className='w-6 h-6 animate-pulse' />
+										</div>
+									</FoodFavouriteListSheetLazy>
 
-								<FoodListSheetLazy>
-									<div className='transition-opacity fade-in animate-in duration-1000 rounded-full dark:bg-green-950 bg-green-500 p-3'>
-										<TbDatabaseSearch className='w-6 h-6 animate-pulse' />
-									</div>
-								</FoodListSheetLazy>
+									<FoodListSheetLazy>
+										<div className='transition-opacity fade-in animate-in duration-1000 rounded-full dark:bg-green-950 bg-green-500 p-3'>
+											<TbDatabaseSearch className='w-6 h-6 animate-pulse' />
+										</div>
+									</FoodListSheetLazy>
 
-								<ExpendedCaloriesButtonLazy showBalloon={true}>
-									<div className='transition-opacity fade-in animate-in duration-1000 mt-2 rounded-full p-2 bg-amber-700 w-10 h-10 flex flex-col items-center justify-center'>
-										<Flame className='w-6 h-6 animate-pulse' />
-									</div>
-								</ExpendedCaloriesButtonLazy>
+									<ExpendedCaloriesButtonLazy showBalloon={true}>
+										<div className='transition-opacity fade-in animate-in duration-1000 mt-2 rounded-full p-2 bg-amber-700 w-10 h-10 flex flex-col items-center justify-center'>
+											<Flame className='w-6 h-6 animate-pulse' />
+										</div>
+									</ExpendedCaloriesButtonLazy>
 
-								<WaterIntakeLazy showBalloon={true}>
-									<div className='transition-opacity fade-in animate-in duration-1000 mt-2 rounded-full p-2 bg-blue-700 w-10 h-10 flex flex-col items-center justify-center'>
-										<IoWaterOutline className='w-6 h-6 animate-pulse' />
-									</div>
-								</WaterIntakeLazy>
-							</Suspense>
+									<WaterIntakeLazy showBalloon={true}>
+										<div className='transition-opacity fade-in animate-in duration-1000 mt-2 rounded-full p-2 bg-blue-700 w-10 h-10 flex flex-col items-center justify-center'>
+											<IoWaterOutline className='w-6 h-6 animate-pulse' />
+										</div>
+									</WaterIntakeLazy>
+								</Suspense>
+							)}
 						</div>
 
 						<div className={cn('flex flex-col items-start w-full gap-1')}>

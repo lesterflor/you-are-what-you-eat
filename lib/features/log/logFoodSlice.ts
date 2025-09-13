@@ -58,6 +58,8 @@ export interface LogFoodSliceState {
 
 	currentDishItems?: FoodItemsState[];
 
+	logRemainder?: string;
+
 	macros: {
 		caloriesBurned?: number | undefined;
 		caloriesConsumed?: number | undefined;
@@ -96,6 +98,8 @@ export interface LogFoodSliceState {
 		| 'loggedCalories'
 		| 'loggingDish'
 		| 'loggedDish'
+		| 'loggingRemainder'
+		| 'loggedRemainder'
 		| 'adding'
 		| 'failed';
 }
