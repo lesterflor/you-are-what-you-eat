@@ -1,15 +1,12 @@
 'use client';
 
-import { getAllDishes } from '@/actions/prepared-dish-actions';
-import {
-	selectPreparedDishData,
-	selectPreparedDishStatus
-} from '@/lib/features/dish/preparedDishSlice';
+import { selectData, selectStatus } from '@/lib/features/log/logFoodSlice';
 import { useAppSelector } from '@/lib/hooks';
-import { getStorageItem, setStorageItem } from '@/lib/utils';
+import DishQueries from '@/lib/queries/dishQueries';
+import { setStorageItem } from '@/lib/utils';
 import { GetPreparedDish } from '@/types';
 import { Soup } from 'lucide-react';
-import { useCallback, useEffect, useState, useTransition } from 'react';
+import { useEffect, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { TbBowl } from 'react-icons/tb';
 import { ScrollArea } from '../ui/scroll-area';
@@ -29,47 +26,22 @@ export default function DishListSheet({
 	children: React.ReactNode;
 	showBalloon?: boolean;
 }) {
-	const [dishes, setDishes] = useState<GetPreparedDish[]>();
-	const [fetchingDishes, setFetchingDishes] = useTransition();
 	const [sheetOpen, setSheetOpen] = useState(false);
 
-	const dishStateData = useAppSelector(selectPreparedDishData);
-	const dishStateStatus = useAppSelector(selectPreparedDishStatus);
+	const logData = useAppSelector(selectData);
+	const logDataStatus = useAppSelector(selectStatus);
+
+	const { data: dishes, isFetching, isFetched } = DishQueries();
+
+	if (isFetched) {
+		setStorageItem('preparedDishes', dishes);
+	}
 
 	useEffect(() => {
-		if (
-			dishStateStatus === 'added' ||
-			dishStateStatus === 'updated' ||
-			dishStateStatus === 'deleted'
-		) {
-			getDishes();
+		if (logDataStatus === 'loggedDish') {
+			setSheetOpen(false);
 		}
-	}, [dishStateData, dishStateStatus]);
-
-	const getDishes = useCallback(() => {
-		setFetchingDishes(async () => {
-			const res = await getAllDishes();
-
-			if (res.success) {
-				setFetchingDishes(() => {
-					setDishes(res.data as GetPreparedDish[]);
-					setStorageItem('preparedDishes', res.data);
-				});
-			}
-		});
-	}, [dishes]);
-
-	useEffect(() => {
-		// on mount get all foods and do local sorting in redux handler
-		const savedDishes: GetPreparedDish[] =
-			getStorageItem('preparedDishes') || [];
-
-		if (savedDishes.length > 0) {
-			setDishes(savedDishes);
-		} else {
-			getDishes();
-		}
-	}, []);
+	}, [logData, logDataStatus]);
 
 	return (
 		<>
@@ -101,16 +73,15 @@ export default function DishListSheet({
 					</SheetDescription>
 
 					<ScrollArea className='w-full pr-3 h-[70vh]'>
-						{fetchingDishes ? (
+						{isFetching ? (
 							<ImSpinner2 className='animate-spin w-8 h-8 opacity-25' />
 						) : (
 							<div className='flex flex-col gap-6'>
 								{dishes && dishes.length > 0 ? (
-									dishes.map((item) => (
+									dishes.map((item: GetPreparedDish) => (
 										<DishCard
 											key={item.id}
-											dish={item}
-											onLogged={() => setSheetOpen(false)}
+											dish={item as GetPreparedDish}
 										/>
 									))
 								) : (

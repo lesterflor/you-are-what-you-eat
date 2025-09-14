@@ -44,12 +44,10 @@ import DishImageGallery from './dish-image-gallery';
 
 export default function DishCard({
 	dish,
-	readOnly = false,
-	onLogged
+	readOnly = false
 }: {
 	dish: GetPreparedDish;
 	readOnly?: boolean;
-	onLogged?: () => void;
 }) {
 	const dispatch = useAppDispatch();
 	const [prepDish, setPrepDish] = useState<GetPreparedDish>(dish);
@@ -487,7 +485,6 @@ export default function DishCard({
 						onClick={() => {
 							setLoggingDish(async () => {
 								dispatch(logPrepDishAsync(prepDish));
-								onLogged?.();
 							});
 						}}>
 						{loggingDish ? (
