@@ -355,17 +355,20 @@ export const logFoodSlice = createAppSlice({
 						state.log = serLog;
 						state.currentLog = JSON.stringify(serLog);
 
-						state.macros.totalCarbs = totalCarbs;
-						state.macros.totalFat = totalFat;
-						state.macros.totalProtein = totalProtein;
-						state.macros.caloriesBurned =
-							action.payload.log.knownCaloriesBurned[0]?.calories ?? 0;
-						state.macros.caloriesConsumed = caloriesConsumed;
-						state.macros.caloriesRemaining =
-							caloriesConsumed -
-							(action.payload.log.knownCaloriesBurned[0].calories +
-								action.payload.log.user.BaseMetabolicRate[0].bmr);
-						state.macros.bmr = action.payload.log.user.BaseMetabolicRate[0].bmr;
+						state.macros = {
+							...state.macros,
+							totalCarbs,
+							totalFat,
+							totalProtein,
+							caloriesConsumed,
+							caloriesBurned:
+								action.payload.log.knownCaloriesBurned[0]?.calories ?? 0,
+							caloriesRemaining:
+								caloriesConsumed -
+								(action.payload.log.knownCaloriesBurned[0].calories +
+									action.payload.log.user.BaseMetabolicRate[0].bmr),
+							bmr: action.payload.log.user.BaseMetabolicRate[0].bmr
+						};
 					}
 				},
 				rejected: (state, action) => {
@@ -540,17 +543,20 @@ export const logFoodSlice = createAppSlice({
 						state.log = serLog;
 						state.currentLog = JSON.stringify(serLog);
 
-						state.macros.totalCarbs = totalCarbs;
-						state.macros.totalFat = totalFat;
-						state.macros.totalProtein = totalProtein;
-						state.macros.caloriesBurned =
-							action.payload.log.knownCaloriesBurned[0]?.calories ?? 0;
-						state.macros.caloriesConsumed = caloriesConsumed;
-						state.macros.caloriesRemaining =
-							caloriesConsumed -
-							(action.payload.log.knownCaloriesBurned[0].calories +
-								action.payload.log.user.BaseMetabolicRate[0].bmr);
-						state.macros.bmr = action.payload.log.user.BaseMetabolicRate[0].bmr;
+						state.macros = {
+							...state.macros,
+							totalCarbs,
+							totalFat,
+							totalProtein,
+							caloriesConsumed,
+							caloriesBurned:
+								action.payload.log.knownCaloriesBurned[0]?.calories ?? 0,
+							caloriesRemaining:
+								caloriesConsumed -
+								(action.payload.log.knownCaloriesBurned[0].calories +
+									action.payload.log.user.BaseMetabolicRate[0].bmr),
+							bmr: action.payload.log.user.BaseMetabolicRate[0].bmr
+						};
 					}
 				},
 				rejected: (state, action) => {
@@ -592,18 +598,22 @@ export const logFoodSlice = createAppSlice({
 						const { totalCarbs, totalFat, totalProtein, caloriesConsumed } =
 							deserFoodItemsMacros(action.payload.log.foodItems);
 
-						state.macros.totalCarbs = totalCarbs;
-						state.macros.totalFat = totalFat;
-						state.macros.totalProtein = totalProtein;
-						state.macros.caloriesBurned =
-							action.payload.log.knownCaloriesBurned[0]?.calories ?? 0;
-						state.macros.caloriesConsumed = caloriesConsumed;
-						state.macros.caloriesRemaining =
-							caloriesConsumed -
-							(action.payload.log.knownCaloriesBurned[0].calories +
-								action.payload.log.user.BaseMetabolicRate[0].bmr);
-						state.macros.bmr = action.payload.log.user.BaseMetabolicRate[0].bmr;
+						state.macros = {
+							...state.macros,
+							totalCarbs,
+							totalFat,
+							totalProtein,
+							caloriesBurned:
+								action.payload.log.knownCaloriesBurned[0]?.calories ?? 0,
+							caloriesConsumed,
+							caloriesRemaining:
+								caloriesConsumed -
+								(action.payload.log.knownCaloriesBurned[0].calories +
+									action.payload.log.user.BaseMetabolicRate[0].bmr),
+							bmr: action.payload.log.user.BaseMetabolicRate[0].bmr
+						};
 
+						state.value.message = action.payload.message;
 						toast.success(action.payload.message);
 					}
 				},
@@ -622,7 +632,8 @@ export const logFoodSlice = createAppSlice({
 				if (res.success && res.data) {
 					return {
 						data: { ...res.data, eatenAt: res.data?.eatenAt.toString() },
-						log: serializeLog(res.log)
+						log: serializeLog(res.log),
+						message: res.message
 					};
 				}
 
@@ -644,7 +655,7 @@ export const logFoodSlice = createAppSlice({
 						const { totalCarbs, totalFat, totalProtein, caloriesConsumed } =
 							deserFoodItemsMacros(action.payload.log.foodItems);
 
-						const successMsg = `You updated the serving of ${action.payload.data.name} to ${action.payload.data.numServings}`;
+						const successMsg = action.payload.message;
 
 						state.value = {
 							name: action.payload.data.name as string,
@@ -656,17 +667,20 @@ export const logFoodSlice = createAppSlice({
 
 						toast.success(successMsg);
 
-						state.macros.totalCarbs = totalCarbs;
-						state.macros.totalFat = totalFat;
-						state.macros.totalProtein = totalProtein;
-						state.macros.caloriesBurned =
-							action.payload.log.knownCaloriesBurned[0]?.calories ?? 0;
-						state.macros.caloriesConsumed = caloriesConsumed;
-						state.macros.caloriesRemaining =
-							caloriesConsumed -
-							(action.payload.log.knownCaloriesBurned[0].calories +
-								action.payload.log.user.BaseMetabolicRate[0].bmr);
-						state.macros.bmr = action.payload.log.user.BaseMetabolicRate[0].bmr;
+						state.macros = {
+							...state.macros,
+							totalCarbs,
+							totalFat,
+							totalProtein,
+							caloriesConsumed,
+							caloriesBurned:
+								action.payload.log.knownCaloriesBurned[0]?.calories ?? 0,
+							caloriesRemaining:
+								caloriesConsumed -
+								(action.payload.log.knownCaloriesBurned[0].calories +
+									action.payload.log.user.BaseMetabolicRate[0].bmr),
+							bmr: action.payload.log.user.BaseMetabolicRate[0].bmr
+						};
 
 						state.updatedItem = {
 							...action.payload.data,

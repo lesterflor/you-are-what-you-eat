@@ -1049,7 +1049,7 @@ export async function updateFoodLogEntry(foodEntry: GetFoodEntry) {
 
 		return {
 			success: true,
-			message: 'Log updated successfully',
+			message: `You updated the serving of ${theUpdate[0].name} to ${theUpdate[0].numServings}`,
 			data: theUpdate[0],
 			log: update
 		};
@@ -1362,7 +1362,9 @@ export async function todaysWaterConsumed(glasses: number = 0) {
 
 		return {
 			success: true,
-			message: 'Successfully updated water consumption',
+			message: `You added ${glasses} ${
+				glasses === 1 ? 'glass' : 'glasses'
+			} to today's water consumption`,
 			data: retLog
 		};
 	} catch (error: unknown) {
