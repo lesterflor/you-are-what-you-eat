@@ -7,7 +7,7 @@ import {
 import { logDishItems } from '@/actions/prepared-dish-actions';
 import { createAppSlice } from '@/lib/createAppSlice';
 import { serializeLog, totalMacrosReducer } from '@/lib/utils';
-import { FoodEntry, GetLogEnhanced, GetPreparedDish } from '@/types';
+import { FoodEntry, GetLog, GetLogEnhanced, GetPreparedDish } from '@/types';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { toast } from 'sonner';
 
@@ -250,14 +250,16 @@ export const logFoodSlice = createAppSlice({
 				logRemainder,
 				knownCaloriesBurned,
 				user: { BaseMetabolicRate: bmrArr }
-			} = logSer;
+			} = logSer as GetLog;
 
 			state.macros = {
 				...state.macros,
 				bmr: bmrArr[0].bmr,
-				caloriesBurned: knownCaloriesBurned[0].calories,
+				caloriesBurned: knownCaloriesBurned[0].calories ?? 0,
 				caloriesRemaining: remainingCalories,
-				caloriesRemainingCumulative: logRemainder[0].calories,
+				caloriesRemainingCumulative: logRemainder
+					? logRemainder[0].calories
+					: 0,
 				caloriesConsumed,
 				totalCarbs,
 				totalFat,
