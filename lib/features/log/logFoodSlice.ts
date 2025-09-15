@@ -257,9 +257,10 @@ export const logFoodSlice = createAppSlice({
 				bmr: bmrArr[0].bmr,
 				caloriesBurned: knownCaloriesBurned[0].calories ?? 0,
 				caloriesRemaining: remainingCalories,
-				caloriesRemainingCumulative: logRemainder
-					? logRemainder[0].calories
-					: 0,
+				caloriesRemainingCumulative:
+					logRemainder && logRemainder.length > 0
+						? logRemainder[0]?.calories
+						: 0,
 				caloriesConsumed,
 				totalCarbs,
 				totalFat,
