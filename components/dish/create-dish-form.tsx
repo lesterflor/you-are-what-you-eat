@@ -1,10 +1,6 @@
 'use client';
 
-import {
-	createDish,
-	getAllDishesByUser,
-	updateDish
-} from '@/actions/prepared-dish-actions';
+import { createDish } from '@/actions/prepared-dish-actions';
 import {
 	addDish,
 	clearItems,
@@ -12,12 +8,15 @@ import {
 	selectPreparedDishStatus,
 	updateDishState
 } from '@/lib/features/dish/preparedDishSlice';
+import { updateDishMutation } from '@/lib/features/mutations/dishMutations';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { getAllDishesByUserOptions } from '@/lib/queries/dishQueries';
 import { preparedDishSchema } from '@/lib/validators';
 import { GetFoodEntry, GetPreparedDish, GetUser } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	ControllerRenderProps,
 	SubmitErrorHandler,
@@ -47,6 +46,8 @@ export default function CreateDishForm({
 	onSuccess?: () => void;
 	onDishListChange?: (list: GetFoodEntry[]) => void;
 }) {
+	const query = useQueryClient();
+
 	const { data: session } = useSession();
 	const user = session?.user as GetUser;
 	const dispatch = useAppDispatch();
@@ -88,6 +89,9 @@ export default function CreateDishForm({
 					dishList: '[]'
 				})
 			);
+
+			// tanstack
+			query.invalidateQueries({ queryKey: ['dishes'] });
 		} else {
 			toast.error(res.message);
 		}
@@ -112,41 +116,33 @@ export default function CreateDishForm({
 		onDishListChange?.(dishFoodItems);
 	}, [dishFoodItems]);
 
-	const [currentDishes, setCurrentDishes] = useState<GetPreparedDish[]>();
-	const fetchDishes = async () => {
-		const res = await getAllDishesByUser();
+	const { data: currentDishes } = useQuery(getAllDishesByUserOptions());
 
-		if (res.success && res.data) {
-			setCurrentDishes(res.data as GetPreparedDish[]);
-		}
-	};
-
-	useEffect(() => {
-		fetchDishes();
-	}, []);
-
-	const [updatingDish, setUpdatingDish] = useTransition();
+	const { isPending: updatePending, mutate: updateDishItem } = useMutation(
+		updateDishMutation()
+	);
 
 	const addItemsToExistingList = (dish: GetPreparedDish) => {
-		setUpdatingDish(async () => {
-			const clone = [...dish.foodItems];
-			const merged = [...clone, ...dishFoodItems];
+		const clone = [...dish.foodItems];
+		const merged = [...clone, ...dishFoodItems];
 
-			dish.foodItems = merged;
-			const res = await updateDish(dish);
+		dish.foodItems = merged;
 
-			if (res.success && res.data) {
-				toast.success(res.message);
+		// tanstack mutation
+		updateDishItem(dish, {
+			onSuccess: (res) => {
+				// redux
 				dispatch(
 					updateDishState({
-						id: res.data.id,
-						name: res.data.name,
-						description: res.data.description ?? '',
+						id: res.data?.id ?? '',
+						name: res.data?.name ?? '',
+						description: res.data?.description ?? '',
 						dishList: '[]'
 					})
 				);
-			} else {
-				toast.error(res.message);
+
+				// tanstack
+				query.invalidateQueries({ queryKey: ['dishes'] });
 			}
 		});
 	};
@@ -294,15 +290,17 @@ export default function CreateDishForm({
 									key={item.id}
 									className='flex flex-col items-end gap-2 relative'>
 									<DishCard
-										dish={item}
+										dish={item as GetPreparedDish}
 										readOnly={true}
 									/>
 									<Button
 										className='absolute -top-2 right-0 rounded-full'
 										size={'icon'}
-										disabled={updatingDish}
-										onClick={() => addItemsToExistingList(item)}>
-										{updatingDish ? (
+										disabled={updatePending}
+										onClick={() =>
+											addItemsToExistingList(item as GetPreparedDish)
+										}>
+										{updatePending ? (
 											<ImSpinner2 className='animate-spin' />
 										) : (
 											<TbHemispherePlus />

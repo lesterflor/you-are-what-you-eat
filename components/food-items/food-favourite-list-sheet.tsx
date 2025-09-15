@@ -1,13 +1,8 @@
 'use client';
 
-import { getFavouriteFoods } from '@/actions/food-actions';
-import {
-	selectBookmarkFoodData,
-	selectBookmarkFoodStatus
-} from '@/lib/features/food/bookmarkSlice';
-import { useAppSelector } from '@/lib/hooks';
+import { getFavouriteQueryOptions } from '@/lib/queries/favouriteQueries';
 import { GetFoodItem } from '@/types';
-import { useCallback, useEffect, useState, useTransition } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { BsBookmarkStarFill } from 'react-icons/bs';
 import { ImSpinner2 } from 'react-icons/im';
 import { ScrollArea } from '../ui/scroll-area';
@@ -27,27 +22,7 @@ export default function FoodFavouriteListSheet({
 	children: React.ReactNode;
 	showBalloon?: boolean;
 }) {
-	const [favs, setFavs] = useState<GetFoodItem[]>();
-	const [isFetching, setIsFetching] = useTransition();
-
-	const bookmarkFoodData = useAppSelector(selectBookmarkFoodData);
-	const bookmarkFoodStatus = useAppSelector(selectBookmarkFoodStatus);
-
-	useEffect(() => {
-		fetchFavs();
-	}, [bookmarkFoodData, bookmarkFoodStatus]);
-
-	const fetchFavs = useCallback(() => {
-		setIsFetching(async () => {
-			const res = await getFavouriteFoods();
-
-			if (res.success) {
-				setIsFetching(() => {
-					setFavs(res.data as GetFoodItem[]);
-				});
-			}
-		});
-	}, [favs]);
+	const { data: favs, isFetching } = useQuery(getFavouriteQueryOptions());
 
 	return (
 		<>
@@ -79,7 +54,7 @@ export default function FoodFavouriteListSheet({
 							favs &&
 							favs.length > 0 && (
 								<div className='flex flex-col items-center gap-4'>
-									{favs.map((item) => (
+									{favs.map((item: GetFoodItem) => (
 										<FoodItemCard
 											item={item}
 											key={item.id}

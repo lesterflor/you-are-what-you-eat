@@ -124,7 +124,7 @@ export async function deleteDish(dishId: string) {
 
 		return {
 			success: true,
-			message: 'Successfully deleted dish',
+			message: `Successfull deleted dish, ${del.name}`,
 			data: del
 		};
 	} catch (err: unknown) {
@@ -255,7 +255,15 @@ export async function getAllDishes() {
 		return {
 			success: true,
 			message: 'success',
-			data: dishes
+			data: dishes.map((item) => ({
+				...item,
+				description: item.description as string,
+				foodItems: item.foodItems.map((fi) => ({
+					...fi,
+					description: fi.description as string,
+					image: fi.image as string
+				}))
+			}))
 		};
 	} catch (err: unknown) {
 		return {

@@ -1,21 +1,24 @@
 'use client';
 
-import { deleteDish, updateDish } from '@/actions/prepared-dish-actions';
 import {
 	deleteDishState,
 	updateDishState
 } from '@/lib/features/dish/preparedDishSlice';
 import { logPrepDishAsync } from '@/lib/features/log/logFoodSlice';
+import {
+	deleteDishMutation,
+	updateDishMutation
+} from '@/lib/features/mutations/dishMutations';
 import { useAppDispatch } from '@/lib/hooks';
 import { cn, formatUnit, totalMacrosReducer } from '@/lib/utils';
 import { GetFoodEntry, GetPreparedDish, GetUser } from '@/types';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Aperture, FilePenLine, Soup, X } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { useCallback, useEffect, useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { BiSolidBowlHot } from 'react-icons/bi';
 import { ImSpinner2 } from 'react-icons/im';
 import { TbShareOff } from 'react-icons/tb';
-import { toast } from 'sonner';
 import ShareListButton from '../grocery/share-list-button';
 import SharedListAvatars from '../grocery/shared-list-avatars';
 import TakePhoto from '../image/take-photo';
@@ -52,8 +55,6 @@ export default function DishCard({
 	const dispatch = useAppDispatch();
 	const [prepDish, setPrepDish] = useState<GetPreparedDish>(dish);
 	const [items, setItems] = useState<GetFoodEntry[]>(dish.foodItems);
-	const [isUpdating, setIsUpdating] = useTransition();
-	const [isDeleting, setIsDeleting] = useTransition();
 	const [loggingDish, setLoggingDish] = useTransition();
 	const [isEditMode, setIsEditMode] = useState(false);
 	const [dishProps, setDishProps] = useState<{
@@ -66,6 +67,7 @@ export default function DishCard({
 		totalProtein: number;
 		totalFat: number;
 	}>({ totalCals: 0, totalCarb: 0, totalProtein: 0, totalFat: 0 });
+	const query = useQueryClient();
 
 	const [photoDlgOpen, setPhotoDlgOpen] = useState(false);
 
@@ -93,44 +95,71 @@ export default function DishCard({
 		}
 	}, [prepDish]);
 
-	const dispatchDishState = useCallback(() => {
-		dispatch(
-			updateDishState({
-				id: prepDish.id,
-				name: prepDish.name,
-				description: prepDish.description,
-				dishList: '[]'
-			})
-		);
-	}, [prepDish]);
-
 	const [sharedUsers, setSharedUsers] = useState<string[]>([]);
-
-	const updatePrepDish = (dish: GetPreparedDish) => {
-		setIsUpdating(async () => {
-			const res = await updateDish(dish);
-
-			if (res.success && res.data) {
-				toast.success(res.message);
-
-				setPrepDish(res.data as GetPreparedDish);
-
-				dispatchDishState();
-			} else {
-				toast.error(res.message);
-			}
-		});
-	};
 
 	const { data: session } = useSession();
 	const user = session?.user as GetUser;
 
 	const [sessionUserIsDishOwner] = useState(user.id === prepDish.userId);
 
+	const { isPending: deletePending, mutate: deleteDishItem } = useMutation(
+		deleteDishMutation()
+	);
+
+	const { isPending: updatePending, mutate: updateDishItem } = useMutation(
+		updateDishMutation()
+	);
+
+	const handleDelete = () => {
+		// tanstack mutate
+		deleteDishItem(prepDish.id, {
+			onSuccess: (res) => {
+				// redux
+				dispatch(
+					deleteDishState({
+						id: res.data?.id ?? '',
+						name: res.data?.name ?? '',
+						description: res.data?.description ?? '',
+						dishList: '[]'
+					})
+				);
+
+				// tanstack
+				query.invalidateQueries({ queryKey: ['dishes'] });
+			}
+		});
+	};
+
+	const updatePrepDish = (dish: GetPreparedDish) => {
+		// tanstack mutation
+		updateDishItem(dish, {
+			onSuccess: (res) => {
+				if (res.success) {
+					const upDish = res.data as GetPreparedDish;
+
+					setPrepDish(upDish);
+
+					// redux
+					dispatch(
+						updateDishState({
+							id: upDish.id,
+							name: upDish.name,
+							description: upDish.description,
+							dishList: '[]'
+						})
+					);
+
+					// tanstack - not required since list is technically the same and we have updated prepDish state above
+					//query.invalidateQueries({ queryKey: ['dishes'] });
+				}
+			}
+		});
+	};
+
 	return (
 		<Card>
 			<CardTitle className='p-2 font-normal flex flex-row items-center gap-2 relative'>
-				{isUpdating ? (
+				{updatePending ? (
 					<ImSpinner2 className='text-slate-500 w-6 h-6 animate-spin' />
 				) : (
 					<Soup className='w-6 h-6 text-fuchsia-500' />
@@ -174,27 +203,9 @@ export default function DishCard({
 										cannot be undone
 									</DialogDescription>
 									<Button
-										disabled={isDeleting}
-										onClick={() => {
-											setIsDeleting(async () => {
-												const res = await deleteDish(prepDish.id);
-
-												if (res.success && res.data) {
-													toast.success(res.message);
-													dispatch(
-														deleteDishState({
-															id: res.data.id,
-															name: res.data.name,
-															description: res.data.description ?? '',
-															dishList: '[]'
-														})
-													);
-												} else {
-													toast.error(res.message);
-												}
-											});
-										}}>
-										{isDeleting ? (
+										disabled={deletePending}
+										onClick={handleDelete}>
+										{deletePending ? (
 											<ImSpinner2 className='animate-spin' />
 										) : (
 											<X />
@@ -265,10 +276,10 @@ export default function DishCard({
 
 												updatePrepDish(upd);
 											}}
-											disabled={isUpdating}
+											disabled={updatePending}
 											variant={'secondary'}
 											size={'icon'}>
-											{isUpdating ? (
+											{updatePending ? (
 												<ImSpinner2 className='animate-spin' />
 											) : (
 												<TbShareOff />
@@ -315,58 +326,36 @@ export default function DishCard({
 									noDeleteButton={readOnly}
 									readOnly={readOnly}
 									onDelete={(item) => {
-										setIsUpdating(async () => {
-											const upd = { ...dish };
+										const upd = { ...dish };
 
-											const newList = upd.foodItems.filter(
-												(dItem) =>
-													dItem.id !== item.id || dItem.eatenAt !== item.eatenAt
-											);
+										const newList = upd.foodItems.filter(
+											(dItem) =>
+												dItem.id !== item.id || dItem.eatenAt !== item.eatenAt
+										);
 
-											upd.foodItems = newList;
+										upd.foodItems = newList;
 
-											setPrepDish(upd);
-											setItems(upd.foodItems);
+										setPrepDish(upd);
+										setItems(upd.foodItems);
 
-											const res = await updateDish(upd);
-
-											if (res.success) {
-												toast.success(res.message);
-												setPrepDish(res.data as GetPreparedDish);
-
-												dispatchDishState();
-											} else {
-												toast.error(res.message);
-											}
-										});
+										updatePrepDish(upd);
 									}}
 									onEdit={(item) => {
-										setIsUpdating(async () => {
-											const upd = { ...dish };
+										const upd = { ...dish };
 
-											const editItem = upd.foodItems.find(
-												(dItem) =>
-													dItem.id === item.id && dItem.eatenAt === item.eatenAt
-											);
+										const editItem = upd.foodItems.find(
+											(dItem) =>
+												dItem.id === item.id && dItem.eatenAt === item.eatenAt
+										);
 
-											if (editItem) {
-												Object.assign(editItem, item);
-											}
+										if (editItem) {
+											Object.assign(editItem, item);
+										}
 
-											setPrepDish(upd);
-											setItems(upd.foodItems);
+										setPrepDish(upd);
+										setItems(upd.foodItems);
 
-											const res = await updateDish(upd);
-
-											if (res.success) {
-												toast.success(res.message);
-												setPrepDish(res.data as GetPreparedDish);
-
-												dispatchDishState();
-											} else {
-												toast.error(res.message);
-											}
-										});
+										updatePrepDish(upd);
 									}}
 									key={`${item.id}-${item.eatenAt}-${indx}`}
 									indx={indx}
@@ -449,28 +438,17 @@ export default function DishCard({
 
 						{isEditMode && (
 							<Button
-								disabled={isUpdating}
+								disabled={updatePending}
 								onClick={() => {
-									setIsUpdating(async () => {
-										const upd = { ...prepDish };
-										upd.name = dishProps.name;
-										upd.description = dishProps.description;
+									const upd = { ...prepDish };
+									upd.name = dishProps.name;
+									upd.description = dishProps.description;
 
-										const res = await updateDish(upd);
+									updatePrepDish(upd);
 
-										if (res.success) {
-											toast.success(res.message);
-
-											setPrepDish(res.data as GetPreparedDish);
-
-											dispatchDishState();
-										} else {
-											toast.error(res.message);
-										}
-										setIsEditMode(false);
-									});
+									setIsEditMode(false);
 								}}>
-								{isUpdating ? (
+								{updatePending ? (
 									<ImSpinner2 className='animate-spin' />
 								) : (
 									<FilePenLine />

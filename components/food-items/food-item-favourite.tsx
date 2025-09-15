@@ -7,12 +7,15 @@ import {
 import { addBookmark, removeBookmark } from '@/lib/features/food/bookmarkSlice';
 import { useAppDispatch } from '@/lib/hooks';
 import { GetFoodItem } from '@/types';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState, useTransition } from 'react';
 import { BsBookmarkPlus, BsBookmarkStarFill } from 'react-icons/bs';
 import { ImSpinner2 } from 'react-icons/im';
 import { useInView } from 'react-intersection-observer';
 
 export default function FoodItemFavourite({ item }: { item: GetFoodItem }) {
+	const query = useQueryClient();
+
 	const dispatch = useAppDispatch();
 	const [isBookmarked, setIsBookmarked] = useState(false);
 	const [isBookmarking, setIsBookmarking] = useTransition();
@@ -41,6 +44,9 @@ export default function FoodItemFavourite({ item }: { item: GetFoodItem }) {
 							? addBookmark(JSON.stringify({ id: item.id, name: item.name }))
 							: removeBookmark(JSON.stringify({ id: item.id, name: item.name }))
 					);
+
+					// tanstack refresh fav list
+					query.invalidateQueries({ queryKey: ['favs'] });
 				});
 			}
 		});
