@@ -2,9 +2,10 @@
 
 import { selectData, selectStatus } from '@/lib/features/log/logFoodSlice';
 import { useAppSelector } from '@/lib/hooks';
-import DishQueries from '@/lib/queries/dishQueries';
+import { getAllDishesOptions } from '@/lib/queries/dishQueries';
 import { setStorageItem } from '@/lib/utils';
 import { GetPreparedDish } from '@/types';
+import { useQuery } from '@tanstack/react-query';
 import { Soup } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
@@ -31,7 +32,11 @@ export default function DishListSheet({
 	const logData = useAppSelector(selectData);
 	const logDataStatus = useAppSelector(selectStatus);
 
-	const { data: dishes, isFetching, isFetched } = DishQueries();
+	const {
+		data: dishes,
+		isFetching,
+		isFetched
+	} = useQuery(getAllDishesOptions());
 
 	if (isFetched) {
 		setStorageItem('preparedDishes', dishes);
