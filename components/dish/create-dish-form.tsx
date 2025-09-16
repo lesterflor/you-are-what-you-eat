@@ -1,6 +1,5 @@
 'use client';
 
-import { createDish } from '@/actions/prepared-dish-actions';
 import {
 	addDish,
 	clearItems,
@@ -8,7 +7,10 @@ import {
 	selectPreparedDishStatus,
 	updateDishState
 } from '@/lib/features/dish/preparedDishSlice';
-import { updateDishMutation } from '@/lib/features/mutations/dishMutations';
+import {
+	createDishMutation,
+	updateDishMutation
+} from '@/lib/features/mutations/dishMutations';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { getAllDishesByUserOptions } from '@/lib/queries/dishQueries';
 import { preparedDishSchema } from '@/lib/validators';
@@ -25,7 +27,6 @@ import {
 } from 'react-hook-form';
 import { ImSpinner2 } from 'react-icons/im';
 import { TbHemisphereOff, TbHemispherePlus } from 'react-icons/tb';
-import { toast } from 'sonner';
 import { z } from 'zod';
 import ShareListButton from '../grocery/share-list-button';
 import SharedListAvatars from '../grocery/shared-list-avatars';
@@ -52,7 +53,27 @@ export default function CreateDishForm({
 	const user = session?.user as GetUser;
 	const dispatch = useAppDispatch();
 
+	const preparedDishData = useAppSelector(selectPreparedDishData);
+	const preparedDishStatus = useAppSelector(selectPreparedDishStatus);
+
+	const [sharedUsers, setSharedUsers] = useState<string[]>([]);
 	const [dishFoodItems, setDishFoodItems] = useState<GetFoodEntry[]>(foodItems);
+
+	useEffect(() => {
+		if (preparedDishStatus === 'checkedItem') {
+			const theData = JSON.parse(preparedDishData.dishList);
+			type SliceDataType = {
+				add: boolean;
+				item: GetFoodEntry;
+			};
+			const items = theData.map((it: SliceDataType) => it.item);
+			setDishFoodItems(items);
+		}
+	}, [preparedDishData, preparedDishStatus]);
+
+	useEffect(() => {
+		onDishListChange?.(dishFoodItems);
+	}, [dishFoodItems]);
 
 	const form = useForm<z.infer<typeof preparedDishSchema>>({
 		resolver: zodResolver(preparedDishSchema),
@@ -70,51 +91,33 @@ export default function CreateDishForm({
 		console.log(JSON.stringify(errors));
 	};
 
+	const { mutate: createDishItem } = useMutation(createDishMutation());
+
 	const sendDish: SubmitHandler<z.infer<typeof preparedDishSchema>> = async (
 		values
 	) => {
 		values.foodItems = dishFoodItems;
 
-		const res = await createDish(values);
+		// tanstack mutate
+		createDishItem(values, {
+			onSuccess: (res) => {
+				onSuccess?.();
 
-		if (res.success && res.data) {
-			toast.success(res.message);
-			onSuccess?.();
+				// redux
+				dispatch(
+					addDish({
+						id: res.data?.id ?? '',
+						name: res.data?.name ?? '',
+						description: res.data?.description ?? '',
+						dishList: '[]'
+					})
+				);
 
-			dispatch(
-				addDish({
-					id: res.data.id,
-					name: res.data.name,
-					description: res.data.description ?? '',
-					dishList: '[]'
-				})
-			);
-
-			// tanstack
-			query.invalidateQueries({ queryKey: ['dishes'] });
-		} else {
-			toast.error(res.message);
-		}
+				// tanstack
+				query.invalidateQueries({ queryKey: ['dishes'] });
+			}
+		});
 	};
-
-	const preparedDishData = useAppSelector(selectPreparedDishData);
-	const preparedDishStatus = useAppSelector(selectPreparedDishStatus);
-
-	useEffect(() => {
-		if (preparedDishStatus === 'checkedItem') {
-			const theData = JSON.parse(preparedDishData.dishList);
-			type SliceDataType = {
-				add: boolean;
-				item: GetFoodEntry;
-			};
-			const items = theData.map((it: SliceDataType) => it.item);
-			setDishFoodItems(items);
-		}
-	}, [preparedDishData, preparedDishStatus]);
-
-	useEffect(() => {
-		onDishListChange?.(dishFoodItems);
-	}, [dishFoodItems]);
 
 	const { data: currentDishes } = useQuery(getAllDishesByUserOptions());
 
@@ -146,8 +149,6 @@ export default function CreateDishForm({
 			}
 		});
 	};
-
-	const [sharedUsers, setSharedUsers] = useState<string[]>([]);
 
 	return (
 		<div className='flex flex-col gap-2 items-center relative'>

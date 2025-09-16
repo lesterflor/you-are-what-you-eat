@@ -1,5 +1,9 @@
-import { deleteDish, updateDish } from '@/actions/prepared-dish-actions';
-import { GetPreparedDish } from '@/types';
+import {
+	createDish,
+	deleteDish,
+	updateDish
+} from '@/actions/prepared-dish-actions';
+import { GetPreparedDish, PreparedDish } from '@/types';
 import { mutationOptions } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
@@ -21,6 +25,20 @@ export function updateDishMutation() {
 	return mutationOptions({
 		mutationFn: (dish: GetPreparedDish) => updateDish(dish),
 		mutationKey: ['mutateUpdateDish'],
+		onSuccess: (res) => {
+			if (res.success) {
+				toast.success(res.message);
+			} else {
+				toast.error(res.message);
+			}
+		}
+	});
+}
+
+export function createDishMutation() {
+	return mutationOptions({
+		mutationFn: (dish: PreparedDish) => createDish(dish),
+		mutationKey: ['mutateCreateDish'],
 		onSuccess: (res) => {
 			if (res.success) {
 				toast.success(res.message);

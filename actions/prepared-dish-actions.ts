@@ -31,7 +31,7 @@ export async function createDish(dish: PreparedDish) {
 
 		return {
 			success: true,
-			message: 'Successfully created dish',
+			message: `Successfully created dish, ${newDish.name}`,
 			data: newDish
 		};
 	} catch (err: unknown) {
