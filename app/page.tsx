@@ -3,7 +3,14 @@ import AddFoodSheet from '@/components/food-items/add-food-sheet';
 import LandingContent from '@/components/landing-content';
 import FoodLogList from '@/components/logs/log-list';
 import { auth } from '@/db/auth';
+import { getAllDishesOptions } from '@/lib/queries/dishQueries';
+import { getFavouriteQueryOptions } from '@/lib/queries/favouriteQueries';
 import { GetLog, GetWaterConsumed } from '@/types';
+import {
+	dehydrate,
+	HydrationBoundary,
+	QueryClient
+} from '@tanstack/react-query';
 import { lazy } from 'react';
 
 const FoodListSheetLazy = lazy(
@@ -15,8 +22,21 @@ export default async function Home() {
 	const todaysLog = await createDailyLog();
 	const currentWater = await todaysWaterConsumed();
 
+	const queryClient = new QueryClient();
+
+	await Promise.all([
+		queryClient.prefetchQuery({
+			queryKey: getFavouriteQueryOptions().queryKey,
+			queryFn: getFavouriteQueryOptions().queryFn
+		}),
+		queryClient.prefetchQuery({
+			queryKey: getAllDishesOptions().queryKey,
+			queryFn: getAllDishesOptions().queryFn
+		})
+	]);
+
 	return (
-		<>
+		<HydrationBoundary state={dehydrate(queryClient)}>
 			{session ? (
 				<div className='flex flex-col gap-0 w-full h-full'>
 					<div className='portrait:hidden flex flex-row items-center justify-between w-full gap-2'>
@@ -40,6 +60,6 @@ export default async function Home() {
 			) : (
 				<LandingContent />
 			)}
-		</>
+		</HydrationBoundary>
 	);
 }
