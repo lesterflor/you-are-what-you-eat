@@ -10,8 +10,14 @@ import {
 	updateDishMutation
 } from '@/lib/features/mutations/dishMutations';
 import { useAppDispatch } from '@/lib/hooks';
+import { addImageState } from '@/lib/image/imageSlice';
 import { cn, formatUnit, totalMacrosReducer } from '@/lib/utils';
-import { GetFoodEntry, GetPreparedDish, GetUser } from '@/types';
+import {
+	GetFoodEntry,
+	GetPreparedDish,
+	GetPreparedDishImage,
+	GetUser
+} from '@/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Aperture, FilePenLine, Soup, X } from 'lucide-react';
 import { useSession } from 'next-auth/react';
@@ -230,11 +236,30 @@ export default function DishCard({
 								<DialogTitle>
 									<Aperture className='w-6 h-6 text-muted-foreground' />
 								</DialogTitle>
-								<TakePhoto<GetPreparedDish>
+								<TakePhoto<GetPreparedDish, GetPreparedDishImage>
 									data={prepDish}
 									type='dish'
-									onSuccess={() => {
+									onSaveSuccess={(data) => {
 										setPhotoDlgOpen(false);
+
+										const { preparedDishId, url, alt } =
+											data as GetPreparedDishImage;
+
+										// redux
+										dispatch(
+											addImageState({
+												id: preparedDishId,
+												url,
+												alt,
+												type: 'dish',
+												parentId: preparedDishId
+											})
+										);
+
+										// tanstack
+										query.invalidateQueries({
+											queryKey: ['dishImages', preparedDishId]
+										});
 									}}
 								/>
 							</DialogContent>

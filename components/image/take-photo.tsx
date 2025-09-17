@@ -1,17 +1,12 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { useAppDispatch } from '@/lib/hooks';
 import { cn } from '@/lib/utils';
 
-import { uploadDishImage, uploadFoodItemImage } from '@/actions/image-actions';
-import { addImageState } from '@/lib/image/imageSlice';
-import {
-	GetFoodItem,
-	GetFoodItemImage,
-	GetPreparedDish,
-	GetPreparedDishImage
-} from '@/types';
+import { uploadFoodItemImage } from '@/actions/image-actions';
+import { addDishImageMutation } from '@/lib/features/mutations/dishMutations';
+import { GetFoodItem, GetPreparedDish } from '@/types';
+import { useMutation } from '@tanstack/react-query';
 import { Aperture, CameraOff, Save } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Camera, CameraType } from 'react-camera-pro';
@@ -27,19 +22,17 @@ import FullImagePreview from '../image/full-image-preview';
 import PhotoImagePreview from '../image/photo-image-preview';
 
 type SupportedImageTypes = 'dish' | 'foodItem';
-interface TakePhotoProps<T> {
+interface TakePhotoProps<T, R> {
 	data: T;
 	type: SupportedImageTypes;
-	onSuccess?: () => void;
+	onSaveSuccess?: (data: R) => void;
 }
 
-export default function TakePhoto<T>({
+export default function TakePhoto<T, R>({
 	data,
 	type,
-	onSuccess
-}: TakePhotoProps<T>) {
-	const dispatch = useAppDispatch();
-
+	onSaveSuccess
+}: TakePhotoProps<T, R>) {
 	const camera = useRef<CameraType>(null);
 	const [file, setFile] = useState<File | null>(null);
 	const [cameraActive, setCameraActive] = useState(true);
@@ -52,6 +45,10 @@ export default function TakePhoto<T>({
 	const [uploading, setUploading] = useState(false);
 
 	const [tookShot, setTookShot] = useState(false);
+
+	const { mutate: addDishImgMtn } = useMutation(
+		addDishImageMutation((data as GetPreparedDish).id)
+	);
 
 	useEffect(() => {
 		if (tookShot) {
@@ -85,47 +82,27 @@ export default function TakePhoto<T>({
 				setUploading(true);
 
 				if (type === 'dish') {
-					const res = await uploadDishImage(formData, data as GetPreparedDish);
-					if (res.success && res.data) {
-						toast.success(res.message);
+					addDishImgMtn(
+						{
+							dish: data as GetPreparedDish,
+							formData
+						},
+						{
+							onSuccess: (res) => {
+								setCameraActive(false);
+								setShowImage(!res.success);
 
-						onSuccess?.();
-						const { preparedDishId, url, alt } =
-							res.data as GetPreparedDishImage;
-
-						dispatch(
-							addImageState({
-								id: preparedDishId,
-								url,
-								alt,
-								type: 'dish'
-							})
-						);
-
-						setCameraActive(false);
-					} else {
-						toast.error(res.message);
-					}
-
-					setShowImage(!res.success);
+								onSaveSuccess?.(res.data as R);
+							}
+						}
+					);
 				} else if (type === 'foodItem') {
 					const res = await uploadFoodItemImage(formData, data as GetFoodItem);
 					if (res.success && res.data) {
 						toast.success(res.message);
 
-						onSuccess?.();
-						const { foodItemId, url, alt } = res.data as GetFoodItemImage;
-
-						dispatch(
-							addImageState({
-								id: foodItemId,
-								url,
-								alt,
-								type: 'foodItem'
-							})
-						);
-
 						setCameraActive(false);
+						onSaveSuccess?.(res.data as R);
 					} else {
 						toast.error(res.message);
 					}
@@ -137,8 +114,6 @@ export default function TakePhoto<T>({
 				setUploading(false);
 				toast.error(`Error uploading image: ${error}`);
 			}
-
-			onSuccess?.();
 		}
 	};
 

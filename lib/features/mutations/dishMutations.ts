@@ -1,6 +1,8 @@
+import { uploadDishImage } from '@/actions/image-actions';
 import {
 	createDish,
 	deleteDish,
+	deleteDishImage,
 	updateDish
 } from '@/actions/prepared-dish-actions';
 import { GetPreparedDish, PreparedDish } from '@/types';
@@ -39,6 +41,40 @@ export function createDishMutation() {
 	return mutationOptions({
 		mutationFn: (dish: PreparedDish) => createDish(dish),
 		mutationKey: ['mutateCreateDish'],
+		onSuccess: (res) => {
+			if (res.success) {
+				toast.success(res.message);
+			} else {
+				toast.error(res.message);
+			}
+		}
+	});
+}
+
+export function deleteDishImageMutation(dishId: string) {
+	return mutationOptions({
+		mutationKey: ['mutateDeleteDishImage', dishId],
+		mutationFn: (imageId: string) => deleteDishImage(imageId),
+		onSuccess: (res) => {
+			if (res.success) {
+				toast.success(res.message);
+			} else {
+				toast.error(res.message);
+			}
+		}
+	});
+}
+
+export function addDishImageMutation(dishId: string) {
+	return mutationOptions({
+		mutationKey: ['mutateAddDishImage', dishId],
+		mutationFn: ({
+			formData,
+			dish
+		}: {
+			formData: FormData;
+			dish: GetPreparedDish;
+		}) => uploadDishImage(formData, dish),
 		onSuccess: (res) => {
 			if (res.success) {
 				toast.success(res.message);

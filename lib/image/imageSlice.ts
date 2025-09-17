@@ -8,6 +8,7 @@ export interface ImageSliceProps {
 	url: string;
 	alt: string;
 	type: SupportedImageTypes | '';
+	parentId?: string;
 }
 
 export interface ImageSliceState {

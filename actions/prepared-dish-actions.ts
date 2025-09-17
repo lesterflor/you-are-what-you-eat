@@ -3,13 +3,7 @@
 import { auth } from '@/db/auth';
 import prisma from '@/db/prisma';
 import { formatError } from '@/lib/utils';
-import {
-	FoodEntry,
-	GetPreparedDish,
-	GetPreparedDishImage,
-	GetUser,
-	PreparedDish
-} from '@/types';
+import { FoodEntry, GetPreparedDish, GetUser, PreparedDish } from '@/types';
 import { getCurrentLog, updateLog } from './log-actions';
 
 export async function createDish(dish: PreparedDish) {
@@ -174,7 +168,7 @@ export async function getDishById(dishId: string) {
 	}
 }
 
-export async function deleteDishImage(img: GetPreparedDishImage) {
+export async function getDishImages(dishId: string) {
 	try {
 		const session = await auth();
 		const user = session?.user as GetUser;
@@ -183,9 +177,43 @@ export async function deleteDishImage(img: GetPreparedDishImage) {
 			throw new Error('User must be authenticated');
 		}
 
-		const existing = await prisma.preparedDish.findFirst({
+		const images = await prisma.preparedDishImage.findMany({
 			where: {
-				id: img.id
+				preparedDishId: dishId
+			}
+		});
+
+		if (!images) {
+			throw new Error('There was a problem finding images for the dish');
+		}
+
+		images.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+		return {
+			success: true,
+			message: 'success',
+			data: images
+		};
+	} catch (err: unknown) {
+		return {
+			success: false,
+			message: formatError(err)
+		};
+	}
+}
+
+export async function deleteDishImage(id: string) {
+	try {
+		const session = await auth();
+		const user = session?.user as GetUser;
+
+		if (!session || !user) {
+			throw new Error('User must be authenticated');
+		}
+
+		const existing = await prisma.preparedDishImage.findFirst({
+			where: {
+				id
 			}
 		});
 

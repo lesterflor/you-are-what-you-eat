@@ -1,18 +1,16 @@
-import { deleteDishImage, getDishById } from '@/actions/prepared-dish-actions';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import {
-	deleteImageState,
-	selectImageData,
-	selectImageStatus
-} from '@/lib/image/imageSlice';
+import { deleteDishImageMutation } from '@/lib/features/mutations/dishMutations';
+import { useAppDispatch } from '@/lib/hooks';
+import { deleteImageState } from '@/lib/image/imageSlice';
+import { getDishImagesOptions } from '@/lib/queries/dishQueries';
 import { GetPreparedDish, GetPreparedDishImage, GetUser } from '@/types';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { useSession } from 'next-auth/react';
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { MdDelete } from 'react-icons/md';
+import { useInView } from 'react-intersection-observer';
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
-import { toast } from 'sonner';
 import FadeInImage from '../image/fade-in-image';
 import { Button } from '../ui/button';
 import {
@@ -30,13 +28,21 @@ import {
 } from '../ui/dialog';
 
 export default function DishImageGallery({ dish }: { dish: GetPreparedDish }) {
+	const query = useQueryClient();
 	const dispatch = useAppDispatch();
-	const imageData = useAppSelector(selectImageData);
-	const imageStatus = useAppSelector(selectImageStatus);
 
 	const { data: session } = useSession();
 	const user = session?.user as GetUser;
 	const itemIsOwnedByUser = dish.userId === user.id;
+	const [fetchImages, setFetchImages] = useState(false);
+
+	const [ref, inView] = useInView({ triggerOnce: true });
+
+	useEffect(() => {
+		if (inView) {
+			setFetchImages(inView);
+		}
+	}, [inView]);
 
 	const [api, setApi] = useState<CarouselApi>();
 	const [current, setCurrent] = useState(0);
@@ -49,56 +55,35 @@ export default function DishImageGallery({ dish }: { dish: GetPreparedDish }) {
 		api.scrollTo(current);
 	}, [api]);
 
-	const [images, setImages] = useState<GetPreparedDishImage[] | undefined>(
-		dish.preparedDishImages
+	const { data: images, isFetching } = useQuery(
+		getDishImagesOptions(dish.id, fetchImages)
 	);
-	const [isFetching, setIsFetching] = useTransition();
 
-	const fetchDish = () => {
-		setIsFetching(async () => {
-			const res = await getDishById(dish.id);
-
-			if (res.success && res.data) {
-				setIsFetching(() => {
-					setImages(res.data.preparedDishImages as GetPreparedDishImage[]);
-				});
-			}
-		});
-	};
-
-	useEffect(() => {
-		if (
-			(imageStatus === 'added' && imageData.type === 'dish') ||
-			(imageStatus === 'deleted' && imageData.type === 'dish')
-		) {
-			fetchDish();
-		}
-	}, [imageData, imageStatus]);
-
-	const [isDeleting, setIsDeleting] = useTransition();
+	const { mutate: deleteImgMutation, isPending: isDeleting } = useMutation(
+		deleteDishImageMutation(dish.id)
+	);
 
 	const delImage = (img: GetPreparedDishImage) => {
-		setIsDeleting(async () => {
-			const res = await deleteDishImage(img);
-
-			if (res.success && res.data) {
-				toast.success(res.message);
+		deleteImgMutation(img.id, {
+			onSuccess: (res) => {
+				// redux
 				dispatch(
 					deleteImageState({
-						alt: res.data.alt,
-						id: res.data.id,
+						alt: res.data?.alt ?? '',
+						id: res.data?.id ?? '',
 						type: 'dish',
-						url: res.data.url
+						url: res.data?.url ?? ''
 					})
 				);
-			} else {
-				toast.error(res.message);
+
+				// tanstack
+				query.invalidateQueries({ queryKey: ['dishImages', dish.id] });
 			}
 		});
 	};
 
 	return (
-		<>
+		<div ref={ref}>
 			{isFetching ? (
 				<ImSpinner2 className='w-16 h-16 animate-spin opacity-10' />
 			) : (
@@ -193,6 +178,6 @@ export default function DishImageGallery({ dish }: { dish: GetPreparedDish }) {
 					</CarouselContent>
 				</Carousel>
 			)}
-		</>
+		</div>
 	);
 }

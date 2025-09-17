@@ -12,9 +12,13 @@ import {
 	selectStatus
 } from '@/lib/features/log/logFoodSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { selectImageData, selectImageStatus } from '@/lib/image/imageSlice';
+import {
+	addImageState,
+	selectImageData,
+	selectImageStatus
+} from '@/lib/image/imageSlice';
 import { cn, formatUnit, getMacroPercOfCals } from '@/lib/utils';
-import { FoodEntry, GetFoodItem, GetUser } from '@/types';
+import { FoodEntry, GetFoodItem, GetFoodItemImage, GetUser } from '@/types';
 import { Aperture, FilePlus, Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { memo, useEffect, useRef, useState, useTransition } from 'react';
@@ -390,11 +394,23 @@ const FoodItemCard = memo(function FoodItemCard({
 												<DialogTitle>
 													<Aperture className='w-6 h-6 text-muted-foreground' />
 												</DialogTitle>
-												<TakePhoto<GetFoodItem>
+												<TakePhoto<GetFoodItem, GetFoodItemImage>
 													data={currentItem}
 													type='foodItem'
-													onSuccess={() => {
+													onSaveSuccess={(data) => {
 														setPhotoDlgOpen(false);
+
+														const { foodItemId, url, alt } =
+															data as GetFoodItemImage;
+
+														dispatch(
+															addImageState({
+																id: foodItemId,
+																url,
+																alt,
+																type: 'foodItem'
+															})
+														);
 													}}
 												/>
 											</DialogContent>
