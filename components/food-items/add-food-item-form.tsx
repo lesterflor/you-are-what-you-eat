@@ -1,20 +1,21 @@
 'use client';
 
-import { addFoodItem } from '@/actions/food-actions';
 import CaloricGram from '@/lib/caloric-gram';
 import {
 	addFood,
 	generateRxFoodItemSchema
 } from '@/lib/features/food/foodUpdateSlice';
+import { addFoodMutationOptions } from '@/lib/features/mutations/foodMutations';
 import { useAppDispatch } from '@/lib/hooks';
+import { getFoodQueryOptions } from '@/lib/queries/foodQueries';
 import { foodItemSchema } from '@/lib/validators';
 import { GetFoodItem, GetUser } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { LoaderIcon, Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { ControllerRenderProps, SubmitHandler, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 import { z } from 'zod';
 import NumberIncrementor from '../number-incrementor';
 import { Button } from '../ui/button';
@@ -37,6 +38,9 @@ export default function AddFoodItemForm({
 	onSuccess?: () => void;
 }) {
 	const dispatch = useAppDispatch();
+
+	const { mutate, isPending } = useMutation(addFoodMutationOptions());
+	const query = useQueryClient();
 
 	const { data: session } = useSession();
 	const user = session?.user as GetUser;
@@ -72,20 +76,19 @@ export default function AddFoodItemForm({
 			values.userId = user.id;
 		}
 
-		const res = await addFoodItem(values);
+		mutate(values, {
+			onSuccess: (res) => {
+				//redux
+				dispatch(addFood(generateRxFoodItemSchema(res.data as GetFoodItem)));
 
-		if (res.success && res.data) {
-			//redux
-			dispatch(addFood(generateRxFoodItemSchema(res.data as GetFoodItem)));
+				// tanstack invalidate foodlist
+				query.invalidateQueries({ queryKey: getFoodQueryOptions().queryKey });
 
-			toast.success(res.message);
-			form.reset();
-			setHasSubmitted(true);
-			onSuccess?.();
-			//router.push('/foods');
-		} else {
-			toast.error(res.message);
-		}
+				form.reset();
+				setHasSubmitted(true);
+				onSuccess?.();
+			}
+		});
 	};
 
 	return (
@@ -272,14 +275,14 @@ export default function AddFoodItemForm({
 
 						<div className='flex flex-row items-end justify-end w-full'>
 							<Button
-								disabled={form.formState.isSubmitting}
+								disabled={isPending}
 								className='w-44 portrait:w-full'>
-								{form.formState.isSubmitting ? (
+								{isPending ? (
 									<LoaderIcon className='w-4 h-4 animate-spin' />
 								) : (
 									<Plus className='w-4 h-4' />
 								)}
-								{form.formState.isSubmitting ? 'Adding...' : 'Add'}
+								{isPending ? 'Adding...' : 'Add'}
 							</Button>
 						</div>
 					</div>

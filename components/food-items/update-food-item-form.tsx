@@ -1,15 +1,17 @@
 'use client';
 
-import { updateFoodItem } from '@/actions/food-actions';
 import CaloricGram from '@/lib/caloric-gram';
 import {
 	generateRxFoodItemSchema,
 	updateFood
 } from '@/lib/features/food/foodUpdateSlice';
+import { updateFoodMutationOptions } from '@/lib/features/mutations/foodMutations';
 import { useAppDispatch } from '@/lib/hooks';
+import { getFoodQueryOptions } from '@/lib/queries/foodQueries';
 import { getFoodItemSchema } from '@/lib/validators';
 import { GetFoodItem, GetUser } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { LoaderIcon, Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import {
@@ -18,7 +20,6 @@ import {
 	SubmitHandler,
 	useForm
 } from 'react-hook-form';
-import { toast } from 'sonner';
 import { z } from 'zod';
 import NumberIncrementor from '../number-incrementor';
 import { Button } from '../ui/button';
@@ -44,6 +45,9 @@ export default function UpdateFoodItemForm({
 }) {
 	const dispatch = useAppDispatch();
 
+	const query = useQueryClient();
+	const { mutate, isPending } = useMutation(updateFoodMutationOptions(item));
+
 	const { data: session } = useSession();
 	const user = session?.user as GetUser;
 
@@ -65,17 +69,20 @@ export default function UpdateFoodItemForm({
 			values.userId = user.id;
 		}
 
-		const res = await updateFoodItem(values);
+		mutate(values, {
+			onSuccess: async (res) => {
+				form.reset();
 
-		if (res.success && res.data) {
-			toast.success(res.message);
-			form.reset();
-			onSuccess?.();
+				// invalidate cache
+				await query.invalidateQueries({
+					queryKey: getFoodQueryOptions().queryKey
+				});
 
-			dispatch(updateFood(generateRxFoodItemSchema(res.data as GetFoodItem)));
-		} else {
-			toast.error(res.message);
-		}
+				dispatch(updateFood(generateRxFoodItemSchema(res.data as GetFoodItem)));
+
+				onSuccess?.();
+			}
+		});
 	};
 
 	const onError: SubmitErrorHandler<z.infer<typeof getFoodItemSchema>> = (
@@ -253,14 +260,14 @@ export default function UpdateFoodItemForm({
 
 						<div className='flex flex-row items-end justify-end w-full'>
 							<Button
-								disabled={form.formState.isSubmitting}
+								disabled={isPending}
 								className='w-44 portrait:w-full'>
-								{form.formState.isSubmitting ? (
+								{isPending ? (
 									<LoaderIcon className='w-4 h-4 animate-spin' />
 								) : (
 									<Plus className='w-4 h-4' />
 								)}
-								{form.formState.isSubmitting ? 'Updating...' : 'Update'}
+								{isPending ? 'Updating...' : 'Update'}
 							</Button>
 						</div>
 					</div>

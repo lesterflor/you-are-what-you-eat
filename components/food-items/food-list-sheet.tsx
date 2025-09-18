@@ -5,6 +5,7 @@ import {
 	selectFoodSearchData,
 	selectFoodSearchStatus
 } from '@/lib/features/food/foodSearchSlice';
+import { selectFoodUpdateStatus } from '@/lib/features/food/foodUpdateSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { getFavouriteQueryOptions } from '@/lib/queries/favouriteQueries';
 import { getFoodQueryOptions } from '@/lib/queries/foodQueries';
@@ -53,6 +54,7 @@ export default function FoodListSheet({
 
 	const foodSearchData = useAppSelector(selectFoodSearchData);
 	const foodSearchStatus = useAppSelector(selectFoodSearchStatus);
+	const foodUpdateStatus = useAppSelector(selectFoodUpdateStatus);
 
 	// redux handler
 	useEffect(() => {
@@ -76,33 +78,28 @@ export default function FoodListSheet({
 		setFoods(foodsData as GetFoodItem[]);
 	}, []);
 
-	const foodCategoryFilter = useMemo(() => {
-		return (
-			foodsData?.filter((item) => item.category === foodSearchData.category) ??
-			[]
-		);
-	}, [foodsData, foodSearchData]);
-
-	const foodUserFilter = useMemo(() => {
-		return (
-			foodsData?.filter((item) => item.userId === foodSearchData.user) ?? []
-		);
-	}, [foodsData, foodSearchData]);
-
-	const allFoodItems = useMemo(() => {
-		return foodsData || [];
-	}, [foodsData]);
+	useEffect(() => {
+		if (foodUpdateStatus === 'deleted') {
+			checkFoodStatus(foodSearchStatus);
+		}
+	}, [foodUpdateStatus]);
 
 	const checkFoodStatus = (status: string) => {
 		switch (status) {
 			case 'category':
-				setFoods(foodCategoryFilter);
+				setFoods(
+					foodsData?.filter(
+						(item) => item.category === foodSearchData.category
+					) ?? []
+				);
 				break;
 			case 'user':
-				setFoods(foodUserFilter);
+				setFoods(
+					foodsData?.filter((item) => item.userId === foodSearchData.user) ?? []
+				);
 				break;
 			case 'all':
-				setFoods(allFoodItems);
+				setFoods(foodsData ?? []);
 				break;
 			case 'input':
 				const term = foodSearchData.term
@@ -117,9 +114,6 @@ export default function FoodListSheet({
 				break;
 			case 'favourites':
 				setFoods(foodFavs);
-				break;
-			default:
-				setFoods(allFoodItems);
 				break;
 		}
 	};

@@ -1,6 +1,6 @@
 'use client';
 
-import { deleteFoodItem, getFoodItemById } from '@/actions/food-actions';
+import { getFoodItemById } from '@/actions/food-actions';
 import { inputSearch, userSearch } from '@/lib/features/food/foodSearchSlice';
 import {
 	deleteFood,
@@ -8,9 +8,12 @@ import {
 	selectFoodUpdateData,
 	selectFoodUpdateStatus
 } from '@/lib/features/food/foodUpdateSlice';
+import { deleteFoodMutationOptions } from '@/lib/features/mutations/foodMutations';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { getFoodQueryOptions } from '@/lib/queries/foodQueries';
 import { shuffle } from '@/lib/utils';
 import { GetFoodItem, GetUser } from '@/types';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	FilePenLine,
 	SquareArrowOutUpRight,
@@ -19,10 +22,9 @@ import {
 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { useInView } from 'react-intersection-observer';
-import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -51,12 +53,16 @@ export default function FoodUserAvatar({
 }) {
 	const dispatch = useAppDispatch();
 
+	const { mutate, isPending } = useMutation(deleteFoodMutationOptions());
+	const query = useQueryClient();
+
 	const foodUpdateData = useAppSelector(selectFoodUpdateData);
 	const foodUpdateStatus = useAppSelector(selectFoodUpdateStatus);
 
 	const DISPLAY_LIMIT = 2;
 	const { name, image = '', id, FoodItems: items = [] } = user;
 
+	// todo useQuery refactor
 	const getCurrentFood = async () => {
 		const res = await getFoodItemById(foodItemId);
 
@@ -94,7 +100,7 @@ export default function FoodUserAvatar({
 	useEffect(() => {
 		if (
 			foodUpdateStatus === 'updated' &&
-			foodUpdateData.name === currentFood[0].name
+			foodUpdateData.name === currentFood[0]?.name
 		) {
 			getCurrentFood();
 		}
@@ -116,29 +122,26 @@ export default function FoodUserAvatar({
 		}
 	}, [isIntersecting]);
 
-	const [isDeleting, setIsDeleting] = useTransition();
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
 	const deleteUserFood = () => {
 		if (currentFood.length === 0) {
 			return;
 		}
-		setIsDeleting(async () => {
-			const res = await deleteFoodItem(currentFood[0].id);
+		// tanstack
+		mutate(currentFood[0].id, {
+			onSuccess: async (res) => {
+				// invalidate cache
+				await query.invalidateQueries({
+					queryKey: getFoodQueryOptions().queryKey
+				});
 
-			if (res.success && res.data) {
 				// redux
 				dispatch(deleteFood(generateRxFoodItemSchema(res.data as GetFoodItem)));
 
-				toast.success(res.message);
-
-				setIsDeleting(() => {
-					setDeleteDialogOpen(false);
-				});
+				setDeleteDialogOpen(false);
 
 				setPopOpen(false);
-			} else {
-				toast.error(res.message);
 			}
 		});
 	};
@@ -228,12 +231,12 @@ export default function FoodUserAvatar({
 										</div>
 										<div>
 											<Button
-												disabled={isDeleting}
+												disabled={isPending}
 												onClick={(e) => {
 													e.preventDefault();
 													deleteUserFood();
 												}}>
-												{isDeleting ? (
+												{isPending ? (
 													<ImSpinner2 className='w-4 h-4 animate-spin' />
 												) : (
 													<X />
