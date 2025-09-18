@@ -458,7 +458,7 @@ export default function FoodLogList({
 										</div>
 									</FoodFavouriteListSheetLazy>
 
-									<FoodListSheetLazy>
+									<FoodListSheetLazy showBalloon={true}>
 										<div className='transition-opacity fade-in animate-in duration-1000 rounded-full dark:bg-green-950 bg-green-500 p-3'>
 											<TbDatabaseSearch className='w-6 h-6 animate-pulse' />
 										</div>

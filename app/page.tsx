@@ -5,6 +5,7 @@ import FoodLogList from '@/components/logs/log-list';
 import { auth } from '@/db/auth';
 import { getAllDishesOptions } from '@/lib/queries/dishQueries';
 import { getFavouriteQueryOptions } from '@/lib/queries/favouriteQueries';
+import { getFoodQueryOptions } from '@/lib/queries/foodQueries';
 import { GetLog, GetWaterConsumed } from '@/types';
 import {
 	dehydrate,
@@ -32,6 +33,10 @@ export default async function Home() {
 		queryClient.prefetchQuery({
 			queryKey: getAllDishesOptions().queryKey,
 			queryFn: getAllDishesOptions().queryFn
+		}),
+		queryClient.prefetchQuery({
+			queryKey: getFoodQueryOptions().queryKey,
+			queryFn: getFoodQueryOptions().queryFn
 		})
 	]);
 

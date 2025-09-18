@@ -217,7 +217,7 @@ export default function ReduxStoreLogger({
 	}, [foodSliceData, foodSliceStatus, foodSliceMsg]);
 
 	useEffect(() => {
-		if (foodSearchStatus !== 'idle') {
+		if (foodSearchStatus !== 'idle' && foodSearchStatus !== 'all') {
 			const data = {
 				type: 'foodSearch',
 				action: foodSearchStatus,
