@@ -70,11 +70,11 @@ export default function UpdateFoodItemForm({
 		}
 
 		mutate(values, {
-			onSuccess: async (res) => {
+			onSuccess: (res) => {
 				form.reset();
 
 				// invalidate cache
-				await query.invalidateQueries({
+				query.invalidateQueries({
 					queryKey: getFoodQueryOptions().queryKey
 				});
 

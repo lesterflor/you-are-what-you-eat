@@ -343,7 +343,8 @@ export async function getFoodItemById(id: string) {
 				user: {
 					select: {
 						name: true,
-						image: true
+						image: true,
+						id: true
 					}
 				},
 				foodItemImages: true

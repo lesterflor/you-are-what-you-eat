@@ -1,15 +1,12 @@
 'use client';
 
-import { getFoodItemById } from '@/actions/food-actions';
 import { inputSearch, userSearch } from '@/lib/features/food/foodSearchSlice';
 import {
 	deleteFood,
-	generateRxFoodItemSchema,
-	selectFoodUpdateData,
-	selectFoodUpdateStatus
+	generateRxFoodItemSchema
 } from '@/lib/features/food/foodUpdateSlice';
 import { deleteFoodMutationOptions } from '@/lib/features/mutations/foodMutations';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { useAppDispatch } from '@/lib/hooks';
 import { getFoodQueryOptions } from '@/lib/queries/foodQueries';
 import { shuffle } from '@/lib/utils';
 import { GetFoodItem, GetUser } from '@/types';
@@ -22,7 +19,7 @@ import {
 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { useInView } from 'react-intersection-observer';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
@@ -52,26 +49,13 @@ export default function FoodUserAvatar({
 	foodItem?: GetFoodItem;
 }) {
 	const dispatch = useAppDispatch();
-
-	const { mutate, isPending } = useMutation(deleteFoodMutationOptions());
 	const query = useQueryClient();
 
-	const foodUpdateData = useAppSelector(selectFoodUpdateData);
-	const foodUpdateStatus = useAppSelector(selectFoodUpdateStatus);
+	const { mutate, isPending } = useMutation(deleteFoodMutationOptions());
 
 	const DISPLAY_LIMIT = 2;
 	const { name, image = '', id, FoodItems: items = [] } = user;
 
-	// todo useQuery refactor
-	const getCurrentFood = async () => {
-		const res = await getFoodItemById(foodItemId);
-
-		if (res.success) {
-			setEditFoodItem(res.data as GetFoodItem);
-		}
-	};
-
-	const [editFoodItem, setEditFoodItem] = useState<GetFoodItem>();
 	const [foods, setFoods] = useState(items);
 	const [showSeeMore, setShowSeeMore] = useState(false);
 	const [popOpen, setPopOpen] = useState(false);
@@ -79,32 +63,29 @@ export default function FoodUserAvatar({
 	const [editFormOpen, setEditFormOpen] = useState(false);
 
 	useEffect(() => {
+		setCurrentFoods();
+	}, []);
+
+	const setCurrentFoods = useCallback(() => {
 		const filter = items.filter(
 			(item) => item.id !== foodItemId && item.category === foodItem?.category
 		);
 
 		shuffle(filter);
 
-		setCurrentFood(items.filter((item) => item.id === foodItemId));
+		const currentFoodFilter = items.filter((item) => item.id === foodItemId);
+
+		setCurrentFood(currentFoodFilter);
 
 		const limit = filter.slice(0, DISPLAY_LIMIT);
 
 		setShowSeeMore(filter.length > DISPLAY_LIMIT);
 
 		setFoods(limit);
-	}, []);
+	}, [items]);
 
 	const { data: session } = useSession();
 	const sessionUser = session?.user as GetUser;
-
-	useEffect(() => {
-		if (
-			foodUpdateStatus === 'updated' &&
-			foodUpdateData.name === currentFood[0]?.name
-		) {
-			getCurrentFood();
-		}
-	}, [foodUpdateStatus, foodUpdateData]);
 
 	useEffect(() => {
 		if (!editFormOpen) {
@@ -173,11 +154,7 @@ export default function FoodUserAvatar({
 								open={editFormOpen}
 								onOpenChange={setEditFormOpen}>
 								<DialogTrigger asChild>
-									<Button
-										size='sm'
-										onClick={() => {
-											getCurrentFood();
-										}}>
+									<Button size='sm'>
 										<FilePenLine className='w-4 h-4' />
 										Edit
 									</Button>
@@ -191,14 +168,14 @@ export default function FoodUserAvatar({
 										<Badge
 											variant='secondary'
 											className='text-sm p-2 select-none font-normal'>
-											{editFoodItem?.name}
+											{foodItem?.name}
 										</Badge>
 									</DialogTitle>
 									<DialogDescription></DialogDescription>
 									<ScrollArea className='h-[80vh] portrait:h-[70vh] w-full pr-3'>
-										{editFoodItem && (
+										{foodItem && (
 											<UpdateFoodItemForm
-												item={editFoodItem as GetFoodItem}
+												item={foodItem}
 												onSuccess={() => {
 													setEditFormOpen(false);
 												}}
