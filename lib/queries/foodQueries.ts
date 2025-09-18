@@ -9,13 +9,13 @@ export function getFoodQueryOptions() {
 		queryFn: () => getFoodItems(),
 		placeholderData: getStorageItem('foodList') || [],
 		select: (res) => res.data as GetFoodItem[],
-		staleTime: 60 * 1000
+		staleTime: 30 * 1000
 	});
 }
 
 export function getFoodItemByIdQueryOptions(
 	id: string,
-	enabled: boolean = true
+	enabled: boolean = false
 ) {
 	return queryOptions({
 		queryKey: ['getFoodItem', id],

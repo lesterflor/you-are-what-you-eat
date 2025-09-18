@@ -1,6 +1,5 @@
 'use client';
 
-import { getFoodItemById } from '@/actions/food-actions';
 import { setCheckedItemState } from '@/lib/features/dish/preparedDishSlice';
 import {
 	selectFoodUpdateData,
@@ -17,8 +16,10 @@ import {
 	selectImageData,
 	selectImageStatus
 } from '@/lib/image/imageSlice';
+import { getFoodItemByIdQueryOptions } from '@/lib/queries/foodQueries';
 import { cn, formatUnit, getMacroPercOfCals } from '@/lib/utils';
 import { FoodEntry, GetFoodItem, GetFoodItemImage, GetUser } from '@/types';
+import { useQuery } from '@tanstack/react-query';
 import { Aperture, FilePlus, Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { memo, useEffect, useRef, useState, useTransition } from 'react';
@@ -56,34 +57,26 @@ const FoodItemCard = memo(function FoodItemCard({
 	selfSearch?: boolean;
 	indx?: number;
 }) {
-	const dispatch = useAppDispatch();
-	const cardRef = useRef<HTMLDivElement>(null);
-
-	const logData = useAppSelector(selectData);
-	const logDataStatus = useAppSelector(selectStatus);
-
-	const [currentItem, setCurrentItem] = useState<GetFoodItem>(item);
-	const [isFetching, setIsFetching] = useTransition();
-
-	const fetchFoodItemData = (id: string) => {
-		setIsFetching(async () => {
-			const res = await getFoodItemById(id);
-
-			if (res.success && res.data) {
-				setIsFetching(() => {
-					setCurrentItem(res.data as GetFoodItem);
-				});
-			}
-		});
-	};
-
 	const { data: session } = useSession();
 	const currentUser = session?.user as GetUser;
+	const cardRef = useRef<HTMLDivElement>(null);
+
+	const dispatch = useAppDispatch();
+	const logData = useAppSelector(selectData);
+	const logDataStatus = useAppSelector(selectStatus);
+	const imageData = useAppSelector(selectImageData);
+	const imageStatus = useAppSelector(selectImageStatus);
+	const foodUpdateData = useAppSelector(selectFoodUpdateData);
+	const foodUpdateStatus = useAppSelector(selectFoodUpdateStatus);
+
 	const [isSubmitting, setIsSubmitting] = useTransition();
+
+	const [fadeClass, setFadeClass] = useState(false);
+	const [queryEnabled, setQueryEnabled] = useState(false);
 	const [showDetails, setShowDetails] = useState(false);
 	const [textSize, setTextSize] = useState('text-xl');
 	const [photoDlgOpen, setPhotoDlgOpen] = useState(false);
-
+	const [sendingDishItem, setSendingDishItem] = useState(false);
 	const [logFoodItem, setLogFoodItem] = useState<FoodEntry>({
 		id: `${item.id}-${new Date().getTime()}`,
 		name: item.name,
@@ -97,20 +90,11 @@ const FoodItemCard = memo(function FoodItemCard({
 		calories: item.calories,
 		eatenAt: new Date()
 	});
-
 	const [portionAmount, setPortionAmount] = useState(1);
 
-	const sendFoodItems = () => {
-		setIsSubmitting(async () => {
-			dispatch(
-				logFoodAsync({
-					logFoodItem,
-					name: logFoodItem.name,
-					servings: logFoodItem.numServings
-				})
-			);
-		});
-	};
+	const { data: currentItem = item, isFetching } = useQuery(
+		getFoodItemByIdQueryOptions(item.id, queryEnabled)
+	);
 
 	useEffect(() => {
 		if (logDataStatus === 'added' && logData.name === item.name) {
@@ -118,7 +102,6 @@ const FoodItemCard = memo(function FoodItemCard({
 		}
 	}, [logData, logDataStatus]);
 
-	const [fadeClass, setFadeClass] = useState(false);
 	useEffect(() => {
 		if (item.name.length >= 20) {
 			setTextSize('text-md');
@@ -142,29 +125,33 @@ const FoodItemCard = memo(function FoodItemCard({
 		}
 	}, [showDetails]);
 
-	const [sendingDishItem, setSendingDishItem] = useState(false);
-
-	const imageData = useAppSelector(selectImageData);
-	const imageStatus = useAppSelector(selectImageStatus);
-
 	useEffect(() => {
 		if (
 			imageStatus === 'added' &&
 			imageData.type === 'foodItem' &&
 			imageData.id === item.id
 		) {
-			fetchFoodItemData(item.id);
+			setQueryEnabled(true);
 		}
 	}, [imageData, imageStatus]);
 
-	const foodUpdateData = useAppSelector(selectFoodUpdateData);
-	const foodUpdateStatus = useAppSelector(selectFoodUpdateStatus);
-
 	useEffect(() => {
 		if (foodUpdateStatus === 'updated' && foodUpdateData.id === item.id) {
-			fetchFoodItemData(item.id);
+			setQueryEnabled(true);
 		}
 	}, [foodUpdateData, foodUpdateStatus]);
+
+	const sendFoodItems = () => {
+		setIsSubmitting(async () => {
+			dispatch(
+				logFoodAsync({
+					logFoodItem,
+					name: logFoodItem.name,
+					servings: logFoodItem.numServings
+				})
+			);
+		});
+	};
 
 	return (
 		<Card
@@ -200,7 +187,7 @@ const FoodItemCard = memo(function FoodItemCard({
 								selfSearch={selfSearch}
 								user={currentItem.user}
 								foodItemId={currentItem.id}
-								foodItem={currentItem}
+								foodItem={currentItem as GetFoodItem}
 							/>
 						</div>
 					)}
@@ -211,7 +198,7 @@ const FoodItemCard = memo(function FoodItemCard({
 				<>
 					<CardDescription className='px-4 pr-1 pb-4 leading-tight flex flex-row items-center justify-between gap-2'>
 						<div>{currentItem.description}</div>
-						<FoodItemFavourite item={currentItem} />
+						<FoodItemFavourite item={currentItem as GetFoodItem} />
 					</CardDescription>
 					<CardContent
 						className='flex flex-row items-center justify-center flex-wrap gap-2 p-0'
@@ -273,11 +260,15 @@ const FoodItemCard = memo(function FoodItemCard({
 								variant='secondary'
 								className='w-14 flex flex-col items-center justify-center'>
 								<div className='font-normal text-muted-foreground'>
-									{currentItem.servingSize * portionAmount === 1
+									{currentItem.servingSize &&
+									currentItem.servingSize * portionAmount === 1
 										? 'Serving'
 										: 'Servings'}
 								</div>
-								<div>{currentItem.servingSize * portionAmount}</div>
+								<div>
+									{currentItem.servingSize &&
+										currentItem.servingSize * portionAmount}
+								</div>
 								<div>
 									<GiSpoon className='w-4 h-4 text-muted-foreground' />
 								</div>
@@ -395,7 +386,7 @@ const FoodItemCard = memo(function FoodItemCard({
 													<Aperture className='w-6 h-6 text-muted-foreground' />
 												</DialogTitle>
 												<TakePhoto<GetFoodItem, GetFoodItemImage>
-													data={currentItem}
+													data={currentItem as GetFoodItem}
 													type='foodItem'
 													onSaveSuccess={(data) => {
 														setPhotoDlgOpen(false);
@@ -422,7 +413,7 @@ const FoodItemCard = memo(function FoodItemCard({
 								{currentItem.foodItemImages &&
 									currentItem.foodItemImages?.length > 0 && (
 										<div className='pt-4 w-full'>
-											<FoodItemImageGallery item={currentItem} />
+											<FoodItemImageGallery item={currentItem as GetFoodItem} />
 										</div>
 									)}
 							</div>
