@@ -11,7 +11,10 @@ import {
 } from '@/lib/features/mutations/dishMutations';
 import { useAppDispatch } from '@/lib/hooks';
 import { addImageState } from '@/lib/image/imageSlice';
-import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
+import {
+	getCurrentLogQueryOptions,
+	getLogRemainderQueryOptions
+} from '@/lib/queries/logQueries';
 import { cn, formatUnit, totalMacrosReducer } from '@/lib/utils';
 import {
 	GetFoodEntry,
@@ -490,8 +493,14 @@ export default function DishCard({
 						onClick={() => {
 							logDish(prepDish, {
 								onSuccess: () => {
+									// invalidate current log
 									query.invalidateQueries({
 										queryKey: getCurrentLogQueryOptions().queryKey
+									});
+
+									// invalidate remainders
+									query.invalidateQueries({
+										queryKey: getLogRemainderQueryOptions().queryKey
 									});
 								}
 							});

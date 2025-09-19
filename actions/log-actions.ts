@@ -1384,7 +1384,7 @@ export async function todaysWaterConsumed(glasses: number = 0) {
 			retLog = update;
 		}
 
-		console.log(retLog);
+		//console.log(retLog);
 
 		return {
 			success: true,

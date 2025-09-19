@@ -10,7 +10,10 @@ import {
 } from '@/lib/features/mutations/logMutations';
 import { useAppSelector } from '@/lib/hooks';
 import { getFoodItemByIdQueryOptions } from '@/lib/queries/foodQueries';
-import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
+import {
+	getCurrentLogQueryOptions,
+	getLogRemainderQueryOptions
+} from '@/lib/queries/logQueries';
 import { cn, formatUnit } from '@/lib/utils';
 import { FoodEntry, GetFoodEntry, GetFoodItem } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -208,6 +211,11 @@ const LogFoodListItem = memo(function LogFoodListItem({
 															queryKey: getCurrentLogQueryOptions().queryKey
 														});
 
+														// invalidate remainders
+														await query.invalidateQueries({
+															queryKey: getLogRemainderQueryOptions().queryKey
+														});
+
 														setDialogOpen(false);
 													}
 												});
@@ -313,6 +321,11 @@ const LogFoodListItem = memo(function LogFoodListItem({
 											// invalidate the log list
 											query.invalidateQueries({
 												queryKey: getCurrentLogQueryOptions().queryKey
+											});
+
+											// invalidate remainders
+											query.invalidateQueries({
+												queryKey: getLogRemainderQueryOptions().queryKey
 											});
 										}
 									});

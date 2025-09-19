@@ -17,7 +17,10 @@ import {
 	selectImageStatus
 } from '@/lib/image/imageSlice';
 import { getFoodItemByIdQueryOptions } from '@/lib/queries/foodQueries';
-import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
+import {
+	getCurrentLogQueryOptions,
+	getLogRemainderQueryOptions
+} from '@/lib/queries/logQueries';
 import { cn, formatUnit, getMacroPercOfCals } from '@/lib/utils';
 import { FoodEntry, GetFoodItem, GetFoodItemImage, GetUser } from '@/types';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -106,6 +109,11 @@ const FoodItemCard = memo(function FoodItemCard({
 			// tanstack
 			query.invalidateQueries({
 				queryKey: getCurrentLogQueryOptions().queryKey
+			});
+
+			// invalidate remainders
+			query.invalidateQueries({
+				queryKey: getLogRemainderQueryOptions().queryKey
 			});
 		}
 	}, [logData, logDataStatus]);

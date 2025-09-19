@@ -1,22 +1,17 @@
 'use client';
 
 import { remainderConfig } from '@/config';
-import { selectMacros, selectStatus } from '@/lib/features/log/logFoodSlice';
 import {
-	fetchLogRemaindersInRange,
-	getRemaining,
-	selectRemainderChartData,
-	selectRemainderData,
-	selectRemainderStatus
-} from '@/lib/features/log/logRemainderSlice';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+	getCurrentLogQueryOptions,
+	getLogRemainderInRangeQueryOptions,
+	getLogRemainderQueryOptions
+} from '@/lib/queries/logQueries';
 import { formatUnit } from '@/lib/utils';
-import { LogRemainderDataType } from '@/types';
+import { useQuery } from '@tanstack/react-query';
 import { ArrowDown, ArrowUp, Info } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { DateRange } from 'react-day-picker';
 import { ImSpinner2 } from 'react-icons/im';
-import { useInView } from 'react-intersection-observer';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import {
 	NameType,
@@ -34,70 +29,36 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { ScrollArea } from '../ui/scroll-area';
 import { Skeleton } from '../ui/skeleton';
 
+type ChartData = {
+	calories: number;
+	createdAt: string;
+}[];
+
 export default function LogRemainderBadge() {
-	const [ref, inView] = useInView();
-
-	const dispatch = useAppDispatch();
-	const logMacros = useAppSelector(selectMacros);
-	const logDataStatus = useAppSelector(selectStatus);
-	const logRemainderData = useAppSelector(selectRemainderData);
-	const logRemainderStatus = useAppSelector(selectRemainderStatus);
-	const logRemainderChartData = useAppSelector(selectRemainderChartData);
-
-	const [logRemainder, setLogRemainder] = useState<LogRemainderDataType>();
-	const [mounted, setMounted] = useState(false);
-	const [popOpen, setPopOpen] = useState(false);
-	const [isFetching, setIsFetching] = useState(false);
-	const [remainderStr, setRemainderStr] = useState('');
-	const [range, setRange] = useState<DateRange | undefined>();
-	const [chartData, setChartData] = useState<
-		{
-			calories: number;
-			createdAt: string;
-		}[]
-	>();
-
 	const chartRef = useRef<HTMLDivElement>(null);
+
+	const { data: logData } = useQuery(getCurrentLogQueryOptions());
+	const { data: logRemainder, isFetching } = useQuery(
+		getLogRemainderQueryOptions()
+	);
+
+	const [popOpen, setPopOpen] = useState(false);
+	const [range, setRange] = useState<DateRange | undefined>();
+
+	const { data: logRemaindersInRange, isFetched: isRemaindersFetched } =
+		useQuery(getLogRemainderInRangeQueryOptions(range, !!range));
+
+	const [chartData, setChartData] = useState<ChartData>(
+		logRemaindersInRange?.chartData as ChartData
+	);
+
+	const remainderStr = logRemaindersInRange?.text as string;
 
 	useEffect(() => {
 		if (chartData && chartRef.current) {
 			chartRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
 		}
 	}, [chartData]);
-
-	useEffect(() => {
-		if (inView && !mounted) {
-			setMounted(true);
-			dispatch(getRemaining());
-			setIsFetching(true);
-		}
-	}, [inView]);
-
-	useEffect(() => {
-		if (logRemainderStatus === 'fetched') {
-			setLogRemainder(logRemainderData);
-			setIsFetching(false);
-		} else if (
-			logRemainderStatus === 'fetchedChartData' &&
-			logRemainderChartData
-		) {
-			setChartData(logRemainderChartData.data);
-			setRemainderStr(logRemainderChartData.text);
-		}
-	}, [logRemainderData, logRemainderStatus, logRemainderChartData]);
-
-	useEffect(() => {
-		if (
-			logDataStatus === 'loggedCalories' ||
-			logDataStatus === 'added' ||
-			logDataStatus === 'updated' ||
-			logDataStatus === 'deleted' ||
-			logDataStatus === 'loggedDish'
-		) {
-			dispatch(getRemaining());
-			setIsFetching(true);
-		}
-	}, [logMacros, logDataStatus]);
 
 	useEffect(() => {
 		if (!popOpen) {
@@ -107,12 +68,12 @@ export default function LogRemainderBadge() {
 	}, [popOpen]);
 
 	useEffect(() => {
-		if (range && range.from && range?.to) {
-			dispatch(fetchLogRemaindersInRange(range));
+		if (range && range.from && range?.to && isRemaindersFetched) {
+			setChartData(logRemaindersInRange?.chartData as ChartData);
 		} else {
 			setChartData([]);
 		}
-	}, [range]);
+	}, [range, isRemaindersFetched]);
 
 	const CustomTooltip = ({
 		active,
@@ -149,7 +110,7 @@ export default function LogRemainderBadge() {
 	};
 
 	return (
-		<div ref={ref}>
+		<div>
 			<Popover
 				open={popOpen}
 				onOpenChange={setPopOpen}>
@@ -212,14 +173,14 @@ export default function LogRemainderBadge() {
 											{formatUnit(logRemainder.yesterdaysExpended)}
 										</div>
 										<div>Base Metabolic Rate</div>
-										<div className='text-foreground'>{logMacros.bmr}</div>
+										<div className='text-foreground'>{logData?.macros.bmr}</div>
 										<div>Yesterday&apos;s Remainder</div>
 										<div className='text-foreground'>
 											{formatUnit(logRemainder.yesterdaysRemainder)}
 										</div>
 										<div>Today&apos; Calories</div>
 										<div className='text-foreground'>
-											{formatUnit(logMacros.caloriesConsumed ?? 0)}
+											{formatUnit(logData?.macros.caloriesConsumed ?? 0)}
 										</div>
 										<div className='col-span-2'>
 											(BMR Calories + Expended Yesterday - Consumed Yesterday) +
@@ -258,9 +219,7 @@ export default function LogRemainderBadge() {
 										<div className='flex flex-row items-center justify-center gap-2'>
 											<div className='text-center'>{remainderStr}</div>
 											<div>
-												{Math.sign(
-													formatUnit((logRemainder.remainder / 1200) * -1)
-												) === -1 ? (
+												{remainderStr === 'pounds lost' ? (
 													<ArrowDown className='animate-bounce text-green-600' />
 												) : (
 													<ArrowUp className='animate-bounce text-red-600' />
