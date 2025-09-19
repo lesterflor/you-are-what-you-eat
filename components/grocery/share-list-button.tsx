@@ -1,9 +1,9 @@
 'use client';
 
-import { getShareableUsers } from '@/actions/user-actions';
 import { shareGroceryListState } from '@/lib/features/grocery/grocerySlice';
 import { useAppDispatch } from '@/lib/hooks';
-import { GetUser } from '@/types';
+import { getShareableUsersQueryOptions } from '@/lib/queries/userQueries';
+import { useQuery } from '@tanstack/react-query';
 import { Share2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
@@ -28,24 +28,13 @@ export default function ShareListButton({
 	iconMode?: boolean;
 }) {
 	const dispatch = useAppDispatch();
-	const [users, setUsers] = useState<GetUser[]>([]);
 	const [selectedUser, setSelectedUser] = useState('');
-	const [isFetching, setIsFetching] = useState(false);
 	const [isUserAction, setIsUserAction] = useState(false);
 
-	const getSharedUsers = async () => {
-		setIsFetching(true);
-		const res = await getShareableUsers();
-
-		if (res.success && res.data) {
-			setUsers(res.data as GetUser[]);
-		}
-
-		setIsFetching(false);
-	};
+	const { data: users, isFetching } = useQuery(getShareableUsersQueryOptions());
 
 	const findSelectedUser = (id: string) => {
-		const found = users.filter((usr) => usr.id === id);
+		const found = users?.filter((usr) => usr.id === id);
 
 		return found;
 	};
@@ -57,17 +46,13 @@ export default function ShareListButton({
 			const clean = value.filter((cln) => cln !== '');
 			const [first] = clean;
 
-			const sharedFound = users.filter((usr) => usr.id === first);
+			const sharedFound = users?.filter((usr) => usr.id === first);
 
-			if (sharedFound.length > 0) {
+			if (sharedFound && sharedFound.length > 0) {
 				setSelectedUser(first);
 			}
 		}
 	}, [users]);
-
-	useEffect(() => {
-		getSharedUsers();
-	}, []);
 
 	useEffect(() => {
 		if (isUserAction) {
@@ -114,7 +99,8 @@ export default function ShareListButton({
 						<DropdownMenuRadioGroup
 							value={selectedUser}
 							onValueChange={setSelectedUser}>
-							{users.length > 0 &&
+							{users &&
+								users.length > 0 &&
 								users.map((item) => (
 									<DropdownMenuRadioItem
 										onSelect={() => {
@@ -124,8 +110,10 @@ export default function ShareListButton({
 										value={item.id}
 										className='flex flex-row items-center gap-2'>
 										<Avatar>
-											<AvatarImage src={item.image} />
-											<AvatarFallback>{item.name.slice(0, 1)}</AvatarFallback>
+											<AvatarImage src={item.image as string} />
+											{item.name && (
+												<AvatarFallback>{item.name.slice(0, 1)}</AvatarFallback>
+											)}
 										</Avatar>
 										<div>{item.name}</div>
 									</DropdownMenuRadioItem>

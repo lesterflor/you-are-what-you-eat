@@ -1,36 +1,30 @@
 'use client';
 
 import { getUserAvatars } from '@/actions/user-actions';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { Skeleton } from '../ui/skeleton';
 
 export default function SharedListAvatars({ userIds }: { userIds: string[] }) {
 	const [users, setUsers] = useState<
 		{ id: string; name: string; image: string }[]
 	>([]);
-	const prevUserIdsRef = useRef<string[]>([]);
+	const [ref, inView] = useInView({ triggerOnce: true });
 
-	// Debounce userIds changes
 	useEffect(() => {
-		if (
-			userIds.length > 0 &&
-			JSON.stringify(userIds) !== JSON.stringify(prevUserIdsRef.current)
-		) {
-			const handler = setTimeout(async () => {
-				const res = await getUserAvatars(userIds);
-				if (res.success && res.data) {
-					// Only update if data actually changed
-					if (JSON.stringify(res.data) !== JSON.stringify(users)) {
-						setUsers(res.data as { id: string; name: string; image: string }[]);
-					}
-				}
-				prevUserIdsRef.current = userIds;
-			});
-
-			return () => clearTimeout(handler);
+		if (userIds.length > 0 && inView) {
+			fetchAvatars();
 		}
-	}, [userIds]);
+	}, [inView, userIds]);
+
+	const fetchAvatars = async () => {
+		const res = await getUserAvatars(userIds);
+		if (res.success && res.data) {
+			setUsers(res.data as { id: string; name: string; image: string }[]);
+		}
+	};
 
 	const smallAvatars = useMemo(
 		() =>
@@ -58,26 +52,30 @@ export default function SharedListAvatars({ userIds }: { userIds: string[] }) {
 		[users]
 	);
 
-	if (users.length === 0) return null;
+	if (userIds.length === 0) return null;
 
 	return (
-		<div>
+		<div ref={ref}>
 			{users.length > 1 ? (
-				<Popover>
-					<PopoverTrigger>
-						<div className='flex flex-row -space-x-3'>{smallAvatars}</div>
-					</PopoverTrigger>
-					<PopoverContent className='flex flex-col gap-4 w-auto'>
-						<div className='text-muted-foreground text-xs'>
-							This list is shared between
-						</div>
-						<div className='flex flex-row -space-x-6 items-center justify-center w-full'>
-							{largeAvatars}
-						</div>
-					</PopoverContent>
-				</Popover>
+				<Suspense fallback={<Skeleton className='rounded-full' />}>
+					<Popover>
+						<PopoverTrigger>
+							<div className='flex flex-row -space-x-3'>{smallAvatars}</div>
+						</PopoverTrigger>
+						<PopoverContent className='flex flex-col gap-4 w-auto'>
+							<div className='text-muted-foreground text-xs'>
+								This list is shared between
+							</div>
+							<div className='flex flex-row -space-x-6 items-center justify-center w-full'>
+								{largeAvatars}
+							</div>
+						</PopoverContent>
+					</Popover>
+				</Suspense>
 			) : (
-				smallAvatars
+				<Suspense fallback={<Skeleton className='rounded-full w-4 h-4' />}>
+					{smallAvatars}
+				</Suspense>
 			)}
 		</div>
 	);

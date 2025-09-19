@@ -56,7 +56,10 @@ export default function DishImageGallery({ dish }: { dish: GetPreparedDish }) {
 	}, [api]);
 
 	const { data: images, isFetching } = useQuery(
-		getDishImagesOptions(dish.id, fetchImages)
+		getDishImagesOptions(
+			dish.id,
+			fetchImages && dish.preparedDishImages.length > 0
+		)
 	);
 
 	const { mutate: deleteImgMutation, isPending: isDeleting } = useMutation(
