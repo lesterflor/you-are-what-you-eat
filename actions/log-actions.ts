@@ -324,7 +324,7 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 			bmrData: colateBMRData(logForToday.user.BaseMetabolicRate[0] as BMRData)
 		};
 
-		//console.log(revisedLog.user.BaseMetabolicRate);
+		console.log(revisedLog);
 
 		return {
 			success: true,

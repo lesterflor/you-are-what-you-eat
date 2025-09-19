@@ -1,56 +1,24 @@
 'use client';
 
-import { selectMacros, selectStatus } from '@/lib/features/log/logFoodSlice';
-import { useAppSelector } from '@/lib/hooks';
+import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
 import { cn, formatUnit } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
 import { ArrowDown, ArrowUp, Frown, Smile } from 'lucide-react';
-import { useEffect, useState } from 'react';
 
 export default function RemainingCalories({
 	iconPosition = 'top'
 }: {
 	iconPosition?: 'right' | 'top';
 }) {
-	const logMacros = useAppSelector(selectMacros);
-	const logDataStatus = useAppSelector(selectStatus);
+	const { data: logData } = useQuery(getCurrentLogQueryOptions());
 
-	const [userInfo, setUserInfo] = useState<
-		| {
-				consumed: number;
-				burned: number;
-				remaining: number;
-				bmr?: number;
-				cumulativeRemaining: number;
-		  }
-		| undefined
-	>(undefined);
-
-	useEffect(() => {
-		if (
-			(logDataStatus === 'updated' ||
-				logDataStatus === 'initial' ||
-				logDataStatus === 'added' ||
-				logDataStatus === 'deleted' ||
-				logDataStatus === 'loggedCalories' ||
-				logDataStatus === 'loggedDish') &&
-			logMacros
-		) {
-			const {
-				caloriesBurned = 0,
-				caloriesConsumed = 0,
-				caloriesRemaining = 0,
-				bmr = 0
-			} = logMacros;
-
-			setUserInfo({
-				consumed: caloriesConsumed,
-				burned: caloriesBurned,
-				remaining: caloriesRemaining,
-				bmr,
-				cumulativeRemaining: caloriesRemaining
-			});
-		}
-	}, [logMacros, logDataStatus]);
+	const userInfo = {
+		consumed: logData?.macros.caloriesConsumed ?? 0,
+		burned: logData?.macros.caloriesBurned ?? 0,
+		remaining: logData?.macros.caloriesRemaining ?? 0,
+		bmr: logData?.macros.bmr ?? 0,
+		cumulativeRemaining: logData?.macros.caloriesRemaining ?? 0
+	};
 
 	return (
 		<>

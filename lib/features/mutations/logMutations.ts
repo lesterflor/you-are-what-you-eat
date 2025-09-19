@@ -1,4 +1,5 @@
 import {
+	addKnownCaloriesBurned,
 	deleteFoodLogEntry,
 	updateFoodLogEntry,
 	updateLogWithOrder
@@ -37,6 +38,19 @@ export function deleteLogFoodItemMutationOptions(id: string) {
 	return mutationOptions({
 		mutationKey: ['deleteLogFoodItemMtn', id],
 		mutationFn: (fiId: string) => deleteFoodLogEntry(fiId),
+		onSuccess: (res) => {
+			toast.success(res.message);
+		},
+		onError: (res) => {
+			toast.error(res.message);
+		}
+	});
+}
+
+export function logCaloriesBurnedMutationOptions() {
+	return mutationOptions({
+		mutationKey: ['logCaloriesBurnedMtn'],
+		mutationFn: (cls: number) => addKnownCaloriesBurned(cls),
 		onSuccess: (res) => {
 			toast.success(res.message);
 		},

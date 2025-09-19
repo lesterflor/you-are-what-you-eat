@@ -1,13 +1,15 @@
 'use client';
 
+import { expendedCaloriesUpdated } from '@/lib/features/log/logFoodSlice';
+import { logCaloriesBurnedMutationOptions } from '@/lib/features/mutations/logMutations';
+import { useAppDispatch } from '@/lib/hooks';
 import {
-	logCaloriesBurnedAsync,
-	selectMacros,
-	selectStatus
-} from '@/lib/features/log/logFoodSlice';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+	getCurrentLogQueryOptions,
+	getLogRemainderQueryOptions
+} from '@/lib/queries/logQueries';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, Flame, InfoIcon, Plus } from 'lucide-react';
-import { useEffect, useOptimistic, useState, useTransition } from 'react';
+import { useEffect, useState } from 'react';
 import { FaWalking } from 'react-icons/fa';
 import { GiWeightLiftingUp } from 'react-icons/gi';
 import { ImSpinner2 } from 'react-icons/im';
@@ -23,18 +25,15 @@ export default function ExpendedCaloriesButton({
 	children?: React.ReactNode;
 	showBalloon?: boolean;
 }) {
-	const dispatch = useAppDispatch();
-	const logStatus = useAppSelector(selectStatus);
-	const logDataMacros = useAppSelector(selectMacros);
+	const query = useQueryClient();
 
-	const [isPending, startPendingTransition] = useTransition();
-
-	const [caloriesBurned, setCaloriesBurned] = useState(0);
-	const [optimisticCalories, setOptimisticCalories] = useOptimistic(
-		caloriesBurned,
-		(currentCalories, optimisticValue: number) =>
-			currentCalories + optimisticValue
+	const { mutate: logCalories } = useMutation(
+		logCaloriesBurnedMutationOptions()
 	);
+
+	const { data: logData, isPending } = useQuery(getCurrentLogQueryOptions());
+
+	const dispatch = useAppDispatch();
 
 	const [inputVal, setInputVal] = useState(10);
 	const [popoverOpen, setPopoverOpen] = useState(false);
@@ -45,16 +44,6 @@ export default function ExpendedCaloriesButton({
 		}
 	}, [popoverOpen]);
 
-	useEffect(() => {
-		if (logStatus === 'initial' && logDataMacros) {
-			setCaloriesBurned(logDataMacros.caloriesBurned as number);
-		} else if (logStatus === 'loggedCalories') {
-			setInputVal(0);
-			setCaloriesBurned(logDataMacros.caloriesBurned as number);
-			setPopoverOpen(false);
-		}
-	}, [logDataMacros, logStatus]);
-
 	return (
 		<Popover
 			open={popoverOpen}
@@ -62,11 +51,14 @@ export default function ExpendedCaloriesButton({
 			<PopoverTrigger asChild>
 				<div className='relative'>
 					{children}
-					{showBalloon && !popoverOpen && caloriesBurned > 0 && (
-						<div className='absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center'>
-							{caloriesBurned}
-						</div>
-					)}
+					{showBalloon &&
+						!popoverOpen &&
+						logData &&
+						logData.macros.caloriesBurned > 0 && (
+							<div className='absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center'>
+								{logData.macros.caloriesBurned}
+							</div>
+						)}
 				</div>
 			</PopoverTrigger>
 			<PopoverContent className='flex flex-col gap-6 items-center justify-center select-none relative w-[85vw] bg-slate-950'>
@@ -90,7 +82,7 @@ export default function ExpendedCaloriesButton({
 					Expended Calories
 				</div>
 				<div className='text-3xl font-semibold text-amber-600 h-6 flex flex-col items-center justify-center'>
-					{optimisticCalories}
+					{logData?.macros.caloriesBurned}
 				</div>
 				<div className='flex flex-row items-center justify-between gap-4 w-full select-none'>
 					<div className='flex flex-col gap-4 items-center justify-center w-full'>
@@ -114,7 +106,7 @@ export default function ExpendedCaloriesButton({
 								defaultValue={[inputVal]}
 								onValueChange={(val) => setInputVal(val[0])}
 								step={1}
-								min={-caloriesBurned}
+								min={-(logData?.macros.caloriesBurned ?? 0)}
 								max={1100}
 							/>
 
@@ -208,10 +200,23 @@ export default function ExpendedCaloriesButton({
 					className='select-none'
 					disabled={isPending || inputVal === 0}
 					onClick={() => {
-						startPendingTransition(async () => {
-							setOptimisticCalories(inputVal);
+						logCalories(inputVal, {
+							onSuccess: async () => {
+								dispatch(expendedCaloriesUpdated(inputVal));
 
-							dispatch(logCaloriesBurnedAsync(inputVal));
+								// tanstack
+								await query.invalidateQueries({
+									queryKey: getCurrentLogQueryOptions().queryKey
+								});
+
+								// invalidate remainders
+								await query.invalidateQueries({
+									queryKey: getLogRemainderQueryOptions().queryKey
+								});
+
+								setInputVal(0);
+								setPopoverOpen(false);
+							}
 						});
 					}}>
 					{isPending ? (
