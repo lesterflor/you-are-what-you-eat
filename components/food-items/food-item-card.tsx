@@ -5,11 +5,8 @@ import {
 	selectFoodUpdateData,
 	selectFoodUpdateStatus
 } from '@/lib/features/food/foodUpdateSlice';
-import {
-	logFoodAsync,
-	selectData,
-	selectStatus
-} from '@/lib/features/log/logFoodSlice';
+import { added } from '@/lib/features/log/logFoodSlice';
+import { addLogFoodItemMutationOptions } from '@/lib/features/mutations/logMutations';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import {
 	addImageState,
@@ -23,10 +20,10 @@ import {
 } from '@/lib/queries/logQueries';
 import { cn, formatUnit, getMacroPercOfCals } from '@/lib/utils';
 import { FoodEntry, GetFoodItem, GetFoodItemImage, GetUser } from '@/types';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Aperture, FilePlus, Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { memo, useEffect, useRef, useState, useTransition } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { GiSpoon } from 'react-icons/gi';
 import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'sonner';
@@ -66,14 +63,10 @@ const FoodItemCard = memo(function FoodItemCard({
 	const cardRef = useRef<HTMLDivElement>(null);
 
 	const dispatch = useAppDispatch();
-	const logData = useAppSelector(selectData);
-	const logDataStatus = useAppSelector(selectStatus);
 	const imageData = useAppSelector(selectImageData);
 	const imageStatus = useAppSelector(selectImageStatus);
 	const foodUpdateData = useAppSelector(selectFoodUpdateData);
 	const foodUpdateStatus = useAppSelector(selectFoodUpdateStatus);
-
-	const [isSubmitting, setIsSubmitting] = useTransition();
 
 	const [fadeClass, setFadeClass] = useState(false);
 	const [queryEnabled, setQueryEnabled] = useState(false);
@@ -102,21 +95,9 @@ const FoodItemCard = memo(function FoodItemCard({
 		getFoodItemByIdQueryOptions(item.id, queryEnabled)
 	);
 
-	useEffect(() => {
-		if (logDataStatus === 'added' && logData.name === item.name) {
-			setShowDetails(false);
-
-			// tanstack
-			query.invalidateQueries({
-				queryKey: getCurrentLogQueryOptions().queryKey
-			});
-
-			// invalidate remainders
-			query.invalidateQueries({
-				queryKey: getLogRemainderQueryOptions().queryKey
-			});
-		}
-	}, [logData, logDataStatus]);
+	const { mutate: logFoodMtn, isPending: isSubmitting } = useMutation(
+		addLogFoodItemMutationOptions(logFoodItem)
+	);
 
 	useEffect(() => {
 		if (item.name.length >= 20) {
@@ -158,14 +139,28 @@ const FoodItemCard = memo(function FoodItemCard({
 	}, [foodUpdateData, foodUpdateStatus]);
 
 	const sendFoodItems = () => {
-		setIsSubmitting(async () => {
-			dispatch(
-				logFoodAsync({
-					logFoodItem,
-					name: logFoodItem.name,
-					servings: logFoodItem.numServings
-				})
-			);
+		logFoodMtn(logFoodItem, {
+			onSuccess: () => {
+				setShowDetails(false);
+
+				// tanstack
+				query.invalidateQueries({
+					queryKey: getCurrentLogQueryOptions().queryKey
+				});
+
+				// invalidate remainders
+				query.invalidateQueries({
+					queryKey: getLogRemainderQueryOptions().queryKey
+				});
+
+				// redux
+				dispatch(
+					added({
+						name: logFoodItem.name,
+						servings: logFoodItem.numServings
+					})
+				);
+			}
 		});
 	};
 

@@ -4,11 +4,12 @@ import {
 	selectPreparedDishData,
 	selectPreparedDishStatus
 } from '@/lib/features/dish/preparedDishSlice';
+import { deleted, updated } from '@/lib/features/log/logFoodSlice';
 import {
 	deleteLogFoodItemMutationOptions,
 	updateLogFoodItemMutationOptions
 } from '@/lib/features/mutations/logMutations';
-import { useAppSelector } from '@/lib/hooks';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { getFoodItemByIdQueryOptions } from '@/lib/queries/foodQueries';
 import {
 	getCurrentLogQueryOptions,
@@ -51,6 +52,7 @@ const LogFoodListItem = memo(function LogFoodListItem({
 	isDishMode?: boolean;
 }) {
 	//const dispatch = useAppDispatch();
+	const dispatch = useAppDispatch();
 	const query = useQueryClient();
 
 	const footerRef = useRef<HTMLDivElement>(null);
@@ -74,17 +76,6 @@ const LogFoodListItem = memo(function LogFoodListItem({
 
 	const preparedDishData = useAppSelector(selectPreparedDishData);
 	const preparedDishStatus = useAppSelector(selectPreparedDishStatus);
-
-	// const logData = useAppSelector(selectData);
-	// const logDataStatus = useAppSelector(selectStatus);
-	// const logDataDeleted = useAppSelector(selectDeletedItem);
-	// const logDataUpdated = useAppSelector(selectUpdatedItem);
-
-	// useEffect(() => {
-	// 	if (logDataStatus === 'deleted' && logDataDeleted?.id === item.id) {
-	// 		setDialogOpen(false);
-	// 	}
-	// }, [logDataStatus, logDataDeleted, logData, logDataUpdated]);
 
 	useEffect(() => {
 		if (
@@ -205,7 +196,7 @@ const LogFoodListItem = memo(function LogFoodListItem({
 											disabled={isPendingDelete}
 											onClick={() => {
 												deleteMutate(item.id, {
-													onSuccess: async () => {
+													onSuccess: async (res) => {
 														// invalidate the log list
 														await query.invalidateQueries({
 															queryKey: getCurrentLogQueryOptions().queryKey
@@ -215,6 +206,14 @@ const LogFoodListItem = memo(function LogFoodListItem({
 														await query.invalidateQueries({
 															queryKey: getLogRemainderQueryOptions().queryKey
 														});
+
+														// redux
+														dispatch(
+															deleted({
+																name: res.data?.name ?? '',
+																servings: res.data?.numServings ?? 0
+															})
+														);
 
 														setDialogOpen(false);
 													}
@@ -327,6 +326,14 @@ const LogFoodListItem = memo(function LogFoodListItem({
 											query.invalidateQueries({
 												queryKey: getLogRemainderQueryOptions().queryKey
 											});
+
+											// redux
+											dispatch(
+												updated({
+													name: res.data?.name ?? '',
+													servings: res.data?.numServings ?? 0
+												})
+											);
 										}
 									});
 

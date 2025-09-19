@@ -507,9 +507,13 @@ export async function updateLogWithOrder(foodEntries: FoodEntry[]) {
 
 		//revalidatePath('/');
 
+		const newItem = foodEntries[0];
+
 		return {
 			success: true,
-			message: 'success',
+			message: `You logged ${newItem.numServings} ${
+				newItem.numServings === 1 ? 'serving' : 'servings'
+			} of ${newItem.name}`,
 			data: clone
 		};
 	} catch (error: unknown) {
