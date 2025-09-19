@@ -2,6 +2,7 @@
 
 import {
 	deleteDishState,
+	logDishState,
 	updateDishState
 } from '@/lib/features/dish/preparedDishSlice';
 import {
@@ -492,7 +493,7 @@ export default function DishCard({
 						disabled={isPendingLog}
 						onClick={() => {
 							logDish(prepDish, {
-								onSuccess: () => {
+								onSuccess: (res) => {
 									// invalidate current log
 									query.invalidateQueries({
 										queryKey: getCurrentLogQueryOptions().queryKey
@@ -502,6 +503,16 @@ export default function DishCard({
 									query.invalidateQueries({
 										queryKey: getLogRemainderQueryOptions().queryKey
 									});
+
+									// redux
+									dispatch(
+										logDishState({
+											id: res.dish?.id ?? '',
+											name: res.dish?.name ?? '',
+											description: res.dish?.description ?? '',
+											dishList: '[]'
+										})
+									);
 								}
 							});
 						}}>

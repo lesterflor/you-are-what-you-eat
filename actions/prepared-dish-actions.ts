@@ -401,7 +401,8 @@ export async function logDishItems(dish: GetPreparedDish) {
 			success: true,
 			message: `You logged items from the dish, ${dish.name}, successfully`,
 			data: foodEntries,
-			log: res.data
+			log: res.data,
+			dish
 		};
 	} catch (err: unknown) {
 		return {
