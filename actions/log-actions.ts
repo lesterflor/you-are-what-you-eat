@@ -3,6 +3,7 @@
 import { auth } from '@/db/auth';
 import prisma from '@/db/prisma';
 import {
+	colateBMRData,
 	convertGlassesOfWater,
 	formatError,
 	formatUnit,
@@ -11,6 +12,7 @@ import {
 	totalMacrosReducer
 } from '@/lib/utils';
 import {
+	BMRData,
 	FoodEntry,
 	GetFoodEntry,
 	GetUser,
@@ -291,14 +293,38 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 
 		const remainingCalories = totalCalories - (bmrVal + burnedVal);
 
+		// TODO - add all macros to the return object
+		const foodItems = logForToday.foodItems.map((item) => ({
+			...item,
+			description: item.description as string,
+			image: item.image as string
+		}));
+
+		const { calories, carbs, fat, protein } = totalMacrosReducer(foodItems);
+		const macros = {
+			bmr: logForToday.user.BaseMetabolicRate[0].bmr,
+			caloriesBurned: logForToday.knownCaloriesBurned[0].calories ?? 0,
+			caloriesRemaining: remainingCalories,
+			caloriesRemainingCumulative:
+				logForToday.logRemainder && logForToday.logRemainder.length > 0
+					? logForToday.logRemainder[0]?.calories
+					: 0,
+			caloriesConsumed: calories,
+			totalCarbs: carbs,
+			totalFat: fat,
+			totalProtein: protein
+		};
+
 		const revisedLog = {
 			...logForToday,
 			comparisons,
 			totalCalories,
-			remainingCalories
+			remainingCalories,
+			macros,
+			bmrData: colateBMRData(logForToday.user.BaseMetabolicRate[0] as BMRData)
 		};
 
-		//console.log('first entry log:', revisedLog.user);
+		//console.log(revisedLog.user.BaseMetabolicRate);
 
 		return {
 			success: true,
@@ -1358,7 +1384,7 @@ export async function todaysWaterConsumed(glasses: number = 0) {
 			retLog = update;
 		}
 
-		//console.log(retLog);
+		console.log(retLog);
 
 		return {
 			success: true,

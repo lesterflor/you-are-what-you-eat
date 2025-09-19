@@ -17,9 +17,10 @@ import {
 	selectImageStatus
 } from '@/lib/image/imageSlice';
 import { getFoodItemByIdQueryOptions } from '@/lib/queries/foodQueries';
+import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
 import { cn, formatUnit, getMacroPercOfCals } from '@/lib/utils';
 import { FoodEntry, GetFoodItem, GetFoodItemImage, GetUser } from '@/types';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Aperture, FilePlus, Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { memo, useEffect, useRef, useState, useTransition } from 'react';
@@ -92,6 +93,8 @@ const FoodItemCard = memo(function FoodItemCard({
 	});
 	const [portionAmount, setPortionAmount] = useState(1);
 
+	const query = useQueryClient();
+
 	const { data: currentItem = item, isFetching } = useQuery(
 		getFoodItemByIdQueryOptions(item.id, queryEnabled)
 	);
@@ -99,6 +102,11 @@ const FoodItemCard = memo(function FoodItemCard({
 	useEffect(() => {
 		if (logDataStatus === 'added' && logData.name === item.name) {
 			setShowDetails(false);
+
+			// tanstack
+			query.invalidateQueries({
+				queryKey: getCurrentLogQueryOptions().queryKey
+			});
 		}
 	}, [logData, logDataStatus]);
 

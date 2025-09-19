@@ -4,13 +4,14 @@ import {
 	deleteDishState,
 	updateDishState
 } from '@/lib/features/dish/preparedDishSlice';
-import { logPrepDishAsync } from '@/lib/features/log/logFoodSlice';
 import {
 	deleteDishMutation,
+	logDishMutationOptions,
 	updateDishMutation
 } from '@/lib/features/mutations/dishMutations';
 import { useAppDispatch } from '@/lib/hooks';
 import { addImageState } from '@/lib/image/imageSlice';
+import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
 import { cn, formatUnit, totalMacrosReducer } from '@/lib/utils';
 import {
 	GetFoodEntry,
@@ -21,7 +22,7 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Aperture, FilePenLine, Soup, X } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useState } from 'react';
 import { BiSolidBowlHot } from 'react-icons/bi';
 import { ImSpinner2 } from 'react-icons/im';
 import { TbShareOff } from 'react-icons/tb';
@@ -58,10 +59,14 @@ export default function DishCard({
 	dish: GetPreparedDish;
 	readOnly?: boolean;
 }) {
+	const { data: session } = useSession();
+	const user = session?.user as GetUser;
+
 	const dispatch = useAppDispatch();
+	const query = useQueryClient();
+
 	const [prepDish, setPrepDish] = useState<GetPreparedDish>(dish);
 	const [items, setItems] = useState<GetFoodEntry[]>(dish.foodItems);
-	const [loggingDish, setLoggingDish] = useTransition();
 	const [isEditMode, setIsEditMode] = useState(false);
 	const [dishProps, setDishProps] = useState<{
 		name: string;
@@ -73,9 +78,9 @@ export default function DishCard({
 		totalProtein: number;
 		totalFat: number;
 	}>({ totalCals: 0, totalCarb: 0, totalProtein: 0, totalFat: 0 });
-	const query = useQueryClient();
-
 	const [photoDlgOpen, setPhotoDlgOpen] = useState(false);
+	const [sharedUsers, setSharedUsers] = useState<string[]>([]);
+	const [sessionUserIsDishOwner] = useState(user.id === prepDish.userId);
 
 	useEffect(() => {
 		const { calories, carbs, fat, protein } = totalMacrosReducer(items);
@@ -101,19 +106,16 @@ export default function DishCard({
 		}
 	}, [prepDish]);
 
-	const [sharedUsers, setSharedUsers] = useState<string[]>([]);
-
-	const { data: session } = useSession();
-	const user = session?.user as GetUser;
-
-	const [sessionUserIsDishOwner] = useState(user.id === prepDish.userId);
-
 	const { isPending: deletePending, mutate: deleteDishItem } = useMutation(
 		deleteDishMutation()
 	);
 
 	const { isPending: updatePending, mutate: updateDishItem } = useMutation(
 		updateDishMutation()
+	);
+
+	const { mutate: logDish, isPending: isPendingLog } = useMutation(
+		logDishMutationOptions()
 	);
 
 	const handleDelete = () => {
@@ -484,13 +486,17 @@ export default function DishCard({
 					</div>
 
 					<Button
-						disabled={loggingDish}
+						disabled={isPendingLog}
 						onClick={() => {
-							setLoggingDish(async () => {
-								dispatch(logPrepDishAsync(prepDish));
+							logDish(prepDish, {
+								onSuccess: () => {
+									query.invalidateQueries({
+										queryKey: getCurrentLogQueryOptions().queryKey
+									});
+								}
 							});
 						}}>
-						{loggingDish ? (
+						{isPendingLog ? (
 							<ImSpinner2 className='animate-spin' />
 						) : (
 							<BiSolidBowlHot />

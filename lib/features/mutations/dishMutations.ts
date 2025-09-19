@@ -3,6 +3,7 @@ import {
 	createDish,
 	deleteDish,
 	deleteDishImage,
+	logDishItems,
 	updateDish
 } from '@/actions/prepared-dish-actions';
 import { GetPreparedDish, PreparedDish } from '@/types';
@@ -82,6 +83,21 @@ export function addDishImageMutation(dishId: string) {
 				toast.error(res.message);
 			}
 		}
+	});
+}
+
+export function logDishMutationOptions() {
+	return mutationOptions({
+		mutationKey: ['mutateLogDish'],
+		mutationFn: (dish: GetPreparedDish) => logDishItems(dish),
+		onSuccess: (res) => {
+			if (res.success) {
+				toast.success(res.message);
+			} else {
+				toast.error(res.message);
+			}
+		},
+		onError: (res) => toast.error(res.message)
 	});
 }
 

@@ -1,20 +1,11 @@
 'use client';
 
-import { selectBMRData, selectStatus } from '@/lib/features/log/logFoodSlice';
-import {
-	selectWaterLogData,
-	selectWaterLogStatus,
-	updateWaterAsync
-} from '@/lib/features/log/waterLogSlice';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import {
-	calculateWaterIntake,
-	cn,
-	colateBMRData,
-	formatUnit
-} from '@/lib/utils';
-import { BMRData } from '@/types';
+import { logWaterMutationOptions } from '@/lib/features/mutations/waterMutations';
+import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
+import { getCurrentWaterQueryOptions } from '@/lib/queries/waterQueries';
+import { calculateWaterIntake, cn, formatUnit } from '@/lib/utils';
 import { DialogTitle } from '@radix-ui/react-dialog';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
 	ArrowDown,
 	ArrowUp,
@@ -22,11 +13,11 @@ import {
 	ChevronLeft,
 	ChevronRight
 } from 'lucide-react';
-import { useEffect, useOptimistic, useState, useTransition } from 'react';
+import { useEffect, useState } from 'react';
 import { BsCupFill } from 'react-icons/bs';
 import { FaGlassWater } from 'react-icons/fa6';
 import { GrCircleQuestion } from 'react-icons/gr';
-import { ImSpinner2, ImSpinner9 } from 'react-icons/im';
+import { ImSpinner2 } from 'react-icons/im';
 import { IoIosWater } from 'react-icons/io';
 import IncrementButton from '../increment-button';
 import { Badge } from '../ui/badge';
@@ -50,88 +41,18 @@ export default function WaterIntake({
 	showBalloon?: boolean;
 	useModal?: boolean;
 }) {
-	const dispatch = useAppDispatch();
-	const waterLogData = useAppSelector(selectWaterLogData);
-	const waterLogStatus = useAppSelector(selectWaterLogStatus);
-
-	const logBMRData = useAppSelector(selectBMRData);
-	const logDataStatus = useAppSelector(selectStatus);
-
-	useEffect(() => {
-		const { weightInKilos, weightInPounds } = colateBMRData(
-			logBMRData as BMRData
-		);
-
-		if (
-			logDataStatus === 'initial' &&
-			logBMRData &&
-			weightInPounds !== weight.weightInPounds
-		) {
-			setWeight({
-				weightInKilos,
-				weightInPounds
-			});
-		}
-	}, [logBMRData, logDataStatus]);
-
-	const [isFetchingWater, setIsFetchingWater] = useTransition();
-
-	const [currentGlasses, setCurrentGlasses] = useState(0);
-	const [waterConsumed, setWaterConsumed] = useState<{
-		glasses: number;
-		ounces: number;
-		litres: number;
-	}>({
-		glasses: 0,
-		ounces: 0,
-		litres: 0
-	});
-
-	const [optWaterConsumed, setOptWaterConsumed] = useOptimistic(
-		waterConsumed,
-		(state, newWater: number) => ({
-			...state,
-			glasses: formatUnit(state.glasses + newWater)
-		})
+	const query = useQueryClient();
+	const { data: waterLogData } = useQuery(getCurrentWaterQueryOptions());
+	const { data: logData } = useQuery(getCurrentLogQueryOptions());
+	const { mutate: logWater, isPending: isLoggingWater } = useMutation(
+		logWaterMutationOptions()
 	);
 
-	const [weight, setWeight] = useState<{
-		weightInKilos: number;
-		weightInPounds: number;
-	}>({ weightInKilos: 0, weightInPounds: 0 });
-	const [waterData, setWaterData] = useState<{
-		ounces: number;
-		litres: number;
-		glasses: number;
-	}>({
-		ounces: 0,
-		litres: 0,
-		glasses: 0
-	});
-
-	useEffect(() => {
-		const { glasses, ounces, litres } = waterLogData;
-
-		if (waterLogStatus === 'updated') {
-			setWaterConsumed({
-				glasses,
-				ounces,
-				litres
-			});
-			setCurrentGlasses(0);
-			setPopoverOpen(false);
-		} else if (waterLogStatus === 'initial') {
-			setWaterConsumed({
-				glasses,
-				ounces,
-				litres
-			});
-		} else if (waterLogStatus === 'failed') {
-			setWaterConsumed(waterConsumed);
-		}
-	}, [waterLogData, waterLogStatus]);
+	const [currentGlasses, setCurrentGlasses] = useState(0);
 
 	const [popoverOpen, setPopoverOpen] = useState(false);
+
+	const waterData = calculateWaterIntake(logData?.bmrData.weightInPounds ?? 0);
 
 	useEffect(() => {
 		if (!popoverOpen) {
@@ -139,18 +60,18 @@ export default function WaterIntake({
 		}
 	}, [popoverOpen]);
 
-	useEffect(() => {
-		if (weight && weight.weightInPounds > 0) {
-			setWaterData(calculateWaterIntake(weight.weightInPounds));
-		}
-	}, [weight]);
-
 	const updateWaterConsumed = async () => {
-		setIsFetchingWater(() => {
-			setOptWaterConsumed(currentGlasses);
-		});
+		// tanstack
+		logWater(currentGlasses, {
+			onSuccess: async () => {
+				await query.invalidateQueries({
+					queryKey: getCurrentWaterQueryOptions().queryKey
+				});
 
-		dispatch(updateWaterAsync(currentGlasses));
+				setCurrentGlasses(0);
+				setPopoverOpen(false);
+			}
+		});
 	};
 
 	return (
@@ -163,23 +84,16 @@ export default function WaterIntake({
 						<div className='relative'>
 							{children}
 							{showBalloon && !popoverOpen && waterData && (
-								<>
-									{isFetchingWater ? (
-										<div className='absolute w-auto h-4 rounded-full bg-gray-500 text-xs top-0 right-0 p-1 flex items-center justify-center'>
-											<ImSpinner9 className='animate-spin' />
-										</div>
-									) : (
-										<div
-											className={cn(
-												'absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center',
-												optWaterConsumed.glasses >= waterData.glasses &&
-													optWaterConsumed.glasses !== 0 &&
-													'bg-green-700'
-											)}>
-											{optWaterConsumed.glasses}
-										</div>
-									)}
-								</>
+								<div
+									className={cn(
+										'absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center',
+										waterLogData &&
+											waterLogData.glasses >= waterData.glasses &&
+											waterLogData.glasses !== 0 &&
+											'bg-green-700'
+									)}>
+									{waterLogData?.glasses ?? 0}
+								</div>
 							)}
 						</div>
 					</DialogTrigger>
@@ -189,17 +103,17 @@ export default function WaterIntake({
 								<GrCircleQuestion className='w-6 h-6 absolute top-2 left-2 text-muted-foreground' />
 							</PopoverTrigger>
 							<PopoverContent>
-								{weight && (
+								{logData?.bmrData && (
 									<div className='text-muted-foreground text-sm'>
 										<p>
 											The water amounts are the minimum water requirements you
 											need a day, based on your weight of{' '}
 											<span className='font-bold'>
-												{weight.weightInPounds} pounds
+												{logData.bmrData.weightInPounds} pounds
 											</span>{' '}
 											/{' '}
 											<span className='font-bold'>
-												{weight.weightInKilos} kilograms.
+												{logData.bmrData.weightInKilos} kilograms.
 											</span>
 										</p>
 										<p>
@@ -257,7 +171,7 @@ export default function WaterIntake({
 							)}
 						</div>
 
-						{waterData && (
+						{waterLogData && (
 							<div className='flex flex-col gap-4 w-full items-center justify-center'>
 								<div className='flex flex-col items-center justify-center gap-0 w-full'>
 									<div className='text-blue-600 text-4xl font-extrabold flex flex-row gap-1 items-center justify-evenly w-full'>
@@ -265,7 +179,7 @@ export default function WaterIntake({
 											<div className='flex flex-row gap-1 items-center justify-center'>
 												<FaGlassWater className='w-8 h-8' />
 												<span className='text-foreground'>
-													{optWaterConsumed.glasses}
+													{waterLogData.glasses}
 												</span>
 											</div>
 											<div className='text-xs font-normal text-muted-foreground'>
@@ -279,7 +193,7 @@ export default function WaterIntake({
 											<div className='flex flex-row gap-1 items-center justify-center'>
 												<BsCupFill className='w-8 h-8' />
 												<span className='text-foreground'>
-													{optWaterConsumed.glasses * 2}
+													{waterLogData.glasses * 2}
 												</span>
 											</div>
 											<div className='text-xs font-normal text-muted-foreground'>
@@ -287,9 +201,9 @@ export default function WaterIntake({
 											</div>
 										</div>
 
-										{optWaterConsumed.glasses < waterData.glasses ? (
+										{waterLogData.glasses < waterData.glasses ? (
 											<ArrowDown className='animate-bounce text-red-600' />
-										) : optWaterConsumed.glasses === waterData.glasses ? (
+										) : waterLogData.glasses === waterData.glasses ? (
 											<Check className='animate-bounce text-green-600' />
 										) : (
 											<ArrowUp className='animate-bounce text-green-600' />
@@ -380,9 +294,9 @@ export default function WaterIntake({
 								</div>
 
 								<Button
-									disabled={isFetchingWater || currentGlasses === 0}
+									disabled={isLoggingWater || currentGlasses === 0}
 									onClick={() => updateWaterConsumed()}>
-									{isFetchingWater ? (
+									{isLoggingWater ? (
 										<ImSpinner2 />
 									) : (
 										<IoIosWater className='!w-6 !h-6' />
@@ -403,23 +317,16 @@ export default function WaterIntake({
 						<div className='relative'>
 							{children}
 							{showBalloon && !popoverOpen && waterData && (
-								<>
-									{isFetchingWater ? (
-										<div className='absolute w-auto h-4 rounded-full bg-gray-500 text-xs top-0 right-0 p-1 flex items-center justify-center'>
-											<ImSpinner9 className='animate-spin' />
-										</div>
-									) : (
-										<div
-											className={cn(
-												'absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center',
-												optWaterConsumed.glasses >= waterData.glasses &&
-													optWaterConsumed.glasses !== 0 &&
-													'bg-green-700'
-											)}>
-											{optWaterConsumed.glasses}
-										</div>
-									)}
-								</>
+								<div
+									className={cn(
+										'absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center',
+										waterLogData &&
+											waterLogData.glasses >= waterData.glasses &&
+											waterLogData.glasses !== 0 &&
+											'bg-green-700'
+									)}>
+									{waterLogData?.glasses}
+								</div>
 							)}
 						</div>
 					</PopoverTrigger>
@@ -429,17 +336,17 @@ export default function WaterIntake({
 								<GrCircleQuestion className='w-6 h-6 absolute top-2 left-2 text-muted-foreground' />
 							</PopoverTrigger>
 							<PopoverContent>
-								{weight && (
+								{logData?.bmrData && (
 									<div className='text-muted-foreground text-sm'>
 										<p>
 											The water amounts are the minimum water requirements you
 											need a day, based on your weight of{' '}
 											<span className='font-bold'>
-												{weight.weightInPounds} pounds
+												{logData.bmrData.weightInPounds} pounds
 											</span>{' '}
 											/{' '}
 											<span className='font-bold'>
-												{weight.weightInKilos} kilograms.
+												{logData.bmrData.weightInKilos} kilograms.
 											</span>
 										</p>
 										<p>
@@ -495,7 +402,7 @@ export default function WaterIntake({
 							)}
 						</div>
 
-						{waterData && (
+						{waterLogData && (
 							<div className='flex flex-col gap-4 w-full items-center justify-center'>
 								<div className='flex flex-col items-center justify-center gap-0 w-full'>
 									<div className='text-blue-600 text-4xl font-extrabold flex flex-row gap-1 items-center justify-evenly w-full'>
@@ -503,7 +410,7 @@ export default function WaterIntake({
 											<div className='flex flex-row gap-1 items-center justify-center'>
 												<FaGlassWater className='w-8 h-8' />
 												<span className='text-foreground'>
-													{optWaterConsumed.glasses}
+													{waterLogData.glasses}
 												</span>
 											</div>
 											<div className='text-xs font-normal text-muted-foreground'>
@@ -517,7 +424,7 @@ export default function WaterIntake({
 											<div className='flex flex-row gap-1 items-center justify-center'>
 												<BsCupFill className='w-8 h-8' />
 												<span className='text-foreground'>
-													{optWaterConsumed.glasses * 2}
+													{waterLogData.glasses * 2}
 												</span>
 											</div>
 											<div className='text-xs font-normal text-muted-foreground'>
@@ -525,9 +432,9 @@ export default function WaterIntake({
 											</div>
 										</div>
 
-										{optWaterConsumed.glasses < waterData.glasses ? (
+										{waterLogData.glasses < waterData.glasses ? (
 											<ArrowDown className='animate-bounce text-red-600' />
-										) : optWaterConsumed.glasses === waterData.glasses ? (
+										) : waterLogData.glasses === waterData.glasses ? (
 											<Check className='animate-bounce text-green-600' />
 										) : (
 											<ArrowUp className='animate-bounce text-green-600' />
@@ -618,9 +525,9 @@ export default function WaterIntake({
 								</div>
 
 								<Button
-									disabled={isFetchingWater || currentGlasses === 0}
-									onClick={() => updateWaterConsumed()}>
-									{isFetchingWater ? (
+									disabled={isLoggingWater || currentGlasses === 0}
+									onClick={updateWaterConsumed}>
+									{isLoggingWater ? (
 										<ImSpinner2 />
 									) : (
 										<IoIosWater className='!w-6 !h-6' />

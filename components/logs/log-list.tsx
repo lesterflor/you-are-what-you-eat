@@ -6,33 +6,16 @@ import {
 	selectPreparedDishStatus,
 	setDishListState
 } from '@/lib/features/dish/preparedDishSlice';
-import {
-	reset,
-	selectCurrentDishItems,
-	selectData,
-	selectDeletedItem,
-	selectLog,
-	selectMacros,
-	selectStatus,
-	selectUpdatedItem,
-	setCurrentLog
-} from '@/lib/features/log/logFoodSlice';
-import { setInitialAmount } from '@/lib/features/log/waterLogSlice';
+import { setCurrentLog } from '@/lib/features/log/logFoodSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
 import { cn, getStorageItem, setStorageItem } from '@/lib/utils';
-import { GetFoodEntry, GetLog, GetWaterConsumed } from '@/types';
+import { GetFoodEntry } from '@/types';
+import { useQuery } from '@tanstack/react-query';
 import { Flame, IdCard, List, LucideUtensilsCrossed, Soup } from 'lucide-react';
-import {
-	lazy,
-	Suspense,
-	useEffect,
-	useMemo,
-	useState,
-	useTransition
-} from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { BiSolidFoodMenu } from 'react-icons/bi';
 import { BsBookmarkStarFill } from 'react-icons/bs';
-import { ImSpinner2 } from 'react-icons/im';
 import { IoFastFoodOutline, IoWaterOutline } from 'react-icons/io5';
 import { TbDatabaseSearch } from 'react-icons/tb';
 import SubToolsSkeleton from '../skeletons/sub-tools-skeleton';
@@ -45,7 +28,7 @@ import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 import ExpendedBadge from './expended-badge';
 import LogFoodCard from './log-food-card';
 import LogFoodListItem from './log-food-list-item';
-import LogMacrosSummary from './log-macros-summary';
+import LogMacrosSummaryCurrent from './log-macros-summary-current';
 import RemainingCalories from './remaining-calories';
 
 const LogRemainderBadgeLazy = lazy(
@@ -80,39 +63,25 @@ export default function FoodLogList({
 	forceColumn = true,
 	useScroller = true,
 	iconPosition = 'right',
-	useFloaterNav = false,
-	todaysLog,
-	currentWater
+	useFloaterNav = false
 }: {
 	useScroller?: boolean;
 	iconPosition?: 'right' | 'top';
 	forceColumn?: boolean;
 	useFloaterNav?: boolean;
-	todaysLog?: GetLog;
-	currentWater?: GetWaterConsumed;
 }) {
 	const dispatch = useAppDispatch();
 
-	const [logList, setLogList] = useState<GetFoodEntry[]>(
-		todaysLog?.foodItems || []
-	);
+	const { data: todaysLog } = useQuery(getCurrentLogQueryOptions());
+
 	const [logParsed, setLogParsed] = useState(false);
-	const [log, setLog] = useState<GetLog>(todaysLog as GetLog);
 	const [dataFormat, setDataFormat] = useState('');
 	const [dishList, setDishList] = useState<
 		{ add: boolean; item: GetFoodEntry }[]
 	>([]);
-	const [fetchingLog, setFetchingLog] = useTransition();
 
 	const preparedDishData = useAppSelector(selectPreparedDishData);
 	const preparedDishStatus = useAppSelector(selectPreparedDishStatus);
-	const logStatus = useAppSelector(selectStatus);
-	const logData = useAppSelector(selectData);
-	const logDataLog = useAppSelector(selectLog);
-	const logDataDeleted = useAppSelector(selectDeletedItem);
-	const logDataUpdated = useAppSelector(selectUpdatedItem);
-	const logDataCurrentDish = useAppSelector(selectCurrentDishItems);
-	const logDataMacros = useAppSelector(selectMacros);
 
 	useEffect(() => {
 		if (
@@ -121,87 +90,10 @@ export default function FoodLogList({
 			preparedDishStatus === 'updated'
 		) {
 			setDishList([]);
-		} else if (preparedDishStatus === 'logged') {
-			parseLog(JSON.parse(preparedDishData.log || '{}'));
 		}
 	}, [preparedDishData, preparedDishStatus]);
 
 	const { scrollingUp, delta } = useScrolling();
-
-	const resetLogState = () => {
-		// reset slice as navigation changes will persist added state
-		dispatch(reset());
-	};
-
-	useEffect(() => {
-		if (logStatus === 'updated') {
-			const update = [...logList].map((item) => {
-				if (logDataUpdated && item.id === logDataUpdated.id) {
-					return {
-						...item,
-						numServings: logDataUpdated.numServings
-					};
-				}
-				return item;
-			});
-
-			setLogList(update);
-
-			resetLogState();
-		} else if (logStatus === 'deleted') {
-			setLogList((prev) => {
-				return prev.filter((item) => item.id !== logDataDeleted?.id);
-			});
-
-			resetLogState();
-		} else if (logStatus === 'added') {
-			setLogList((prev) => {
-				if (
-					logDataLog &&
-					logDataLog.foodItems &&
-					logDataLog.foodItems?.length > 0
-				) {
-					const item = {
-						...logDataLog.foodItems[logDataLog.foodItems.length - 1]
-					};
-
-					const update = {
-						...item,
-						description: item.description ?? '',
-						image: item.image ?? '',
-						eatenAt: item.eatenAt ? new Date(item.eatenAt) : new Date()
-					};
-
-					return [update, ...prev];
-				}
-				return prev;
-			});
-
-			resetLogState();
-		} else if (
-			logStatus === 'loggedDish' &&
-			logDataCurrentDish &&
-			logDataCurrentDish?.length > 0
-		) {
-			const updates = logDataCurrentDish.map((item) => ({
-				...item,
-				description: item.description ?? '',
-				image: item.image ?? '',
-				eatenAt: item.eatenAt ? new Date(item.eatenAt) : new Date()
-			}));
-
-			setLogList((prev) => updates.concat(...prev));
-
-			resetLogState();
-		}
-	}, [
-		logStatus,
-		logData,
-		logDataLog,
-		logDataDeleted,
-		logDataUpdated,
-		logDataCurrentDish
-	]);
 
 	useEffect(() => {
 		if (dataFormat) {
@@ -218,39 +110,15 @@ export default function FoodLogList({
 
 	const initialPageLoad = () => {
 		if (todaysLog) {
+			// TODO - the macros in this reducer should be done in the server action
 			dispatch(setCurrentLog(JSON.stringify(todaysLog)));
-			parseLog(todaysLog);
 		}
-
-		if (currentWater) {
-			const { glasses, ounces, litres } = currentWater;
-
-			dispatch(
-				setInitialAmount({
-					glasses,
-					ounces,
-					litres
-				})
-			);
-		}
-	};
-
-	const parseLog = (log: GetLog, ignoreLogList: boolean = false) => {
-		const { foodItems = [] } = log;
-
-		setFetchingLog(() => {
-			setLog(log);
-
-			if (!ignoreLogList) {
-				setLogList(foodItems as GetFoodEntry[]);
-			}
-		});
 
 		setLogParsed(true);
 	};
 
 	const logFoodCards = useMemo(() => {
-		return logList.map((item, indx) => (
+		return todaysLog?.foodItems.map((item, indx) => (
 			<LogFoodCard
 				allowEdit={true}
 				indx={indx}
@@ -258,10 +126,10 @@ export default function FoodLogList({
 				key={`${item.id}-${new Date(item.eatenAt).getTime()}`}
 			/>
 		));
-	}, [logList]);
+	}, [todaysLog]);
 
 	const logListItems = useMemo(() => {
-		return logList.map((item, indx) => (
+		return todaysLog?.foodItems.map((item, indx) => (
 			<LogFoodListItem
 				onCheck={(data) => {
 					// add or delete foodEntry from the dishList state
@@ -302,11 +170,11 @@ export default function FoodLogList({
 				key={`${item.id}-${new Date(item.eatenAt).getTime()}`}
 			/>
 		));
-	}, [logList, dishList]);
+	}, [todaysLog, dishList]);
 
 	return (
 		<>
-			{logList.length > 0 && (
+			{todaysLog && todaysLog?.foodItems && todaysLog?.foodItems.length > 0 && (
 				<Badge
 					variant={'secondary'}
 					className={cn(
@@ -314,14 +182,11 @@ export default function FoodLogList({
 						scrollingUp ? '-top-24' : 'top-24',
 						delta === 0 && 'top-24'
 					)}>
-					{logList.length > 0 && (
+					{todaysLog.foodItems.length > 0 && (
 						<div className='flex flex-row items-center gap-2 font-normal pr-4'>
-							{fetchingLog && (
-								<ImSpinner2 className='animate-spin w-4 h-4 opacity-25' />
-							)}
 							<BiSolidFoodMenu className='w-4 h-4' />
-							<div>{`Today's Log (${logList.length} ${
-								logList.length === 1 ? 'item' : 'items'
+							<div>{`Today's Log (${todaysLog.foodItems.length} ${
+								todaysLog.foodItems.length === 1 ? 'item' : 'items'
 							})`}</div>
 						</div>
 					)}
@@ -364,14 +229,13 @@ export default function FoodLogList({
 								Calories Consumed
 								<span className='font-semibold'>
 									{' '}
-									{logDataMacros.caloriesConsumed}
+									{todaysLog?.macros.caloriesConsumed}
 								</span>
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent className='max-w-[80vw] w-auto'>
-							<LogMacrosSummary
+							<LogMacrosSummaryCurrent
 								showPie={true}
-								log={log}
 								compactMode={true}
 								detailedMode={true}
 								useSkeleton={true}
@@ -392,7 +256,7 @@ export default function FoodLogList({
 					</div>
 				</div>
 
-				{logDataMacros.caloriesRemaining ? (
+				{todaysLog?.macros.caloriesRemaining ? (
 					<>
 						{!useFloaterNav && (
 							<RemainingCalories iconPosition={iconPosition} />
@@ -413,7 +277,7 @@ export default function FoodLogList({
 								: 'flex flex-row flex-wrap gap-4 portrait:flex-col'
 						)}>
 						<>
-							{logList.length > 0 ? (
+							{todaysLog && todaysLog.foodItems.length > 0 ? (
 								<>{dataFormat === 'card' ? logFoodCards : logListItems}</>
 							) : (
 								<div className='flex flex-col items-center justify-center gap-2 text-muted-foreground  fixed top-[16vh] w-[95%]'>
@@ -487,14 +351,13 @@ export default function FoodLogList({
 										Calories Consumed
 										<span className='font-semibold'>
 											{' '}
-											{logDataMacros.caloriesConsumed}
+											{todaysLog?.macros.caloriesConsumed}
 										</span>
 									</Button>
 								</PopoverTrigger>
 								<PopoverContent className='max-w-[90vw] w-auto'>
-									<LogMacrosSummary
+									<LogMacrosSummaryCurrent
 										showPie={true}
-										log={log}
 										compactMode={true}
 										detailedMode={true}
 										useSkeleton={true}

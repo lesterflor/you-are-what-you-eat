@@ -1,4 +1,3 @@
-import { createDailyLog, todaysWaterConsumed } from '@/actions/log-actions';
 import AddFoodSheet from '@/components/food-items/add-food-sheet';
 import LandingContent from '@/components/landing-content';
 import FoodLogList from '@/components/logs/log-list';
@@ -6,7 +5,8 @@ import { auth } from '@/db/auth';
 import { getAllDishesOptions } from '@/lib/queries/dishQueries';
 import { getFavouriteQueryOptions } from '@/lib/queries/favouriteQueries';
 import { getFoodQueryOptions } from '@/lib/queries/foodQueries';
-import { GetLog, GetWaterConsumed } from '@/types';
+import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
+import { getCurrentWaterQueryOptions } from '@/lib/queries/waterQueries';
 import {
 	dehydrate,
 	HydrationBoundary,
@@ -20,12 +20,13 @@ const FoodListSheetLazy = lazy(
 
 export default async function Home() {
 	const session = await auth();
-	const todaysLog = await createDailyLog();
-	const currentWater = await todaysWaterConsumed();
-
 	const queryClient = new QueryClient();
 
 	await Promise.all([
+		queryClient.prefetchQuery({
+			queryKey: getCurrentLogQueryOptions().queryKey,
+			queryFn: getCurrentLogQueryOptions().queryFn
+		}),
 		queryClient.prefetchQuery({
 			queryKey: getFavouriteQueryOptions().queryKey,
 			queryFn: getFavouriteQueryOptions().queryFn
@@ -37,6 +38,10 @@ export default async function Home() {
 		queryClient.prefetchQuery({
 			queryKey: getFoodQueryOptions().queryKey,
 			queryFn: getFoodQueryOptions().queryFn
+		}),
+		queryClient.prefetchQuery({
+			queryKey: getCurrentWaterQueryOptions().queryKey,
+			queryFn: getCurrentWaterQueryOptions().queryFn
 		})
 	]);
 
@@ -57,8 +62,6 @@ export default async function Home() {
 							useFloaterNav={true}
 							iconPosition='top'
 							forceColumn={false}
-							todaysLog={todaysLog?.data as GetLog}
-							currentWater={currentWater.data as GetWaterConsumed}
 						/>
 					</div>
 				</div>

@@ -35,6 +35,8 @@ import { ScrollArea } from '../ui/scroll-area';
 import { Skeleton } from '../ui/skeleton';
 
 export default function LogRemainderBadge() {
+	const [ref, inView] = useInView();
+
 	const dispatch = useAppDispatch();
 	const logMacros = useAppSelector(selectMacros);
 	const logDataStatus = useAppSelector(selectStatus);
@@ -44,16 +46,6 @@ export default function LogRemainderBadge() {
 
 	const [logRemainder, setLogRemainder] = useState<LogRemainderDataType>();
 	const [mounted, setMounted] = useState(false);
-	const [ref, inView] = useInView();
-
-	useEffect(() => {
-		if (inView && !mounted) {
-			setMounted(true);
-			dispatch(getRemaining());
-			setIsFetching(true);
-		}
-	}, [inView]);
-
 	const [popOpen, setPopOpen] = useState(false);
 	const [isFetching, setIsFetching] = useState(false);
 	const [remainderStr, setRemainderStr] = useState('');
@@ -64,6 +56,22 @@ export default function LogRemainderBadge() {
 			createdAt: string;
 		}[]
 	>();
+
+	const chartRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (chartData && chartRef.current) {
+			chartRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		}
+	}, [chartData]);
+
+	useEffect(() => {
+		if (inView && !mounted) {
+			setMounted(true);
+			dispatch(getRemaining());
+			setIsFetching(true);
+		}
+	}, [inView]);
 
 	useEffect(() => {
 		if (logRemainderStatus === 'fetched') {
@@ -139,14 +147,6 @@ export default function LogRemainderBadge() {
 
 		return null;
 	};
-
-	const chartRef = useRef<HTMLDivElement>(null);
-
-	useEffect(() => {
-		if (chartData && chartRef.current) {
-			chartRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-		}
-	}, [chartData]);
 
 	return (
 		<div ref={ref}>

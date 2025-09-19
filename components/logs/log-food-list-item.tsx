@@ -1,24 +1,22 @@
 'use client';
 
-import { getFoodItemById } from '@/actions/food-actions';
 import {
 	selectPreparedDishData,
 	selectPreparedDishStatus
 } from '@/lib/features/dish/preparedDishSlice';
 import {
-	deleteLogItemAsync,
-	selectData,
-	selectDeletedItem,
-	selectStatus,
-	selectUpdatedItem,
-	updateItemAsync
-} from '@/lib/features/log/logFoodSlice';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+	deleteLogFoodItemMutationOptions,
+	updateLogFoodItemMutationOptions
+} from '@/lib/features/mutations/logMutations';
+import { useAppSelector } from '@/lib/hooks';
+import { getFoodItemByIdQueryOptions } from '@/lib/queries/foodQueries';
+import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
 import { cn, formatUnit } from '@/lib/utils';
 import { FoodEntry, GetFoodEntry, GetFoodItem } from '@/types';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { Clock, FilePenLine, RefreshCwOff, Trash2, X } from 'lucide-react';
-import { memo, useEffect, useRef, useState, useTransition } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { RxUpdate } from 'react-icons/rx';
 import FoodCategoryIconMapper from '../food-items/food-category-icon-mapper';
@@ -49,38 +47,41 @@ const LogFoodListItem = memo(function LogFoodListItem({
 	onCheck?: (data: { add: boolean; item: GetFoodEntry }) => void;
 	isDishMode?: boolean;
 }) {
-	const dispatch = useAppDispatch();
+	//const dispatch = useAppDispatch();
+	const query = useQueryClient();
 
 	const footerRef = useRef<HTMLDivElement>(null);
 
 	const [isEditing, setIsEditing] = useState(false);
 	const [servingSize, setServingSize] = useState(item.numServings);
-	const [isDeleting, setIsDeleting] = useTransition();
-	const [isUpdating, setIsUpdating] = useTransition();
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [isChecked, setIsChecked] = useState<boolean | undefined>();
+	const [fadeClass, setFadeClass] = useState(false);
+
+	const { data: foodItem } = useQuery(
+		getFoodItemByIdQueryOptions(item.id, isEditing)
+	);
+
+	const { mutate, isPending: isPendingUpdate } = useMutation(
+		updateLogFoodItemMutationOptions(item)
+	);
+	const { mutate: deleteMutate, isPending: isPendingDelete } = useMutation(
+		deleteLogFoodItemMutationOptions(item.id)
+	);
 
 	const preparedDishData = useAppSelector(selectPreparedDishData);
 	const preparedDishStatus = useAppSelector(selectPreparedDishStatus);
 
-	const logData = useAppSelector(selectData);
-	const logDataStatus = useAppSelector(selectStatus);
-	const logDataDeleted = useAppSelector(selectDeletedItem);
-	const logDataUpdated = useAppSelector(selectUpdatedItem);
+	// const logData = useAppSelector(selectData);
+	// const logDataStatus = useAppSelector(selectStatus);
+	// const logDataDeleted = useAppSelector(selectDeletedItem);
+	// const logDataUpdated = useAppSelector(selectUpdatedItem);
 
-	useEffect(() => {
-		if (logDataStatus === 'deleted' && logDataDeleted?.id === item.id) {
-			setDialogOpen(false);
-		} else if (
-			logDataUpdated &&
-			logDataStatus === 'updated' &&
-			logDataUpdated.id === item.id
-		) {
-			setIsUpdating(() => {
-				setServingSize(formatUnit(logDataUpdated.numServings));
-			});
-		}
-	}, [logDataStatus, logDataDeleted, logData, logDataUpdated]);
+	// useEffect(() => {
+	// 	if (logDataStatus === 'deleted' && logDataDeleted?.id === item.id) {
+	// 		setDialogOpen(false);
+	// 	}
+	// }, [logDataStatus, logDataDeleted, logData, logDataUpdated]);
 
 	useEffect(() => {
 		if (
@@ -98,7 +99,6 @@ const LogFoodListItem = memo(function LogFoodListItem({
 		}
 	}, [isChecked]);
 
-	const [fadeClass, setFadeClass] = useState(false);
 	useEffect(() => {
 		setTimeout(
 			() => {
@@ -115,20 +115,8 @@ const LogFoodListItem = memo(function LogFoodListItem({
 				block: 'center',
 				inline: 'center'
 			});
-
-			fetchFoodItem();
 		}
 	}, [isEditing]);
-
-	const [foodItem, setFoodItem] = useState<GetFoodItem>();
-
-	const fetchFoodItem = async () => {
-		const res = await getFoodItemById(item.id);
-
-		if (res.success && res.data) {
-			setFoodItem(res.data as GetFoodItem);
-		}
-	};
 
 	return (
 		<Card
@@ -211,18 +199,25 @@ const LogFoodListItem = memo(function LogFoodListItem({
 									</DialogDescription>
 									<div className='flex flex-row items-center justify-center'>
 										<Button
-											disabled={isDeleting}
+											disabled={isPendingDelete}
 											onClick={() => {
-												setIsDeleting(async () => {
-													dispatch(deleteLogItemAsync(item.id));
+												deleteMutate(item.id, {
+													onSuccess: async () => {
+														// invalidate the log list
+														await query.invalidateQueries({
+															queryKey: getCurrentLogQueryOptions().queryKey
+														});
+
+														setDialogOpen(false);
+													}
 												});
 											}}>
-											{isDeleting ? (
+											{isPendingDelete ? (
 												<ImSpinner2 className='w-4 h-4 animate-spin' />
 											) : (
 												<Trash2 className='w-4 h-4' />
 											)}
-											{isDeleting ? 'Deleting' : 'Delete'}
+											{isPendingDelete ? 'Deleting' : 'Delete'}
 										</Button>
 									</div>
 								</DialogContent>
@@ -303,26 +298,38 @@ const LogFoodListItem = memo(function LogFoodListItem({
 							</Button>
 							<Button
 								onClick={() => {
-									setIsUpdating(async () => {
-										const updatedEntry: FoodEntry = {
-											...item,
-											numServings: servingSize
-										};
+									const updatedEntry: FoodEntry = {
+										...item,
+										numServings: servingSize
+									};
 
-										dispatch(updateItemAsync(updatedEntry));
+									// redux method - consider using the static reducer
+									//dispatch(updateItemAsync(updatedEntry));
+
+									mutate(updatedEntry, {
+										onSuccess: (res) => {
+											setServingSize(formatUnit(res.data?.numServings ?? 1));
+
+											// invalidate the log list
+											query.invalidateQueries({
+												queryKey: getCurrentLogQueryOptions().queryKey
+											});
+										}
 									});
 
 									setIsEditing(false);
 								}}>
 								<RxUpdate
-									className={cn('w-4 h-4', isUpdating && 'animate-spin')}
+									className={cn('w-4 h-4', isPendingUpdate && 'animate-spin')}
 								/>
-								{isUpdating ? 'Updating...' : 'Update'}
+								{isPendingUpdate ? 'Updating...' : 'Update'}
 							</Button>
 						</div>
 
 						<div className='w-full'>
-							{foodItem && <FoodItemImageGallery item={foodItem} />}
+							{foodItem && (
+								<FoodItemImageGallery item={foodItem as GetFoodItem} />
+							)}
 						</div>
 					</div>
 				)}
