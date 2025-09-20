@@ -18,12 +18,14 @@ import {
 	getCurrentLogQueryOptions,
 	getLogRemainderQueryOptions
 } from '@/lib/queries/logQueries';
-import { cn, formatUnit, getMacroPercOfCals } from '@/lib/utils';
+import { cn, formatUnit, getMacroPercOfCals, isNewFoodItem } from '@/lib/utils';
 import { FoodEntry, GetFoodItem, GetFoodItemImage, GetUser } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { format } from 'date-fns';
 import { Aperture, FilePlus, Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { memo, useEffect, useRef, useState } from 'react';
+import { FaAsterisk } from 'react-icons/fa';
 import { GiSpoon } from 'react-icons/gi';
 import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'sonner';
@@ -44,6 +46,7 @@ import {
 	DialogTitle,
 	DialogTrigger
 } from '../ui/dialog';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import FoodCategoryIconMapper from './food-category-icon-mapper';
 import FoodItemFavourite from './food-item-favourite';
 import FoodItemImageGallery from './food-item-image-gallery';
@@ -176,6 +179,23 @@ const FoodItemCard = memo(function FoodItemCard({
 					showDetails ? 'text-foreground' : 'text-muted-foreground',
 					textSize
 				)}>
+				{isNewFoodItem(currentItem.createdAt) && (
+					<Popover>
+						<PopoverTrigger
+							asChild
+							className='absolute top-0 left-0'>
+							<FaAsterisk className='w-3 h-3 text-green-500 animate-pulse' />
+						</PopoverTrigger>
+						<PopoverContent className='text-xs'>
+							Added by{' '}
+							<span className='font-semibold'>
+								{currentItem.user?.name || 'a user'}
+							</span>{' '}
+							on {format(new Date(currentItem.createdAt), 'MMM do')}
+						</PopoverContent>
+					</Popover>
+				)}
+
 				<div
 					onClick={(e) => {
 						e.preventDefault();

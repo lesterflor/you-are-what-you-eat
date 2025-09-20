@@ -479,3 +479,13 @@ export function serializeLog(log: GetLogEnhanced) {
 			}))
 	};
 }
+
+export function isNewFoodItem(itemDate: string | Date) {
+	const today = getToday().current;
+	const createdAt = new Date(itemDate).getTime();
+
+	// 7 days in milliseconds
+	const sevenDays = 7 * 24 * 60 * 60 * 1000;
+
+	return today - createdAt < sevenDays;
+}
