@@ -27,11 +27,11 @@ export default function ExpendedCaloriesButton({
 }) {
 	const query = useQueryClient();
 
-	const { mutate: logCalories } = useMutation(
+	const { mutate: logCalories, isPending: isLoggingCalories } = useMutation(
 		logCaloriesBurnedMutationOptions()
 	);
 
-	const { data: logData, isPending } = useQuery(getCurrentLogQueryOptions());
+	const { data: logData } = useQuery(getCurrentLogQueryOptions());
 
 	const dispatch = useAppDispatch();
 
@@ -198,7 +198,7 @@ export default function ExpendedCaloriesButton({
 
 				<Button
 					className='select-none'
-					disabled={isPending || inputVal === 0}
+					disabled={isLoggingCalories || inputVal === 0}
 					onClick={() => {
 						logCalories(inputVal, {
 							onSuccess: async () => {
@@ -219,7 +219,7 @@ export default function ExpendedCaloriesButton({
 							}
 						});
 					}}>
-					{isPending ? (
+					{isLoggingCalories ? (
 						<ImSpinner2 className='w-4 h-4 animate-spin' />
 					) : (
 						<Plus className='h-4 w-4' />

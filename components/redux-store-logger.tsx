@@ -141,6 +141,7 @@ export default function ReduxStoreLogger({
 			logFoodItemStatus === 'updated' ||
 			logFoodItemStatus === 'deleted' ||
 			logFoodItemStatus === 'loggedCalories' ||
+			logFoodItemStatus === 'expended calories' ||
 			logFoodItemStatus === 'loggedDish'
 		) {
 			const data = {

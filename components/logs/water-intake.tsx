@@ -1,6 +1,8 @@
 'use client';
 
+import { updatedWater } from '@/lib/features/log/waterLogSlice';
 import { logWaterMutationOptions } from '@/lib/features/mutations/waterMutations';
+import { useAppDispatch } from '@/lib/hooks';
 import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
 import { getCurrentWaterQueryOptions } from '@/lib/queries/waterQueries';
 import { calculateWaterIntake, cn, formatUnit } from '@/lib/utils';
@@ -41,6 +43,7 @@ export default function WaterIntake({
 	showBalloon?: boolean;
 	useModal?: boolean;
 }) {
+	const dispatch = useAppDispatch();
 	const query = useQueryClient();
 	const { data: waterLogData } = useQuery(getCurrentWaterQueryOptions());
 	const { data: logData } = useQuery(getCurrentLogQueryOptions());
@@ -64,6 +67,14 @@ export default function WaterIntake({
 		// tanstack
 		logWater(currentGlasses, {
 			onSuccess: async () => {
+				// redux
+				dispatch(
+					updatedWater({
+						glasses: currentGlasses
+					})
+				);
+
+				// tanstack invalidate water cache
 				await query.invalidateQueries({
 					queryKey: getCurrentWaterQueryOptions().queryKey
 				});

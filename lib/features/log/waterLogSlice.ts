@@ -5,8 +5,8 @@ import { toast } from 'sonner';
 
 export interface WaterLogSliceProps {
 	glasses: number;
-	ounces: number;
-	litres: number;
+	ounces?: number;
+	litres?: number;
 }
 
 export interface WaterLogSlice {
@@ -47,9 +47,9 @@ export const waterLogSlice = createAppSlice({
 					ounces: action.payload.ounces,
 					litres: action.payload.litres
 				};
-				state.message = `Water consumption updated to ${
-					action.payload.glasses
-				} ${action.payload.glasses === 1 ? 'glass' : 'glasses'}`;
+				state.message = `You added ${action.payload.glasses} ${
+					action.payload.glasses === 1 ? 'glass' : 'glasses'
+				} to today's water consumption`;
 			}
 		),
 
