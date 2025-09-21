@@ -1,6 +1,9 @@
 'use client';
 
-import { selectData, selectStatus } from '@/lib/features/log/logFoodSlice';
+import {
+	selectPreparedDishData,
+	selectPreparedDishStatus
+} from '@/lib/features/dish/preparedDishSlice';
 import { useAppSelector } from '@/lib/hooks';
 import { getAllDishesOptions } from '@/lib/queries/dishQueries';
 import { setStorageItem } from '@/lib/utils';
@@ -29,8 +32,8 @@ export default function DishListSheet({
 }) {
 	const [sheetOpen, setSheetOpen] = useState(false);
 
-	const logData = useAppSelector(selectData);
-	const logDataStatus = useAppSelector(selectStatus);
+	const dishData = useAppSelector(selectPreparedDishData);
+	const dishStatus = useAppSelector(selectPreparedDishStatus);
 
 	const {
 		data: dishes,
@@ -43,10 +46,10 @@ export default function DishListSheet({
 	}
 
 	useEffect(() => {
-		if (logDataStatus === 'loggedDish') {
+		if (dishStatus === 'logged') {
 			setSheetOpen(false);
 		}
-	}, [logData, logDataStatus]);
+	}, [dishData, dishStatus]);
 
 	return (
 		<>
