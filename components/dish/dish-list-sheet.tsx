@@ -9,10 +9,11 @@ import { getAllDishesOptions } from '@/lib/queries/dishQueries';
 import { setStorageItem } from '@/lib/utils';
 import { GetPreparedDish } from '@/types';
 import { useQuery } from '@tanstack/react-query';
-import { Soup } from 'lucide-react';
+import { InfoIcon, Soup } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { TbBowl } from 'react-icons/tb';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { ScrollArea } from '../ui/scroll-area';
 import {
 	Sheet,
@@ -69,18 +70,24 @@ export default function DishListSheet({
 				<SheetContent
 					side={'bottom'}
 					className='max-w-[100vw] w-96 px-2'>
-					<SheetTitle className='flex flex-row items-center gap-2 w-48'>
+					<SheetTitle className='flex flex-row items-center gap-2 w-48 relative'>
 						{' '}
+						<Popover>
+							<PopoverTrigger asChild>
+								<InfoIcon className='w-6 h-6 text-muted-foreground' />
+							</PopoverTrigger>
+							<PopoverContent className='text-sm leading-tight pb-6 text-muted-foreground'>
+								These are your prepared dishes. You can create dishes by
+								selecting items from your logged food list or add them from
+								searched food items. You can then log all items from a dish
+								instead of adding food items individually.
+							</PopoverContent>
+						</Popover>
 						<Soup className='w-6 h-6 text-fuchsia-500' /> Your Dishes
 					</SheetTitle>
-					<SheetDescription className='text-sm leading-tight pb-6'>
-						These are your prepared dishes. You can create dishes by selecting
-						items from your logged food list or add them from searched food
-						items. You can then log all items from a dish instead of adding food
-						items individually.
-					</SheetDescription>
+					<SheetDescription></SheetDescription>
 
-					<ScrollArea className='w-full pr-3 h-[70vh]'>
+					<ScrollArea className='mt-3 w-full pr-3 h-[70vh]'>
 						{isFetching ? (
 							<ImSpinner2 className='animate-spin w-8 h-8 opacity-25' />
 						) : (
