@@ -6,7 +6,6 @@ import {
 	selectPreparedDishStatus,
 	setDishListState
 } from '@/lib/features/dish/preparedDishSlice';
-import { setCurrentLog } from '@/lib/features/log/logFoodSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
 import { cn, getStorageItem, setStorageItem } from '@/lib/utils';
@@ -105,17 +104,8 @@ export default function FoodLogList({
 		const savedFormat = getStorageItem('logFormat') ?? 'card';
 		setDataFormat(savedFormat);
 
-		initialPageLoad();
-	}, []);
-
-	const initialPageLoad = () => {
-		if (todaysLog) {
-			// TODO - the macros in this reducer should be done in the server action
-			dispatch(setCurrentLog(JSON.stringify(todaysLog)));
-		}
-
 		setLogParsed(true);
-	};
+	}, []);
 
 	const logFoodCards = useMemo(() => {
 		return todaysLog?.foodItems.map((item, indx) => (
