@@ -75,7 +75,7 @@ export default function WaterIntake({
 				);
 
 				// tanstack invalidate water cache
-				await query.invalidateQueries({
+				query.invalidateQueries({
 					queryKey: getCurrentWaterQueryOptions().queryKey
 				});
 

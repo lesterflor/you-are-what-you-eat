@@ -201,16 +201,16 @@ export default function ExpendedCaloriesButton({
 					disabled={isLoggingCalories || inputVal === 0}
 					onClick={() => {
 						logCalories(inputVal, {
-							onSuccess: async () => {
+							onSuccess: () => {
 								dispatch(expendedCaloriesUpdated(inputVal));
 
 								// tanstack
-								await query.invalidateQueries({
+								query.invalidateQueries({
 									queryKey: getCurrentLogQueryOptions().queryKey
 								});
 
 								// invalidate remainders
-								await query.invalidateQueries({
+								query.invalidateQueries({
 									queryKey: getLogRemainderQueryOptions().queryKey
 								});
 
