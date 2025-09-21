@@ -58,10 +58,12 @@ import DishImageGallery from './dish-image-gallery';
 
 export default function DishCard({
 	dish,
-	readOnly = false
+	readOnly = false,
+	onLogSuccess
 }: {
 	dish: GetPreparedDish;
 	readOnly?: boolean;
+	onLogSuccess?: () => void;
 }) {
 	const { data: session } = useSession();
 	const user = session?.user as GetUser;
@@ -503,6 +505,8 @@ export default function DishCard({
 									query.invalidateQueries({
 										queryKey: getLogRemainderQueryOptions().queryKey
 									});
+
+									onLogSuccess?.();
 
 									// redux
 									dispatch(

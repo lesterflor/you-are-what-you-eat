@@ -1,16 +1,11 @@
 'use client';
 
-import {
-	selectPreparedDishData,
-	selectPreparedDishStatus
-} from '@/lib/features/dish/preparedDishSlice';
-import { useAppSelector } from '@/lib/hooks';
 import { getAllDishesOptions } from '@/lib/queries/dishQueries';
 import { setStorageItem } from '@/lib/utils';
 import { GetPreparedDish } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { InfoIcon, Soup } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { TbBowl } from 'react-icons/tb';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
@@ -33,9 +28,6 @@ export default function DishListSheet({
 }) {
 	const [sheetOpen, setSheetOpen] = useState(false);
 
-	const dishData = useAppSelector(selectPreparedDishData);
-	const dishStatus = useAppSelector(selectPreparedDishStatus);
-
 	const {
 		data: dishes,
 		isFetching,
@@ -45,12 +37,6 @@ export default function DishListSheet({
 	if (isFetched) {
 		setStorageItem('preparedDishes', dishes);
 	}
-
-	useEffect(() => {
-		if (dishStatus === 'logged') {
-			setSheetOpen(false);
-		}
-	}, [dishData, dishStatus]);
 
 	return (
 		<>
@@ -97,6 +83,7 @@ export default function DishListSheet({
 										<DishCard
 											key={item.id}
 											dish={item as GetPreparedDish}
+											onLogSuccess={() => setSheetOpen(false)}
 										/>
 									))
 								) : (
