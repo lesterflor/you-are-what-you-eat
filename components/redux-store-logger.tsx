@@ -1,10 +1,6 @@
 'use client';
 
 import {
-	getCurrentActivityLog,
-	logActivity
-} from '@/actions/activity-log-actions';
-import {
 	selectPreparedDishData,
 	selectPreparedDishMsg,
 	selectPreparedDishStatus
@@ -40,16 +36,14 @@ import {
 	selectNoteUpdateStatus
 } from '@/lib/features/notes/noteUpdateSlice';
 import { useAppSelector } from '@/lib/hooks';
+import { logActivityMutationOptions } from '@/lib/mutations/logMutations';
+import { getCurrentActivityLogQueryOptions } from '@/lib/queries/logQueries';
 import { cn } from '@/lib/utils';
-import {
-	ActivityItem,
-	GetActivityItem,
-	GetActivityLog,
-	GetUser
-} from '@/types';
+import { ActivityItem, GetUser } from '@/types';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Activity, SquareActivity } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import ActivityCard from './activity/activity-card';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -64,6 +58,8 @@ export default function ReduxStoreLogger({
 }) {
 	const { data: session } = useSession();
 	const user = session?.user as GetUser;
+
+	const [hasOpened, setHasOpened] = useState(false);
 
 	const logFoodItem = useAppSelector(selectData);
 	const logFoodItemStatus = useAppSelector(selectStatus);
@@ -95,45 +91,24 @@ export default function ReduxStoreLogger({
 	const bookmarkFoodStatus = useAppSelector(selectBookmarkFoodStatus);
 	const bookmarkFoodMsg = useAppSelector(selectBookmarkFoodMessage);
 
-	const [isFetching, setIsFetching] = useTransition();
-	const [log, setLog] = useState<GetActivityLog>();
-	const [activities, setActivities] = useState<GetActivityItem[]>([]);
-	const [hasOpened, setHasOpened] = useState(false);
+	const query = useQueryClient();
 
-	const getTodaysActivity = () => {
-		setIsFetching(async () => {
-			const res = await getCurrentActivityLog();
+	const { data: activityLog, isFetching } = useQuery(
+		getCurrentActivityLogQueryOptions()
+	);
 
-			if (res.success && res.data) {
-				setLog(res.data);
-			}
-		});
-	};
+	const { mutate: logActivity } = useMutation(logActivityMutationOptions());
 
 	const logActivityAction = (data: ActivityItem) => {
-		setIsFetching(async () => {
-			const res = await logActivity(data);
-
-			if (res.success && res.data) {
-				//getTodaysActivity();
-				setLog(res.data);
+		logActivity(data, {
+			onSuccess: () => {
+				// invalidate log
+				query.invalidateQueries({
+					queryKey: getCurrentActivityLogQueryOptions().queryKey
+				});
 			}
 		});
 	};
-
-	useEffect(() => {
-		getTodaysActivity();
-	}, []);
-
-	useEffect(() => {
-		if (log?.activityItems) {
-			const clean = log.activityItems.filter((item) => !!item.data);
-
-			setActivities(
-				clean.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-			);
-		}
-	}, [log]);
 
 	useEffect(() => {
 		if (
@@ -270,7 +245,7 @@ export default function ReduxStoreLogger({
 					className='w-14'>
 					<ImSpinner2 className='animate-spin opacity-50' />
 				</Button>
-			) : user && activities.length > 0 ? (
+			) : user && activityLog && activityLog.activityItems.length > 0 ? (
 				<Popover>
 					<PopoverTrigger asChild>
 						<Button
@@ -301,10 +276,10 @@ export default function ReduxStoreLogger({
 						<ScrollArea
 							className={cn(
 								'w-full h-[20%]',
-								activities.length < 5 ? 'h-auto' : 'h-[45vh]'
+								activityLog.activityItems.length < 5 ? 'h-auto' : 'h-[45vh]'
 							)}>
 							<div className='flex flex-col gap-2'>
-								{activities.map((item) => (
+								{activityLog.activityItems.map((item) => (
 									<ActivityCard
 										item={item}
 										key={item.id}

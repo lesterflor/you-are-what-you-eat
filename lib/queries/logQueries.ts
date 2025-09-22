@@ -1,3 +1,4 @@
+import { getCurrentActivityLog } from '@/actions/activity-log-actions';
 import { getBMRById } from '@/actions/bmr-actions';
 import {
 	createDailyLog,
@@ -107,5 +108,23 @@ export function getBMRByIdQueryOptions(userId: string) {
 		queryKey: ['bmrByUserIdQuery', userId],
 		queryFn: () => getBMRById(userId),
 		select: (res) => res.data
+	});
+}
+
+export function getCurrentActivityLogQueryOptions() {
+	return queryOptions({
+		queryKey: ['currentActivityLogQuery'],
+		queryFn: getCurrentActivityLog,
+		select: (res) => {
+			if (res?.data) {
+				const sorted = res.data.activityItems
+					.filter((item) => !!item.data)
+					.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+				return { ...res.data, activityItems: sorted };
+			}
+
+			return res?.data;
+		}
 	});
 }
