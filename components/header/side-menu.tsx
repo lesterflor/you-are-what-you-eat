@@ -1,7 +1,7 @@
 'use client';
 
 import { useCurrentSession } from '@/hooks/use-current-session';
-import { GetLog, GetUser } from '@/types';
+import { GetUser } from '@/types';
 import { Calculator, Flame, Menu, Soup, UtensilsCrossed } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
@@ -30,7 +30,7 @@ import {
 import ModeToggle from './mode-toggle';
 
 import { FaGlassWater } from 'react-icons/fa6';
-export default function SideMenu({ log }: { log?: GetLog }) {
+export default function SideMenu() {
 	const pathname = usePathname();
 	const { status } = useCurrentSession();
 	const { data: session } = useSession();
@@ -62,9 +62,6 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 									<span className='text-muted-foreground portrait:text-lg text-2xl font-bold thin-title'>
 										You are what you eat
 									</span>
-									{/* <span className='text-xs font-normal text-muted-foreground leading-tight'>
-										Track the food you eat and stop wondering
-									</span> */}
 								</div>
 							</div>
 						</Link>
@@ -89,7 +86,6 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 						<div className='flex flex-col item-center gap-1 w-full'>
 							<div>Log Info</div>
 							<div className='flex flex-col items-stretch gap-4 w-full'>
-								{/* {log && <LogSheet log={log as GetLog} />} */}
 								{pathname === '/logs' && (
 									<Button
 										onClick={() => {
@@ -125,24 +121,8 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 
 							<NoteSheet />
 							<GrocerListSheet />
-
-							{/* <div className='flex flex-row justify-evenly gap-2'></div> */}
 						</div>
 					</div>
-
-					{/* {pathname !== '/foods' && (
-						<Button
-							asChild
-							className='w-fit'>
-							<Link
-								href='/foods'
-								onClick={handleClick}
-								className='flex flex-row items-center gap-2'>
-								<Database className='w-4 h-4' />
-								View Food Database
-							</Link>
-						</Button>
-					)} */}
 
 					<div className='flex flex-col item-center gap-1'>
 						<div>Food</div>
@@ -183,8 +163,6 @@ export default function SideMenu({ log }: { log?: GetLog }) {
 							</WaterIntake>
 						</div>
 					</div>
-
-					{/* <KnowCaloriesBurned /> */}
 				</div>
 			</SheetContent>
 		</Sheet>

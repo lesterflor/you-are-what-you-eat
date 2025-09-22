@@ -854,14 +854,11 @@ export async function addKnownCaloriesBurned(calories: number) {
 			throw new Error('There was a problem updating the Known Calories Burned');
 		}
 
-		// return the latest log for slice
-		const currentLog = await createDailyLog();
-
 		return {
 			success: true,
 			message: `Updated ${calories} calories to your total calories burned`,
 			data: update,
-			log: currentLog?.data
+			log: {} // remove for now
 		};
 	} catch (error: unknown) {
 		return {

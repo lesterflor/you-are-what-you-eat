@@ -1,13 +1,9 @@
-import { getCurrentLog } from '@/actions/log-actions';
 import { auth } from '@/db/auth';
 import { getToday } from '@/lib/utils';
-import { GetLog } from '@/types';
 import { format } from 'date-fns';
 import { Calculator, UtensilsCrossed } from 'lucide-react';
 import Link from 'next/link';
 import { lazy } from 'react';
-import LogButton from '../logs/log-button';
-import LogSheet from '../logs/log-sheet';
 import ModeToggle from './mode-toggle';
 import UserButton from './user-button';
 
@@ -21,15 +17,15 @@ const ReduxStoreLoggerLazy = lazy(
 
 const SideMenuLazy = lazy(() => import('@/components/header/side-menu'));
 
-const LogMacrosSummaryLazy = lazy(
-	() => import('@/components/logs/log-macros-summary')
+const LogMacrosSummaryCurrentLazy = lazy(
+	() => import('@/components/logs/log-macros-summary-current')
 );
+
+const LogSheetLazy = lazy(() => import('@/components/logs/log-sheet'));
 
 export default async function SiteHeader() {
 	const session = await auth();
 	const { current } = getToday();
-
-	const log = await getCurrentLog(true);
 
 	return (
 		<header className='w-full border-b fixed top-0 z-50 bg-white dark:bg-green-950 select-none px-0'>
@@ -74,15 +70,14 @@ export default async function SiteHeader() {
 
 				{session && (
 					<div className='flex flex-col items-center gap-0'>
-						<LogMacrosSummaryLazy
-							log={log?.data as GetLog}
+						<LogMacrosSummaryCurrentLazy
 							compactMode={true}
 							useSkeleton={false}>
 							<div className='flex flex-row items-center gap-2'>
 								<Calculator className='w-4 h-4' />
 								<div>{format(current, 'eee PP h:mm a')}</div>
 							</div>
-						</LogMacrosSummaryLazy>
+						</LogMacrosSummaryCurrentLazy>
 						<div className='text-xs text-muted-foreground pt-1'>
 							You are what you eat,{' '}
 							<span className='font-semibold'>{session.user?.name}</span>
@@ -90,13 +85,13 @@ export default async function SiteHeader() {
 					</div>
 				)}
 
-				<div className='hidden lg:block'>
+				{/* <div className='hidden lg:block'>
 					<LogButton />
-				</div>
+				</div> */}
 
 				<div className='flex flex-row portrait:flex-col justify-end gap-2 items-center'>
 					<div className='hidden lg:block'>
-						<LogSheet log={log?.data as GetLog} />
+						<LogSheetLazy />
 					</div>
 					<div className='hidden lg:block'>
 						<ModeToggle />
@@ -105,7 +100,7 @@ export default async function SiteHeader() {
 					<UserButton />
 
 					<div>
-						<SideMenuLazy log={log?.data as GetLog} />
+						<SideMenuLazy />
 					</div>
 				</div>
 			</div>

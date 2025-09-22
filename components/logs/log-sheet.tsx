@@ -1,7 +1,8 @@
 'use client';
 
+import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
 import { cn, getToday } from '@/lib/utils';
-import { GetLog } from '@/types';
+import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { CalendarSearch, FileClock } from 'lucide-react';
 import { usePathname } from 'next/navigation';
@@ -16,13 +17,9 @@ import {
 } from '../ui/sheet';
 import FoodLogList from './log-list';
 
-export default function LogSheet({
-	log,
-	onOpen
-}: {
-	log: GetLog;
-	onOpen?: () => void;
-}) {
+export default function LogSheet({ onOpen }: { onOpen?: () => void }) {
+	const { data: log } = useQuery(getCurrentLogQueryOptions());
+
 	const pathname = usePathname();
 	const [isOpen, setIsOpen] = useState(false);
 	const [isMounted, setIsMounted] = useState(false);
