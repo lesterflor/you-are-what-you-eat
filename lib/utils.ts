@@ -3,6 +3,7 @@ import {
 	BMRData,
 	ColatedBMRData,
 	GetFoodEntry,
+	GetFoodItem,
 	GetKnowCaloriesBurned,
 	GetLogEnhanced,
 	GetLogRemainder,
@@ -488,4 +489,13 @@ export function isNewFoodItem(itemDate: string | Date) {
 	const sevenDays = 7 * 24 * 60 * 60 * 1000;
 
 	return today - createdAt < sevenDays;
+}
+
+export function getNewItemCount(items: GetFoodItem[]) {
+	return items.reduce((acc, curr) => {
+		if (isNewFoodItem(curr.createdAt)) {
+			return acc + 1;
+		}
+		return acc;
+	}, 0);
 }

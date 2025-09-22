@@ -9,7 +9,7 @@ import { selectFoodUpdateStatus } from '@/lib/features/food/foodUpdateSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { getFavouriteQueryOptions } from '@/lib/queries/favouriteQueries';
 import { getFoodQueryOptions } from '@/lib/queries/foodQueries';
-import { cn } from '@/lib/utils';
+import { cn, isNewFoodItem } from '@/lib/utils';
 import { GetFoodItem } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { Search } from 'lucide-react';
@@ -29,6 +29,7 @@ import {
 } from '../ui/sheet';
 import FoodCategoryPicker from './food-categories';
 import FoodItemCard from './food-item-card';
+import NewItemsBadge from './new-items-badge';
 
 export default function FoodListSheet({
 	forceColumn = true,
@@ -115,6 +116,11 @@ export default function FoodListSheet({
 			case 'favourites':
 				setFoods(foodFavs);
 				break;
+			case 'newItems':
+				setFoods(
+					foodsData?.filter((item) => isNewFoodItem(item.createdAt)) ?? []
+				);
+				break;
 		}
 	};
 
@@ -170,6 +176,11 @@ export default function FoodListSheet({
 					<SheetContent side='right'>
 						<SheetDescription></SheetDescription>
 						<SheetTitle className='flex flex-col items-center gap-2 pb-4 relative'>
+							<NewItemsBadge
+								onBadgeClick={() => {
+									checkFoodStatus('newItems');
+								}}
+							/>
 							<div className='flex flex-row gap-2 justify-between items-center pt-2'>
 								<InputWithButton
 									className='w-[90%]'
@@ -235,6 +246,13 @@ export default function FoodListSheet({
 						side='top'
 						className='px-2'>
 						<div className='flex flex-col items-center gap-4 pb-4 relative top-3'>
+							<div className='absolute -top-6 left-0'>
+								<NewItemsBadge
+									onBadgeClick={() => {
+										checkFoodStatus('newItems');
+									}}
+								/>
+							</div>
 							<div className='flex flex-row gap-2 justify-between items-center mt-4'>
 								<div className='flex flex-row items-center gap-4'>
 									<InputWithButton
@@ -245,7 +263,7 @@ export default function FoodListSheet({
 										<Search className='w-4 h-4 text-muted-foreground' />
 									</InputWithButton>
 
-									<div className='text-xs font-normal'>
+									<div className='text-xs font-normal relative'>
 										{foods.length} {foods.length === 1 ? 'result' : 'results'}
 									</div>
 								</div>
