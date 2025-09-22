@@ -1,16 +1,23 @@
 'use client';
 
-import { deleteFoodLogEntry, updateFoodLogEntry } from '@/actions/log-actions';
 import { deleted, updated } from '@/lib/features/log/logFoodSlice';
+import {
+	deleteLogFoodItemMutationOptions,
+	updateLogFoodItemMutationOptions
+} from '@/lib/features/mutations/logMutations';
 import { useAppDispatch } from '@/lib/hooks';
+import {
+	getCurrentLogQueryOptions,
+	getLogRemainderQueryOptions
+} from '@/lib/queries/logQueries';
 import { cn, formatUnit } from '@/lib/utils';
 import { FoodEntry, GetFoodEntry } from '@/types';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { Clock, FilePenLine, RefreshCwOff, Trash2, X } from 'lucide-react';
-import { memo, useEffect, useRef, useState, useTransition } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { RxUpdate } from 'react-icons/rx';
-import { toast } from 'sonner';
 import FoodCategoryIconMapper from '../food-items/food-category-icon-mapper';
 import NumberIncrementor from '../number-incrementor';
 import { Badge } from '../ui/badge';
@@ -40,23 +47,31 @@ const LogFoodCard = memo(function LogFoodCard({
 	allowEdit?: boolean;
 }) {
 	const dispatch = useAppDispatch();
+	const query = useQueryClient();
 
 	const footerRef = useRef<HTMLDivElement>(null);
 
 	const [isEditing, setIsEditing] = useState(false);
 	const [servingSize, setServingSize] = useState(item.numServings);
-	const [isDeleting, setIsDeleting] = useTransition();
-	const [isUpdating, setIsUpdating] = useTransition();
 	const [dialogOpen, setDialogOpen] = useState(false);
-
 	const [fadeClass, setFadeClass] = useState(false);
+
+	const { mutate, isPending: isPendingUpdate } = useMutation(
+		updateLogFoodItemMutationOptions(item)
+	);
+	const { mutate: deleteMutate, isPending: isPendingDelete } = useMutation(
+		deleteLogFoodItemMutationOptions(item.id)
+	);
+
 	useEffect(() => {
-		setTimeout(
+		const tim = setTimeout(
 			() => {
 				setFadeClass(true);
 			},
 			indx === 0 ? 1 : indx * 10
 		);
+
+		return () => clearTimeout(tim);
 	}, []);
 
 	useEffect(() => {
@@ -165,41 +180,44 @@ const LogFoodCard = memo(function LogFoodCard({
 							</Button>
 							<Button
 								onClick={() => {
-									setIsUpdating(async () => {
-										const updatedEntry: FoodEntry = {
-											...item,
-											numServings: servingSize
-										};
+									const updatedEntry: FoodEntry = {
+										...item,
+										numServings: servingSize
+									};
 
-										const res = await updateFoodLogEntry(updatedEntry);
+									// redux method - consider using the static reducer
+									//dispatch(updateItemAsync(updatedEntry));
 
-										if (res.success) {
-											toast.success(res.message);
+									mutate(updatedEntry, {
+										onSuccess: (res) => {
+											setServingSize(formatUnit(res.data?.numServings ?? 1));
 
-											if (res.data) {
-												const { numServings } = res.data;
+											// invalidate the log list
+											query.invalidateQueries({
+												queryKey: getCurrentLogQueryOptions().queryKey
+											});
 
-												setServingSize(numServings);
+											// invalidate remainders
+											query.invalidateQueries({
+												queryKey: getLogRemainderQueryOptions().queryKey
+											});
 
-												// redux
-												dispatch(
-													updated({
-														name: item.name,
-														servings: numServings
-													})
-												);
-											}
-										} else {
-											toast.error(res.message);
+											// redux
+											dispatch(
+												updated({
+													name: res.data?.name ?? '',
+													servings: res.data?.numServings ?? 0
+												})
+											);
 										}
 									});
 
 									setIsEditing(false);
 								}}>
 								<RxUpdate
-									className={cn('w-4 h-4', isUpdating && 'animate-spin')}
+									className={cn('w-4 h-4', isPendingUpdate && 'animate-spin')}
 								/>
-								{isUpdating ? 'Updating...' : 'Update'}
+								{isPendingUpdate ? 'Updating...' : 'Update'}
 							</Button>
 						</div>
 					</div>
@@ -232,34 +250,38 @@ const LogFoodCard = memo(function LogFoodCard({
 							</DialogDescription>
 							<div className='flex flex-row items-center justify-center'>
 								<Button
-									disabled={isDeleting}
+									disabled={isPendingDelete}
 									onClick={() => {
-										setIsDeleting(async () => {
-											const res = await deleteFoodLogEntry(item.id);
+										deleteMutate(item.id, {
+											onSuccess: async (res) => {
+												// invalidate the log list
+												await query.invalidateQueries({
+													queryKey: getCurrentLogQueryOptions().queryKey
+												});
 
-											if (res.success) {
-												toast.success(res.message);
+												// invalidate remainders
+												await query.invalidateQueries({
+													queryKey: getLogRemainderQueryOptions().queryKey
+												});
 
 												// redux
 												dispatch(
 													deleted({
-														name: item.name,
-														servings: item.numServings
+														name: res.data?.name ?? '',
+														servings: res.data?.numServings ?? 0
 													})
 												);
-											} else {
-												toast.error(res.message);
+
+												setDialogOpen(false);
 											}
 										});
-
-										setDialogOpen(false);
 									}}>
-									{isDeleting ? (
+									{isPendingDelete ? (
 										<ImSpinner2 className='w-4 h-4 animate-spin' />
 									) : (
 										<Trash2 className='w-4 h-4' />
 									)}
-									{isDeleting ? 'Deleting' : 'Delete'}
+									{isPendingDelete ? 'Deleting' : 'Delete'}
 								</Button>
 							</div>
 						</DialogContent>

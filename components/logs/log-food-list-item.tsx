@@ -94,12 +94,14 @@ const LogFoodListItem = memo(function LogFoodListItem({
 	}, [isChecked]);
 
 	useEffect(() => {
-		setTimeout(
+		const tim = setTimeout(
 			() => {
 				setFadeClass(true);
 			},
 			indx === 0 ? 1 : indx * 10
 		);
+
+		return () => clearTimeout(tim);
 	}, []);
 
 	useEffect(() => {
