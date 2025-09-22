@@ -14,7 +14,7 @@ export function getCurrentWaterQueryOptions() {
 
 export function getAllUserWaterConsumptionQueryOptions() {
 	return queryOptions({
-		queryKey: ['allUserWaterConsumption'],
+		queryKey: ['allUserWaterConsumptionQuery'],
 		queryFn: () => getAllUserWaterConsumption(),
 		select: (res) => res.data
 	});

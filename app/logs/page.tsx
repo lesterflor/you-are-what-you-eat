@@ -1,5 +1,4 @@
 import LogEntrySkeleton from '@/components/logs/log-entry-skeleton';
-import LogHistory from '@/components/logs/log-history';
 import LogHistoryTitle from '@/components/logs/log-history-title';
 import { auth } from '@/db/auth';
 import {
@@ -8,10 +7,15 @@ import {
 } from '@/lib/queries/logQueries';
 import { getAllUserWaterConsumptionQueryOptions } from '@/lib/queries/waterQueries';
 import { GetUser } from '@/types';
-import { QueryClient } from '@tanstack/react-query';
+import {
+	dehydrate,
+	HydrationBoundary,
+	QueryClient
+} from '@tanstack/react-query';
 import { Metadata } from 'next';
-import { redirect } from 'next/navigation';
-import { Suspense } from 'react';
+import { lazy, Suspense } from 'react';
+
+const LogHistoryLazy = lazy(() => import('@/components/logs/log-history'));
 
 export const metadata: Metadata = {
 	title: 'Log History'
@@ -20,11 +24,6 @@ export const metadata: Metadata = {
 export default async function LogsPage() {
 	const session = await auth();
 	const user = session?.user as GetUser;
-
-	if (!session || !user.id) {
-		redirect('/');
-	}
-
 	const queryClient = new QueryClient();
 
 	await Promise.all([
@@ -43,12 +42,16 @@ export default async function LogsPage() {
 	]);
 
 	return (
-		<div className='flex flex-col gap-4 relative'>
-			<LogHistoryTitle />
+		<HydrationBoundary state={dehydrate(queryClient)}>
+			{session && user.id && (
+				<div className='flex flex-col gap-4 relative'>
+					<LogHistoryTitle />
 
-			<Suspense fallback={<LogEntrySkeleton />}>
-				<LogHistory />
-			</Suspense>
-		</div>
+					<Suspense fallback={<LogEntrySkeleton />}>
+						<LogHistoryLazy />
+					</Suspense>
+				</div>
+			)}
+		</HydrationBoundary>
 	);
 }

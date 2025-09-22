@@ -96,7 +96,7 @@ export function getLogRemainderInRangeQueryOptions(
 
 export function getLogByUserIdQueryOptions() {
 	return queryOptions({
-		queryKey: ['getLogByUserId'],
+		queryKey: ['getLogByUserIdQuery'],
 		queryFn: () => getLogsByUserId(),
 		select: (res) => res.data
 	});
@@ -104,7 +104,7 @@ export function getLogByUserIdQueryOptions() {
 
 export function getBMRByIdQueryOptions(userId: string) {
 	return queryOptions({
-		queryKey: ['bmrByUserId', userId],
+		queryKey: ['bmrByUserIdQuery', userId],
 		queryFn: () => getBMRById(userId),
 		select: (res) => res.data
 	});
