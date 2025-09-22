@@ -5,13 +5,13 @@ import {
 	logDishState,
 	updateDishState
 } from '@/lib/features/dish/preparedDishSlice';
+import { addImageState } from '@/lib/features/image/imageSlice';
+import { useAppDispatch } from '@/lib/hooks';
 import {
 	deleteDishMutation,
 	logDishMutationOptions,
 	updateDishMutation
-} from '@/lib/features/mutations/dishMutations';
-import { useAppDispatch } from '@/lib/hooks';
-import { addImageState } from '@/lib/image/imageSlice';
+} from '@/lib/mutations/dishMutations';
 import {
 	getCurrentLogQueryOptions,
 	getLogRemainderQueryOptions

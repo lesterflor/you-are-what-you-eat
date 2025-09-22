@@ -1,8 +1,8 @@
 'use client';
 
 import { expendedCaloriesUpdated } from '@/lib/features/log/logFoodSlice';
-import { logCaloriesBurnedMutationOptions } from '@/lib/features/mutations/logMutations';
 import { useAppDispatch } from '@/lib/hooks';
+import { logCaloriesBurnedMutationOptions } from '@/lib/mutations/logMutations';
 import {
 	getCurrentLogQueryOptions,
 	getLogRemainderQueryOptions

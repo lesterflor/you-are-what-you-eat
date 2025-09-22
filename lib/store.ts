@@ -6,6 +6,7 @@ import { bookmarkFoodSlice } from './features/food/bookmarkSlice';
 import { foodSearchSlice } from './features/food/foodSearchSlice';
 import { foodUpdateSlice } from './features/food/foodUpdateSlice';
 import { grocerySlice } from './features/grocery/grocerySlice';
+import { imageSlice } from './features/image/imageSlice';
 import { logCumulativeSlice } from './features/log/cumulativeLogSlice';
 import { foodLogSlice } from './features/log/foodLogSlice';
 import { logFoodSlice } from './features/log/logFoodSlice';
@@ -13,7 +14,6 @@ import { logRemainderSlice } from './features/log/logRemainderSlice';
 import { waterLogSlice } from './features/log/waterLogSlice';
 import { noteUpdateSlice } from './features/notes/noteUpdateSlice';
 import { userDataSlice } from './features/user/userDataSlice';
-import { imageSlice } from './image/imageSlice';
 
 // `combineSlices` automatically combines the reducers using
 // their `reducerPath`s, therefore we no longer need to call `combineReducers`.

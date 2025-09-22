@@ -5,11 +5,11 @@ import {
 	selectPreparedDishStatus
 } from '@/lib/features/dish/preparedDishSlice';
 import { deleted, updated } from '@/lib/features/log/logFoodSlice';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import {
 	deleteLogFoodItemMutationOptions,
 	updateLogFoodItemMutationOptions
-} from '@/lib/features/mutations/logMutations';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+} from '@/lib/mutations/logMutations';
 import { getFoodItemByIdQueryOptions } from '@/lib/queries/foodQueries';
 import {
 	getCurrentLogQueryOptions,

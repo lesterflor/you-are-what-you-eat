@@ -7,11 +7,11 @@ import {
 	selectPreparedDishStatus,
 	updateDishState
 } from '@/lib/features/dish/preparedDishSlice';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import {
 	createDishMutation,
 	updateDishMutation
-} from '@/lib/features/mutations/dishMutations';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+} from '@/lib/mutations/dishMutations';
 import { getAllDishesByUserOptions } from '@/lib/queries/dishQueries';
 import { preparedDishSchema } from '@/lib/validators';
 import { GetFoodEntry, GetPreparedDish, GetUser } from '@/types';

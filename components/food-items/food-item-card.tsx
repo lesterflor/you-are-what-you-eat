@@ -5,14 +5,14 @@ import {
 	selectFoodUpdateData,
 	selectFoodUpdateStatus
 } from '@/lib/features/food/foodUpdateSlice';
-import { added } from '@/lib/features/log/logFoodSlice';
-import { addLogFoodItemMutationOptions } from '@/lib/features/mutations/logMutations';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import {
 	addImageState,
 	selectImageData,
 	selectImageStatus
-} from '@/lib/image/imageSlice';
+} from '@/lib/features/image/imageSlice';
+import { added } from '@/lib/features/log/logFoodSlice';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { addLogFoodItemMutationOptions } from '@/lib/mutations/logMutations';
 import { getFoodItemByIdQueryOptions } from '@/lib/queries/foodQueries';
 import {
 	getCurrentLogQueryOptions,

@@ -5,8 +5,8 @@ import {
 	deleteFood,
 	generateRxFoodItemSchema
 } from '@/lib/features/food/foodUpdateSlice';
-import { deleteFoodMutationOptions } from '@/lib/features/mutations/foodMutations';
 import { useAppDispatch } from '@/lib/hooks';
+import { deleteFoodMutationOptions } from '@/lib/mutations/foodMutations';
 import { getFoodQueryOptions } from '@/lib/queries/foodQueries';
 import { shuffle } from '@/lib/utils';
 import { GetFoodItem, GetUser } from '@/types';

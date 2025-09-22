@@ -7,7 +7,7 @@ import { formatUnit, totalMacrosReducer } from '@/lib/utils';
 import { queryOptions } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { DateRange } from 'react-day-picker';
-import { GetFoodEntry } from './../../types/index';
+import { GetFoodEntry } from '../../types/index';
 
 export function getCurrentLogQueryOptions() {
 	return queryOptions({

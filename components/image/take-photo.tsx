@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 import { uploadFoodItemImage } from '@/actions/image-actions';
-import { addDishImageMutation } from '@/lib/features/mutations/dishMutations';
+import { addDishImageMutation } from '@/lib/mutations/dishMutations';
 import { GetFoodItem, GetPreparedDish } from '@/types';
 import { useMutation } from '@tanstack/react-query';
 import { Aperture, CameraOff, Save } from 'lucide-react';

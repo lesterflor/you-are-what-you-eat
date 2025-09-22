@@ -1,8 +1,8 @@
 'use client';
 
 import { updatedWater } from '@/lib/features/log/waterLogSlice';
-import { logWaterMutationOptions } from '@/lib/features/mutations/waterMutations';
 import { useAppDispatch } from '@/lib/hooks';
+import { logWaterMutationOptions } from '@/lib/mutations/waterMutations';
 import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
 import { getCurrentWaterQueryOptions } from '@/lib/queries/waterQueries';
 import { calculateWaterIntake, cn, formatUnit } from '@/lib/utils';

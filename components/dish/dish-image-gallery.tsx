@@ -1,6 +1,6 @@
-import { deleteDishImageMutation } from '@/lib/features/mutations/dishMutations';
+import { deleteImageState } from '@/lib/features/image/imageSlice';
 import { useAppDispatch } from '@/lib/hooks';
-import { deleteImageState } from '@/lib/image/imageSlice';
+import { deleteDishImageMutation } from '@/lib/mutations/dishMutations';
 import { getDishImagesOptions } from '@/lib/queries/dishQueries';
 import { GetPreparedDish, GetPreparedDishImage, GetUser } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';

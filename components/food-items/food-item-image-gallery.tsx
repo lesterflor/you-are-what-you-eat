@@ -1,11 +1,11 @@
 import { getFoodItemById } from '@/actions/food-actions';
 import { deleteFoodItemImage } from '@/actions/image-actions';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import {
 	deleteImageState,
 	selectImageData,
 	selectImageStatus
-} from '@/lib/image/imageSlice';
+} from '@/lib/features/image/imageSlice';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { GetFoodItem, GetFoodItemImage, GetUser } from '@/types';
 import { format } from 'date-fns';
 import { useSession } from 'next-auth/react';

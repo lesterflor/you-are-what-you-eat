@@ -1,11 +1,11 @@
 'use client';
 
 import { deleted, updated } from '@/lib/features/log/logFoodSlice';
+import { useAppDispatch } from '@/lib/hooks';
 import {
 	deleteLogFoodItemMutationOptions,
 	updateLogFoodItemMutationOptions
-} from '@/lib/features/mutations/logMutations';
-import { useAppDispatch } from '@/lib/hooks';
+} from '@/lib/mutations/logMutations';
 import {
 	getCurrentLogQueryOptions,
 	getLogRemainderQueryOptions

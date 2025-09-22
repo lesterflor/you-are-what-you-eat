@@ -5,8 +5,8 @@ import {
 	addFood,
 	generateRxFoodItemSchema
 } from '@/lib/features/food/foodUpdateSlice';
-import { addFoodMutationOptions } from '@/lib/features/mutations/foodMutations';
 import { useAppDispatch } from '@/lib/hooks';
+import { addFoodMutationOptions } from '@/lib/mutations/foodMutations';
 import { getFoodQueryOptions } from '@/lib/queries/foodQueries';
 import { foodItemSchema } from '@/lib/validators';
 import { GetFoodItem, GetUser } from '@/types';
