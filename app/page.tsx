@@ -1,6 +1,4 @@
-import AddFoodSheet from '@/components/food-items/add-food-sheet';
 import LandingContent from '@/components/landing-content';
-import FoodLogList from '@/components/logs/log-list';
 import { auth } from '@/db/auth';
 import { getAllDishesOptions } from '@/lib/queries/dishQueries';
 import { getFavouriteQueryOptions } from '@/lib/queries/favouriteQueries';
@@ -18,6 +16,12 @@ import { lazy } from 'react';
 const FoodListSheetLazy = lazy(
 	() => import('@/components/food-items/food-list-sheet')
 );
+
+const AddFoodSheetLazy = lazy(
+	() => import('@/components/food-items/add-food-sheet')
+);
+
+const FoodLogListLazy = lazy(() => import('@/components/logs/log-list'));
 
 export default async function Home() {
 	const session = await auth();
@@ -56,14 +60,14 @@ export default async function Home() {
 				<div className='flex flex-col gap-0 w-full h-full'>
 					<div className='portrait:hidden flex flex-row items-center justify-between w-full gap-2'>
 						<div>
-							<AddFoodSheet />
+							<AddFoodSheetLazy />
 						</div>
 						<div className='flex flex-row items-center gap-4'>
 							<FoodListSheetLazy />
 						</div>
 					</div>
 					<div className='relative pt-10'>
-						<FoodLogList
+						<FoodLogListLazy
 							useFloaterNav={true}
 							iconPosition='top'
 							forceColumn={false}

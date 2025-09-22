@@ -5,7 +5,8 @@ const nextConfig: NextConfig = {
 		ppr: 'incremental',
 		serverActions: {
 			bodySizeLimit: '5mb'
-		}
+		},
+		optimizePackageImports: ['react-icons', 'lucide-react']
 	},
 	images: {
 		remotePatterns: [
