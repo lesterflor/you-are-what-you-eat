@@ -36,7 +36,7 @@ export async function uploadDishImage(
 		const {
 			data: { data, success, message }
 		} = (await axios.post(
-			'http://lesterflor.com/experiments/imageUploadAPI.php',
+			process.env.IMAGE_UPLOAD_URL || '',
 			formData
 		)) as ResponseObjectType;
 
@@ -86,7 +86,7 @@ export async function uploadFoodItemImage(
 		const {
 			data: { data, success, message }
 		} = (await axios.post(
-			'http://lesterflor.com/experiments/imageUploadAPI.php',
+			process.env.IMAGE_UPLOAD_URL || '',
 			formData
 		)) as ResponseObjectType;
 
