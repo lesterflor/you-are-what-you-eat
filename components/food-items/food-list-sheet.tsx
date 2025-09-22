@@ -1,6 +1,7 @@
 'use client';
 
 import {
+	clearCategories,
 	inputSearch,
 	selectFoodSearchData,
 	selectFoodSearchStatus
@@ -153,6 +154,18 @@ export default function FoodListSheet({
 		[foods]
 	);
 
+	const NewItemsBadgeMemo = useMemo(
+		() => (
+			<NewItemsBadge
+				onBadgeClick={() => {
+					checkFoodStatus('newItems');
+					dispatch(clearCategories());
+				}}
+			/>
+		),
+		[]
+	);
+
 	return (
 		<>
 			<div className='portrait:hidden'>
@@ -176,11 +189,7 @@ export default function FoodListSheet({
 					<SheetContent side='right'>
 						<SheetDescription></SheetDescription>
 						<SheetTitle className='flex flex-col items-center gap-2 pb-4 relative'>
-							<NewItemsBadge
-								onBadgeClick={() => {
-									checkFoodStatus('newItems');
-								}}
-							/>
+							{NewItemsBadgeMemo}
 							<div className='flex flex-row gap-2 justify-between items-center pt-2'>
 								<InputWithButton
 									className='w-[90%]'
@@ -246,13 +255,7 @@ export default function FoodListSheet({
 						side='top'
 						className='px-2'>
 						<div className='flex flex-col items-center gap-4 pb-4 relative top-3'>
-							<div className='absolute -top-6 left-0'>
-								<NewItemsBadge
-									onBadgeClick={() => {
-										checkFoodStatus('newItems');
-									}}
-								/>
-							</div>
+							<div className='absolute -top-6 left-0'>{NewItemsBadgeMemo}</div>
 							<div className='flex flex-row gap-2 justify-between items-center mt-4'>
 								<div className='flex flex-row items-center gap-4'>
 									<InputWithButton

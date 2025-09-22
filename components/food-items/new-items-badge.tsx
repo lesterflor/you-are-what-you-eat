@@ -24,7 +24,6 @@ export default function NewItemsBadge({
 		return null;
 	}
 
-	// TODO - food category filter should be cleared when clicked
 	return (
 		<Button
 			onClick={() => onBadgeClick?.()}

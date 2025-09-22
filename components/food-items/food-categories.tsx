@@ -74,7 +74,11 @@ export default function FoodCategoryPicker({
 
 	useEffect(() => {
 		if (!disableReduxDispatch) {
-			if (foodSearchStatus !== 'category') {
+			if (
+				foodSearchStatus !== 'category' &&
+				foodSearchStatus !== 'all' &&
+				foodSearchStatus !== 'idle'
+			) {
 				setSelected('');
 			}
 		}
@@ -93,7 +97,8 @@ export default function FoodCategoryPicker({
 					compactMode && 'gap-0'
 				)}
 				type='single'
-				defaultValue={selected}
+				value={selected}
+				//defaultValue={selected}
 				onValueChange={setSelected}>
 				{showFilterIcon && (
 					<ToggleGroupItem
