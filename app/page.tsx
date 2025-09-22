@@ -4,7 +4,6 @@ import { getAllDishesOptions } from '@/lib/queries/dishQueries';
 import { getFavouriteQueryOptions } from '@/lib/queries/favouriteQueries';
 import { getFoodQueryOptions } from '@/lib/queries/foodQueries';
 import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
-import { getShareableUsersQueryOptions } from '@/lib/queries/userQueries';
 import { getCurrentWaterQueryOptions } from '@/lib/queries/waterQueries';
 import {
 	dehydrate,
@@ -47,10 +46,6 @@ export default async function Home() {
 		queryClient.prefetchQuery({
 			queryKey: getCurrentWaterQueryOptions().queryKey,
 			queryFn: getCurrentWaterQueryOptions().queryFn
-		}),
-		queryClient.prefetchQuery({
-			queryKey: getShareableUsersQueryOptions().queryKey,
-			queryFn: getShareableUsersQueryOptions().queryFn
 		})
 	]);
 
