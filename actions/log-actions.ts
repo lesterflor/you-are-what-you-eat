@@ -579,7 +579,6 @@ export async function getLogsByUserId(logId: string = '') {
 		const logs = await prisma.log.findMany({
 			where: {
 				userId: user.id,
-				//userId: '67db518ff10abb25395df978',
 				id: logId ? logId : undefined,
 				NOT: [
 					{

@@ -1,7 +1,9 @@
+import { getBMRById } from '@/actions/bmr-actions';
 import {
 	createDailyLog,
 	getLogRemainder,
-	getLogRemainderByUserIdInRange
+	getLogRemainderByUserIdInRange,
+	getLogsByUserId
 } from '@/actions/log-actions';
 import { formatUnit, totalMacrosReducer } from '@/lib/utils';
 import { queryOptions } from '@tanstack/react-query';
@@ -89,5 +91,21 @@ export function getLogRemainderInRangeQueryOptions(
 				};
 			}
 		}
+	});
+}
+
+export function getLogByUserIdQueryOptions(logId: string) {
+	return queryOptions({
+		queryKey: ['getLogByUserId', logId],
+		queryFn: () => getLogsByUserId(logId),
+		select: (res) => res.data
+	});
+}
+
+export function getBMRByIdQueryOptions(userId: string) {
+	return queryOptions({
+		queryKey: ['bmrByUserId', userId],
+		queryFn: () => getBMRById(userId),
+		select: (res) => res.data
 	});
 }
