@@ -94,10 +94,10 @@ export function getLogRemainderInRangeQueryOptions(
 	});
 }
 
-export function getLogByUserIdQueryOptions(logId: string) {
+export function getLogByUserIdQueryOptions() {
 	return queryOptions({
-		queryKey: ['getLogByUserId', logId],
-		queryFn: () => getLogsByUserId(logId),
+		queryKey: ['getLogByUserId'],
+		queryFn: () => getLogsByUserId(),
 		select: (res) => res.data
 	});
 }

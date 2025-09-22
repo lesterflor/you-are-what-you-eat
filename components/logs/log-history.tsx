@@ -12,11 +12,11 @@ import { CalendarOff } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import LogEntry from './log-entry';
 
-export default function LogHistory({ logId = '' }: { logId: string }) {
+export default function LogHistory() {
 	const { data: session } = useSession();
 	const user = session?.user as GetUser;
 
-	const { data: logData } = useQuery(getLogByUserIdQueryOptions(logId));
+	const { data: logData } = useQuery(getLogByUserIdQueryOptions());
 	const { data: bmrData } = useQuery(getBMRByIdQueryOptions(user.id));
 	const userInfo = colateBMRData(bmrData as BMRData);
 	const { data: userWaterLogs } = useQuery(
