@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import WaterIntake from './water-intake'; // adjust path if needed
 
@@ -111,44 +111,52 @@ describe('WaterIntake (Jest)', () => {
 		expect(currentCups.textContent.trim()).toBe('2');
 	});
 
-	// it('disables log button when glasses = 0', async () => {
-	// 	await renderWithClient(
-	// 		<WaterIntake showBalloon>
-	// 			<button>child</button>
-	// 		</WaterIntake>
-	// 	);
+	it('disables log button when glasses = 0', async () => {
+		await renderWithClient(
+			<WaterIntake showBalloon>
+				<button>child</button>
+			</WaterIntake>
+		);
 
-	// 	await fireEvent.click(screen.getByText('child')); // open popover
+		await fireEvent.click(screen.getByText('child')); // open popover
 
-	// 	const logBtn = await screen.findByRole('button', { name: /Log/i });
-	// 	expect(logBtn).toBeDisabled();
-	// });
+		const mockBns = screen.getAllByTestId('mock-button');
+		const logBtn = mockBns.find((b) => b.textContent === 'Log');
 
-	// it('enables log button when glasses > 0 and calls mutation', async () => {
-	// 	const mutateMock = jest.fn();
-	// 	(
-	// 		require('@/lib/mutations/waterMutations')
-	// 			.logWaterMutationOptions as jest.Mock
-	// 	).mockReturnValue({
-	// 		mutationFn: mutateMock
-	// 	});
+		expect(logBtn).toBeDisabled();
+	});
 
-	// 	await renderWithClient(
-	// 		<WaterIntake showBalloon={true}>
-	// 			<button>child</button>
-	// 		</WaterIntake>
-	// 	);
+	it('enables log button when glasses > 0 and calls mutation', async () => {
+		const mutateMock = jest.fn();
+		(
+			require('@/lib/mutations/waterMutations')
+				.logWaterMutationOptions as jest.Mock
+		).mockReturnValue({
+			mutationFn: mutateMock
+		});
 
-	// 	await fireEvent.click(screen.getByText('child')); // open
-	// 	await fireEvent.click(screen.getByTestId('quick-1-glass')); // set 1 glass
+		await renderWithClient(
+			<WaterIntake showBalloon={true}>
+				<button>child</button>
+			</WaterIntake>
+		);
 
-	// 	const logBtn = await screen.findByRole('button', { name: /Log/i });
-	// 	expect(logBtn).not.toBeDisabled();
+		await fireEvent.click(screen.getByText('child')); // open
 
-	// 	fireEvent.click(logBtn);
+		// quick button "1 glass / 2 cups"
+		await fireEvent.click(screen.getByRole('button', { name: /1 2/i }));
 
-	// 	await waitFor(() => {
-	// 		expect(mutateMock).toHaveBeenCalled();
-	// 	});
-	// });
+		const mockBns = await screen.getAllByTestId('mock-button');
+		const logBtn = mockBns.find((b) => b.textContent === 'Log');
+
+		expect(logBtn).not.toBeDisabled();
+
+		if (logBtn) {
+			fireEvent.click(logBtn);
+
+			await waitFor(() => {
+				expect(mutateMock).toHaveBeenCalled();
+			});
+		}
+	});
 });
