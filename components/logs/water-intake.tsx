@@ -221,6 +221,7 @@ export default function WaterIntake({
 								<div className='flex flex-col gap-0 items-center justify-center w-full'>
 									<div className='text-muted-foreground flex flex-row gap-2 items-center justify-center'>
 										<div
+											data-testid='selected-glasses'
 											className={cn(
 												'flex flex-row gap-1 w-16 items-center justify-start',
 												currentGlasses !== 0 && 'text-green-400 animate-pulse'
@@ -229,6 +230,7 @@ export default function WaterIntake({
 										</div>
 
 										<div
+											data-testid='selected-cups'
 											className={cn(
 												'flex flex-row gap-1 w-16 items-center justify-start',
 												currentGlasses !== 0 && 'text-green-400 animate-pulse'
@@ -452,6 +454,7 @@ export default function WaterIntake({
 								<div className='flex flex-col gap-0 items-center justify-center w-full'>
 									<div className='text-muted-foreground flex flex-row gap-2 items-center justify-center'>
 										<div
+											data-testid='selected-glasses'
 											className={cn(
 												'flex flex-row gap-1 w-16 items-center justify-start',
 												currentGlasses !== 0 && 'text-green-400 animate-pulse'
@@ -460,6 +463,7 @@ export default function WaterIntake({
 										</div>
 
 										<div
+											data-testid='selected-cups'
 											className={cn(
 												'flex flex-row gap-1 w-16 items-center justify-start',
 												currentGlasses !== 0 && 'text-green-400 animate-pulse'

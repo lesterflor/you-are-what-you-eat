@@ -81,10 +81,18 @@ export default function FoodListSheet({
 	}, []);
 
 	useEffect(() => {
-		if (foodUpdateStatus === 'deleted') {
+		if (foodsData) {
+			console.log(foodsData);
+			setAllFoods(foodsData as GetFoodItem[]);
 			checkFoodStatus(foodSearchStatus);
 		}
-	}, [foodUpdateStatus]);
+	}, [foodsData]);
+
+	useEffect(() => {
+		if (foodUpdateStatus === 'deleted' && foodSearchStatus === 'cleared') {
+			checkFoodStatus(foodSearchStatus);
+		}
+	}, [foodUpdateStatus, foodSearchStatus]);
 
 	const checkFoodStatus = (status: string) => {
 		switch (status) {
@@ -120,7 +128,7 @@ export default function FoodListSheet({
 				}
 
 				break;
-			case 'newItems':
+			case 'cleared': // clears all categories and returns new items
 				setFoods(
 					foodsData?.filter((item) => isNewFoodItem(item.createdAt)) ?? []
 				);
@@ -155,14 +163,13 @@ export default function FoodListSheet({
 					selfSearch={true}
 				/>
 			)),
-		[foods]
+		[foods, foodsData]
 	);
 
 	const NewItemsBadgeMemo = useMemo(
 		() => (
 			<NewItemsBadge
 				onBadgeClick={() => {
-					checkFoodStatus('newItems');
 					dispatch(clearCategories());
 				}}
 			/>

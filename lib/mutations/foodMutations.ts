@@ -20,10 +20,10 @@ export function addFoodMutationOptions() {
 	return mutationOptions({
 		mutationKey: ['addFoodMtn'],
 		mutationFn: (item: FoodItem) => addFoodItem(item),
-		onSuccess: (res) => {
+		onSuccess: async (res) => {
 			if (res.success) {
 				// invalidate foodlist
-				queryClient.invalidateQueries({
+				await queryClient.invalidateQueries({
 					queryKey: getFoodQueryOptions().queryKey
 				});
 
