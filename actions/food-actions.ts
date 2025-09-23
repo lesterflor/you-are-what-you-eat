@@ -506,7 +506,9 @@ export async function bookmarkFoodItem(foodItemId: string) {
 
 		return {
 			success: true,
-			message: 'success',
+			message: `${existing.name} ${
+				added ? 'added to' : 'removed from'
+			} favourites`,
 			data: bookmark,
 			bookmarked: added
 		};

@@ -47,9 +47,6 @@ export default function FoodFavouriteListSheet({
 					<SheetDescription></SheetDescription>
 
 					<ScrollArea className='w-full pt-4 pr-3 h-[70vh]'>
-						{/* {isFetching ? (
-							<ImSpinner2 className='animate-spin w-6 h-6 opacity-20' />
-						) : ( */}
 						{favs && favs.length > 0 && (
 							<div className='flex flex-col items-center gap-4'>
 								{favs.map((item: GetFoodItem) => (
@@ -60,8 +57,6 @@ export default function FoodFavouriteListSheet({
 								))}
 							</div>
 						)}
-
-						{/* )} */}
 					</ScrollArea>
 				</SheetContent>
 			</Sheet>

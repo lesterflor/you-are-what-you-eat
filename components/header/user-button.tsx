@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import {
 	DropdownMenu,
@@ -6,15 +8,15 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { auth } from '@/db/auth';
 import { User } from '@/types';
 import { UserIcon } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import SignOutButton from './sign-out-button';
 
-export default async function UserButton() {
-	const session = await auth();
+export default function UserButton() {
+	const { data: session } = useSession();
 
 	const user = session?.user as User;
 
@@ -31,8 +33,6 @@ export default async function UserButton() {
 		);
 	}
 
-	const firstInitial = session.user?.name?.[0].toUpperCase() ?? '';
-
 	return (
 		<div className='flex gap-2 items-center'>
 			<DropdownMenu>
@@ -40,7 +40,9 @@ export default async function UserButton() {
 					<div className='flex items-center w-[50px] portrait:w-auto'>
 						<Avatar>
 							<AvatarImage src={user.image} />
-							<AvatarFallback>{firstInitial}</AvatarFallback>
+							<AvatarFallback>
+								{user.name.slice(0, 1).toUpperCase()}
+							</AvatarFallback>
 						</Avatar>
 					</div>
 				</DropdownMenuTrigger>

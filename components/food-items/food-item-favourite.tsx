@@ -1,66 +1,48 @@
 'use client';
 
-import {
-	bookmarkFoodItem,
-	checkFoodItemBookmarked
-} from '@/actions/food-actions';
 import { addBookmark, removeBookmark } from '@/lib/features/food/bookmarkSlice';
 import { useAppDispatch } from '@/lib/hooks';
+import { bookmarkFoodItemMutationOptions } from '@/lib/mutations/foodMutations';
+import { getIsFoodItemBookmarkedQueryOptions } from '@/lib/queries/favouriteQueries';
 import { GetFoodItem } from '@/types';
-import { useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState, useTransition } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { memo } from 'react';
 import { BsBookmarkPlus, BsBookmarkStarFill } from 'react-icons/bs';
 import { ImSpinner2 } from 'react-icons/im';
 import { useInView } from 'react-intersection-observer';
 
-export default function FoodItemFavourite({ item }: { item: GetFoodItem }) {
-	const query = useQueryClient();
-
+const FoodItemFavourite = memo(function FoodItemFavourite({
+	item
+}: {
+	item: GetFoodItem;
+}) {
 	const dispatch = useAppDispatch();
-	const [isBookmarked, setIsBookmarked] = useState(false);
-	const [isBookmarking, setIsBookmarking] = useTransition();
-	const [ref, isInView] = useInView();
+	const [ref, isInView] = useInView({ triggerOnce: true });
 
-	const checkBookmark = async () => {
-		const res = await checkFoodItemBookmarked(item.id);
+	const { data: isBookmarked } = useQuery(
+		getIsFoodItemBookmarkedQueryOptions(item.id, isInView)
+	);
 
-		if (res.success) {
-			setIsBookmarked(!!res.data);
-		}
-	};
+	const { mutate: bookmarkMtn, isPending } = useMutation(
+		bookmarkFoodItemMutationOptions(item.id)
+	);
 
 	const toggleBookmark = () => {
-		setIsBookmarking(async () => {
-			const res = await bookmarkFoodItem(item.id);
-
-			if (res.success) {
-				setIsBookmarking(() => {
-					const isBookmarked = !!res.bookmarked;
-
-					setIsBookmarked(isBookmarked);
-
-					dispatch(
-						isBookmarked
-							? addBookmark(JSON.stringify({ id: item.id, name: item.name }))
-							: removeBookmark(JSON.stringify({ id: item.id, name: item.name }))
-					);
-
-					// tanstack refresh fav list
-					query.invalidateQueries({ queryKey: ['favs'] });
-				});
+		bookmarkMtn(item.id, {
+			onSuccess: () => {
+				// local state
+				dispatch(
+					isBookmarked
+						? addBookmark(JSON.stringify({ id: item.id, name: item.name }))
+						: removeBookmark(JSON.stringify({ id: item.id, name: item.name }))
+				);
 			}
 		});
 	};
 
-	useEffect(() => {
-		if (isInView) {
-			checkBookmark();
-		}
-	}, [isInView]);
-
 	return (
 		<>
-			{isBookmarking ? (
+			{isPending ? (
 				<div>
 					<ImSpinner2 className='w-6 h-6 animate-spin text-teal-600' />
 				</div>
@@ -68,7 +50,7 @@ export default function FoodItemFavourite({ item }: { item: GetFoodItem }) {
 				<div
 					onClick={toggleBookmark}
 					ref={ref}>
-					{isBookmarked ? (
+					{!!isBookmarked ? (
 						<BsBookmarkStarFill className='w-6 h-6 text-teal-600' />
 					) : (
 						<BsBookmarkPlus className='w-6 h-6' />
@@ -77,4 +59,6 @@ export default function FoodItemFavourite({ item }: { item: GetFoodItem }) {
 			)}
 		</>
 	);
-}
+});
+
+export default FoodItemFavourite;

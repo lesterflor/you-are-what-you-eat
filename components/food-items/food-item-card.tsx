@@ -107,12 +107,14 @@ const FoodItemCard = memo(function FoodItemCard({
 			setTextSize('text-md');
 		}
 
-		setTimeout(
+		const tim = setTimeout(
 			() => {
 				setFadeClass(true);
 			},
 			indx === 0 ? 1 : indx * 20
 		);
+
+		return () => clearTimeout(tim);
 	}, []);
 
 	useEffect(() => {
