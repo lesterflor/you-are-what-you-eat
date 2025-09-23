@@ -15,7 +15,7 @@ import { GetFoodEntry } from '../../types/index';
 export function getCurrentLogQueryOptions() {
 	return queryOptions({
 		queryKey: ['currentLog'],
-		queryFn: () => createDailyLog(),
+		queryFn: () => createDailyLog(true),
 		select: (res) => {
 			if (res?.data) {
 				return {

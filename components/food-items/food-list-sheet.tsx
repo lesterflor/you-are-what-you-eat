@@ -82,7 +82,6 @@ export default function FoodListSheet({
 
 	useEffect(() => {
 		if (foodsData) {
-			console.log(foodsData);
 			setAllFoods(foodsData as GetFoodItem[]);
 			checkFoodStatus(foodSearchStatus);
 		}

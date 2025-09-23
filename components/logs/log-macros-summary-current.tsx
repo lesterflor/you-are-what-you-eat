@@ -3,7 +3,7 @@
 import { pieChartConfig } from '@/config';
 import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
 import { formatUnit, getMacroPercOfCals, RADIAN } from '@/lib/utils';
-import { LogComparisonType, PieItemType } from '@/types';
+import { PieItemType } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
@@ -30,9 +30,6 @@ export default function LogMacrosSummaryCurrent({
 
 	const [revealPie, setRevealPie] = useState(false);
 
-	const comparisonData: LogComparisonType =
-		logData?.comparisons as LogComparisonType;
-
 	const pieData: PieItemType[] = [
 		{
 			name: 'Carbs',
@@ -56,7 +53,8 @@ export default function LogMacrosSummaryCurrent({
 		carbs: logData?.macros.totalCarbs ?? 0,
 		fat: logData?.macros.totalFat ?? 0,
 		protein: logData?.macros.totalProtein ?? 0,
-		totalGrams: 0
+		totalGrams: 0,
+		comparisons: logData?.comparisons
 	};
 
 	currentData.totalGrams =
@@ -81,9 +79,9 @@ export default function LogMacrosSummaryCurrent({
 								<div className='flex flex-col items-center w-full'>
 									<div className='font-normal'>Calories</div>
 									<div className='flex flex-row items-center gap-0'>
-										{currentData.calories > 0 && comparisonData ? (
+										{currentData.calories > 0 && currentData?.comparisons ? (
 											<ComparisonPopover
-												data={comparisonData}
+												data={currentData?.comparisons}
 												field='calories'
 												value={formatUnit(currentData.calories)}
 											/>
@@ -101,9 +99,9 @@ export default function LogMacrosSummaryCurrent({
 								<div className='flex flex-col items-center w-full'>
 									<div className='font-normal whitespace-nowrap'>Protein g</div>
 									<div className='flex flex-row items-center gap-0'>
-										{currentData.protein > 0 && comparisonData ? (
+										{currentData.protein > 0 && currentData?.comparisons ? (
 											<ComparisonPopover
-												data={comparisonData}
+												data={currentData?.comparisons}
 												field='protein'
 												value={formatUnit(currentData.protein)}
 												unitLabel='(grams)'
@@ -123,9 +121,9 @@ export default function LogMacrosSummaryCurrent({
 								<div className='flex flex-col items-center w-full'>
 									<div className='font-normal whitespace-nowrap'>Carb g</div>
 									<div className='flex flex-row items-center gap-0'>
-										{currentData.carbs > 0 && comparisonData ? (
+										{currentData.carbs > 0 && currentData?.comparisons ? (
 											<ComparisonPopover
-												data={comparisonData}
+												data={currentData?.comparisons}
 												field='carbs'
 												value={formatUnit(currentData.carbs)}
 												unitLabel='(grams)'
@@ -145,9 +143,9 @@ export default function LogMacrosSummaryCurrent({
 								<div className='flex flex-col items-center w-full'>
 									<div className='font-normal whitespace-nowrap'>Fat g</div>
 									<div className='flex flex-row items-center gap-0'>
-										{currentData.fat > 0 && comparisonData ? (
+										{currentData.fat > 0 && currentData?.comparisons ? (
 											<ComparisonPopover
-												data={comparisonData}
+												data={currentData?.comparisons}
 												field='fat'
 												value={formatUnit(currentData.fat)}
 												unitLabel='(grams)'
