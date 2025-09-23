@@ -22,6 +22,11 @@ export function addFoodMutationOptions() {
 		mutationFn: (item: FoodItem) => addFoodItem(item),
 		onSuccess: (res) => {
 			if (res.success) {
+				// invalidate foodlist
+				queryClient.invalidateQueries({
+					queryKey: getFoodQueryOptions().queryKey
+				});
+
 				toast.success(res.message);
 			} else {
 				toast.error(res.message);
@@ -36,6 +41,11 @@ export function updateFoodMutationOptions(item: GetFoodItem) {
 		mutationFn: (fi: GetFoodItem) => updateFoodItem(fi),
 		onSuccess: (res) => {
 			if (res.success) {
+				// invalidate cache
+				queryClient.invalidateQueries({
+					queryKey: getFoodQueryOptions().queryKey
+				});
+
 				toast.success(res.message);
 			} else {
 				toast.error(res.message);

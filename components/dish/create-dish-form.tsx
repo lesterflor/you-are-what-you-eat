@@ -16,7 +16,7 @@ import { getAllDishesByUserOptions } from '@/lib/queries/dishQueries';
 import { preparedDishSchema } from '@/lib/validators';
 import { GetFoodEntry, GetPreparedDish, GetUser } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import {
@@ -47,8 +47,6 @@ export default function CreateDishForm({
 	onSuccess?: () => void;
 	onDishListChange?: (list: GetFoodEntry[]) => void;
 }) {
-	const query = useQueryClient();
-
 	const { data: session } = useSession();
 	const user = session?.user as GetUser;
 	const dispatch = useAppDispatch();
@@ -112,9 +110,6 @@ export default function CreateDishForm({
 						dishList: '[]'
 					})
 				);
-
-				// tanstack
-				query.invalidateQueries({ queryKey: ['dishes'] });
 			}
 		});
 	};
@@ -143,9 +138,6 @@ export default function CreateDishForm({
 						dishList: '[]'
 					})
 				);
-
-				// tanstack
-				query.invalidateQueries({ queryKey: ['dishes'] });
 			}
 		});
 	};

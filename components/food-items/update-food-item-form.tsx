@@ -7,11 +7,10 @@ import {
 } from '@/lib/features/food/foodUpdateSlice';
 import { useAppDispatch } from '@/lib/hooks';
 import { updateFoodMutationOptions } from '@/lib/mutations/foodMutations';
-import { getFoodQueryOptions } from '@/lib/queries/foodQueries';
 import { getFoodItemSchema } from '@/lib/validators';
 import { GetFoodItem, GetUser } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { LoaderIcon, Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import {
@@ -45,7 +44,6 @@ export default function UpdateFoodItemForm({
 }) {
 	const dispatch = useAppDispatch();
 
-	const query = useQueryClient();
 	const { mutate, isPending } = useMutation(updateFoodMutationOptions(item));
 
 	const { data: session } = useSession();
@@ -73,11 +71,7 @@ export default function UpdateFoodItemForm({
 			onSuccess: (res) => {
 				form.reset();
 
-				// invalidate cache
-				query.invalidateQueries({
-					queryKey: getFoodQueryOptions().queryKey
-				});
-
+				// redux
 				dispatch(updateFood(generateRxFoodItemSchema(res.data as GetFoodItem)));
 
 				onSuccess?.();

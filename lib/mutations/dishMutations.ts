@@ -6,9 +6,17 @@ import {
 	logDishItems,
 	updateDish
 } from '@/actions/prepared-dish-actions';
+import { getQueryClient } from '@/components/query-provider';
 import { GetPreparedDish, PreparedDish } from '@/types';
 import { mutationOptions } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { getAllDishesOptions } from '../queries/dishQueries';
+import {
+	getCurrentLogQueryOptions,
+	getLogRemainderQueryOptions
+} from '../queries/logQueries';
+
+const query = getQueryClient();
 
 export function deleteDishMutation() {
 	return mutationOptions({
@@ -16,6 +24,8 @@ export function deleteDishMutation() {
 		mutationKey: ['mutateDeleteDish'],
 		onSuccess: (res) => {
 			if (res.success) {
+				query.invalidateQueries({ queryKey: getAllDishesOptions().queryKey });
+
 				toast.success(res.message);
 			} else {
 				toast.error(res.message);
@@ -30,6 +40,8 @@ export function updateDishMutation() {
 		mutationKey: ['mutateUpdateDish'],
 		onSuccess: (res) => {
 			if (res.success) {
+				query.invalidateQueries({ queryKey: getAllDishesOptions().queryKey });
+
 				toast.success(res.message);
 			} else {
 				toast.error(res.message);
@@ -44,6 +56,8 @@ export function createDishMutation() {
 		mutationKey: ['mutateCreateDish'],
 		onSuccess: (res) => {
 			if (res.success) {
+				query.invalidateQueries({ queryKey: getAllDishesOptions().queryKey });
+
 				toast.success(res.message);
 			} else {
 				toast.error(res.message);
@@ -92,6 +106,16 @@ export function logDishMutationOptions() {
 		mutationFn: (dish: GetPreparedDish) => logDishItems(dish),
 		onSuccess: (res) => {
 			if (res.success) {
+				// invalidate current log
+				query.invalidateQueries({
+					queryKey: getCurrentLogQueryOptions().queryKey
+				});
+
+				// invalidate remainders
+				query.invalidateQueries({
+					queryKey: getLogRemainderQueryOptions().queryKey
+				});
+
 				toast.success(res.message);
 			} else {
 				toast.error(res.message);

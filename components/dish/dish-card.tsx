@@ -12,10 +12,6 @@ import {
 	logDishMutationOptions,
 	updateDishMutation
 } from '@/lib/mutations/dishMutations';
-import {
-	getCurrentLogQueryOptions,
-	getLogRemainderQueryOptions
-} from '@/lib/queries/logQueries';
 import { cn, formatUnit, totalMacrosReducer } from '@/lib/utils';
 import {
 	GetFoodEntry,
@@ -137,9 +133,6 @@ export default function DishCard({
 						dishList: '[]'
 					})
 				);
-
-				// tanstack
-				query.invalidateQueries({ queryKey: ['dishes'] });
 			}
 		});
 	};
@@ -496,16 +489,6 @@ export default function DishCard({
 						onClick={() => {
 							logDish(prepDish, {
 								onSuccess: (res) => {
-									// invalidate current log
-									query.invalidateQueries({
-										queryKey: getCurrentLogQueryOptions().queryKey
-									});
-
-									// invalidate remainders
-									query.invalidateQueries({
-										queryKey: getLogRemainderQueryOptions().queryKey
-									});
-
 									onLogSuccess?.();
 
 									// redux
