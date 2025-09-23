@@ -12,6 +12,7 @@ import {
 	getFavouriteQueryOptions,
 	getIsFoodItemBookmarkedQueryOptions
 } from '../queries/favouriteQueries';
+import { getFoodQueryOptions } from '../queries/foodQueries';
 
 const queryClient = getQueryClient();
 
@@ -47,8 +48,12 @@ export function deleteFoodMutationOptions() {
 	return mutationOptions({
 		mutationKey: ['deleteFoodMtn'],
 		mutationFn: (id: string) => deleteFoodItem(id),
-		onSuccess: (res) => {
+		onSuccess: async (res) => {
 			if (res.success) {
+				// refresh food list
+				await queryClient.invalidateQueries({
+					queryKey: getFoodQueryOptions().queryKey
+				});
 				toast.success(res.message);
 			} else {
 				toast.error(res.message);

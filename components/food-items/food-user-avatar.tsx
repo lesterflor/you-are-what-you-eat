@@ -7,10 +7,9 @@ import {
 } from '@/lib/features/food/foodUpdateSlice';
 import { useAppDispatch } from '@/lib/hooks';
 import { deleteFoodMutationOptions } from '@/lib/mutations/foodMutations';
-import { getFoodQueryOptions } from '@/lib/queries/foodQueries';
 import { shuffle } from '@/lib/utils';
 import { GetFoodItem, GetUser } from '@/types';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import {
 	FilePenLine,
 	SquareArrowOutUpRight,
@@ -49,7 +48,6 @@ export default function FoodUserAvatar({
 	foodItem?: GetFoodItem;
 }) {
 	const dispatch = useAppDispatch();
-	const query = useQueryClient();
 
 	const { mutate, isPending } = useMutation(deleteFoodMutationOptions());
 
@@ -111,12 +109,7 @@ export default function FoodUserAvatar({
 		}
 		// tanstack
 		mutate(currentFood[0].id, {
-			onSuccess: async (res) => {
-				// invalidate cache
-				await query.invalidateQueries({
-					queryKey: getFoodQueryOptions().queryKey
-				});
-
+			onSuccess: (res) => {
 				// redux
 				dispatch(deleteFood(generateRxFoodItemSchema(res.data as GetFoodItem)));
 
