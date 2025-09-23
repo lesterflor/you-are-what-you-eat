@@ -7,20 +7,17 @@ import {
 	setDishListState
 } from '@/lib/features/dish/preparedDishSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { getAllDishesOptions } from '@/lib/queries/dishQueries';
-import { getFavouriteQueryOptions } from '@/lib/queries/favouriteQueries';
-import { getFoodQueryOptions } from '@/lib/queries/foodQueries';
 import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
-import { getCurrentWaterQueryOptions } from '@/lib/queries/waterQueries';
 import { cn, getStorageItem, setStorageItem } from '@/lib/utils';
 import { GetFoodEntry } from '@/types';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Flame, IdCard, List, LucideUtensilsCrossed, Soup } from 'lucide-react';
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { BiSolidFoodMenu } from 'react-icons/bi';
 import { BsBookmarkStarFill } from 'react-icons/bs';
 import { IoFastFoodOutline, IoWaterOutline } from 'react-icons/io5';
 import { TbDatabaseSearch } from 'react-icons/tb';
+import SubToolsSkeleton from '../skeletons/sub-tools-skeleton';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
@@ -73,19 +70,14 @@ export default function FoodLogList({
 	useFloaterNav?: boolean;
 }) {
 	const dispatch = useAppDispatch();
-	const queryClient = useQueryClient();
 
 	const { data: todaysLog } = useQuery(getCurrentLogQueryOptions());
 
-	// const [logParsed, setLogParsed] = useState(false);
+	const [logParsed, setLogParsed] = useState(false);
 	const [dataFormat, setDataFormat] = useState('');
 	const [dishList, setDishList] = useState<
 		{ add: boolean; item: GetFoodEntry }[]
 	>([]);
-	const [isDishesLoaded, setIsDishesLoaded] = useState(false);
-	const [isFavsLoaded, setIsFavsLoaded] = useState(false);
-	const [isFoodsLoaded, setIsFoodsLoaded] = useState(false);
-	const [isWaterLoaded, setIsWaterLoaded] = useState(false);
 
 	const preparedDishData = useAppSelector(selectPreparedDishData);
 	const preparedDishStatus = useAppSelector(selectPreparedDishStatus);
@@ -112,36 +104,8 @@ export default function FoodLogList({
 		const savedFormat = getStorageItem('logFormat') ?? 'card';
 		setDataFormat(savedFormat);
 
-		prefetchOtherQueries();
+		setLogParsed(true);
 	}, []);
-
-	const prefetchOtherQueries = async () => {
-		await queryClient.prefetchQuery({
-			queryKey: getAllDishesOptions().queryKey,
-			queryFn: getAllDishesOptions().queryFn
-		});
-		setIsDishesLoaded(true);
-
-		await queryClient.prefetchQuery({
-			queryKey: getFavouriteQueryOptions().queryKey,
-			queryFn: getFavouriteQueryOptions().queryFn
-		});
-		setIsFavsLoaded(true);
-
-		await queryClient.prefetchQuery({
-			queryKey: getFoodQueryOptions().queryKey,
-			queryFn: getFoodQueryOptions().queryFn
-		});
-		setIsFoodsLoaded(true);
-
-		await queryClient.prefetchQuery({
-			queryKey: getCurrentWaterQueryOptions().queryKey,
-			queryFn: getCurrentWaterQueryOptions().queryFn
-		});
-		setIsWaterLoaded(true);
-
-		//setLogParsed(true);
-	};
 
 	const logFoodCards = useMemo(() => {
 		return todaysLog?.foodItems.map((item, indx) => (
@@ -334,49 +298,32 @@ export default function FoodLogList({
 					)}>
 					<CardContent className='p-2 pt-5 flex flex-row items-center gap-2 relative'>
 						<div className='absolute -top-6 left-4 flex flex-row items-center justify-center gap-2.5'>
-							{/* <Suspense fallback={<SubToolsSkeleton />}> */}
-
-							{isDishesLoaded && (
-								<Suspense
-									fallback={<Skeleton className='w-11 h-11 rounded-full' />}>
+							{logParsed && (
+								<Suspense fallback={<SubToolsSkeleton />}>
 									<DishListSheetLazy showBalloon={true}>
 										<div className='transition-opacity fade-in animate-in duration-1000 rounded-full w-11 h-11 bg-fuchsia-700 p-1.5 flex flex-col items-center justify-center'>
 											<Soup className='w-6 h-6 animate-pulse' />
 										</div>
 									</DishListSheetLazy>
-								</Suspense>
-							)}
 
-							{isFavsLoaded && (
-								<Suspense
-									fallback={<Skeleton className='w-11 h-11 rounded-full' />}>
 									<FoodFavouriteListSheetLazy showBalloon={true}>
 										<div className='transition-opacity fade-in animate-in duration-1000 w-11 h-11 rounded-full p-2 bg-teal-600 flex flex-col items-center justify-center mt-1'>
 											<BsBookmarkStarFill className='w-6 h-6 animate-pulse' />
 										</div>
 									</FoodFavouriteListSheetLazy>
-								</Suspense>
-							)}
 
-							{isFoodsLoaded && (
-								<Suspense
-									fallback={<Skeleton className='w-11 h-11 rounded-full' />}>
 									<FoodListSheetLazy showBalloon={true}>
 										<div className='transition-opacity fade-in animate-in duration-1000 rounded-full dark:bg-green-950 bg-green-500 p-3'>
 											<TbDatabaseSearch className='w-6 h-6 animate-pulse' />
 										</div>
 									</FoodListSheetLazy>
-								</Suspense>
-							)}
 
-							{isWaterLoaded && (
-								<Suspense
-									fallback={<Skeleton className='w-11 h-11 rounded-full' />}>
 									<ExpendedCaloriesButtonLazy showBalloon={true}>
 										<div className='transition-opacity fade-in animate-in duration-1000 mt-2 rounded-full p-2 bg-amber-700 w-10 h-10 flex flex-col items-center justify-center'>
 											<Flame className='w-6 h-6 animate-pulse' />
 										</div>
 									</ExpendedCaloriesButtonLazy>
+
 									<WaterIntakeLazy showBalloon={true}>
 										<div className='transition-opacity fade-in animate-in duration-1000 mt-2 rounded-full p-2 bg-blue-700 w-10 h-10 flex flex-col items-center justify-center'>
 											<IoWaterOutline className='w-6 h-6 animate-pulse' />
@@ -384,7 +331,6 @@ export default function FoodLogList({
 									</WaterIntakeLazy>
 								</Suspense>
 							)}
-							{/* </Suspense> */}
 						</div>
 
 						<div className={cn('flex flex-col items-start w-full gap-1')}>
@@ -416,11 +362,11 @@ export default function FoodLogList({
 
 								<ExpendedBadge />
 
-								{/* {logParsed && ( */}
-								<Suspense fallback={<Skeleton className='w-full h-full' />}>
-									<LogRemainderBadgeLazy />
-								</Suspense>
-								{/* )} */}
+								{logParsed && (
+									<Suspense fallback={<Skeleton className='w-full h-full' />}>
+										<LogRemainderBadgeLazy />
+									</Suspense>
+								)}
 							</div>
 						</div>
 						<RemainingCalories iconPosition={iconPosition} />

@@ -1,6 +1,10 @@
 import LandingContent from '@/components/landing-content';
 import { auth } from '@/db/auth';
+import { getAllDishesOptions } from '@/lib/queries/dishQueries';
+import { getFavouriteQueryOptions } from '@/lib/queries/favouriteQueries';
+import { getFoodQueryOptions } from '@/lib/queries/foodQueries';
 import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
+import { getCurrentWaterQueryOptions } from '@/lib/queries/waterQueries';
 import {
 	dehydrate,
 	HydrationBoundary,
@@ -22,27 +26,27 @@ export default async function Home() {
 	const session = await auth();
 	const queryClient = new QueryClient();
 
-	await Promise.all([
+	await Promise.allSettled([
 		queryClient.prefetchQuery({
 			queryKey: getCurrentLogQueryOptions().queryKey,
 			queryFn: getCurrentLogQueryOptions().queryFn
+		}),
+		queryClient.prefetchQuery({
+			queryKey: getFavouriteQueryOptions().queryKey,
+			queryFn: getFavouriteQueryOptions().queryFn
+		}),
+		queryClient.prefetchQuery({
+			queryKey: getAllDishesOptions().queryKey,
+			queryFn: getAllDishesOptions().queryFn
+		}),
+		queryClient.prefetchQuery({
+			queryKey: getFoodQueryOptions().queryKey,
+			queryFn: getFoodQueryOptions().queryFn
+		}),
+		queryClient.prefetchQuery({
+			queryKey: getCurrentWaterQueryOptions().queryKey,
+			queryFn: getCurrentWaterQueryOptions().queryFn
 		})
-		// queryClient.prefetchQuery({
-		// 	queryKey: getFavouriteQueryOptions().queryKey,
-		// 	queryFn: getFavouriteQueryOptions().queryFn
-		// }),
-		// queryClient.prefetchQuery({
-		// 	queryKey: getAllDishesOptions().queryKey,
-		// 	queryFn: getAllDishesOptions().queryFn
-		// }),
-		// queryClient.prefetchQuery({
-		// 	queryKey: getFoodQueryOptions().queryKey,
-		// 	queryFn: getFoodQueryOptions().queryFn
-		// }),
-		// queryClient.prefetchQuery({
-		// 	queryKey: getCurrentWaterQueryOptions().queryKey,
-		// 	queryFn: getCurrentWaterQueryOptions().queryFn
-		// })
 	]);
 
 	return (
