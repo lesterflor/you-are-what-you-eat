@@ -444,10 +444,18 @@ export async function getFavouriteFoods() {
 
 		foodItems.sort((a, b) => a.name.localeCompare(b.name));
 
+		const clean = foodItems.map((item) => ({
+			...item,
+			image: item.image as string,
+			description: item.description as string,
+			servingSize: item.servingSize as number,
+			userId: item.userId as string
+		}));
+
 		return {
 			success: true,
 			message: 'success',
-			data: foodItems
+			data: clean
 		};
 	} catch (error: unknown) {
 		return {

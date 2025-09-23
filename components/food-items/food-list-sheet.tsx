@@ -115,7 +115,10 @@ export default function FoodListSheet({
 				setFoods(searchFoods as GetFoodItem[]);
 				break;
 			case 'favourites':
-				setFoods(foodFavs);
+				if (foodFavs) {
+					setFoods(foodFavs);
+				}
+
 				break;
 			case 'newItems':
 				setFoods(
@@ -143,6 +146,7 @@ export default function FoodListSheet({
 
 	const foodListComponents = useMemo(
 		() =>
+			foods &&
 			foods.map((item, indx) => (
 				<FoodItemCard
 					indx={indx}
@@ -198,9 +202,12 @@ export default function FoodListSheet({
 									}}>
 									<Search className='w-4 h-4 text-muted-foreground' />
 								</InputWithButton>
-								<div className='text-xs font-normal'>
-									{foods.length} {foods.length === 1 ? 'result' : 'results'}
-								</div>
+
+								{foods && (
+									<div className='text-xs font-normal'>
+										{foods.length} {foods.length === 1 ? 'result' : 'results'}
+									</div>
+								)}
 							</div>
 							<FoodCategoryPicker
 								showFilterIcon={true}
@@ -266,9 +273,11 @@ export default function FoodListSheet({
 										<Search className='w-4 h-4 text-muted-foreground' />
 									</InputWithButton>
 
-									<div className='text-xs font-normal relative'>
-										{foods.length} {foods.length === 1 ? 'result' : 'results'}
-									</div>
+									{foods && (
+										<div className='text-xs font-normal'>
+											{foods.length} {foods.length === 1 ? 'result' : 'results'}
+										</div>
+									)}
 								</div>
 
 								<DishCreationPopover />

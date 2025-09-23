@@ -7,10 +7,14 @@ import {
 	setDishListState
 } from '@/lib/features/dish/preparedDishSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { getAllDishesOptions } from '@/lib/queries/dishQueries';
+import { getFavouriteQueryOptions } from '@/lib/queries/favouriteQueries';
+import { getFoodQueryOptions } from '@/lib/queries/foodQueries';
 import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
+import { getCurrentWaterQueryOptions } from '@/lib/queries/waterQueries';
 import { cn, getStorageItem, setStorageItem } from '@/lib/utils';
 import { GetFoodEntry } from '@/types';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Flame, IdCard, List, LucideUtensilsCrossed, Soup } from 'lucide-react';
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { BiSolidFoodMenu } from 'react-icons/bi';
@@ -70,6 +74,7 @@ export default function FoodLogList({
 	useFloaterNav?: boolean;
 }) {
 	const dispatch = useAppDispatch();
+	const queryClient = useQueryClient();
 
 	const { data: todaysLog } = useQuery(getCurrentLogQueryOptions());
 
@@ -104,8 +109,31 @@ export default function FoodLogList({
 		const savedFormat = getStorageItem('logFormat') ?? 'card';
 		setDataFormat(savedFormat);
 
-		setLogParsed(true);
+		prefetchOtherQueries();
 	}, []);
+
+	const prefetchOtherQueries = async () => {
+		await Promise.all([
+			queryClient.prefetchQuery({
+				queryKey: getFavouriteQueryOptions().queryKey,
+				queryFn: getFavouriteQueryOptions().queryFn
+			}),
+			queryClient.prefetchQuery({
+				queryKey: getAllDishesOptions().queryKey,
+				queryFn: getAllDishesOptions().queryFn
+			}),
+			queryClient.prefetchQuery({
+				queryKey: getFoodQueryOptions().queryKey,
+				queryFn: getFoodQueryOptions().queryFn
+			}),
+			queryClient.prefetchQuery({
+				queryKey: getCurrentWaterQueryOptions().queryKey,
+				queryFn: getCurrentWaterQueryOptions().queryFn
+			})
+		]);
+
+		setLogParsed(true);
+	};
 
 	const logFoodCards = useMemo(() => {
 		return todaysLog?.foodItems.map((item, indx) => (
