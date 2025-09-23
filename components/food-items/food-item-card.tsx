@@ -14,13 +14,9 @@ import { added } from '@/lib/features/log/logFoodSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { addLogFoodItemMutationOptions } from '@/lib/mutations/logMutations';
 import { getFoodItemByIdQueryOptions } from '@/lib/queries/foodQueries';
-import {
-	getCurrentLogQueryOptions,
-	getLogRemainderQueryOptions
-} from '@/lib/queries/logQueries';
 import { cn, formatUnit, getMacroPercOfCals, isNewFoodItem } from '@/lib/utils';
 import { FoodEntry, GetFoodItem, GetFoodItemImage, GetUser } from '@/types';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { Aperture, FilePlus, Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
@@ -92,8 +88,6 @@ const FoodItemCard = memo(function FoodItemCard({
 	});
 	const [portionAmount, setPortionAmount] = useState(1);
 
-	const query = useQueryClient();
-
 	const { data: currentItem = item, isFetching } = useQuery(
 		getFoodItemByIdQueryOptions(item.id, queryEnabled)
 	);
@@ -147,16 +141,6 @@ const FoodItemCard = memo(function FoodItemCard({
 		logFoodMtn(logFoodItem, {
 			onSuccess: () => {
 				setShowDetails(false);
-
-				// tanstack
-				query.invalidateQueries({
-					queryKey: getCurrentLogQueryOptions().queryKey
-				});
-
-				// invalidate remainders
-				query.invalidateQueries({
-					queryKey: getLogRemainderQueryOptions().queryKey
-				});
 
 				// redux
 				dispatch(

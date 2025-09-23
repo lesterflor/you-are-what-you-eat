@@ -3,11 +3,8 @@
 import { expendedCaloriesUpdated } from '@/lib/features/log/logFoodSlice';
 import { useAppDispatch } from '@/lib/hooks';
 import { logCaloriesBurnedMutationOptions } from '@/lib/mutations/logMutations';
-import {
-	getCurrentLogQueryOptions,
-	getLogRemainderQueryOptions
-} from '@/lib/queries/logQueries';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, Flame, InfoIcon, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { FaWalking } from 'react-icons/fa';
@@ -25,8 +22,6 @@ export default function ExpendedCaloriesButton({
 	children?: React.ReactNode;
 	showBalloon?: boolean;
 }) {
-	const query = useQueryClient();
-
 	const { mutate: logCalories, isPending: isLoggingCalories } = useMutation(
 		logCaloriesBurnedMutationOptions()
 	);
@@ -203,16 +198,6 @@ export default function ExpendedCaloriesButton({
 						logCalories(inputVal, {
 							onSuccess: () => {
 								dispatch(expendedCaloriesUpdated(inputVal));
-
-								// tanstack
-								query.invalidateQueries({
-									queryKey: getCurrentLogQueryOptions().queryKey
-								});
-
-								// invalidate remainders
-								query.invalidateQueries({
-									queryKey: getLogRemainderQueryOptions().queryKey
-								});
 
 								setInputVal(0);
 								setPopoverOpen(false);

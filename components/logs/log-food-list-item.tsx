@@ -11,13 +11,9 @@ import {
 	updateLogFoodItemMutationOptions
 } from '@/lib/mutations/logMutations';
 import { getFoodItemByIdQueryOptions } from '@/lib/queries/foodQueries';
-import {
-	getCurrentLogQueryOptions,
-	getLogRemainderQueryOptions
-} from '@/lib/queries/logQueries';
 import { cn, formatUnit } from '@/lib/utils';
 import { FoodEntry, GetFoodEntry, GetFoodItem } from '@/types';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { Clock, FilePenLine, RefreshCwOff, Trash2, X } from 'lucide-react';
 import { memo, useEffect, useRef, useState } from 'react';
@@ -53,8 +49,6 @@ const LogFoodListItem = memo(function LogFoodListItem({
 }) {
 	//const dispatch = useAppDispatch();
 	const dispatch = useAppDispatch();
-	const query = useQueryClient();
-
 	const footerRef = useRef<HTMLDivElement>(null);
 
 	const [isEditing, setIsEditing] = useState(false);
@@ -198,17 +192,7 @@ const LogFoodListItem = memo(function LogFoodListItem({
 											disabled={isPendingDelete}
 											onClick={() => {
 												deleteMutate(item.id, {
-													onSuccess: async (res) => {
-														// invalidate the log list
-														await query.invalidateQueries({
-															queryKey: getCurrentLogQueryOptions().queryKey
-														});
-
-														// invalidate remainders
-														await query.invalidateQueries({
-															queryKey: getLogRemainderQueryOptions().queryKey
-														});
-
+													onSuccess: (res) => {
 														// redux
 														dispatch(
 															deleted({
@@ -318,16 +302,6 @@ const LogFoodListItem = memo(function LogFoodListItem({
 									mutate(updatedEntry, {
 										onSuccess: (res) => {
 											setServingSize(formatUnit(res.data?.numServings ?? 1));
-
-											// invalidate the log list
-											query.invalidateQueries({
-												queryKey: getCurrentLogQueryOptions().queryKey
-											});
-
-											// invalidate remainders
-											query.invalidateQueries({
-												queryKey: getLogRemainderQueryOptions().queryKey
-											});
 
 											// redux
 											dispatch(

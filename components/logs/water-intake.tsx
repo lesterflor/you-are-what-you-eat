@@ -7,7 +7,7 @@ import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
 import { getCurrentWaterQueryOptions } from '@/lib/queries/waterQueries';
 import { calculateWaterIntake, cn, formatUnit } from '@/lib/utils';
 import { DialogTitle } from '@radix-ui/react-dialog';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	ArrowDown,
 	ArrowUp,
@@ -44,7 +44,6 @@ export default function WaterIntake({
 	useModal?: boolean;
 }) {
 	const dispatch = useAppDispatch();
-	const query = useQueryClient();
 	const { data: waterLogData } = useQuery(getCurrentWaterQueryOptions());
 	const { data: logData } = useQuery(getCurrentLogQueryOptions());
 	const { mutate: logWater, isPending: isLoggingWater } = useMutation(
@@ -73,11 +72,6 @@ export default function WaterIntake({
 						glasses: currentGlasses
 					})
 				);
-
-				// tanstack invalidate water cache
-				query.invalidateQueries({
-					queryKey: getCurrentWaterQueryOptions().queryKey
-				});
 
 				setCurrentGlasses(0);
 				setPopoverOpen(false);

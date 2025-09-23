@@ -40,7 +40,7 @@ import { logActivityMutationOptions } from '@/lib/mutations/logMutations';
 import { getCurrentActivityLogQueryOptions } from '@/lib/queries/logQueries';
 import { cn } from '@/lib/utils';
 import { ActivityItem, GetUser } from '@/types';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Activity, SquareActivity } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
@@ -91,8 +91,6 @@ export default function ReduxStoreLogger({
 	const bookmarkFoodStatus = useAppSelector(selectBookmarkFoodStatus);
 	const bookmarkFoodMsg = useAppSelector(selectBookmarkFoodMessage);
 
-	const query = useQueryClient();
-
 	const { data: activityLog, isFetching } = useQuery(
 		getCurrentActivityLogQueryOptions()
 	);
@@ -100,14 +98,7 @@ export default function ReduxStoreLogger({
 	const { mutate: logActivity } = useMutation(logActivityMutationOptions());
 
 	const logActivityAction = (data: ActivityItem) => {
-		logActivity(data, {
-			onSuccess: () => {
-				// invalidate log
-				query.invalidateQueries({
-					queryKey: getCurrentActivityLogQueryOptions().queryKey
-				});
-			}
-		});
+		logActivity(data);
 	};
 
 	useEffect(() => {

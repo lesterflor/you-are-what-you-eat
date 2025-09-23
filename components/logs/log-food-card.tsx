@@ -6,13 +6,9 @@ import {
 	deleteLogFoodItemMutationOptions,
 	updateLogFoodItemMutationOptions
 } from '@/lib/mutations/logMutations';
-import {
-	getCurrentLogQueryOptions,
-	getLogRemainderQueryOptions
-} from '@/lib/queries/logQueries';
 import { cn, formatUnit } from '@/lib/utils';
 import { FoodEntry, GetFoodEntry } from '@/types';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { Clock, FilePenLine, RefreshCwOff, Trash2, X } from 'lucide-react';
 import { memo, useEffect, useRef, useState } from 'react';
@@ -47,7 +43,6 @@ const LogFoodCard = memo(function LogFoodCard({
 	allowEdit?: boolean;
 }) {
 	const dispatch = useAppDispatch();
-	const query = useQueryClient();
 
 	const footerRef = useRef<HTMLDivElement>(null);
 
@@ -192,16 +187,6 @@ const LogFoodCard = memo(function LogFoodCard({
 										onSuccess: (res) => {
 											setServingSize(formatUnit(res.data?.numServings ?? 1));
 
-											// invalidate the log list
-											query.invalidateQueries({
-												queryKey: getCurrentLogQueryOptions().queryKey
-											});
-
-											// invalidate remainders
-											query.invalidateQueries({
-												queryKey: getLogRemainderQueryOptions().queryKey
-											});
-
 											// redux
 											dispatch(
 												updated({
@@ -253,17 +238,7 @@ const LogFoodCard = memo(function LogFoodCard({
 									disabled={isPendingDelete}
 									onClick={() => {
 										deleteMutate(item.id, {
-											onSuccess: async (res) => {
-												// invalidate the log list
-												await query.invalidateQueries({
-													queryKey: getCurrentLogQueryOptions().queryKey
-												});
-
-												// invalidate remainders
-												await query.invalidateQueries({
-													queryKey: getLogRemainderQueryOptions().queryKey
-												});
-
+											onSuccess: (res) => {
 												// redux
 												dispatch(
 													deleted({
