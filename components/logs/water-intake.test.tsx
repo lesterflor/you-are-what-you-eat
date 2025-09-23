@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import WaterIntake from './water-intake'; // adjust path if needed
 
@@ -66,6 +67,8 @@ const renderWithClient = async (ui: React.ReactNode) => {
 };
 
 describe('WaterIntake (Jest)', () => {
+	const user = userEvent.setup();
+
 	beforeEach(() => {
 		jest.clearAllMocks();
 	});
@@ -77,7 +80,7 @@ describe('WaterIntake (Jest)', () => {
 			</WaterIntake>
 		);
 
-		await fireEvent.click(screen.getByText('trigger')); // open popover
+		await user.click(screen.getByText('trigger')); // open popover
 
 		expect(screen.getByText(/daily water requirements/i)).toBeInTheDocument();
 	});
@@ -118,7 +121,7 @@ describe('WaterIntake (Jest)', () => {
 			</WaterIntake>
 		);
 
-		await fireEvent.click(screen.getByText('child')); // open popover
+		await user.click(screen.getByText('child')); // open popover
 
 		const mockBns = screen.getAllByTestId('mock-button');
 		const logBtn = mockBns.find((b) => b.textContent === 'Log');
@@ -141,10 +144,10 @@ describe('WaterIntake (Jest)', () => {
 			</WaterIntake>
 		);
 
-		await fireEvent.click(screen.getByText('child')); // open
+		await user.click(screen.getByText('child')); // open
 
 		// quick button "1 glass / 2 cups"
-		await fireEvent.click(screen.getByRole('button', { name: /1 2/i }));
+		await user.click(screen.getByRole('button', { name: /1 2/i }));
 
 		const mockBns = await screen.getAllByTestId('mock-button');
 		const logBtn = mockBns.find((b) => b.textContent === 'Log');
@@ -152,7 +155,7 @@ describe('WaterIntake (Jest)', () => {
 		expect(logBtn).not.toBeDisabled();
 
 		if (logBtn) {
-			fireEvent.click(logBtn);
+			user.click(logBtn);
 
 			await waitFor(() => {
 				expect(mutateMock).toHaveBeenCalled();
