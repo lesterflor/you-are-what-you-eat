@@ -47,7 +47,7 @@ export default function DishListSheet({
 					<div className='relative'>
 						{children}
 						{showBalloon && dishes && dishes?.length > 0 && (
-							<div className='absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center'>
+							<div className='transition-opacity fade-in animate-in duration-1000 absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center'>
 								{dishes?.length}
 							</div>
 						)}

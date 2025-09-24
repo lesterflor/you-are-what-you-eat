@@ -88,18 +88,21 @@ export default function WaterIntake({
 					<DialogTrigger asChild>
 						<div className='relative'>
 							{children}
-							{showBalloon && !popoverOpen && waterData && (
-								<div
-									className={cn(
-										'absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center',
-										waterLogData &&
-											waterLogData.glasses >= waterData.glasses &&
-											waterLogData.glasses !== 0 &&
-											'bg-green-700'
-									)}>
-									{waterLogData?.glasses ?? 0}
-								</div>
-							)}
+							{showBalloon &&
+								!popoverOpen &&
+								waterLogData &&
+								waterLogData.glasses > 0 && (
+									<div
+										className={cn(
+											'transition-opacity fade-in animate-in duration-1000 absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center',
+											waterLogData &&
+												waterLogData.glasses >= waterData.glasses &&
+												waterLogData.glasses !== 0 &&
+												'bg-green-700'
+										)}>
+										{waterLogData?.glasses ?? 0}
+									</div>
+								)}
 						</div>
 					</DialogTrigger>
 					<DialogContent className='flex flex-col gap-2 items-center justify-center max-h-[90vh] !max-w-[95vw] w-[86vw] rounded-md p-2 pt-8'>
@@ -323,18 +326,21 @@ export default function WaterIntake({
 					<PopoverTrigger asChild>
 						<div className='relative'>
 							{children}
-							{showBalloon && !popoverOpen && waterData && (
-								<div
-									className={cn(
-										'absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center',
-										waterLogData &&
-											waterLogData.glasses >= waterData.glasses &&
-											waterLogData.glasses !== 0 &&
-											'bg-green-700'
-									)}>
-									{waterLogData?.glasses}
-								</div>
-							)}
+							{showBalloon &&
+								!popoverOpen &&
+								waterLogData &&
+								waterLogData.glasses > 0 && (
+									<div
+										className={cn(
+											'transition-opacity fade-in animate-in duration-1000 absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center',
+											waterLogData &&
+												waterLogData.glasses >= waterData.glasses &&
+												waterLogData.glasses !== 0 &&
+												'bg-green-700'
+										)}>
+										{waterLogData?.glasses}
+									</div>
+								)}
 						</div>
 					</PopoverTrigger>
 					<PopoverContent className='flex flex-col gap-2 items-center justify-center max-h-[70vh] !max-w-[95vw] w-[86vw] relative'>

@@ -185,7 +185,7 @@ export default function FoodListSheet({
 							<div className='relative'>
 								{children}
 								{showBalloon && foodsData && foodsData.length > 0 && (
-									<div className='absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center'>
+									<div className='transition-opacity fade-in animate-in duration-1000 absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center'>
 										{foodsData?.length}
 									</div>
 								)}
@@ -251,7 +251,7 @@ export default function FoodListSheet({
 							<div className='relative'>
 								{children}
 								{showBalloon && foodsData && foodsData.length > 0 && (
-									<div className='absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center'>
+									<div className='transition-opacity fade-in animate-in duration-1000 absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center'>
 										{foodsData?.length}
 									</div>
 								)}
