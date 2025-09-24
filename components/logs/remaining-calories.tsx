@@ -48,13 +48,25 @@ export default function RemainingCalories({
 								)}>
 								{Math.sign(userInfo.cumulativeRemaining) === -1 ? (
 									<>
-										<ArrowDown className='w-6 h-6 text-green-600 animate-bounce' />
-										<Smile className='w-6 h-6' />
+										<ArrowDown
+											data-testid='lucide-arrow-down'
+											className='w-6 h-6 text-green-600 animate-bounce'
+										/>
+										<Smile
+											className='w-6 h-6'
+											data-testid='smile-icon'
+										/>
 									</>
 								) : (
 									<>
-										<ArrowUp className='w-6 h-6 text-red-600 animate-bounce' />
-										<Frown className='w-6 h-6' />
+										<ArrowUp
+											data-testid='lucide-arrow-up'
+											className='w-6 h-6 text-red-600 animate-bounce'
+										/>
+										<Frown
+											data-testid='frown-icon'
+											className='w-6 h-6'
+										/>
 									</>
 								)}
 							</div>
