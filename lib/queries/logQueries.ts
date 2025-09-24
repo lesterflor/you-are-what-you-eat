@@ -2,6 +2,7 @@ import { getCurrentActivityLog } from '@/actions/activity-log-actions';
 import { getBMRById } from '@/actions/bmr-actions';
 import {
 	createDailyLog,
+	getCommonItemsInLog,
 	getLogRemainder,
 	getLogRemainderByUserIdInRange,
 	getLogsByUserId
@@ -125,6 +126,42 @@ export function getCurrentActivityLogQueryOptions() {
 			}
 
 			return res?.data;
+		}
+	});
+}
+
+export function getCommonItemsQueryOptions() {
+	return queryOptions({
+		queryKey: ['commonItemsQuery'],
+		queryFn: getCommonItemsInLog,
+		select: (res) => {
+			if (res.success && res.data && res.data.length > 0) {
+				const result = Object.groupBy(
+					res.data,
+					({ category }: GetFoodEntry) => category
+				);
+
+				const { fruit, grain, legume, meat, nutSeed, other, veg } = result;
+
+				const t = Object.values(result).reduce(
+					(acc, curr) => acc + (curr?.length || 0),
+					0
+				);
+
+				return {
+					firstDate: res?.firstLog.createdAt ?? new Date(),
+					categories: {
+						fruit: fruit?.length || 0,
+						grain: grain?.length || 0,
+						legume: legume?.length || 0,
+						meat: meat?.length || 0,
+						nutSeed: nutSeed?.length || 0,
+						other: other?.length || 0,
+						veg: veg?.length || 0,
+						total: t
+					}
+				};
+			}
 		}
 	});
 }
