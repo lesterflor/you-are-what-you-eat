@@ -10,7 +10,10 @@ import { getQueryClient } from '@/components/query-provider';
 import { GetPreparedDish, PreparedDish } from '@/types';
 import { mutationOptions } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { getAllDishesOptions } from '../queries/dishQueries';
+import {
+	getAllDishesOptions,
+	getDishImagesOptions
+} from '../queries/dishQueries';
 import {
 	getCurrentLogQueryOptions,
 	getLogRemainderQueryOptions
@@ -30,7 +33,8 @@ export function deleteDishMutation() {
 			} else {
 				toast.error(res.message);
 			}
-		}
+		},
+		onError: (res) => toast.error(res.message)
 	});
 }
 
@@ -46,7 +50,8 @@ export function updateDishMutation() {
 			} else {
 				toast.error(res.message);
 			}
-		}
+		},
+		onError: (res) => toast.error(res.message)
 	});
 }
 
@@ -62,7 +67,8 @@ export function createDishMutation() {
 			} else {
 				toast.error(res.message);
 			}
-		}
+		},
+		onError: (res) => toast.error(res.message)
 	});
 }
 
@@ -72,11 +78,15 @@ export function deleteDishImageMutation(dishId: string) {
 		mutationFn: (imageId: string) => deleteDishImage(imageId),
 		onSuccess: (res) => {
 			if (res.success) {
+				query.invalidateQueries({
+					queryKey: getDishImagesOptions(dishId).queryKey
+				});
 				toast.success(res.message);
 			} else {
 				toast.error(res.message);
 			}
-		}
+		},
+		onError: (res) => toast.error(res.message)
 	});
 }
 

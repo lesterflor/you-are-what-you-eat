@@ -333,7 +333,7 @@ export default function FoodLogList({
 							)}
 						</div>
 
-						<div className={cn('flex flex-col items-start w-full gap-1')}>
+						<div className='flex flex-col items-start w-full gap-1'>
 							<Popover modal={true}>
 								<PopoverTrigger asChild>
 									<Button className='p-1 portrait:text-sm flex flex-row gap-2 w-60'>

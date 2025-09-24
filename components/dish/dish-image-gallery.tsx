@@ -3,7 +3,7 @@ import { useAppDispatch } from '@/lib/hooks';
 import { deleteDishImageMutation } from '@/lib/mutations/dishMutations';
 import { getDishImagesOptions } from '@/lib/queries/dishQueries';
 import { GetPreparedDish, GetPreparedDishImage, GetUser } from '@/types';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
@@ -30,7 +30,6 @@ import {
 export default function DishImageGallery({ dish }: { dish: GetPreparedDish }) {
 	const { data: session } = useSession();
 	const user = session?.user as GetUser;
-	const query = useQueryClient();
 	const dispatch = useAppDispatch();
 
 	const [api, setApi] = useState<CarouselApi>();
@@ -73,16 +72,13 @@ export default function DishImageGallery({ dish }: { dish: GetPreparedDish }) {
 						url: res.data?.url ?? ''
 					})
 				);
-
-				// tanstack
-				query.invalidateQueries({ queryKey: ['dishImages', dish.id] });
 			}
 		});
 	};
 
 	return (
 		<div ref={ref}>
-			<Carousel className='w-full'>
+			<Carousel className='w-full mt-2'>
 				<CarouselContent>
 					{images &&
 						images.length > 0 &&

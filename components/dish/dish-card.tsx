@@ -339,8 +339,6 @@ export default function DishCard({
 				</CardDescription>
 			)}
 			<CardContent className='flex flex-col gap-2 w-full px-2'>
-				<DishImageGallery dish={prepDish} />
-
 				<TruncateSection
 					useCardBG={true}
 					label='See more'>
@@ -390,6 +388,8 @@ export default function DishCard({
 							))}
 					</div>
 				</TruncateSection>
+
+				<DishImageGallery dish={prepDish} />
 
 				<div className='flex flex-row flex-wrap items-center justify-evenly	gap-1 pt-4 w-full'>
 					<Badge
