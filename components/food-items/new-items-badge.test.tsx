@@ -12,6 +12,7 @@ jest.mock('@/lib/queries/foodQueries', () => ({
 	})
 }));
 
+// generate an item with a specific date
 const generateFoodItem = (date: Date): GetFoodItem => {
 	return {
 		id: `${Math.random()}`,
@@ -97,10 +98,8 @@ describe('NewItemsBadge (Jest)', () => {
 			generateFoodItem(new Date())
 		]);
 
-		const btn = screen.getByRole('button');
-
 		// trigger
-		await user.click(btn);
+		await user.click(screen.getByRole('button'));
 
 		expect(handleClick).toHaveBeenCalled();
 	});

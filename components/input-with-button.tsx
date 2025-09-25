@@ -39,6 +39,7 @@ export default function InputWithButton({
 			<div className='flex flex-row items-center gap-2'>
 				{children}
 				<Input
+					data-testid='input-field'
 					className='pr-10'
 					value={search}
 					onChange={(e) => {

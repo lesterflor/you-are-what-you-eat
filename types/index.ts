@@ -293,3 +293,8 @@ export type GetLogDetailed = {
 		eatenAt: Date;
 	}[];
 };
+
+export type MockedFunction<T extends (...args: any[]) => any> = jest.Mock<
+	ReturnType<T>, // what it returns
+	Parameters<T> // what it accepts
+>;
