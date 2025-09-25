@@ -5,10 +5,6 @@ import { userEvent } from '@testing-library/user-event';
 import InputWithButton from './input-with-button';
 
 jest.mock('@/lib/hooks', () => ({
-	useAppDispatch: () => jest.fn()
-}));
-
-jest.mock('@/lib/hooks', () => ({
 	...jest.requireActual('@/lib/hooks'),
 	useAppSelector: jest.fn()
 }));
