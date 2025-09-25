@@ -5,7 +5,7 @@ import { setStorageItem } from '@/lib/utils';
 import { GetPreparedDish } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { InfoIcon, Soup } from 'lucide-react';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { TbBowl } from 'react-icons/tb';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
@@ -19,7 +19,7 @@ import {
 } from '../ui/sheet';
 import DishCard from './dish-card';
 
-export default function DishListSheet({
+export const DishListSheet = memo(function DishListSheet({
 	children,
 	showBalloon = false
 }: {
@@ -99,4 +99,6 @@ export default function DishListSheet({
 			</Sheet>
 		</>
 	);
-}
+});
+
+export default DishListSheet;

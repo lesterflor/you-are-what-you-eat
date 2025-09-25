@@ -6,7 +6,7 @@ import { logCaloriesBurnedMutationOptions } from '@/lib/mutations/logMutations';
 import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, Flame, InfoIcon, Plus } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { FaWalking } from 'react-icons/fa';
 import { GiWeightLiftingUp } from 'react-icons/gi';
 import { ImSpinner2 } from 'react-icons/im';
@@ -15,7 +15,7 @@ import { Button } from '../ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Slider } from '../ui/slider';
 
-export default function ExpendedCaloriesButton({
+const ExpendedCaloriesButton = memo(function ExpendedCaloriesButton({
 	children,
 	showBalloon = false
 }: {
@@ -214,4 +214,6 @@ export default function ExpendedCaloriesButton({
 			</PopoverContent>
 		</Popover>
 	);
-}
+});
+
+export default ExpendedCaloriesButton;

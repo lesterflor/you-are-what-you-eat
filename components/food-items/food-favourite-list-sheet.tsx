@@ -3,6 +3,7 @@
 import { getFavouriteQueryOptions } from '@/lib/queries/favouriteQueries';
 import { GetFoodItem } from '@/types';
 import { useQuery } from '@tanstack/react-query';
+import { memo } from 'react';
 import { BsBookmarkStarFill } from 'react-icons/bs';
 import { ScrollArea } from '../ui/scroll-area';
 import {
@@ -14,7 +15,7 @@ import {
 } from '../ui/sheet';
 import FoodItemCard from './food-item-card';
 
-export default function FoodFavouriteListSheet({
+const FoodFavouriteListSheet = memo(function FoodFavouriteListSheet({
 	children,
 	showBalloon = false
 }: {
@@ -62,4 +63,6 @@ export default function FoodFavouriteListSheet({
 			</Sheet>
 		</>
 	);
-}
+});
+
+export default FoodFavouriteListSheet;

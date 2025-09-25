@@ -14,7 +14,7 @@ import { cn, isNewFoodItem } from '@/lib/utils';
 import { GetFoodItem } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { Search } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { TbDatabaseSearch } from 'react-icons/tb';
 import { useDebounce } from 'use-debounce';
 import DishCreationPopover from '../dish/dish-creation-popover';
@@ -32,7 +32,7 @@ import FoodCategoryPicker from './food-categories';
 import FoodItemCard from './food-item-card';
 import NewItemsBadge from './new-items-badge';
 
-export default function FoodListSheet({
+const FoodListSheet = memo(function FoodListSheet({
 	forceColumn = true,
 	children,
 	showBalloon = false
@@ -321,4 +321,6 @@ export default function FoodListSheet({
 			</div>
 		</>
 	);
-}
+});
+
+export default FoodListSheet;

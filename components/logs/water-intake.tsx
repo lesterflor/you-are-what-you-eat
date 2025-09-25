@@ -15,7 +15,7 @@ import {
 	ChevronLeft,
 	ChevronRight
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { BsCupFill } from 'react-icons/bs';
 import { FaGlassWater } from 'react-icons/fa6';
 import { GrCircleQuestion } from 'react-icons/gr';
@@ -34,7 +34,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Separator } from '../ui/separator';
 import { Slider } from '../ui/slider';
 
-export default function WaterIntake({
+const WaterIntake = memo(function WaterIntake({
 	children,
 	showBalloon = false,
 	useModal = false
@@ -556,4 +556,6 @@ export default function WaterIntake({
 			)}
 		</>
 	);
-}
+});
+
+export default WaterIntake;
