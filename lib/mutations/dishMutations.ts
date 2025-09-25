@@ -102,6 +102,10 @@ export function addDishImageMutation(dishId: string) {
 		}) => uploadDishImage(formData, dish),
 		onSuccess: (res) => {
 			if (res.success) {
+				query.invalidateQueries({
+					queryKey: getDishImagesOptions(dishId).queryKey
+				});
+
 				toast.success(res.message);
 			} else {
 				toast.error(res.message);

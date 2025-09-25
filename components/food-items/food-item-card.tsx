@@ -12,6 +12,7 @@ import {
 } from '@/lib/features/image/imageSlice';
 import { added } from '@/lib/features/log/logFoodSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { addFoodItemImageMutationOptions } from '@/lib/mutations/foodMutations';
 import { addLogFoodItemMutationOptions } from '@/lib/mutations/logMutations';
 import { getFoodItemByIdQueryOptions } from '@/lib/queries/foodQueries';
 import { cn, formatUnit, getMacroPercOfCals, isNewFoodItem } from '@/lib/utils';
@@ -94,6 +95,10 @@ const FoodItemCard = memo(function FoodItemCard({
 
 	const { mutate: logFoodMtn, isPending: isSubmitting } = useMutation(
 		addLogFoodItemMutationOptions(logFoodItem)
+	);
+
+	const { mutate: addImageMtn } = useMutation(
+		addFoodItemImageMutationOptions(item.id)
 	);
 
 	useEffect(() => {
@@ -402,22 +407,30 @@ const FoodItemCard = memo(function FoodItemCard({
 												<DialogTitle>
 													<Aperture className='w-6 h-6 text-muted-foreground' />
 												</DialogTitle>
-												<TakePhoto<GetFoodItem, GetFoodItemImage>
-													data={currentItem as GetFoodItem}
-													type='foodItem'
-													onSaveSuccess={(data) => {
-														setPhotoDlgOpen(false);
+												<TakePhoto<GetFoodItemImage>
+													onAddPhoto={(formData) => {
+														addImageMtn(
+															{
+																formData,
+																data: currentItem as GetFoodItem
+															},
+															{
+																onSuccess: (res) => {
+																	setPhotoDlgOpen(false);
 
-														const { foodItemId, url, alt } =
-															data as GetFoodItemImage;
+																	const { foodItemId, url, alt } =
+																		res.data as GetFoodItemImage;
 
-														dispatch(
-															addImageState({
-																id: foodItemId,
-																url,
-																alt,
-																type: 'foodItem'
-															})
+																	dispatch(
+																		addImageState({
+																			id: foodItemId,
+																			url,
+																			alt,
+																			type: 'foodItem'
+																		})
+																	);
+																}
+															}
 														);
 													}}
 												/>

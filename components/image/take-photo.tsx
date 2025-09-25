@@ -3,10 +3,6 @@
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-import { uploadFoodItemImage } from '@/actions/image-actions';
-import { addDishImageMutation } from '@/lib/mutations/dishMutations';
-import { GetFoodItem, GetPreparedDish } from '@/types';
-import { useMutation } from '@tanstack/react-query';
 import { Aperture, CameraOff, Save } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Camera, CameraType } from 'react-camera-pro';
@@ -17,22 +13,18 @@ import {
 	MdOutlineHighlight
 } from 'react-icons/md';
 import { useAudioPlayer } from 'react-use-audio-player';
-import { toast } from 'sonner';
 import FullImagePreview from '../image/full-image-preview';
 import PhotoImagePreview from '../image/photo-image-preview';
 
-type SupportedImageTypes = 'dish' | 'foodItem';
-interface TakePhotoProps<T, R> {
-	data: T;
-	type: SupportedImageTypes;
-	onSaveSuccess?: (data: R) => void;
+interface TakePhotoProps<R> {
+	onSaveSuccess?: (data?: R) => void;
+	onAddPhoto: (formData: FormData) => void;
 }
 
-export default function TakePhoto<T, R>({
-	data,
-	type,
-	onSaveSuccess
-}: TakePhotoProps<T, R>) {
+export default function TakePhoto<R>({
+	onSaveSuccess,
+	onAddPhoto
+}: TakePhotoProps<R>) {
 	const camera = useRef<CameraType>(null);
 	const [file, setFile] = useState<File | null>(null);
 	const [cameraActive, setCameraActive] = useState(true);
@@ -46,9 +38,9 @@ export default function TakePhoto<T, R>({
 
 	const [tookShot, setTookShot] = useState(false);
 
-	const { mutate: addDishImgMtn } = useMutation(
-		addDishImageMutation((data as GetPreparedDish).id)
-	);
+	useEffect(() => {
+		return () => setUploading(false);
+	}, []);
 
 	useEffect(() => {
 		if (tookShot) {
@@ -75,45 +67,16 @@ export default function TakePhoto<T, R>({
 
 	const addPhotoToSaved = async () => {
 		if (file) {
+			setUploading(true);
+
 			const formData = new FormData();
 			formData.append('image', file, file.name);
 
-			try {
-				setUploading(true);
+			// if the cb is async?
+			await onAddPhoto(formData);
 
-				if (type === 'dish') {
-					addDishImgMtn(
-						{
-							dish: data as GetPreparedDish,
-							formData
-						},
-						{
-							onSuccess: (res) => {
-								setCameraActive(false);
-								setShowImage(!res.success);
-
-								onSaveSuccess?.(res.data as R);
-							}
-						}
-					);
-				} else if (type === 'foodItem') {
-					const res = await uploadFoodItemImage(formData, data as GetFoodItem);
-					if (res.success && res.data) {
-						toast.success(res.message);
-
-						setCameraActive(false);
-						onSaveSuccess?.(res.data as R);
-					} else {
-						toast.error(res.message);
-					}
-					setShowImage(!res.success);
-				}
-
-				setUploading(false);
-			} catch (error) {
-				setUploading(false);
-				toast.error(`Error uploading image: ${error}`);
-			}
+			const optionalData = { url: file.name } as R;
+			onSaveSuccess?.(optionalData);
 		}
 	};
 
@@ -163,7 +126,6 @@ export default function TakePhoto<T, R>({
 								aspectRatio='cover'
 								facingMode='environment'
 								numberOfCamerasCallback={(i) => setNumberOfCameras(i)}
-								//videoSourceDeviceId={activeDeviceId}
 								errorMessages={{
 									noCameraAccessible:
 										'No camera device accessible. Please connect your camera or try a different browser.',

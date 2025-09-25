@@ -8,6 +8,7 @@ import {
 import { addImageState } from '@/lib/features/image/imageSlice';
 import { useAppDispatch } from '@/lib/hooks';
 import {
+	addDishImageMutation,
 	deleteDishMutation,
 	logDishMutationOptions,
 	updateDishMutation
@@ -19,7 +20,7 @@ import {
 	GetPreparedDishImage,
 	GetUser
 } from '@/types';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { Aperture, FilePenLine, Soup, X } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
@@ -65,7 +66,6 @@ export default function DishCard({
 	const user = session?.user as GetUser;
 
 	const dispatch = useAppDispatch();
-	const query = useQueryClient();
 
 	const [prepDish, setPrepDish] = useState<GetPreparedDish>(dish);
 	const [items, setItems] = useState<GetFoodEntry[]>(dish.foodItems);
@@ -120,6 +120,8 @@ export default function DishCard({
 		logDishMutationOptions()
 	);
 
+	const { mutate: addDishImgMtn } = useMutation(addDishImageMutation(dish.id));
+
 	const handleDelete = () => {
 		// tanstack mutate
 		deleteDishItem(prepDish.id, {
@@ -155,9 +157,6 @@ export default function DishCard({
 							dishList: '[]'
 						})
 					);
-
-					// tanstack - not required since list is technically the same and we have updated prepDish state above
-					//query.invalidateQueries({ queryKey: ['dishes'] });
 				}
 			}
 		});
@@ -237,30 +236,33 @@ export default function DishCard({
 								<DialogTitle>
 									<Aperture className='w-6 h-6 text-muted-foreground' />
 								</DialogTitle>
-								<TakePhoto<GetPreparedDish, GetPreparedDishImage>
-									data={prepDish}
-									type='dish'
-									onSaveSuccess={(data) => {
-										setPhotoDlgOpen(false);
+								<TakePhoto<GetPreparedDishImage>
+									onAddPhoto={async (formData) => {
+										await addDishImgMtn(
+											{
+												dish: prepDish as GetPreparedDish,
+												formData
+											},
+											{
+												onSuccess: (res) => {
+													setPhotoDlgOpen(false);
 
-										const { preparedDishId, url, alt } =
-											data as GetPreparedDishImage;
+													const { preparedDishId, url, alt } =
+														res.data as GetPreparedDishImage;
 
-										// redux
-										dispatch(
-											addImageState({
-												id: preparedDishId,
-												url,
-												alt,
-												type: 'dish',
-												parentId: preparedDishId
-											})
+													// redux
+													dispatch(
+														addImageState({
+															id: preparedDishId,
+															url,
+															alt,
+															type: 'dish',
+															parentId: preparedDishId
+														})
+													);
+												}
+											}
 										);
-
-										// tanstack
-										query.invalidateQueries({
-											queryKey: ['dishImages', preparedDishId]
-										});
 									}}
 								/>
 							</DialogContent>

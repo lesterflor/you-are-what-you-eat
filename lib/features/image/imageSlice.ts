@@ -13,7 +13,7 @@ export interface ImageSliceProps {
 
 export interface ImageSliceState {
 	value: ImageSliceProps;
-	status: 'idle' | 'added' | 'deleted' | 'updated' | 'cleared';
+	status: 'idle' | 'added' | 'deleted' | 'updated' | 'cleared' | 'adding';
 }
 
 const initialState: ImageSliceState = {
@@ -36,7 +36,10 @@ export const imageSlice = createAppSlice({
 				state.value = action.payload;
 				state.status = 'deleted';
 			}
-		)
+		),
+		addingImageState: create.reducer((state) => {
+			state.status = 'adding';
+		})
 	}),
 	selectors: {
 		selectImageData: (state) => state.value,
@@ -44,6 +47,7 @@ export const imageSlice = createAppSlice({
 	}
 });
 
-export const { addImageState, deleteImageState } = imageSlice.actions;
+export const { addImageState, deleteImageState, addingImageState } =
+	imageSlice.actions;
 
 export const { selectImageData, selectImageStatus } = imageSlice.selectors;

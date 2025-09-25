@@ -4,6 +4,7 @@ import {
 	deleteFoodItem,
 	updateFoodItem
 } from '@/actions/food-actions';
+import { uploadFoodItemImage } from '@/actions/image-actions';
 import { getQueryClient } from '@/components/query-provider';
 import { FoodItem, GetFoodItem } from '@/types';
 import { mutationOptions } from '@tanstack/react-query';
@@ -94,5 +95,18 @@ export function bookmarkFoodItemMutationOptions(itemId: string) {
 			}
 		},
 		onMutate: () => {}
+	});
+}
+
+export function addFoodItemImageMutationOptions(foodItemId: string) {
+	return mutationOptions({
+		mutationKey: ['foddItemImageMtn', foodItemId],
+		mutationFn: ({
+			formData,
+			data
+		}: {
+			formData: FormData;
+			data: GetFoodItem;
+		}) => uploadFoodItemImage(formData, data)
 	});
 }
