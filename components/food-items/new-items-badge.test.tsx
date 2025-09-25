@@ -66,7 +66,6 @@ describe('NewItemsBadge (Jest)', () => {
 		// 1 item within 7 days
 		await renderWithClient(<NewItemsBadge />, [generateFoodItem(new Date())]);
 
-		screen.debug();
 		expect(screen.getByText(/1 new item/i)).toBeInTheDocument();
 	});
 
@@ -77,7 +76,6 @@ describe('NewItemsBadge (Jest)', () => {
 			generateFoodItem(new Date())
 		]);
 
-		screen.debug();
 		expect(screen.getByText(/2 new items/i)).toBeInTheDocument();
 	});
 
@@ -87,7 +85,6 @@ describe('NewItemsBadge (Jest)', () => {
 			generateFoodItem(new Date('September 1, 2025')) // out of 7 day range from today
 		]);
 
-		screen.debug();
 		expect(screen.getByText(/1 new item/i)).toBeInTheDocument();
 	});
 
