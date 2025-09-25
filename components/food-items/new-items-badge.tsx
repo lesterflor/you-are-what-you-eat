@@ -13,7 +13,7 @@ export default function NewItemsBadge({
 }: {
 	onBadgeClick?: () => void;
 }) {
-	const { data } = useQuery(getFoodQueryOptions());
+	const { data = [] } = useQuery(getFoodQueryOptions());
 
 	const itemCount = useMemo(
 		() => getNewItemCount(data as GetFoodItem[]),
