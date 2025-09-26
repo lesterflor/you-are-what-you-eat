@@ -15,6 +15,7 @@ import { GetFoodItem } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { Search } from 'lucide-react';
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { ImSpinner2 } from 'react-icons/im';
 import { TbDatabaseSearch } from 'react-icons/tb';
 import { useDebounce } from 'use-debounce';
 import DishCreationPopover from '../dish/dish-creation-popover';
@@ -41,7 +42,11 @@ const FoodListSheet = memo(function FoodListSheet({
 	children?: React.ReactNode;
 	showBalloon?: boolean;
 }) {
-	const { data: foodsData, refetch } = useQuery(getFoodQueryOptions());
+	const {
+		data: foodsData,
+		refetch,
+		isFetching
+	} = useQuery(getFoodQueryOptions());
 	const { data: foodFavs } = useQuery(getFavouriteQueryOptions());
 
 	const [foods, setFoods] = useState<GetFoodItem[]>([]);
@@ -188,10 +193,18 @@ const FoodListSheet = memo(function FoodListSheet({
 						{children ? (
 							<div className='relative'>
 								{children}
-								{showBalloon && foodsData && foodsData.length > 0 && (
-									<div className='transition-opacity fade-in animate-in duration-1000 absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center'>
-										{foodsData?.length}
+								{isFetching ? (
+									<div>
+										<ImSpinner2 className='w-4 h-4 animate-spin text-muted-foreground' />
 									</div>
+								) : (
+									showBalloon &&
+									foodsData &&
+									foodsData.length > 0 && (
+										<div className='transition-opacity fade-in animate-in duration-1000 absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center'>
+											{foodsData?.length}
+										</div>
+									)
 								)}
 							</div>
 						) : (
@@ -254,10 +267,18 @@ const FoodListSheet = memo(function FoodListSheet({
 						{children ? (
 							<div className='relative'>
 								{children}
-								{showBalloon && foodsData && foodsData.length > 0 && (
-									<div className='transition-opacity fade-in animate-in duration-1000 absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center'>
-										{foodsData?.length}
+								{isFetching ? (
+									<div className='absolute top-0 right-0'>
+										<ImSpinner2 className='w-4 h-4 animate-spin text-muted-foreground' />
 									</div>
+								) : (
+									showBalloon &&
+									foodsData &&
+									foodsData.length > 0 && (
+										<div className='transition-opacity fade-in animate-in duration-1000 absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center'>
+											{foodsData?.length}
+										</div>
+									)
 								)}
 							</div>
 						) : (
