@@ -21,9 +21,27 @@ const AddFoodSheetLazy = lazy(
 
 const FoodLogListLazy = lazy(() => import('@/components/logs/log-list'));
 
+const queryClient = new QueryClient();
+
+export const preloadWater = () => {
+	void queryClient.prefetchQuery({
+		queryKey: getCurrentWaterQueryOptions().queryKey,
+		queryFn: getCurrentWaterQueryOptions().queryFn
+	});
+};
+
+export const preloadDishes = () => {
+	void queryClient.prefetchQuery({
+		queryKey: getAllDishesOptions().queryKey,
+		queryFn: getAllDishesOptions().queryFn
+	});
+};
+
 export default async function Home() {
+	preloadWater();
+	preloadDishes();
+
 	const session = await auth();
-	const queryClient = new QueryClient();
 
 	await Promise.allSettled([
 		queryClient.prefetchQuery({
@@ -33,20 +51,12 @@ export default async function Home() {
 		queryClient.prefetchQuery({
 			queryKey: getFavouriteQueryOptions().queryKey,
 			queryFn: getFavouriteQueryOptions().queryFn
-		}),
-		queryClient.prefetchQuery({
-			queryKey: getAllDishesOptions().queryKey,
-			queryFn: getAllDishesOptions().queryFn
-		}),
+		})
+
 		// queryClient.prefetchQuery({
 		// 	queryKey: getFoodQueryOptions().queryKey,
 		// 	queryFn: getFoodQueryOptions().queryFn
 		// })
-
-		queryClient.prefetchQuery({
-			queryKey: getCurrentWaterQueryOptions().queryKey,
-			queryFn: getCurrentWaterQueryOptions().queryFn
-		})
 	]);
 
 	return (
