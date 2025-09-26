@@ -7,9 +7,13 @@ export function getFoodQueryOptions() {
 	return queryOptions({
 		queryKey: ['foodList'],
 		queryFn: () => getFoodItems(),
-		placeholderData: getStorageItem('foodList') || [],
+		initialData: () => {
+			const items = getStorageItem('foodList');
+
+			return { data: items };
+		},
 		select: (res) => res.data as GetFoodItem[],
-		staleTime: 30 * 1000
+		staleTime: 1 * 1000
 	});
 }
 

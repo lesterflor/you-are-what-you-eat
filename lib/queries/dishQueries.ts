@@ -3,15 +3,25 @@ import {
 	getAllDishesByUser,
 	getDishImages
 } from '@/actions/prepared-dish-actions';
+import { GetPreparedDish } from '@/types';
 import { keepPreviousData, queryOptions } from '@tanstack/react-query';
 import { getStorageItem } from '../utils';
 
 export function getAllDishesOptions() {
 	return queryOptions({
 		queryKey: ['dishes'],
-		queryFn: getAllDishes,
-		placeholderData: getStorageItem('preparedDishes') || [],
-		select: (res) => res.data
+		queryFn: () => getAllDishes(),
+		initialData: () => {
+			const items: GetPreparedDish[] = getStorageItem('preparedDishes');
+
+			return { data: items } as {
+				success: boolean;
+				message: string;
+				data: GetPreparedDish[];
+			};
+		},
+		select: (res) => res.data as GetPreparedDish[],
+		staleTime: 5 * 1000
 	});
 }
 
