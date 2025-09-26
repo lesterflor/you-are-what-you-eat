@@ -116,7 +116,11 @@ export function shuffle(array: any[]) {
 
 export function setStorageItem(name: string, value: any) {
 	if (typeof window !== 'undefined') {
-		window.localStorage.setItem(name, JSON.stringify(value));
+		try {
+			window.localStorage.setItem(name, JSON.stringify(value));
+		} catch (e) {
+			console.log('Error writing to local storage: ', e);
+		}
 	}
 }
 
@@ -501,4 +505,15 @@ export function getNewItemCount(items: GetFoodItem[]) {
 		}
 		return acc;
 	}, 0);
+}
+
+export function getLocalStorageSize() {
+	let total = 0;
+	for (const x in localStorage) {
+		if (localStorage.hasOwnProperty(x)) {
+			const amount = (localStorage[x].length + x.length) * 2;
+			total += amount;
+		}
+	}
+	return (total / 1024).toFixed(2); // Returns size in KB
 }
