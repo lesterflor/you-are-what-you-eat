@@ -12,8 +12,9 @@ export function getFoodQueryOptions() {
 
 			return { data: items };
 		},
-		select: (res) => res.data as GetFoodItem[],
-		staleTime: 1 * 1000
+		select: (res) => res.data as GetFoodItem[]
+		//refetchInterval: 1000
+		//staleTime: 1 * 1000
 	});
 }
 

@@ -10,7 +10,7 @@ import { selectFoodUpdateStatus } from '@/lib/features/food/foodUpdateSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { getFavouriteQueryOptions } from '@/lib/queries/favouriteQueries';
 import { getFoodQueryOptions } from '@/lib/queries/foodQueries';
-import { cn, isNewFoodItem, setStorageItem } from '@/lib/utils';
+import { cn, isNewFoodItem } from '@/lib/utils';
 import { GetFoodItem } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { Search } from 'lucide-react';
@@ -41,7 +41,7 @@ const FoodListSheet = memo(function FoodListSheet({
 	children?: React.ReactNode;
 	showBalloon?: boolean;
 }) {
-	const { data: foodsData, isFetched } = useQuery(getFoodQueryOptions());
+	const { data: foodsData, refetch } = useQuery(getFoodQueryOptions());
 	const { data: foodFavs } = useQuery(getFavouriteQueryOptions());
 
 	const [foods, setFoods] = useState<GetFoodItem[]>([]);
@@ -78,6 +78,10 @@ const FoodListSheet = memo(function FoodListSheet({
 	useEffect(() => {
 		setAllFoods(foodsData as GetFoodItem[]);
 		setFoods(foodsData as GetFoodItem[]);
+
+		// refetch again since initialData is stale from local storage (max size reached)
+		console.log('mount refetch');
+		refetch();
 	}, []);
 
 	useEffect(() => {
@@ -175,10 +179,6 @@ const FoodListSheet = memo(function FoodListSheet({
 		),
 		[]
 	);
-
-	if (isFetched && foodsData) {
-		setStorageItem('foodList', foodsData);
-	}
 
 	return (
 		<>
