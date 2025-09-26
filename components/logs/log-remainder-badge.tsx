@@ -11,7 +11,6 @@ import { useQuery } from '@tanstack/react-query';
 import { ArrowDown, ArrowUp, Info } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { DateRange } from 'react-day-picker';
-import { ImSpinner2 } from 'react-icons/im';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import {
 	NameType,
@@ -27,7 +26,6 @@ import {
 } from '../ui/chart';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { ScrollArea } from '../ui/scroll-area';
-import { Skeleton } from '../ui/skeleton';
 
 type ChartData = {
 	calories: number;
@@ -114,36 +112,27 @@ export default function LogRemainderBadge() {
 			<Popover
 				open={popOpen}
 				onOpenChange={setPopOpen}>
-				<PopoverTrigger>
+				<PopoverTrigger disabled={isFetching}>
 					<Badge
 						variant='secondary'
 						className='select-none p-1 rounded-md border-2 font-normal text-xs flex flex-row gap-1 items-start'>
-						{isFetching ? (
-							<ImSpinner2 className='w-4 h-4 animate-spin opacity-25' />
-						) : (
-							<>{logRemainder ? <Info className='w-4 h-4' /> : ''}</>
-						)}
+						{logData ? <Info className='w-4 h-4' /> : ''}
 						<div className='flex flex-col gap-0'>
-							{logRemainder ? (
-								<>
-									<span className='whitespace-nowrap'>Cumulative</span>
-									<div className='flex flex-row gap-1 items-center'>
-										{Math.sign(formatUnit(logRemainder.remainder)) === -1 ? (
-											<ArrowUp className='w-3 h-3 text-red-600 animate-bounce' />
-										) : (
-											<ArrowDown className='w-3 h-3 text-green-600 animate-bounce' />
-										)}
-										<span>{Math.abs(formatUnit(logRemainder.remainder))}</span>
-									</div>
-								</>
-							) : (
-								<>
-									<span className='whitespace-nowrap'>Cumulative</span>
-									<div className='flex flex-row gap-1 items-center'>
-										<Skeleton className='w-10 h-4' />
-									</div>
-								</>
-							)}
+							<span className='whitespace-nowrap'>Cumulative</span>
+							<div className='flex flex-row gap-1 items-center'>
+								{Math.sign(
+									formatUnit(logData?.macros.caloriesRemainingCumulative ?? 0)
+								) === -1 ? (
+									<ArrowUp className='w-3 h-3 text-red-600 animate-bounce' />
+								) : (
+									<ArrowDown className='w-3 h-3 text-green-600 animate-bounce' />
+								)}
+								<span>
+									{Math.abs(
+										formatUnit(logData?.macros.caloriesRemainingCumulative ?? 0)
+									)}
+								</span>
+							</div>
 						</div>
 					</Badge>
 				</PopoverTrigger>
