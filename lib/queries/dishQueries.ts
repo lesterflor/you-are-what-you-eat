@@ -20,8 +20,8 @@ export function getAllDishesOptions() {
 				data: GetPreparedDish[];
 			};
 		},
-		select: (res) => res.data as GetPreparedDish[],
-		staleTime: 5 * 1000
+		select: (res) => res.data as GetPreparedDish[]
+		//staleTime: 5 * 1000
 	});
 }
 
