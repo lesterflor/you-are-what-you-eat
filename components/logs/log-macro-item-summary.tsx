@@ -102,7 +102,9 @@ export default function LogMacroItemSummary({
 												<div className='font-normal leading-tight text-muted-foreground capitalize'>
 													{name}
 												</div>
-												<div className='whitespace-nowrap'>{`${formatUnit(
+												<div
+													data-testid='macro-field'
+													className='whitespace-nowrap'>{`${formatUnit(
 													macroField
 												)}`}</div>
 											</CardContent>
