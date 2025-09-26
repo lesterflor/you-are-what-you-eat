@@ -3,6 +3,7 @@
 import { auth } from '@/db/auth';
 import prisma from '@/db/prisma';
 import {
+	calculateWaterIntake,
 	colateBMRData,
 	convertGlassesOfWater,
 	formatError,
@@ -315,13 +316,19 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 			totalProtein: protein
 		};
 
+		const bmrData = colateBMRData(
+			logForToday.user.BaseMetabolicRate[0] as BMRData
+		);
+		const waterData = calculateWaterIntake(bmrData.weightInPounds ?? 0);
+
 		const revisedLog = {
 			...logForToday,
 			comparisons,
 			totalCalories,
 			remainingCalories,
 			macros,
-			bmrData: colateBMRData(logForToday.user.BaseMetabolicRate[0] as BMRData)
+			bmrData,
+			waterData
 		};
 
 		console.log(revisedLog);

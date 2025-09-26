@@ -5,7 +5,7 @@ import { useAppDispatch } from '@/lib/hooks';
 import { logWaterMutationOptions } from '@/lib/mutations/waterMutations';
 import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
 import { getCurrentWaterQueryOptions } from '@/lib/queries/waterQueries';
-import { calculateWaterIntake, cn, formatUnit } from '@/lib/utils';
+import { cn, formatUnit } from '@/lib/utils';
 import { DialogTitle } from '@radix-ui/react-dialog';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
@@ -54,7 +54,7 @@ const WaterIntake = memo(function WaterIntake({
 
 	const [popoverOpen, setPopoverOpen] = useState(false);
 
-	const waterData = calculateWaterIntake(logData?.bmrData.weightInPounds ?? 0);
+	const { waterData } = { ...logData };
 
 	useEffect(() => {
 		if (!popoverOpen) {
@@ -96,6 +96,7 @@ const WaterIntake = memo(function WaterIntake({
 										className={cn(
 											'transition-opacity fade-in animate-in duration-1000 absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center',
 											waterLogData &&
+												waterData &&
 												waterLogData.glasses >= waterData.glasses &&
 												waterLogData.glasses !== 0 &&
 												'bg-green-700'
@@ -209,9 +210,10 @@ const WaterIntake = memo(function WaterIntake({
 											</div>
 										</div>
 
-										{waterLogData.glasses < waterData.glasses ? (
+										{waterData && waterLogData.glasses < waterData.glasses ? (
 											<ArrowDown className='animate-bounce text-red-600' />
-										) : waterLogData.glasses === waterData.glasses ? (
+										) : waterData &&
+										  waterLogData.glasses === waterData.glasses ? (
 											<Check className='animate-bounce text-green-600' />
 										) : (
 											<ArrowUp className='animate-bounce text-green-600' />
@@ -334,6 +336,7 @@ const WaterIntake = memo(function WaterIntake({
 										className={cn(
 											'transition-opacity fade-in animate-in duration-1000 absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center',
 											waterLogData &&
+												waterData &&
 												waterLogData.glasses >= waterData.glasses &&
 												waterLogData.glasses !== 0 &&
 												'bg-green-700'
@@ -445,9 +448,10 @@ const WaterIntake = memo(function WaterIntake({
 											</div>
 										</div>
 
-										{waterLogData.glasses < waterData.glasses ? (
+										{waterData && waterLogData.glasses < waterData.glasses ? (
 											<ArrowDown className='animate-bounce text-red-600' />
-										) : waterLogData.glasses === waterData.glasses ? (
+										) : waterData &&
+										  waterLogData.glasses === waterData.glasses ? (
 											<Check className='animate-bounce text-green-600' />
 										) : (
 											<ArrowUp className='animate-bounce text-green-600' />
