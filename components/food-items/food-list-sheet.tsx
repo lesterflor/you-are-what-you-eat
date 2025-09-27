@@ -227,8 +227,11 @@ const FoodListSheet = memo(function FoodListSheet({
 								</InputWithButton>
 
 								{foods && (
-									<div className='text-xs font-normal'>
+									<div className='text-xs font-normal flex flex-row gap-2'>
 										{foods.length} {foods.length === 1 ? 'result' : 'results'}
+										{isFetching && (
+											<ImSpinner2 className='text-muted-foreground w-4 h-4 animate-spin' />
+										)}
 									</div>
 								)}
 							</div>
@@ -305,8 +308,11 @@ const FoodListSheet = memo(function FoodListSheet({
 									</InputWithButton>
 
 									{foods && (
-										<div className='text-xs font-normal'>
+										<div className='text-xs font-normal flex flex-row gap-2'>
 											{foods.length} {foods.length === 1 ? 'result' : 'results'}
+											{isFetching && (
+												<ImSpinner2 className='text-muted-foreground w-4 h-4 animate-spin' />
+											)}
 										</div>
 									)}
 								</div>

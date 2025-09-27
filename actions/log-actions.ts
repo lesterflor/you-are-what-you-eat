@@ -156,7 +156,8 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 			},
 			include: {
 				user: {
-					include: {
+					select: {
+						name: true,
 						BaseMetabolicRate: {
 							select: {
 								bmr: true,
@@ -192,7 +193,8 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 				},
 				include: {
 					user: {
-						include: {
+						select: {
+							name: true,
 							BaseMetabolicRate: {
 								select: {
 									bmr: true,

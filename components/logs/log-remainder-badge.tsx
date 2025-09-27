@@ -11,6 +11,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ArrowDown, ArrowUp, Info } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { DateRange } from 'react-day-picker';
+import { ImSpinner2 } from 'react-icons/im';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import {
 	NameType,
@@ -26,6 +27,7 @@ import {
 } from '../ui/chart';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { ScrollArea } from '../ui/scroll-area';
+import { Skeleton } from '../ui/skeleton';
 
 type ChartData = {
 	calories: number;
@@ -120,18 +122,24 @@ export default function LogRemainderBadge() {
 						<div className='flex flex-col gap-0'>
 							<span className='whitespace-nowrap'>Cumulative</span>
 							<div className='flex flex-row gap-1 items-center'>
-								{Math.sign(
-									formatUnit(logData?.macros.caloriesRemainingCumulative ?? 0)
-								) === -1 ? (
-									<ArrowUp className='w-3 h-3 text-red-600 animate-bounce' />
+								{isFetching ? (
+									<>
+										<ImSpinner2 className='text-muted-foreground w-4 h-4 animate-spin' />
+										<Skeleton className='h-4 w-8' />
+									</>
 								) : (
-									<ArrowDown className='w-3 h-3 text-green-600 animate-bounce' />
+									<>
+										{Math.sign(formatUnit(logRemainder?.remainder ?? 0)) ===
+										-1 ? (
+											<ArrowUp className='w-3 h-3 text-red-600 animate-bounce' />
+										) : (
+											<ArrowDown className='w-3 h-3 text-green-600 animate-bounce' />
+										)}
+										<span>
+											{Math.abs(formatUnit(logRemainder?.remainder ?? 0))}
+										</span>
+									</>
 								)}
-								<span>
-									{Math.abs(
-										formatUnit(logData?.macros.caloriesRemainingCumulative ?? 0)
-									)}
-								</span>
 							</div>
 						</div>
 					</Badge>
