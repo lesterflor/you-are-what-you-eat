@@ -76,8 +76,6 @@ export const logCumulativeSlice = createAppSlice({
 						})),
 						user: res.data.user && {
 							...res.data.user,
-							createdAt: res.data.user.createdAt.toString(),
-							updatedAt: res.data.user.updatedAt.toString(),
 							BaseMetabolicRate: res.data.user.BaseMetabolicRate?.map(
 								(bmr) => ({
 									...bmr
