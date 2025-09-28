@@ -1,7 +1,10 @@
 import LandingContent from '@/components/landing-content';
 import { auth } from '@/db/auth';
 import { getFavouriteQueryOptions } from '@/lib/queries/favouriteQueries';
-import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
+import {
+	getCurrentLogQueryOptions,
+	getLogRemainderQueryOptions
+} from '@/lib/queries/logQueries';
 import { getCurrentWaterQueryOptions } from '@/lib/queries/waterQueries';
 import {
 	dehydrate,
@@ -33,10 +36,10 @@ export default async function Home() {
 			queryKey: getFavouriteQueryOptions().queryKey,
 			queryFn: getFavouriteQueryOptions().queryFn
 		}),
-		// queryClient.prefetchQuery({
-		// 	queryKey: getAllDishesOptions().queryKey,
-		// 	queryFn: getAllDishesOptions().queryFn
-		// }),
+		queryClient.prefetchQuery({
+			queryKey: getLogRemainderQueryOptions().queryKey,
+			queryFn: getLogRemainderQueryOptions().queryFn
+		}),
 		// queryClient.prefetchQuery({
 		// 	queryKey: getFoodQueryOptions().queryKey,
 		// 	queryFn: getFoodQueryOptions().queryFn
