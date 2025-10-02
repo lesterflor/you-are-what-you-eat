@@ -13,7 +13,7 @@ export const experimental_ppr = true;
 
 export const metadata: Metadata = {
 	title: {
-		template: `%s - You are what you eat`,
+		template: '%s | You are what you eat',
 		default: 'You are what you eat'
 	},
 	description:

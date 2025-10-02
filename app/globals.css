@@ -121,10 +121,6 @@ body {
 	}
 }
 
-.thin-title {
-	font-family: 'InterThin';
-}
-
 @layer utilities {
 	.scrollbar::-webkit-scrollbar {
 		width: 8px;

@@ -97,7 +97,7 @@ export default function LogMacroItemSummary({
 									return (
 										<Card
 											key={`${id}-${eatenAt.getTime()}`}
-											className='p-0 w-full bg-green-950'>
+											className='p-0 w-full dark:bg-green-950'>
 											<CardContent className='flex flex-row items-center gap-2 justify-between w-full p-1.5'>
 												<div className='font-normal leading-tight text-muted-foreground capitalize'>
 													{name}

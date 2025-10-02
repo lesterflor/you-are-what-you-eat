@@ -55,7 +55,7 @@ const ExpendedCaloriesButtonLazy = lazy(
 	() => import('@/components/logs/expended-calories-button')
 );
 
-const WaterIntakeLazy = lazy(() => import('./water-intake'));
+const WaterIntakeLazy = lazy(() => import('@/components/logs/water-intake'));
 
 export default function FoodLogList({
 	forceColumn = true,

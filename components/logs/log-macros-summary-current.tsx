@@ -5,6 +5,7 @@ import { getCurrentLogQueryOptions } from '@/lib/queries/logQueries';
 import { formatUnit, getMacroPercOfCals, RADIAN } from '@/lib/utils';
 import { PieItemType } from '@/types';
 import { useQuery } from '@tanstack/react-query';
+import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { Label, Pie, PieChart } from 'recharts';
@@ -27,6 +28,8 @@ export default function LogMacrosSummaryCurrent({
 	showPie?: boolean;
 }) {
 	const { data: logData, isFetching } = useQuery(getCurrentLogQueryOptions());
+
+	const { resolvedTheme = 'dark' } = useTheme();
 
 	const [revealPie, setRevealPie] = useState(false);
 
@@ -341,7 +344,7 @@ export default function LogMacrosSummaryCurrent({
 									dataKey='value'
 									nameKey='name'
 									labelLine={false}
-									label={(value) => renderCustomizedLabel(value)}
+									label={(value) => renderCustomizedLabel(value, resolvedTheme)}
 									innerRadius={45}
 									outerRadius={82}
 									strokeWidth={1}>
@@ -381,24 +384,27 @@ export default function LogMacrosSummaryCurrent({
 	);
 }
 
-const renderCustomizedLabel = ({
-	cx,
-	cy,
-	midAngle,
-	innerRadius,
-	outerRadius,
-	percent,
-	name
-}: {
-	cx: number;
-	cy: number;
-	midAngle: number;
-	innerRadius: number;
-	outerRadius: number;
-	percent: number;
-	value: number;
-	name: string;
-}) => {
+const renderCustomizedLabel = (
+	{
+		cx,
+		cy,
+		midAngle,
+		innerRadius,
+		outerRadius,
+		percent,
+		name
+	}: {
+		cx: number;
+		cy: number;
+		midAngle: number;
+		innerRadius: number;
+		outerRadius: number;
+		percent: number;
+		value: number;
+		name: string;
+	},
+	theme: string
+) => {
 	const radius = innerRadius + (outerRadius - innerRadius) * 0.4;
 	const x = cx + radius * Math.cos(-midAngle * RADIAN);
 	const y = cy + radius * Math.sin(-midAngle * RADIAN);
@@ -407,7 +413,7 @@ const renderCustomizedLabel = ({
 		<text
 			x={x}
 			y={y}
-			fill='white'
+			fill={theme === 'dark' ? 'white' : 'black'}
 			textAnchor={x > cx ? 'start' : 'end'}
 			dominantBaseline='middle'>
 			<tspan

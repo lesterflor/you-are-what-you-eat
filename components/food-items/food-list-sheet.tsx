@@ -196,14 +196,14 @@ const FoodListSheet = memo(function FoodListSheet({
 							<div className='relative'>
 								{children}
 								{isFetching ? (
-									<div>
+									<div className='absolute top-0 right-0'>
 										<ImSpinner2 className='w-4 h-4 animate-spin text-muted-foreground' />
 									</div>
 								) : (
 									showBalloon &&
 									foodsData &&
 									foodsData.length > 0 && (
-										<div className='transition-opacity fade-in animate-in duration-1000 absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center'>
+										<div className='transition-opacity fade-in animate-in duration-1000 absolute w-auto h-4 rounded-full text-white bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center'>
 											{foodsData?.length}
 										</div>
 									)
@@ -282,7 +282,7 @@ const FoodListSheet = memo(function FoodListSheet({
 									showBalloon &&
 									foodsData &&
 									foodsData.length > 0 && (
-										<div className='transition-opacity fade-in animate-in duration-1000 absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center'>
+										<div className='transition-opacity fade-in animate-in duration-1000 absolute w-auto h-4 rounded-full text-white bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center'>
 											{foodsData?.length}
 										</div>
 									)

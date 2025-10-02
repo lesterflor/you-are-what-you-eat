@@ -50,13 +50,13 @@ const ExpendedCaloriesButton = memo(function ExpendedCaloriesButton({
 						!popoverOpen &&
 						logData &&
 						logData.macros.caloriesBurned > 0 && (
-							<div className='transition-opacity fade-in animate-in duration-1000 absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center'>
+							<div className='transition-opacity fade-in animate-in duration-1000 absolute w-auto h-4 rounded-full text-white bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center'>
 								{logData.macros.caloriesBurned}
 							</div>
 						)}
 				</div>
 			</PopoverTrigger>
-			<PopoverContent className='flex flex-col gap-6 items-center justify-center select-none relative w-[85vw] bg-slate-950'>
+			<PopoverContent className='flex flex-col gap-6 items-center justify-center select-none relative w-[85vw]'>
 				<Popover>
 					<PopoverTrigger asChild>
 						<div className='absolute top-2 left-2'>

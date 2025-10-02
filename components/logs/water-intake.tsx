@@ -94,7 +94,7 @@ const WaterIntake = memo(function WaterIntake({
 								waterLogData.glasses > 0 && (
 									<div
 										className={cn(
-											'transition-opacity fade-in animate-in duration-1000 absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center',
+											'transition-opacity fade-in animate-in duration-1000 absolute w-auto h-4 rounded-full text-white bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center',
 											waterLogData &&
 												waterData &&
 												waterLogData.glasses >= waterData.glasses &&
@@ -334,7 +334,7 @@ const WaterIntake = memo(function WaterIntake({
 								waterLogData.glasses > 0 && (
 									<div
 										className={cn(
-											'transition-opacity fade-in animate-in duration-1000 absolute w-auto h-4 rounded-full bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center',
+											'transition-opacity fade-in animate-in duration-1000 absolute w-auto h-4 rounded-full text-white bg-red-700 text-xs top-0 right-0 p-1 flex items-center justify-center',
 											waterLogData &&
 												waterData &&
 												waterLogData.glasses >= waterData.glasses &&

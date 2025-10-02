@@ -44,9 +44,9 @@ export default async function SiteHeader() {
 							<div className='flex flex-col gap-0'>
 								{!session ? (
 									<>
-										<span className='dark:text-white text-black text-2xl font-bold thin-title'>
-											You are what you eat
-										</span>
+										<h1 className='dark:text-white text-black text-2xl font-bold'>
+											You Are What You Eat
+										</h1>
 
 										<span className='text-xs'>
 											Track the food you eat and stop wondering
@@ -54,9 +54,9 @@ export default async function SiteHeader() {
 									</>
 								) : (
 									<>
-										<span className='dark:text-white text-black text-2xl font-bold thin-title portrait:hidden'>
-											You are what you eat
-										</span>
+										<h1 className='dark:text-white text-black text-2xl font-bold portrait:hidden'>
+											You Are What You Eat
+										</h1>
 
 										<span className='text-xs portrait:hidden'>
 											Track the food you eat and stop wondering

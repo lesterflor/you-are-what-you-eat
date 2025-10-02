@@ -164,6 +164,7 @@ const LogFoodListItem = memo(function LogFoodListItem({
 					{!isEditing && allowEdit && (
 						<div className='flex flex-row gap-2 justify-between pb-2'>
 							<Button
+								aria-label='update'
 								variant='outline'
 								size={'icon'}
 								onClick={() => {
@@ -176,6 +177,7 @@ const LogFoodListItem = memo(function LogFoodListItem({
 								onOpenChange={setDialogOpen}>
 								<DialogTrigger asChild>
 									<Button
+										aria-label='delete'
 										variant='outline'
 										size={'icon'}>
 										<X className='w-4 h-4' />

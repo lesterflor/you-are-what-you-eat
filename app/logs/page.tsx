@@ -18,7 +18,7 @@ import { lazy, Suspense } from 'react';
 const LogHistoryLazy = lazy(() => import('@/components/logs/log-history'));
 
 export const metadata: Metadata = {
-	title: 'Log History'
+	title: 'Log History | You Are What You Eat'
 };
 
 export default async function LogsPage() {

@@ -11,7 +11,12 @@ import {
 	HydrationBoundary,
 	QueryClient
 } from '@tanstack/react-query';
+import { Metadata } from 'next';
 import { lazy } from 'react';
+
+export const metadata: Metadata = {
+	title: `Today's Log | You Are What You Eat`
+};
 
 const FoodListSheetLazy = lazy(
 	() => import('@/components/food-items/food-list-sheet')

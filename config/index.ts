@@ -11,7 +11,7 @@ export const pieChartConfig = {
 	},
 	fat: {
 		label: 'Fat',
-		color: 'hsl(var(--chart-3))'
+		color: 'hsl(var(--chart-5))'
 	}
 } satisfies ChartConfig;
 
