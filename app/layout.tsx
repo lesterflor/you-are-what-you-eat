@@ -18,6 +18,13 @@ export const metadata: Metadata = {
 	},
 	description:
 		'What you put in your mouth determines what your body is composed of.  Find out the composition of your body by tracking what you eat.',
+	alternates: {
+		canonical: 'https://you-are-what-you-eat-henna.vercel.app/',
+		languages: {
+			'en-US': 'https://you-are-what-you-eat-henna.vercel.app/'
+		}
+	},
+
 	authors: [{ name: 'Lester Flor', url: 'https://lester-flor.vercel.app' }]
 };
 
