@@ -85,7 +85,7 @@ export default function LogRemainderBadge() {
 	}) => {
 		if (active && payload && payload.length) {
 			return (
-				<div className='bg-black p-2 rounded-md'>
+				<div className='dark:bg-black p-2 rounded-md'>
 					<div className='flex flex-row items-center justify-center gap-2'>
 						<span className='label'>{Math.abs(+payload[0].value)}</span>
 						<span>
@@ -144,7 +144,7 @@ export default function LogRemainderBadge() {
 						</div>
 					</Badge>
 				</PopoverTrigger>
-				<PopoverContent className='text-xs text-muted-foreground flex flex-col gap-2 max-w-[95vw] w-[90vw] bg-neutral-800'>
+				<PopoverContent className='text-xs text-muted-foreground flex flex-col gap-2 max-w-[95vw] w-[90vw] dark:bg-neutral-800'>
 					<ScrollArea className='w-full'>
 						<div className='max-h-[65vh]'>
 							<div className='flex flex-row items-center gap-2'>

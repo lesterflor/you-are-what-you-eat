@@ -232,6 +232,7 @@ export default function ReduxStoreLogger({
 		<>
 			{isFetching ? (
 				<Button
+					aria-label='loading'
 					variant='outline'
 					className='w-14'>
 					<ImSpinner2 className='animate-spin opacity-50' />
@@ -240,6 +241,7 @@ export default function ReduxStoreLogger({
 				<Popover>
 					<PopoverTrigger asChild>
 						<Button
+							aria-label='expand'
 							onClick={() => {
 								setHasOpened(true);
 							}}

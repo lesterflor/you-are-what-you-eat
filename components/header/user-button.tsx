@@ -39,8 +39,11 @@ export default function UserButton() {
 				<DropdownMenuTrigger asChild>
 					<div className='flex items-center w-[50px] portrait:w-auto'>
 						<Avatar>
-							<AvatarImage src={user.image} />
-							<AvatarFallback>
+							<AvatarImage
+								src={user.image}
+								alt={user.name}
+							/>
+							<AvatarFallback aria-label={user.name}>
 								{user.name.slice(0, 1).toUpperCase()}
 							</AvatarFallback>
 						</Avatar>

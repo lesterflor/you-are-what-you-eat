@@ -1,17 +1,17 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { useTheme } from 'next-themes';
 import {
 	DropdownMenu,
+	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-	DropdownMenuCheckboxItem
+	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { SunIcon, MoonIcon, SunMoon } from 'lucide-react';
+import { MoonIcon, SunIcon, SunMoon } from 'lucide-react';
 
 export default function ModeToggle() {
 	const [mounted, setMounted] = useState(false);
@@ -30,6 +30,7 @@ export default function ModeToggle() {
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<Button
+					aria-label='toggle page theme'
 					className='focus-visible:ring-0 focus-visible:ring-offset-0'
 					variant='ghost'>
 					{theme === 'system' ? (

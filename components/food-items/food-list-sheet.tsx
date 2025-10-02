@@ -295,11 +295,11 @@ const FoodListSheet = memo(function FoodListSheet({
 							</Button>
 						)}
 					</SheetTrigger>
-					<SheetTitle />
+
 					<SheetContent
 						side='top'
 						className='px-2'>
-						<div className='flex flex-col items-center gap-4 pb-4 relative top-3'>
+						<SheetTitle className='flex flex-col items-center gap-4 pb-4 relative top-3'>
 							<div className='absolute -top-6 left-0'>{NewItemsBadgeMemo}</div>
 							<div className='flex flex-row gap-2 justify-between items-center mt-4'>
 								<div className='flex flex-row items-center gap-4'>
@@ -331,7 +331,7 @@ const FoodListSheet = memo(function FoodListSheet({
 								onSelect={() => {}}
 								compactMode={true}
 							/>
-						</div>
+						</SheetTitle>
 						<SheetDescription></SheetDescription>
 						<ScrollArea className='h-[70vh] w-[100%] pt-4'>
 							<div

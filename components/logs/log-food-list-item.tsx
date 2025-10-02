@@ -112,7 +112,7 @@ const LogFoodListItem = memo(function LogFoodListItem({
 		<Card
 			className={cn(
 				'transition-opacity opacity-0 duration-1000 select-none p-0',
-				isEditing && 'bg-green-900'
+				isEditing && 'dark:bg-green-900 bg-green-100'
 			)}
 			style={{
 				opacity: fadeClass ? 1 : 0
@@ -124,6 +124,7 @@ const LogFoodListItem = memo(function LogFoodListItem({
 							{!isDishMode && (
 								<div className='absolute -top-2.5 -left-4'>
 									<Checkbox
+										aria-label='check food item'
 										checked={isChecked}
 										onCheckedChange={(val) => setIsChecked(!!val)}
 									/>
@@ -170,7 +171,10 @@ const LogFoodListItem = memo(function LogFoodListItem({
 								onClick={() => {
 									setIsEditing(!isEditing);
 								}}>
-								<FilePenLine className='w-4 h-4' />
+								<FilePenLine
+									className='w-4 h-4'
+									role='button'
+								/>
 							</Button>
 							<Dialog
 								open={dialogOpen}
@@ -180,7 +184,10 @@ const LogFoodListItem = memo(function LogFoodListItem({
 										aria-label='delete'
 										variant='outline'
 										size={'icon'}>
-										<X className='w-4 h-4' />
+										<X
+											className='w-4 h-4'
+											role='button'
+										/>
 									</Button>
 								</DialogTrigger>
 								<DialogContent>

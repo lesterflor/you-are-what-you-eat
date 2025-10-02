@@ -64,6 +64,7 @@ export default function IncrementButton({
 
 	return (
 		<Button
+			aria-label='increment'
 			data-testid={dataTestId}
 			onContextMenu={(e) => {
 				e.preventDefault();

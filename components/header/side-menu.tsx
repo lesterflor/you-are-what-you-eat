@@ -47,7 +47,10 @@ export default function SideMenu() {
 			open={isOpen}
 			onOpenChange={setIsOpen}>
 			<SheetTrigger>
-				<Menu className='w-6 h-6' />
+				<Menu
+					className='w-6 h-6'
+					aria-label='side menu'
+				/>
 			</SheetTrigger>
 			<SheetContent className='max-w-96 w-80 px-3'>
 				<SheetDescription></SheetDescription>
