@@ -249,7 +249,10 @@ export default function ReduxStoreLogger({
 							variant='outline'
 							size='sm'>
 							<Avatar className='w-4 h-4'>
-								<AvatarImage src={user.image} />
+								<AvatarImage
+									src={user.image}
+									alt={user.name}
+								/>
 								<AvatarFallback className='text-xs opacity-40'>
 									{user.name.slice(0, 1)}
 								</AvatarFallback>
