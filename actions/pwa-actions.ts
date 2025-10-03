@@ -42,7 +42,7 @@ export async function subscribeUser(sub: PushSubscription) {
 
 		return {
 			success: true,
-			message: 'success creating push subscription',
+			message: 'Successfully subscribed to push notifications',
 			data: newSub
 		};
 	} catch (err: unknown) {
@@ -91,7 +91,7 @@ export async function unsubscribeUser() {
 
 		return {
 			success: true,
-			message: 'Successfully deleted push subscription'
+			message: 'Successfully unsubscribed to push notifications'
 		};
 	} catch (err: unknown) {
 		return {

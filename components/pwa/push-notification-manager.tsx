@@ -6,6 +6,7 @@ import {
 	unsubscribeUser
 } from '@/actions/pwa-actions';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardTitle } from '../ui/card';
 import { Input } from '../ui/input';
@@ -44,13 +45,27 @@ export default function PushNotificationManager() {
 		});
 		setSubscription(sub);
 		const serializedSub = JSON.parse(JSON.stringify(sub));
-		await subscribeUser(serializedSub);
+
+		const res = await subscribeUser(serializedSub);
+
+		if (res.success) {
+			toast.success(res.message);
+		} else {
+			toast.error(res.message);
+		}
 	}
 
 	async function unsubscribeFromPush() {
 		await subscription?.unsubscribe();
 		setSubscription(null);
-		await unsubscribeUser();
+
+		const res = await unsubscribeUser();
+
+		if (res.success) {
+			toast.success(res.message);
+		} else {
+			toast.error(res.message);
+		}
 	}
 
 	async function sendTestNotification() {
