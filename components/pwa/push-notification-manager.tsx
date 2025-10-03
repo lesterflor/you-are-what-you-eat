@@ -91,14 +91,6 @@ export default function PushNotificationManager({
 		});
 	};
 
-	// const sendTestNotification = async () => {
-	// 	if (subscription) {
-	// 		const serializedSub = JSON.parse(JSON.stringify(subscription));
-	// 		await sendNotification(serializedSub, message);
-	// 		setMessage('');
-	// 	}
-	// };
-
 	if (!isSupported || invisibleMode) {
 		return null;
 	}

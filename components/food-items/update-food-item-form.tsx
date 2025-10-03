@@ -81,7 +81,7 @@ export default function UpdateFoodItemForm({
 					await sendNotification(
 						JSON.parse(JSON.stringify(subscription)),
 						`${res.pushMessage}`,
-						'Food Item Updated!'
+						'Food Item Updated'
 					);
 				}
 

@@ -119,7 +119,7 @@ export default function FoodUserAvatar({
 					await sendNotification(
 						JSON.parse(JSON.stringify(subscription)),
 						`${res.pushMessage}`,
-						'Food Item Deleted!'
+						'Food Item Deleted'
 					);
 				}
 

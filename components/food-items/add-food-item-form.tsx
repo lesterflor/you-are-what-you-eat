@@ -86,7 +86,7 @@ export default function AddFoodItemForm({
 					await sendNotification(
 						JSON.parse(JSON.stringify(subscription)),
 						`${res.pushMessage}`,
-						'New Food Item Added!'
+						'New Food Item Added'
 					);
 				}
 

@@ -103,7 +103,8 @@ export async function uploadFoodItemImage(
 				return {
 					success: true,
 					message: res.message,
-					data: res.data
+					data: res.data,
+					pushMessage: `A new photo was added for the food item, ${item.name}.`
 				};
 			}
 		}
@@ -202,6 +203,16 @@ export async function deleteFoodItemImage(img: GetFoodItemImage) {
 			throw new Error('The food item image was not found');
 		}
 
+		const foodItem = await prisma.foodItem.findFirst({
+			where: {
+				id: existing.foodItemId
+			}
+		});
+
+		if (!foodItem) {
+			throw new Error('The food item was not found');
+		}
+
 		const del = await prisma.foodItemImage.delete({
 			where: {
 				id: existing.id
@@ -215,7 +226,8 @@ export async function deleteFoodItemImage(img: GetFoodItemImage) {
 		return {
 			success: true,
 			message: 'Deleted food item image successfully',
-			data: del
+			data: del,
+			pushMessage: `${user.name} deleted an image for the food item, ${foodItem.name}`
 		};
 	} catch (error: unknown) {
 		return {

@@ -1,5 +1,7 @@
 import { getFoodItemById } from '@/actions/food-actions';
 import { deleteFoodItemImage } from '@/actions/image-actions';
+import { sendNotification } from '@/actions/pwa-actions';
+import { pushSubAtom } from '@/lib/atoms/pushSubAtom';
 import {
 	deleteImageState,
 	selectImageData,
@@ -8,6 +10,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { GetFoodItem, GetFoodItemImage, GetUser } from '@/types';
 import { format } from 'date-fns';
+import { useAtomValue } from 'jotai';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
@@ -34,6 +37,7 @@ export default function FoodItemImageGallery({ item }: { item: GetFoodItem }) {
 	const dispatch = useAppDispatch();
 	const imageData = useAppSelector(selectImageData);
 	const imageStatus = useAppSelector(selectImageStatus);
+	const subscription = useAtomValue(pushSubAtom);
 
 	const { data: session } = useSession();
 	const user = session?.user as GetUser;
@@ -83,6 +87,15 @@ export default function FoodItemImageGallery({ item }: { item: GetFoodItem }) {
 			const res = await deleteFoodItemImage(img);
 
 			if (res.success && res.data) {
+				// push notification
+				if (subscription) {
+					await sendNotification(
+						JSON.parse(JSON.stringify(subscription)),
+						`${res.pushMessage}`,
+						'Food Item Image Update'
+					);
+				}
+
 				toast.success(res.message);
 
 				dispatch(

@@ -1,5 +1,7 @@
 'use client';
 
+import { sendNotification } from '@/actions/pwa-actions';
+import { pushSubAtom } from '@/lib/atoms/pushSubAtom';
 import { setCheckedItemState } from '@/lib/features/dish/preparedDishSlice';
 import {
 	selectFoodUpdateData,
@@ -19,6 +21,7 @@ import { cn, formatUnit, getMacroPercOfCals, isNewFoodItem } from '@/lib/utils';
 import { FoodEntry, GetFoodItem, GetFoodItemImage, GetUser } from '@/types';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
+import { useAtomValue } from 'jotai';
 import { Aperture, FilePlus, Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { memo, useEffect, useRef, useState } from 'react';
@@ -61,6 +64,8 @@ const FoodItemCard = memo(function FoodItemCard({
 	const { data: session } = useSession();
 	const currentUser = session?.user as GetUser;
 	const cardRef = useRef<HTMLDivElement>(null);
+
+	const subscription = useAtomValue(pushSubAtom);
 
 	const dispatch = useAppDispatch();
 	const imageData = useAppSelector(selectImageData);
@@ -415,7 +420,16 @@ const FoodItemCard = memo(function FoodItemCard({
 																data: currentItem as GetFoodItem
 															},
 															{
-																onSuccess: (res) => {
+																onSuccess: async (res) => {
+																	// push notification
+																	if (subscription) {
+																		await sendNotification(
+																			JSON.parse(JSON.stringify(subscription)),
+																			`${res.pushMessage}`,
+																			'Food Item Image Update'
+																		);
+																	}
+
 																	setPhotoDlgOpen(false);
 
 																	const { foodItemId, url, alt } =
