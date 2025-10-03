@@ -1,6 +1,5 @@
 'use client';
 
-import { useLocalOrientation } from '@/hooks/use-orientation';
 import {
 	clearCategories,
 	inputSearch,
@@ -49,7 +48,6 @@ const FoodListSheet = memo(function FoodListSheet({
 		isFetching
 	} = useQuery(getFoodQueryOptions());
 	const { data: foodFavs } = useQuery(getFavouriteQueryOptions());
-	const { lockOrientation } = useLocalOrientation();
 
 	const [foods, setFoods] = useState<GetFoodItem[]>([]);
 	const [allFoods, setAllFoods] = useState<GetFoodItem[]>([]);
@@ -269,7 +267,7 @@ const FoodListSheet = memo(function FoodListSheet({
 				<Sheet>
 					<SheetTrigger
 						asChild
-						onClick={() => lockOrientation()}>
+						disabled={isFetching}>
 						{children ? (
 							<div className='relative'>
 								{children}

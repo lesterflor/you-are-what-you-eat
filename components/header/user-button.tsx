@@ -21,7 +21,7 @@ export default function UserButton() {
 
 	const user = session?.user as User;
 
-	if (!session) {
+	if (!session || !user) {
 		return (
 			<Button asChild>
 				<Link
@@ -35,62 +35,58 @@ export default function UserButton() {
 	}
 
 	return (
-		<div className='flex gap-2 items-center'>
-			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<div className='flex items-center w-[50px] portrait:w-auto'>
-						<Avatar>
-							<AvatarImage
-								src={user.image}
-								alt={user.name}
-							/>
-							<AvatarFallback aria-label={user.name}>
-								{user.name.slice(0, 1).toUpperCase()}
-							</AvatarFallback>
-						</Avatar>
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<Avatar className='flex items-center w-10 h-10'>
+					<AvatarImage
+						src={user.image}
+						alt={user.name}
+					/>
+					<AvatarFallback aria-label={user.name}>
+						{user.name.slice(0, 1).toUpperCase()}
+					</AvatarFallback>
+				</Avatar>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent
+				className='w-56 p-2'
+				align='end'
+				forceMount>
+				<DropdownMenuLabel className='font-normal'>
+					<div className='flex flex-col space-y-1 pb-5'>
+						<div className='text-sm font-medium leading-none'>
+							{session.user?.name}
+						</div>
+
+						<div className='text-sm text-muted-foreground leading-none'>
+							{session.user?.email}
+						</div>
 					</div>
-				</DropdownMenuTrigger>
-				<DropdownMenuContent
-					className='w-56 p-2'
-					align='end'
-					forceMount>
-					<DropdownMenuLabel className='font-normal'>
-						<div className='flex flex-col space-y-1 pb-5'>
-							<div className='text-sm font-medium leading-none'>
-								{session.user?.name}
-							</div>
+				</DropdownMenuLabel>
 
-							<div className='text-sm text-muted-foreground leading-none'>
-								{session.user?.email}
-							</div>
-						</div>
-					</DropdownMenuLabel>
+				{user?.role === 'admin' && (
+					<>
+						<DropdownMenuItem>
+							<Link
+								href='/admin'
+								className='w-full'>
+								Admin
+							</Link>
+						</DropdownMenuItem>
+					</>
+				)}
 
-					{user?.role === 'admin' && (
-						<>
-							<DropdownMenuItem>
-								<Link
-									href='/admin'
-									className='w-full'>
-									Admin
-								</Link>
-							</DropdownMenuItem>
-						</>
-					)}
+				<DropdownMenuItem asChild>
+					<div className=' flex flex-col items-end justify-end'>
+						<PushNotificationManager />
+					</div>
+				</DropdownMenuItem>
 
-					<DropdownMenuItem asChild>
-						<div className=' flex flex-col items-end justify-end'>
-							<PushNotificationManager />
-						</div>
-					</DropdownMenuItem>
-
-					<DropdownMenuItem asChild>
-						<div className=' flex flex-col items-end justify-end'>
-							<SignOutButton />
-						</div>
-					</DropdownMenuItem>
-				</DropdownMenuContent>
-			</DropdownMenu>
-		</div>
+				<DropdownMenuItem asChild>
+					<div className=' flex flex-col items-end justify-end'>
+						<SignOutButton />
+					</div>
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }

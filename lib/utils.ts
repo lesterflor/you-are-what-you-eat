@@ -499,12 +499,14 @@ export function isNewFoodItem(itemDate: string | Date) {
 }
 
 export function getNewItemCount(items: GetFoodItem[]) {
-	return items.reduce((acc, curr) => {
-		if (isNewFoodItem(curr.createdAt)) {
-			return acc + 1;
-		}
-		return acc;
-	}, 0);
+	return (
+		items?.reduce((acc, curr) => {
+			if (isNewFoodItem(curr.createdAt)) {
+				return acc + 1;
+			}
+			return acc;
+		}, 0) ?? 0
+	);
 }
 
 export function getLocalStorageSize() {
