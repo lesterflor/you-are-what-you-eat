@@ -1,24 +1,26 @@
 'use client';
 
-import {
-	sendNotification,
-	subscribeUser,
-	unsubscribeUser
-} from '@/actions/pwa-actions';
-import { useEffect, useRef, useState } from 'react';
+import { subscribeUser, unsubscribeUser } from '@/actions/pwa-actions';
+import { pushSubAtom } from '@/lib/atoms/pushSubAtom';
+import { useAtom } from 'jotai';
+import { useEffect, useRef, useState, useTransition } from 'react';
+import { ImSpinner2 } from 'react-icons/im';
+import { IoIosNotificationsOutline } from 'react-icons/io';
+import { IoNotificationsOffOutline } from 'react-icons/io5';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardTitle } from '../ui/card';
-import { Input } from '../ui/input';
 import { urlBase64ToUint8Array } from './urlBase64';
 
-export default function PushNotificationManager() {
+export default function PushNotificationManager({
+	invisibleMode = false
+}: {
+	invisibleMode?: boolean;
+}) {
 	const isSubbing = useRef<boolean>(false);
 	const [isSupported, setIsSupported] = useState(false);
-	const [subscription, setSubscription] = useState<PushSubscription | null>(
-		null
-	);
-	const [message, setMessage] = useState('');
+	const [subscription, setSubscription] = useAtom(pushSubAtom);
+	const [isSubbingTrans, setIsSubbingTrans] = useTransition();
 
 	useEffect(() => {
 		if ('serviceWorker' in navigator && 'PushManager' in window) {
@@ -40,7 +42,7 @@ export default function PushNotificationManager() {
 		}
 	};
 
-	const subscribeToPush = async () => {
+	const subscribeToPush = async (showSubToast: boolean = false) => {
 		isSubbing.current = true;
 		const registration = await navigator.serviceWorker.ready;
 		const sub = await registration.pushManager.subscribe({
@@ -50,16 +52,22 @@ export default function PushNotificationManager() {
 			)
 		});
 
-		const serializedSub = JSON.parse(JSON.stringify(sub));
+		setIsSubbingTrans(async () => {
+			const serializedSub = JSON.parse(JSON.stringify(sub));
 
-		const res = await subscribeUser(serializedSub);
+			const res = await subscribeUser(serializedSub);
 
-		if (res.success) {
-			setSubscription(sub);
-			toast.success(res.message);
-		} else {
-			toast.error(res.message);
-		}
+			if (res.success) {
+				setSubscription(sub);
+				if (showSubToast) {
+					toast.success(res.message);
+				}
+			} else {
+				if (showSubToast) {
+					toast.error(res.message);
+				}
+			}
+		});
 
 		isSubbing.current = false;
 	};
@@ -69,27 +77,29 @@ export default function PushNotificationManager() {
 			return;
 		}
 
-		const serializedSub = JSON.parse(JSON.stringify(subscription));
-		const res = await unsubscribeUser(serializedSub);
-
-		if (res.success) {
-			await subscription?.unsubscribe();
-			setSubscription(null);
-			toast.success(res.message);
-		} else {
-			toast.error(res.message);
-		}
-	};
-
-	const sendTestNotification = async () => {
-		if (subscription) {
+		setIsSubbingTrans(async () => {
 			const serializedSub = JSON.parse(JSON.stringify(subscription));
-			await sendNotification(serializedSub, message);
-			setMessage('');
-		}
+			const res = await unsubscribeUser(serializedSub);
+
+			if (res.success) {
+				await subscription?.unsubscribe();
+				setSubscription(null);
+				toast.success(res.message);
+			} else {
+				toast.error(res.message);
+			}
+		});
 	};
 
-	if (!isSupported) {
+	// const sendTestNotification = async () => {
+	// 	if (subscription) {
+	// 		const serializedSub = JSON.parse(JSON.stringify(subscription));
+	// 		await sendNotification(serializedSub, message);
+	// 		setMessage('');
+	// 	}
+	// };
+
+	if (!isSupported || invisibleMode) {
 		return null;
 	}
 
@@ -103,38 +113,28 @@ export default function PushNotificationManager() {
 							You are subscribed to push notifications.
 						</CardDescription>
 						<Button
+							disabled={isSubbingTrans}
 							size={'sm'}
 							variant={'secondary'}
 							onClick={(e) => {
 								e.preventDefault();
 								unsubscribeFromPush();
 							}}>
+							{isSubbingTrans ? <ImSpinner2 /> : <IoNotificationsOffOutline />}
 							Unsubscribe
-						</Button>
-						<Input
-							onClick={(e) => e.preventDefault()}
-							type='text'
-							placeholder='Enter notification message'
-							value={message}
-							onChange={(e) => {
-								e.preventDefault();
-								setMessage(e.target.value);
-							}}
-						/>
-						<Button
-							size={'sm'}
-							variant={'secondary'}
-							onClick={(e) => {
-								e.preventDefault();
-								sendTestNotification();
-							}}>
-							Send Test
 						</Button>
 					</>
 				) : (
 					<>
 						<p>You are not subscribed to push notifications.</p>
-						{/* <Button onClick={subscribeToPush}>Subscribe</Button> */}
+						<Button
+							disabled={isSubbingTrans}
+							size={'sm'}
+							variant={'secondary'}
+							onClick={() => subscribeToPush(true)}>
+							{isSubbingTrans ? <ImSpinner2 /> : <IoIosNotificationsOutline />}
+							Subscribe
+						</Button>
 					</>
 				)}
 			</CardContent>

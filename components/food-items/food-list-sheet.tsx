@@ -87,7 +87,6 @@ const FoodListSheet = memo(function FoodListSheet({
 		setFoods(foodsData as GetFoodItem[]);
 
 		// refetch again since initialData is stale from local storage (max size reached)
-		console.log('mount refetch');
 		refetch();
 	}, []);
 

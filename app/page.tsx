@@ -1,4 +1,5 @@
 import LandingContent from '@/components/landing-content';
+import PushNotificationManager from '@/components/pwa/push-notification-manager';
 import { auth } from '@/db/auth';
 import { getFavouriteQueryOptions } from '@/lib/queries/favouriteQueries';
 import {
@@ -58,27 +59,30 @@ export default async function Home() {
 
 	return (
 		<HydrationBoundary state={dehydrate(queryClient)}>
-			{session ? (
-				<div className='flex flex-col gap-0 w-full h-full relative'>
-					<div className='portrait:hidden flex flex-row items-center justify-between w-full gap-2'>
-						<div>
-							<AddFoodSheetLazy />
+			<>
+				{session ? (
+					<div className='flex flex-col gap-0 w-full h-full relative'>
+						<div className='portrait:hidden flex flex-row items-center justify-between w-full gap-2'>
+							<div>
+								<AddFoodSheetLazy />
+							</div>
+							<div className='flex flex-row items-center gap-4'>
+								<FoodListSheetLazy />
+							</div>
 						</div>
-						<div className='flex flex-row items-center gap-4'>
-							<FoodListSheetLazy />
+						<div className='relative pt-10'>
+							<FoodLogListLazy
+								useFloaterNav={true}
+								iconPosition='top'
+								forceColumn={false}
+							/>
 						</div>
 					</div>
-					<div className='relative pt-10'>
-						<FoodLogListLazy
-							useFloaterNav={true}
-							iconPosition='top'
-							forceColumn={false}
-						/>
-					</div>
-				</div>
-			) : (
-				<LandingContent />
-			)}
+				) : (
+					<LandingContent />
+				)}
+				<PushNotificationManager invisibleMode={true} />
+			</>
 		</HydrationBoundary>
 	);
 }
