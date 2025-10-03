@@ -1,5 +1,17 @@
 import { z } from 'zod';
 
+export const pushNotificationSchema = z.object({
+	createdAt: z.date().optional(),
+	updatedAt: z.date().optional(),
+	userId: z.string(),
+	expirationDate: z.date().optional().nullable(),
+	endpoint: z.string(),
+	keys: z.object({
+		p256dh: z.string(),
+		auth: z.string()
+	})
+});
+
 // schema for signing users in
 export const signInFormSchema = z.object({
 	email: z.string().email('Invalid email address'),

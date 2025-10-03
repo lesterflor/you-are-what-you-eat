@@ -254,3 +254,18 @@ model FoodItemImage {
   foodItem   FoodItem @relation(fields: [foodItemId], references: [id])
   foodItemId String   @db.ObjectId
 }
+
+model PushSubscription {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  userId         String
+  expirationDate DateTime?
+  endpoint       String    @unique
+  keys           Keys
+}
+
+type Keys {
+  p256dh String
+  auth   String
+}

@@ -59,7 +59,7 @@ export default async function Home() {
 	return (
 		<HydrationBoundary state={dehydrate(queryClient)}>
 			{session ? (
-				<div className='flex flex-col gap-0 w-full h-full'>
+				<div className='flex flex-col gap-0 w-full h-full relative'>
 					<div className='portrait:hidden flex flex-row items-center justify-between w-full gap-2'>
 						<div>
 							<AddFoodSheetLazy />

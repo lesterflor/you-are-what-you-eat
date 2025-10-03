@@ -4,6 +4,7 @@ import {
 	getPreparedDishImageSchema,
 	getWaterConsumedSchema,
 	preparedDishImageSchema,
+	pushNotificationSchema,
 	userSchema,
 	waterConsumedSchema
 } from '@/lib/validators';
@@ -298,3 +299,5 @@ export type MockedFunction<T extends (...args: any[]) => any> = jest.Mock<
 	ReturnType<T>, // what it returns
 	Parameters<T> // what it accepts
 >;
+
+export type PushNotification = z.infer<typeof pushNotificationSchema>;

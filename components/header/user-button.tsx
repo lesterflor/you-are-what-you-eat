@@ -12,6 +12,7 @@ import { User } from '@/types';
 import { UserIcon } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import PushNotificationManager from '../pwa/push-notification-manager';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import SignOutButton from './sign-out-button';
 
@@ -76,6 +77,12 @@ export default function UserButton() {
 							</DropdownMenuItem>
 						</>
 					)}
+
+					<DropdownMenuItem asChild>
+						<div className=' flex flex-col items-end justify-end'>
+							<PushNotificationManager />
+						</div>
+					</DropdownMenuItem>
 
 					<DropdownMenuItem asChild>
 						<div className=' flex flex-col items-end justify-end'>
