@@ -1,5 +1,7 @@
 'use client';
 
+import { sendNotification } from '@/actions/pwa-actions';
+import { pushSubAtom } from '@/lib/atoms/pushSubAtom';
 import CaloricGram from '@/lib/caloric-gram';
 import {
 	addFood,
@@ -11,6 +13,7 @@ import { foodItemSchema } from '@/lib/validators';
 import { GetFoodItem, GetUser } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import { useAtomValue } from 'jotai';
 import { LoaderIcon, Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
@@ -39,6 +42,8 @@ export default function AddFoodItemForm({
 	const dispatch = useAppDispatch();
 
 	const { mutate, isPending } = useMutation(addFoodMutationOptions());
+
+	const subscription = useAtomValue(pushSubAtom);
 
 	const { data: session } = useSession();
 	const user = session?.user as GetUser;
@@ -75,7 +80,16 @@ export default function AddFoodItemForm({
 		}
 
 		mutate(values, {
-			onSuccess: (res) => {
+			onSuccess: async (res) => {
+				// push notification
+				if (subscription) {
+					await sendNotification(
+						JSON.parse(JSON.stringify(subscription)),
+						`${res.pushMessage}`,
+						'New Food Item Added!'
+					);
+				}
+
 				//redux
 				dispatch(addFood(generateRxFoodItemSchema(res.data as GetFoodItem)));
 

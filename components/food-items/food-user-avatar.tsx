@@ -1,5 +1,7 @@
 'use client';
 
+import { sendNotification } from '@/actions/pwa-actions';
+import { pushSubAtom } from '@/lib/atoms/pushSubAtom';
 import { inputSearch, userSearch } from '@/lib/features/food/foodSearchSlice';
 import {
 	deleteFood,
@@ -10,6 +12,7 @@ import { deleteFoodMutationOptions } from '@/lib/mutations/foodMutations';
 import { shuffle } from '@/lib/utils';
 import { GetFoodItem, GetUser } from '@/types';
 import { useMutation } from '@tanstack/react-query';
+import { useAtomValue } from 'jotai';
 import {
 	FilePenLine,
 	SquareArrowOutUpRight,
@@ -50,6 +53,7 @@ export default function FoodUserAvatar({
 	const dispatch = useAppDispatch();
 
 	const { mutate, isPending } = useMutation(deleteFoodMutationOptions());
+	const subscription = useAtomValue(pushSubAtom);
 
 	const DISPLAY_LIMIT = 2;
 	const { name, image = '', id, FoodItems: items = [] } = user;
@@ -109,7 +113,16 @@ export default function FoodUserAvatar({
 		}
 		// tanstack
 		mutate(currentFood[0].id, {
-			onSuccess: (res) => {
+			onSuccess: async (res) => {
+				// push notification
+				if (subscription) {
+					await sendNotification(
+						JSON.parse(JSON.stringify(subscription)),
+						`${res.pushMessage}`,
+						'Food Item Deleted!'
+					);
+				}
+
 				// redux
 				dispatch(deleteFood(generateRxFoodItemSchema(res.data as GetFoodItem)));
 

@@ -1,5 +1,7 @@
 'use client';
 
+import { sendNotification } from '@/actions/pwa-actions';
+import { pushSubAtom } from '@/lib/atoms/pushSubAtom';
 import CaloricGram from '@/lib/caloric-gram';
 import {
 	generateRxFoodItemSchema,
@@ -11,6 +13,7 @@ import { getFoodItemSchema } from '@/lib/validators';
 import { GetFoodItem, GetUser } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import { useAtomValue } from 'jotai';
 import { LoaderIcon, Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import {
@@ -49,6 +52,8 @@ export default function UpdateFoodItemForm({
 	const { data: session } = useSession();
 	const user = session?.user as GetUser;
 
+	const subscription = useAtomValue(pushSubAtom);
+
 	const form = useForm<z.infer<typeof getFoodItemSchema>>({
 		resolver: zodResolver(getFoodItemSchema),
 		defaultValues: item
@@ -68,8 +73,17 @@ export default function UpdateFoodItemForm({
 		}
 
 		mutate(values, {
-			onSuccess: (res) => {
+			onSuccess: async (res) => {
 				form.reset();
+
+				// push notification
+				if (subscription) {
+					await sendNotification(
+						JSON.parse(JSON.stringify(subscription)),
+						`${res.pushMessage}`,
+						'Food Item Updated!'
+					);
+				}
 
 				// redux
 				dispatch(updateFood(generateRxFoodItemSchema(res.data as GetFoodItem)));

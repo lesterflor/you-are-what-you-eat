@@ -210,6 +210,13 @@ export async function compareLocalFoods(strLen: number) {
 }
 
 export async function addFoodItem(item: FoodItem) {
+	const session = await auth();
+	const user = session?.user;
+
+	if (!session || !user) {
+		throw new Error('User must be authenticated');
+	}
+
 	try {
 		const validated = foodItemSchema.parse(item);
 
@@ -225,8 +232,21 @@ export async function addFoodItem(item: FoodItem) {
 
 		return {
 			success: true,
-			message: 'Food item added successfully',
-			data: newItem
+			message: `Food item ${newItem.name}, was added successfully.`,
+			data: newItem,
+			pushMessage: `${user.name} added a new food item, ${
+				newItem.name
+			}. It has ${newItem.calories} ${
+				newItem.calories === 1 ? 'calorie' : 'calories'
+			}, with ${newItem.carbGrams} ${
+				newItem.carbGrams === 1 ? 'gram' : 'grams'
+			} of carbs, ${newItem.proteinGrams} ${
+				newItem.proteinGrams === 1 ? 'gram' : 'grams'
+			} of protein, and ${newItem.fatGrams} ${
+				newItem.fatGrams === 1 ? 'gram' : 'grams'
+			} of fat, based on ${newItem.servingSize} ${
+				newItem.servingSize === 1 ? 'serving' : 'servings'
+			}.`
 		};
 	} catch (error: unknown) {
 		return {
@@ -239,8 +259,9 @@ export async function addFoodItem(item: FoodItem) {
 export async function updateFoodItem(item: GetFoodItem) {
 	try {
 		const session = await auth();
+		const user = session?.user;
 
-		if (!session) {
+		if (!session || !user) {
 			throw new Error('User must be authenticated');
 		}
 
@@ -280,8 +301,21 @@ export async function updateFoodItem(item: GetFoodItem) {
 
 		return {
 			success: true,
-			message: 'Food item updated successfully',
-			data: update
+			message: `Food item ${update.name}, was updated successfully.`,
+			data: update,
+			pushMessage: `${user.name} updated the food item, ${
+				update.name
+			}. It now has ${update.calories} ${
+				update.calories === 1 ? 'calorie' : 'calories'
+			}, with ${update.carbGrams} ${
+				update.carbGrams === 1 ? 'gram' : 'grams'
+			} of carbs, ${update.proteinGrams} ${
+				update.proteinGrams === 1 ? 'gram' : 'grams'
+			} of protein, and ${update.fatGrams} ${
+				update.fatGrams === 1 ? 'gram' : 'grams'
+			} of fat, based on ${update.servingSize} ${
+				update.servingSize === 1 ? 'serving' : 'servings'
+			}.`
 		};
 	} catch (error: unknown) {
 		return {
@@ -292,6 +326,13 @@ export async function updateFoodItem(item: GetFoodItem) {
 }
 
 export async function deleteFoodItem(id: string) {
+	const session = await auth();
+	const user = session?.user;
+
+	if (!session || !user) {
+		throw new Error('User must be authenticated');
+	}
+
 	try {
 		const existing = await prisma.foodItem.findFirst({
 			where: {
@@ -322,8 +363,9 @@ export async function deleteFoodItem(id: string) {
 
 		return {
 			success: true,
-			message: 'Food item deleted successfully',
-			data: del
+			message: `Food item ${del.name}, was deleted successfully.`,
+			data: del,
+			pushMessage: `${user.name} deleted the food item, ${del.name}.`
 		};
 	} catch (error: unknown) {
 		return {
