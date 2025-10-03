@@ -1,9 +1,8 @@
 import { auth } from '@/db/auth';
-import { getToday } from '@/lib/utils';
-import { format } from 'date-fns';
-import { Calculator, UtensilsCrossed } from 'lucide-react';
+import { UtensilsCrossed } from 'lucide-react';
 import Link from 'next/link';
 import { lazy } from 'react';
+import CurrentDayHud from './current-day-hud';
 import ModeToggle from './mode-toggle';
 import UserButton from './user-button';
 
@@ -25,7 +24,6 @@ const LogSheetLazy = lazy(() => import('@/components/logs/log-sheet'));
 
 export default async function SiteHeader() {
 	const session = await auth();
-	const { current } = getToday();
 
 	return (
 		<header className='w-full border-b fixed top-0 z-50 bg-white dark:bg-green-950 select-none px-0'>
@@ -73,10 +71,7 @@ export default async function SiteHeader() {
 						<LogMacrosSummaryCurrentLazy
 							compactMode={true}
 							useSkeleton={false}>
-							<div className='flex flex-row items-center gap-2'>
-								<Calculator className='w-4 h-4' />
-								<div>{format(current, 'eee PP h:mm a')}</div>
-							</div>
+							<CurrentDayHud />
 						</LogMacrosSummaryCurrentLazy>
 						<div className='text-xs text-muted-foreground pt-1'>
 							You are what you eat,{' '}
