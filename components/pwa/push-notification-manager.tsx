@@ -5,7 +5,7 @@ import {
 	subscribeUser,
 	unsubscribeUser
 } from '@/actions/pwa-actions';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardTitle } from '../ui/card';
@@ -14,6 +14,8 @@ import { urlBase64ToUint8Array } from './urlBase64';
 
 export default function PushNotificationManager() {
 	const [isSupported, setIsSupported] = useState(false);
+	const isSubbing = useRef<boolean>(false);
+
 	const [subscription, setSubscription] = useState<PushSubscription | null>(
 		null
 	);
@@ -33,9 +35,14 @@ export default function PushNotificationManager() {
 		});
 		const sub = await registration.pushManager.getSubscription();
 		setSubscription(sub);
+
+		if (!sub && !isSubbing.current) {
+			subscribeToPush();
+		}
 	}
 
 	async function subscribeToPush() {
+		isSubbing.current = true;
 		const registration = await navigator.serviceWorker.ready;
 		const sub = await registration.pushManager.subscribe({
 			userVisibleOnly: true,
@@ -53,6 +60,8 @@ export default function PushNotificationManager() {
 		} else {
 			toast.error(res.message);
 		}
+
+		isSubbing.current = false;
 	}
 
 	async function unsubscribeFromPush() {
@@ -76,7 +85,6 @@ export default function PushNotificationManager() {
 	}
 
 	if (!isSupported) {
-		// return <p>Push notifications are not supported in this browser.</p>;
 		return null;
 	}
 
@@ -121,7 +129,7 @@ export default function PushNotificationManager() {
 				) : (
 					<>
 						<p>You are not subscribed to push notifications.</p>
-						<Button onClick={subscribeToPush}>Subscribe</Button>
+						{/* <Button onClick={subscribeToPush}>Subscribe</Button> */}
 					</>
 				)}
 			</CardContent>
