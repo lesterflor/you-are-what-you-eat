@@ -13,9 +13,8 @@ import { Input } from '../ui/input';
 import { urlBase64ToUint8Array } from './urlBase64';
 
 export default function PushNotificationManager() {
-	const [isSupported, setIsSupported] = useState(false);
 	const isSubbing = useRef<boolean>(false);
-
+	const [isSupported, setIsSupported] = useState(false);
 	const [subscription, setSubscription] = useState<PushSubscription | null>(
 		null
 	);
@@ -28,7 +27,7 @@ export default function PushNotificationManager() {
 		}
 	}, []);
 
-	async function registerServiceWorker() {
+	const registerServiceWorker = async () => {
 		const registration = await navigator.serviceWorker.register('/sw.js', {
 			scope: '/',
 			updateViaCache: 'none'
@@ -39,9 +38,9 @@ export default function PushNotificationManager() {
 		if (!sub && !isSubbing.current) {
 			subscribeToPush();
 		}
-	}
+	};
 
-	async function subscribeToPush() {
+	const subscribeToPush = async () => {
 		isSubbing.current = true;
 		const registration = await navigator.serviceWorker.ready;
 		const sub = await registration.pushManager.subscribe({
@@ -50,39 +49,40 @@ export default function PushNotificationManager() {
 				process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
 			)
 		});
-		setSubscription(sub);
+
 		const serializedSub = JSON.parse(JSON.stringify(sub));
 
 		const res = await subscribeUser(serializedSub);
 
 		if (res.success) {
+			setSubscription(sub);
 			toast.success(res.message);
 		} else {
 			toast.error(res.message);
 		}
 
 		isSubbing.current = false;
-	}
+	};
 
-	async function unsubscribeFromPush() {
+	const unsubscribeFromPush = async () => {
 		await subscription?.unsubscribe();
-		setSubscription(null);
 
 		const res = await unsubscribeUser();
 
 		if (res.success) {
+			setSubscription(null);
 			toast.success(res.message);
 		} else {
 			toast.error(res.message);
 		}
-	}
+	};
 
-	async function sendTestNotification() {
+	const sendTestNotification = async () => {
 		if (subscription) {
 			await sendNotification(message);
 			setMessage('');
 		}
-	}
+	};
 
 	if (!isSupported) {
 		return null;

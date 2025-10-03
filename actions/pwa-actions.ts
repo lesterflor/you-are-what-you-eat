@@ -13,8 +13,6 @@ webpush.setVapidDetails(
 );
 
 export async function subscribeUser(sub: PushSubscription) {
-	console.log('pushsub', sub);
-
 	const session = await auth();
 	const user = session?.user;
 
@@ -23,6 +21,19 @@ export async function subscribeUser(sub: PushSubscription) {
 	}
 
 	try {
+		const existing = await prisma.pushSubscription.findFirst({
+			where: {
+				userId: user.id
+			}
+		});
+
+		if (existing) {
+			return {
+				success: true,
+				message: 'User is already subscribed to push notifications'
+			};
+		}
+
 		const data: PushNotification = {
 			userId: user.id as string,
 			endpoint: sub.endpoint,
