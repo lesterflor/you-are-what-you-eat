@@ -21,19 +21,6 @@ export async function subscribeUser(sub: PushSubscription) {
 	}
 
 	try {
-		const existing = await prisma.pushSubscription.findFirst({
-			where: {
-				userId: user.id
-			}
-		});
-
-		if (existing) {
-			return {
-				success: true,
-				message: 'User is already subscribed to push notifications'
-			};
-		}
-
 		const data: PushNotification = {
 			userId: user.id as string,
 			endpoint: sub.endpoint,
@@ -64,7 +51,7 @@ export async function subscribeUser(sub: PushSubscription) {
 	}
 }
 
-export async function unsubscribeUser() {
+export async function unsubscribeUser(sub: PushSubscription) {
 	const session = await auth();
 	const user = session?.user;
 
@@ -75,7 +62,8 @@ export async function unsubscribeUser() {
 	try {
 		const existingSub = await prisma.pushSubscription.findFirst({
 			where: {
-				userId: user.id
+				userId: user.id,
+				endpoint: sub.endpoint
 			}
 		});
 
@@ -113,6 +101,7 @@ export async function unsubscribeUser() {
 }
 
 export async function sendNotification(
+	sub: PushSubscription,
 	message: string,
 	title: string = 'You Are What You Eat'
 ) {
@@ -123,33 +112,44 @@ export async function sendNotification(
 		throw new Error('User must be authenticated');
 	}
 
-	const sub = await prisma.pushSubscription.findFirst({
-		where: { userId: user.id }
+	const subs = await prisma.pushSubscription.findMany({
+		where: {
+			NOT: [
+				{
+					userId: user.id,
+					endpoint: sub.endpoint
+				}
+			]
+		}
 	});
 
-	if (!sub) {
+	if (!subs) {
 		throw new Error('No subscription available');
 	}
 
 	try {
-		const pushSub: PushSubscription = {
-			endpoint: sub.endpoint,
-			expirationTime: sub.expirationDate ? sub.expirationDate.getTime() : null,
-			keys: {
-				p256dh: sub.keys?.p256dh ?? '',
-				auth: sub.keys?.auth ?? ''
-			}
-		};
+		for (const sub of subs) {
+			const pushSub: PushSubscription = {
+				endpoint: sub.endpoint,
+				expirationTime: sub.expirationDate
+					? sub.expirationDate.getTime()
+					: null,
+				keys: {
+					p256dh: sub.keys?.p256dh ?? '',
+					auth: sub.keys?.auth ?? ''
+				}
+			};
 
-		await webpush.sendNotification(
-			pushSub,
-			JSON.stringify({
-				title: title,
-				body: message,
-				icon: '/android-chrome-192x192.png'
-			})
-		);
-		return { success: true };
+			await webpush.sendNotification(
+				pushSub,
+				JSON.stringify({
+					title: title,
+					body: message,
+					icon: '/android-chrome-192x192.png'
+				})
+			);
+			return { success: true };
+		}
 	} catch (error) {
 		console.error('Error sending push notification:', error);
 		return { success: false, error: 'Failed to send notification' };

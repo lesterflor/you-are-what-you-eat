@@ -65,11 +65,15 @@ export default function PushNotificationManager() {
 	};
 
 	const unsubscribeFromPush = async () => {
-		await subscription?.unsubscribe();
+		if (!subscription) {
+			return;
+		}
 
-		const res = await unsubscribeUser();
+		const serializedSub = JSON.parse(JSON.stringify(subscription));
+		const res = await unsubscribeUser(serializedSub);
 
 		if (res.success) {
+			await subscription?.unsubscribe();
 			setSubscription(null);
 			toast.success(res.message);
 		} else {
@@ -79,7 +83,8 @@ export default function PushNotificationManager() {
 
 	const sendTestNotification = async () => {
 		if (subscription) {
-			await sendNotification(message);
+			const serializedSub = JSON.parse(JSON.stringify(subscription));
+			await sendNotification(serializedSub, message);
 			setMessage('');
 		}
 	};

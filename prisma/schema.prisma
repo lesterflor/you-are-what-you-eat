@@ -58,6 +58,7 @@ model User {
   foodItemFavourites  FoodItemFavourite[]
   preparedDishes      PreparedDish[]
   waterConsumed       WaterConsumed[]
+  subscriptions       PushSubscription[]
 }
 
 model FoodItem {
@@ -259,10 +260,11 @@ model PushSubscription {
   id             String    @id @default(auto()) @map("_id") @db.ObjectId
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
-  userId         String
+  userId         String    @db.ObjectId
   expirationDate DateTime?
   endpoint       String    @unique
   keys           Keys
+  user           User      @relation(fields: [userId], references: [id])
 }
 
 type Keys {
