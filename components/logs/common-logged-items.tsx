@@ -53,7 +53,7 @@ const CommonLoggedItems = memo(function CommonLoggedItems() {
 							</Badge>
 							<Badge
 								variant={'outline'}
-								className='bg-amber-900 text-muted-foreground py-2 gap-1 px-1 font-normal'>
+								className='bg-amber-900 text-white dark:text-muted-foreground py-2 gap-1 px-1 font-normal'>
 								<FoodCategoryIconMapper
 									type='meat'
 									small={true}
@@ -71,7 +71,7 @@ const CommonLoggedItems = memo(function CommonLoggedItems() {
 							</Badge>
 							<Badge
 								variant={'outline'}
-								className='bg-amber-950 text-muted-foreground py-2 gap-1 px-1 font-normal'>
+								className='bg-amber-950 text-white dark:text-muted-foreground py-2 gap-1 px-1 font-normal'>
 								<FoodCategoryIconMapper
 									type='nutSeed'
 									small={true}
@@ -80,7 +80,7 @@ const CommonLoggedItems = memo(function CommonLoggedItems() {
 							</Badge>
 							<Badge
 								variant={'outline'}
-								className='bg-slate-700 text-muted-foreground py-2 gap-1 px-1 font-normal'>
+								className='bg-slate-700 text-white dark:text-muted-foreground py-2 gap-1 px-1 font-normal'>
 								<FoodCategoryIconMapper
 									type='other'
 									small={true}
@@ -89,7 +89,7 @@ const CommonLoggedItems = memo(function CommonLoggedItems() {
 							</Badge>
 							<Badge
 								variant={'outline'}
-								className='bg-green-950 text-muted-foreground py-2 gap-1 px-1 font-normal'>
+								className='bg-green-950 text-white dark:text-muted-foreground py-2 gap-1 px-1 font-normal'>
 								<FoodCategoryIconMapper
 									type='veg'
 									small={true}
