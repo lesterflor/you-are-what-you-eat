@@ -1,1 +1,10 @@
 npm test
+
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔧 Incrementing build number..."
+npm run build:increment
+
+# Add the updated package.json to the commit
+git add package.json

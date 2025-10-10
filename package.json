@@ -12,7 +12,8 @@
     "test:watch": "jest --watch",
     "prepare": "husky",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "build:increment": "node scripts/incrementBuild.js"
   },
   "dependencies": {
     "@auth/core": "^0.37.4",
@@ -143,5 +144,6 @@
   },
   "overrides": {
     "react-is": "^19.0.0-rc-69d4b800-20241021"
-  }
+  },
+  "buildNumber": 1.1
 }
