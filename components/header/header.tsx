@@ -1,4 +1,5 @@
 import { auth } from '@/db/auth';
+import { appVersion } from '@/lib/version';
 import { UtensilsCrossed } from 'lucide-react';
 import Link from 'next/link';
 import { lazy } from 'react';
@@ -35,8 +36,11 @@ export default async function SiteHeader() {
 				<div className='flex flex-row items-center justify-start gap-5 portrait:gap-0 h-full'>
 					<Link href='/'>
 						<div className='flex flex-row items-center gap-2 h-full'>
-							<div className='portrait:h-[7vh] portrait:align-top'>
-								<UtensilsCrossed className='w-8 h-8' />
+							<div className='portrait:h-[7vh] portrait:align-top w-12 h-10 rounded-full bg-emerald-900 flex items-center justify-center relative'>
+								<UtensilsCrossed className='w-8 h-8 text-white' />
+								<div className='absolute bottom-0 text-[8px] text-muted-foreground font-extralight'>
+									{appVersion}
+								</div>
 							</div>
 
 							<div className='flex flex-col gap-0'>
