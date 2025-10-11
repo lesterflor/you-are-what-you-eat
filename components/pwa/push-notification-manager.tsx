@@ -2,6 +2,7 @@
 
 import { subscribeUser, unsubscribeUser } from '@/actions/pwa-actions';
 import { pushSubAtom } from '@/lib/atoms/pushSubAtom';
+import { formatError } from '@/lib/utils';
 import { useAtom } from 'jotai';
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
@@ -21,6 +22,9 @@ export default function PushNotificationManager({
 	const [isSupported, setIsSupported] = useState(false);
 	const [subscription, setSubscription] = useAtom(pushSubAtom);
 	const [isSubbingTrans, setIsSubbingTrans] = useTransition();
+	const [permission, setPermission] = useState<NotificationPermission>(
+		typeof window !== 'undefined' ? Notification.permission : 'default'
+	);
 
 	useEffect(() => {
 		if ('serviceWorker' in navigator && 'PushManager' in window) {
@@ -28,6 +32,28 @@ export default function PushNotificationManager({
 			registerServiceWorker();
 		}
 	}, []);
+
+	const checkPermissions = async () => {
+		if (!('Notification' in window)) {
+			console.error('This browser does not support notifications');
+			return;
+		}
+
+		try {
+			const result = await Notification.requestPermission();
+
+			setPermission(result);
+
+			if (result === 'granted') {
+				new Notification('Notifications enabled!', {
+					body: "You'll now receive updates from this app.",
+					icon: '/android-chrome-192x192.png'
+				});
+			}
+		} catch (err: unknown) {
+			console.error(formatError(err));
+		}
+	};
 
 	const registerServiceWorker = async () => {
 		const registration = await navigator.serviceWorker.register('/sw.js', {
@@ -43,6 +69,7 @@ export default function PushNotificationManager({
 	};
 
 	const subscribeToPush = async (showSubToast: boolean = false) => {
+		await checkPermissions();
 		isSubbing.current = true;
 		const registration = await navigator.serviceWorker.ready;
 		const sub = await registration.pushManager.subscribe({
@@ -99,7 +126,7 @@ export default function PushNotificationManager({
 		<Card>
 			<CardContent className='text-xs flex flex-col gap-2 mt-2'>
 				<CardTitle>Push Notifications</CardTitle>
-				{subscription ? (
+				{subscription && permission === 'granted' ? (
 					<>
 						<CardDescription className='text-xs leading-tight'>
 							You are subscribed to push notifications.
