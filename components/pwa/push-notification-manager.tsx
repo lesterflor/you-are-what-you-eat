@@ -123,7 +123,10 @@ export default function PushNotificationManager({
 							disabled={isSubbingTrans}
 							size={'sm'}
 							variant={'secondary'}
-							onClick={() => subscribeToPush(true)}>
+							onClick={(e) => {
+								e.preventDefault();
+								subscribeToPush(true);
+							}}>
 							{isSubbingTrans ? <ImSpinner2 /> : <IoIosNotificationsOutline />}
 							Subscribe
 						</Button>
