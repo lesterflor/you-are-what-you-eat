@@ -144,12 +144,12 @@ export default function CreateDishForm({
 
 	return (
 		<div className='flex flex-col gap-2 items-center relative'>
-			<div className='leading-tight text-sm'>
+			<h2 className='leading-tight text-sm self-start font-semibold'>
 				Do you want to create a new dish from the {foodItems.length} selected{' '}
 				{foodItems.length === 1 ? 'item' : 'items'}?
-			</div>
+			</h2>
 			<ScrollArea className='w-full'>
-				<div className='flex flex-col gap-2 max-h-[22vh]'>
+				<div className='flex flex-col justify-center gap-2 max-h-[22vh]'>
 					{dishFoodItems &&
 						dishFoodItems.length > 0 &&
 						dishFoodItems.map((item, indx) => (
@@ -271,13 +271,13 @@ export default function CreateDishForm({
 
 			{currentDishes && currentDishes.length > 0 && (
 				<div className='flex flex-col gap-2 pt-4'>
-					<div className='text-sm leading-tight'>
+					<h2 className='text-sm leading-tight font-semibold'>
 						{`Or add ${
 							foodItems.length === 1 ? 'it' : 'them'
 						} to an existing dish?`}
-					</div>
+					</h2>
 					<ScrollArea className='w-full'>
-						<div className='flex flex-col gap-6 max-h-[24vh] pt-3'>
+						<div className='flex flex-col gap-6 max-h-[24vh] items-start w-full pt-2'>
 							{currentDishes.map((item) => (
 								<div
 									key={item.id}
@@ -287,7 +287,7 @@ export default function CreateDishForm({
 										readOnly={true}
 									/>
 									<Button
-										className='absolute -top-2 right-0 rounded-full'
+										className='absolute !flex-col !gap-0 !text-xs -top-2 right-0 rounded-full'
 										size={'icon'}
 										disabled={updatePending}
 										onClick={() =>
@@ -296,7 +296,10 @@ export default function CreateDishForm({
 										{updatePending ? (
 											<ImSpinner2 className='animate-spin' />
 										) : (
-											<TbHemispherePlus />
+											<>
+												<TbHemispherePlus />
+												Add
+											</>
 										)}
 									</Button>
 								</div>

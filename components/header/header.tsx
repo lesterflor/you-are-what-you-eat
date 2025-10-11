@@ -38,7 +38,7 @@ export default async function SiteHeader() {
 						<div className='flex flex-row items-center gap-2 h-full'>
 							<div className='portrait:h-[7vh] portrait:align-top w-12 h-10 rounded-full bg-emerald-900 flex items-center justify-center relative'>
 								<UtensilsCrossed className='w-8 h-8 text-white' />
-								<div className='absolute bottom-0 text-[8px] text-muted-foreground font-extralight'>
+								<div className='absolute bottom-0 text-[8px] text-white dark:text-muted-foreground font-extralight'>
 									{appVersion}
 								</div>
 							</div>
