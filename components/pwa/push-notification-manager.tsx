@@ -147,7 +147,7 @@ export default function PushNotificationManager({
 					<>
 						<p>You are not subscribed to push notifications.</p>
 						<Button
-							disabled={isSubbingTrans}
+							disabled={isSubbingTrans || permission === 'denied'}
 							size={'sm'}
 							variant={'secondary'}
 							onClick={(e) => {
@@ -157,6 +157,13 @@ export default function PushNotificationManager({
 							{isSubbingTrans ? <ImSpinner2 /> : <IoIosNotificationsOutline />}
 							Subscribe
 						</Button>
+						{permission === 'denied' && (
+							<p className='text-xs text-muted-foreground'>
+								You have notifications turned off for your browser. To enable
+								this feature, go to your browser settings on allow
+								Notifications.
+							</p>
+						)}
 					</>
 				)}
 			</CardContent>
