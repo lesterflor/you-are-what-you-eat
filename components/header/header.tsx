@@ -30,7 +30,8 @@ export default async function SiteHeader() {
 		<header className='w-full border-b fixed top-0 z-50 bg-white dark:bg-green-950 select-none px-0'>
 			<div className='wrapper flex flex-between justify-between items-center w-full p-2 relative'>
 				<div className='absolute -bottom-4 left-0 flex flex-row items-center gap-2'>
-					<ReduxStoreLoggerLazy />
+					{session && <ReduxStoreLoggerLazy />}
+
 					<DishCreationPopoverLazy />
 				</div>
 				<div className='flex flex-row items-center justify-start gap-5 portrait:gap-0 h-full'>
