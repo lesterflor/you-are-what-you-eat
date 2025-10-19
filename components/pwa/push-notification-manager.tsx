@@ -4,6 +4,7 @@ import { subscribeUser, unsubscribeUser } from '@/actions/pwa-actions';
 import { pushSubAtom } from '@/lib/atoms/pushSubAtom';
 import { formatError } from '@/lib/utils';
 import { useAtom } from 'jotai';
+import { useSession } from 'next-auth/react';
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { IoIosNotificationsOutline } from 'react-icons/io';
@@ -25,6 +26,10 @@ export default function PushNotificationManager({
 	const [permission, setPermission] = useState<NotificationPermission>(
 		typeof window !== 'undefined' ? Notification.permission : 'default'
 	);
+	const [currentError, setCurrentError] = useState('');
+
+	const { data: session } = useSession();
+	const user = session?.user;
 
 	useEffect(() => {
 		if ('serviceWorker' in navigator && 'PushManager' in window) {
@@ -56,6 +61,10 @@ export default function PushNotificationManager({
 	};
 
 	const registerServiceWorker = async () => {
+		if (!session || !user) {
+			return;
+		}
+
 		const registration = await navigator.serviceWorker.register('/sw.js', {
 			scope: '/',
 			updateViaCache: 'none'
@@ -69,6 +78,11 @@ export default function PushNotificationManager({
 	};
 
 	const subscribeToPush = async (showSubToast: boolean = false) => {
+		if (!session || !user) {
+			setCurrentError('You must sign in to subscribe to notifications.');
+			return;
+		}
+
 		await checkPermissions();
 		isSubbing.current = true;
 		const registration = await navigator.serviceWorker.ready;
@@ -101,6 +115,9 @@ export default function PushNotificationManager({
 
 	const unsubscribeFromPush = async () => {
 		if (!subscription) {
+			setCurrentError(
+				'You must sign in, or have a current notification subscription to unsubscribe from notifications.'
+			);
 			return;
 		}
 
@@ -165,6 +182,11 @@ export default function PushNotificationManager({
 							</p>
 						)}
 					</>
+				)}
+				{currentError && (
+					<p className='text-xs text-muted-foreground text-red-600'>
+						{currentError}
+					</p>
 				)}
 			</CardContent>
 		</Card>
