@@ -139,7 +139,7 @@ export async function createDailyLog(compareToYesterday: boolean = false) {
 	const user = session?.user;
 
 	if (!session || !user) {
-		return;
+		return null;
 	}
 
 	// first check if there are any logs for today

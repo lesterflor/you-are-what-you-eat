@@ -1,5 +1,3 @@
-'use client';
-
 import { Button } from '@/components/ui/button';
 import {
 	DropdownMenu,
@@ -8,20 +6,18 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { User } from '@/types';
+import { auth } from '@/db/auth';
 import { UserIcon } from 'lucide-react';
-import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import PushNotificationManager from '../pwa/push-notification-manager';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import SignOutButton from './sign-out-button';
 
-export default function UserButton() {
-	const { data: session } = useSession();
+export default async function UserButton() {
+	const session = await auth();
+	const user = session?.user;
 
-	const user = session?.user as User;
-
-	if (!session || !user) {
+	if (!session || !user || !user.name || !user.image) {
 		return (
 			<Button asChild>
 				<Link
@@ -62,18 +58,6 @@ export default function UserButton() {
 						</div>
 					</div>
 				</DropdownMenuLabel>
-
-				{user?.role === 'admin' && (
-					<>
-						<DropdownMenuItem>
-							<Link
-								href='/admin'
-								className='w-full'>
-								Admin
-							</Link>
-						</DropdownMenuItem>
-					</>
-				)}
 
 				<DropdownMenuItem asChild>
 					<div className=' flex flex-col items-end justify-end'>

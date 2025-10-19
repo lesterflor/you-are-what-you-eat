@@ -84,10 +84,6 @@ export default async function SiteHeader() {
 					</div>
 				)}
 
-				{/* <div className='hidden lg:block'>
-					<LogButton />
-				</div> */}
-
 				<div className='flex flex-row portrait:flex-col justify-end gap-2 items-center'>
 					<div className='hidden lg:block'>
 						<LogSheetLazy />
@@ -98,9 +94,11 @@ export default async function SiteHeader() {
 
 					<UserButton />
 
-					<div>
-						<SideMenuLazy />
-					</div>
+					{session && (
+						<div>
+							<SideMenuLazy />
+						</div>
+					)}
 				</div>
 			</div>
 		</header>
