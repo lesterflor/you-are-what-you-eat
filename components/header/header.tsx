@@ -3,9 +3,12 @@ import { appVersion } from '@/lib/version';
 import { UtensilsCrossed } from 'lucide-react';
 import Link from 'next/link';
 import { lazy } from 'react';
-import CurrentDayHud from './current-day-hud';
 import ModeToggle from './mode-toggle';
 import UserButton from './user-button';
+
+const CurrentDayHudLazy = lazy(
+	() => import('@/components/header/current-day-hud')
+);
 
 const DishCreationPopoverLazy = lazy(
 	() => import('@/components/dish/dish-creation-popover')
@@ -76,7 +79,7 @@ export default async function SiteHeader() {
 						<LogMacrosSummaryCurrentLazy
 							compactMode={true}
 							useSkeleton={false}>
-							<CurrentDayHud />
+							<CurrentDayHudLazy />
 						</LogMacrosSummaryCurrentLazy>
 						<div className='text-xs text-muted-foreground pt-1'>
 							You are what you eat,{' '}
