@@ -519,3 +519,15 @@ export function getLocalStorageSize() {
 	}
 	return (total / 1024).toFixed(2); // Returns size in KB
 }
+
+export function dateComparator<T>(
+	getDate: (item: T) => string | Date,
+	ascending: boolean = true
+): (a: T, b: T) => number {
+	return (a, b) => {
+		const dateA = new Date(getDate(a)).getTime();
+		const dateB = new Date(getDate(b)).getTime();
+
+		return ascending ? dateA - dateB : dateB - dateA;
+	};
+}

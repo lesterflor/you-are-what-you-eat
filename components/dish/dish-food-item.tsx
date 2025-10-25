@@ -73,7 +73,7 @@ export default function DishFoodItem({
 		<Card
 			className={cn(
 				'transition-opacity opacity-0 duration-1000 select-none p-0',
-				isEditing && 'bg-green-900'
+				isEditing && 'dark:bg-green-900 bg-green-200'
 			)}
 			style={{
 				opacity: fadeClass ? 1 : 0
