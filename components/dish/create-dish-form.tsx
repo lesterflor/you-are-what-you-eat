@@ -89,7 +89,9 @@ export default function CreateDishForm({
 		console.log(JSON.stringify(errors));
 	};
 
-	const { mutate: createDishItem } = useMutation(createDishMutation());
+	const { mutate: createDishItem, isPending: pendingCreate } = useMutation(
+		createDishMutation()
+	);
 
 	const sendDish: SubmitHandler<z.infer<typeof preparedDishSchema>> = async (
 		values
@@ -243,8 +245,8 @@ export default function CreateDishForm({
 									className='w-20'
 									size={'sm'}
 									type='submit'
-									disabled={form.formState.isSubmitting}>
-									{form.formState.isSubmitting ? (
+									disabled={pendingCreate}>
+									{pendingCreate ? (
 										<ImSpinner2 className='animate-spin' />
 									) : (
 										<TbHemispherePlus />
