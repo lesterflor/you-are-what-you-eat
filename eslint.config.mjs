@@ -20,9 +20,7 @@ const eslintConfig = [
 			'@typescript-eslint/no-unused-vars': 'warn',
 			'@typescript-eslint/no-require-imports': 0,
 			'react-hooks/exhaustive-deps': 0,
-			'@typescript-eslint/ban-ts-comment': 0,
-			curly: ['error', 'all'],
-			semi: ['error', 'always']
+			'@typescript-eslint/ban-ts-comment': 0
 		}
 	},
 	...storybook.configs['flat/recommended']
