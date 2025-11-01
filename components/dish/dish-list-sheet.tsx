@@ -4,7 +4,7 @@ import { getAllDishesOptions } from '@/lib/queries/dishQueries';
 import { setStorageItem } from '@/lib/utils';
 import { GetPreparedDish } from '@/types';
 import { useQuery } from '@tanstack/react-query';
-import { InfoIcon, Soup } from 'lucide-react';
+import { InfoIcon } from 'lucide-react';
 import { memo, useState } from 'react';
 import { ImSpinner2 } from 'react-icons/im';
 import { TbBowl } from 'react-icons/tb';
@@ -70,7 +70,7 @@ export const DishListSheet = memo(function DishListSheet({
 								both from your logged food and searched food.
 							</PopoverContent>
 						</Popover>
-						<Soup className='w-6 h-6 text-fuchsia-500' /> Your Dishes
+						Your Dishes
 					</SheetTitle>
 					<SheetDescription></SheetDescription>
 
