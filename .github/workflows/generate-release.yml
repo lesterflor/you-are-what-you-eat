@@ -14,9 +14,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0 # Needed to push tags and branches
+          fetch-depth: 0 # Needed for tags
 
-      # Step 2: Set up Node.js
+      # Step 2: Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -28,11 +28,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      # Step 4: Fetch and switch to master
-      - name: Ensure on master branch
+      # Step 4: Ensure on master and sync with remote
+      - name: Checkout and sync master
         run: |
-          git fetch origin master:master
           git checkout master
+          git reset --hard origin/master
 
       # Step 5: Bump version (patch rollover)
       - name: Bump version
@@ -54,7 +54,7 @@ jobs:
           NEW_VERSION="$MAJOR.$MINOR.$PATCH"
           echo "New version: $NEW_VERSION"
 
-          # Update package.json and commit/tag
+          # Update package.json and create git tag
           npm version "$NEW_VERSION" -m "chore: bump version to %s [skip ci]"
 
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
@@ -66,6 +66,7 @@ jobs:
           VERSION=${{ steps.bump_version.outputs.new_version }}
           echo "Generating RELEASE.md for version $VERSION"
 
+          # Determine last tag
           LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
           if [ -z "$LAST_TAG" ]; then
             RANGE="HEAD"
@@ -74,15 +75,15 @@ jobs:
           fi
           echo "Commit range: $RANGE"
 
-          # Ensure GitHub CLI is installed
+          # Ensure GitHub CLI installed
           if ! command -v gh &>/dev/null; then
             sudo apt-get update && sudo apt-get install -y gh
           fi
 
-          # Authenticate gh CLI
+          # Authenticate GitHub CLI
           echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
 
-          # Get merged PRs
+          # Get merged PRs into master since last tag
           MERGED_PRS=$(gh pr list --state merged --base master --json title,number,author,mergedAt \
             --jq ".[] | select(.mergedAt >= \"$(git log -1 --format=%ci $LAST_TAG)\" ) | \"#\(.number) - \(.title) (@\(.author.login))\"")
 
@@ -98,17 +99,20 @@ jobs:
             echo
           } > $TMP_FILE
 
-          # Append to RELEASE.md
-          cat $TMP_FILE >> RELEASE.md
-          rm $TMP_FILE
+          # Prepend new release notes to RELEASE.md (latest first)
+          if [ -f RELEASE.md ]; then
+            cat TMP_FILE RELEASE.md > RELEASE.tmp && mv RELEASE.tmp RELEASE.md
+          else
+            mv TMP_FILE RELEASE.md
+          fi
 
           echo "release_version=$VERSION" >> $GITHUB_OUTPUT
 
-      # Step 7: Commit and push to master
-      - name: Commit and push package.json + RELEASE.md to master
+      # Step 7: Commit and push changes to master
+      - name: Commit and push to master
         run: |
           git add package.json package-lock.json RELEASE.md
           git commit -m "chore: bump version ${{ steps.bump_version.outputs.new_version }} and update RELEASE.md [skip ci]" || echo "No changes to commit"
-          git push origin master
+          git push origin master --follow-tags
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
