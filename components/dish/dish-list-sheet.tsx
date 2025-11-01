@@ -70,7 +70,7 @@ export const DishListSheet = memo(function DishListSheet({
 								both from your logged food and searched food.
 							</PopoverContent>
 						</Popover>
-						Your Dishes
+						Your Saved Dishes
 					</SheetTitle>
 					<SheetDescription></SheetDescription>
 
