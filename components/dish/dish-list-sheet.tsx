@@ -90,7 +90,7 @@ export const DishListSheet = memo(function DishListSheet({
 								) : (
 									<div className='pt-10 flex flex-col items-center justify-center w-full opacity-20'>
 										<TbBowl className=' w-24 h-24' />
-										<div>You currently have no dishes</div>
+										<div>You have no dishes</div>
 									</div>
 								)}
 							</div>
