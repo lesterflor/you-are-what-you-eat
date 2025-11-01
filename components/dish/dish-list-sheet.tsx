@@ -66,7 +66,8 @@ export const DishListSheet = memo(function DishListSheet({
 								These are your prepared dishes. You can create dishes by
 								selecting items from your logged food list or add them from
 								searched food items. You can then log all items from a dish
-								instead of adding food items individually.
+								instead of adding food items individually. Or, you can combine
+								both from your logged food and searched food.
 							</PopoverContent>
 						</Popover>
 						<Soup className='w-6 h-6 text-fuchsia-500' /> Your Dishes
