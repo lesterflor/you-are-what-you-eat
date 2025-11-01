@@ -86,7 +86,7 @@ export default function CreateDishForm({
 	const onError: SubmitErrorHandler<z.infer<typeof preparedDishSchema>> = (
 		errors
 	) => {
-		console.log(JSON.stringify(errors));
+		console.error(JSON.stringify(errors));
 	};
 
 	const { mutate: createDishItem, isPending: pendingCreate } = useMutation(

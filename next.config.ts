@@ -6,7 +6,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 const nextConfig: NextConfig = {
 	experimental: {
-		ppr: 'incremental',
+		//ppr: 'incremental',
 		serverActions: {
 			bodySizeLimit: '5mb'
 		},
