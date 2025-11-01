@@ -97,13 +97,13 @@ jobs:
               echo "$MERGED_PRS"
             fi
             echo
-          } > $TMP_FILE
+          } > "$TMP_FILE"
 
-          # Prepend new release notes to RELEASE.md (latest first)
+          # Prepend new release notes to RELEASE.md
           if [ -f RELEASE.md ]; then
-            cat TMP_FILE RELEASE.md > RELEASE.tmp && mv RELEASE.tmp RELEASE.md
+            cat "$TMP_FILE" RELEASE.md > RELEASE.tmp && mv RELEASE.tmp RELEASE.md
           else
-            mv TMP_FILE RELEASE.md
+            mv "$TMP_FILE" RELEASE.md
           fi
 
           echo "release_version=$VERSION" >> $GITHUB_OUTPUT
