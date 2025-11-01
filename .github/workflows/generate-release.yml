@@ -10,11 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true
     steps:
-      # Step 1: Checkout repo
+      # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Needed to push tags and branches
 
       # Step 2: Set up Node.js
       - name: Setup Node.js
@@ -28,7 +28,13 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      # Step 4: Bump version (patch rollover)
+      # Step 4: Fetch and switch to master
+      - name: Ensure on master branch
+        run: |
+          git fetch origin master:master
+          git checkout master
+
+      # Step 5: Bump version (patch rollover)
       - name: Bump version
         id: bump_version
         run: |
@@ -53,7 +59,7 @@ jobs:
 
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
-      # Step 5: Generate RELEASE.md
+      # Step 6: Generate RELEASE.md
       - name: Generate RELEASE.md
         id: generate_release
         run: |
@@ -77,7 +83,7 @@ jobs:
           echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
 
           # Get merged PRs
-          MERGED_PRS=$(gh pr list --state merged --base main --json title,number,author,mergedAt \
+          MERGED_PRS=$(gh pr list --state merged --base master --json title,number,author,mergedAt \
             --jq ".[] | select(.mergedAt >= \"$(git log -1 --format=%ci $LAST_TAG)\" ) | \"#\(.number) - \(.title) (@\(.author.login))\"")
 
           TMP_FILE=$(mktemp)
@@ -98,11 +104,11 @@ jobs:
 
           echo "release_version=$VERSION" >> $GITHUB_OUTPUT
 
-      # Step 6: Commit and push updates
-      - name: Commit and push package.json + RELEASE.md
+      # Step 7: Commit and push to master
+      - name: Commit and push package.json + RELEASE.md to master
         run: |
           git add package.json package-lock.json RELEASE.md
           git commit -m "chore: bump version ${{ steps.bump_version.outputs.new_version }} and update RELEASE.md [skip ci]" || echo "No changes to commit"
-          git push origin HEAD
+          git push origin master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
