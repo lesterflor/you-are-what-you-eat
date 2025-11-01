@@ -113,6 +113,6 @@ jobs:
         run: |
           git add package.json package-lock.json RELEASE.md
           git commit -m "chore: bump version ${{ steps.bump_version.outputs.new_version }} and update RELEASE.md [skip ci]" || echo "No changes to commit"
-          git push origin master --follow-tags
+          git push https://x-access-token:${GH_PAT}@github.com/${{ github.repository }} master --follow-tags
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_PAT: ${{ secrets.GH_PAT }}
