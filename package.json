@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@auth/core": "^0.37.4",
-    "@auth/prisma-adapter": "^2.7.4",
+    "@auth/prisma-adapter": "^2.11.1",
     "@hookform/resolvers": "^3.10.0",
     "@monaco-editor/react": "^4.7.0-rc.0",
     "@next/bundle-analyzer": "^16.0.1",
